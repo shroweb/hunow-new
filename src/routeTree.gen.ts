@@ -35,6 +35,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
+import { Route as SeriesRouteImport } from './routes/series'
 import { Route as SeriesSeriesRouteImport } from './routes/series.$series'
 import { Route as PlacesSlugRouteImport } from './routes/places.$slug'
 import { Route as FeedEventsDotrssRouteImport } from './routes/feed.events[.]rss'
@@ -188,6 +189,11 @@ const StoriesSlugRoute = StoriesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => StoriesRoute,
+} as any)
+const SeriesRoute = SeriesRouteImport.update({
+  id: '/series',
+  path: '/series',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SeriesSeriesRoute = SeriesSeriesRouteImport.update({
   id: '/series/$series',
@@ -350,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
+  '/series': typeof SeriesRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -400,6 +407,7 @@ export interface FileRoutesByTo {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
+  '/series': typeof SeriesRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -452,6 +460,7 @@ export interface FileRoutesById {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
+  '/series': typeof SeriesRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -813,6 +822,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoriesSlugRouteImport
       parentRoute: typeof StoriesRoute
     }
+    '/series': {
+      id: '/series'
+      path: '/series'
+      fullPath: '/series'
+      preLoaderRoute: typeof SeriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/series/$series': {
       id: '/series/$series'
       path: '/series/$series'
@@ -1095,6 +1111,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsSlugRoute: EventsSlugRoute,
   FeedArticlesDotrssRoute: FeedArticlesDotrssRoute,
   FeedEventsDotrssRoute: FeedEventsDotrssRoute,
+  SeriesRoute: SeriesRoute,
   SeriesSeriesRoute: SeriesSeriesRoute,
   TagTagRoute: TagTagRoute,
 }

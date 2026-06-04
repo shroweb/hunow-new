@@ -48,33 +48,53 @@ function SeriesPage() {
     .filter((a) => a.status === "published" && a.series === series)
     .sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0));
 
+  const totalMinutes = articles.reduce((sum, a) => sum + (a.readingMinutes ?? 0), 0);
+  const first = articles[0];
+
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Series</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">{series}</h1>
-        <p className="text-xl text-muted-foreground">
-          {articles.length} {articles.length === 1 ? "article" : "articles"} in this series
-        </p>
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-[10px] font-mono uppercase text-accent">Series</span>
+          <a href="/series" className="text-[10px] font-mono uppercase text-muted-foreground hover:text-accent transition-colors">
+            ← All series
+          </a>
+        </div>
+        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">{series}</h1>
+        <div className="flex flex-wrap items-center gap-6">
+          <p className="text-lg text-muted-foreground">
+            {articles.length} {articles.length === 1 ? "part" : "parts"} · {totalMinutes} min total
+          </p>
+          {first && (
+            <a
+              href={articlePath(first)}
+              className="bg-foreground text-background px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors"
+            >
+              Start from Part 1 →
+            </a>
+          )}
+        </div>
       </section>
-      <section className="max-w-7xl mx-auto px-4 py-12">
-        <div className="space-y-0 border-2 border-foreground">
+      <section className="max-w-3xl mx-auto px-4 py-12">
+        <div className="border-2 border-foreground">
           {articles.map((a, i) => (
             <a
               key={a.id}
               href={articlePath(a)}
-              className="group flex items-center gap-6 p-5 border-b border-foreground/10 last:border-b-0 hover:bg-foreground hover:text-background transition-colors"
+              className="group flex items-start gap-6 p-5 border-b border-foreground/10 last:border-b-0 hover:bg-foreground hover:text-background transition-colors"
             >
-              <span className="font-display text-4xl text-muted-foreground group-hover:text-background/40 shrink-0 w-10 text-right">
+              <span className="font-display text-4xl text-muted-foreground group-hover:text-background/30 shrink-0 w-10 text-right pt-1">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-lg leading-tight">{a.title}</p>
-                <p className="text-sm text-muted-foreground group-hover:text-background/60 mt-0.5 line-clamp-1">
+                <p className="font-bold text-lg leading-tight mb-1">{a.title}</p>
+                <p className="text-sm text-muted-foreground group-hover:text-background/60 line-clamp-2">
                   {a.excerpt}
                 </p>
               </div>
-              <span className="text-[10px] font-mono uppercase shrink-0">{a.readingMinutes} min →</span>
+              <span className="text-[10px] font-mono uppercase shrink-0 pt-1 text-right">
+                {a.readingMinutes} min<br />→
+              </span>
             </a>
           ))}
         </div>

@@ -153,7 +153,18 @@ function ArticleDetail() {
           />
         </div>
         <div className="max-w-3xl mx-auto px-4 py-12">
-          <div className="font-mono text-[10px] uppercase text-accent mb-4">{article.category}</div>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="font-mono text-[10px] uppercase text-accent">{article.category}</span>
+            {article.series && seriesArticles.length > 0 && (
+              <a
+                href={`/series/${article.series.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                className="font-mono text-[10px] uppercase text-muted-foreground hover:text-accent transition-colors"
+              >
+                {article.series}
+                {article.seriesOrder && ` · Part ${article.seriesOrder} of ${seriesArticles.length}`}
+              </a>
+            )}
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 text-balance">
             {article.title}
           </h1>

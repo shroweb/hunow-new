@@ -263,13 +263,27 @@ function AdminArticles() {
                       />
                     </AdminField>
                   </div>
-                  <AdminField label="Series" hint="Group related articles, e.g. 'Hidden Hull'">
+                  <AdminField label="Series" hint="Group related articles into an ordered collection">
                     <input
                       name="series"
+                      list="admin-series-list"
                       defaultValue={editing?.series}
-                      placeholder="Series name (optional)"
+                      placeholder="Series name — pick existing or type new"
                       className={adminInput}
                     />
+                    <datalist id="admin-series-list">
+                      {Array.from(
+                        new Set(
+                          articles
+                            .filter((a) => a.series)
+                            .map((a) => a.series!)
+                        )
+                      ).map((s) => (
+                        <option key={s} value={s}>
+                          {articles.filter((a) => a.series === s).length} parts
+                        </option>
+                      ))}
+                    </datalist>
                   </AdminField>
                   <ImageUpload
                     name="featuredImage"

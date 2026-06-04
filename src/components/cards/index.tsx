@@ -115,9 +115,16 @@ export function ArticleCard({ article }: { article: Article }) {
           }}
         />
       </div>
-      <span className="inline-block text-[10px] font-mono font-bold uppercase bg-foreground text-background px-2 py-1">
-        {article.category}
-      </span>
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="inline-block text-[10px] font-mono font-bold uppercase bg-foreground text-background px-2 py-1">
+          {article.category}
+        </span>
+        {article.series && (
+          <span className="text-[10px] font-mono uppercase text-accent">
+            {article.series}{article.seriesOrder ? ` · Part ${article.seriesOrder}` : ""}
+          </span>
+        )}
+      </div>
       <h3 className="text-2xl md:text-3xl font-bold leading-none group-hover:underline">
         {article.title}
       </h3>
