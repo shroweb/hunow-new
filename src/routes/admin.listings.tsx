@@ -97,6 +97,7 @@ function AdminListings() {
       email: String(fd.get("email") || "") || undefined,
       featuredImage: String(fd.get("featuredImage") || "photo-1568901346375-23c9450c58cd"),
       gallery: gallery.length > 0 ? gallery : undefined,
+      tags: String(fd.get("tags") || "").split(",").map((t) => t.trim()).filter(Boolean),
       isFeatured: fd.get("isFeatured") === "on",
       isHiddenGem: fd.get("isHiddenGem") === "on",
       isIndependent: fd.get("isIndependent") === "on",
@@ -311,6 +312,14 @@ function AdminListings() {
                     defaultValue={editing?.featuredImage}
                     label="Featured image"
                   />
+                  <AdminField label="Tags / good for (comma-separated)">
+                    <input
+                      name="tags"
+                      defaultValue={editing?.tags?.join(", ")}
+                      placeholder="dog-friendly, good for dates, live sport..."
+                      className={adminInput}
+                    />
+                  </AdminField>
                   <div className="grid grid-cols-2 gap-3 text-xs font-mono uppercase">
                     <label className="flex items-center gap-2">
                       <input

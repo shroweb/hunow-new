@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { ArticleCard } from "@/components/cards";
+import { ArticleCard, EventCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
 import { findSection, findSub, type NavSub } from "@/lib/nav";
 
@@ -46,8 +46,18 @@ export const Route = createFileRoute("/c/$section/$sub")({
 function SubPage() {
   const { section, sub } = Route.useLoaderData();
   const articles = useStore((s) => s.articles).filter(
-    (a) => a.status === "published" && a.section === section.slug && a.subcategory === sub.slug,
+    (a) =>
+      a.status === "published" &&
+      (
+        (a.section === section.slug && a.subcategory === sub.slug) ||
+        a.tags.some((t) => t.toLowerCase() === sub.slug)
+      ),
   );
+  const events = useStore((s) => s.events).filter(
+    (e) => e.status === "published" && e.category.toLowerCase() === sub.slug,
+  );
+
+  const hasContent = articles.length > 0 || events.length > 0;
 
   return (
     <PublicLayout>
@@ -63,7 +73,7 @@ function SubPage() {
           {sub.label}
         </h1>
         <p className="text-lg text-muted-foreground">
-          Posts in {sub.label.toLowerCase()} from across Hull.
+          Posts and events in {sub.label.toLowerCase()} from across Hull.
         </p>
       </section>
 
@@ -90,9 +100,9 @@ function SubPage() {
       </section>
 
       <section className="max-w-7xl mx-auto px-4 py-12">
-        {articles.length === 0 ? (
+        {!hasContent ? (
           <div className="text-center py-20">
-            <p className="text-2xl font-display uppercase mb-2">No posts yet</p>
+            <p className="text-2xl font-display uppercase mb-2">No content yet</p>
             <p className="text-sm text-muted-foreground mb-6">
               Check back soon — or submit one yourself.
             </p>
@@ -104,10 +114,23 @@ function SubPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-            {articles.map((a) => (
-              <ArticleCard key={a.id} article={a} />
-            ))}
+          <div className="space-y-16">
+            {events.length > 0 && (
+              <div>
+                <h2 className="font-display text-3xl uppercase mb-6">Upcoming</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8">
+                  {events.map((e) => <EventCard key={e.id} event={e} />)}
+                </div>
+              </div>
+            )}
+            {articles.length > 0 && (
+              <div>
+                <h2 className="font-display text-3xl uppercase mb-6">Stories</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                  {articles.map((a) => <ArticleCard key={a.id} article={a} />)}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </section>

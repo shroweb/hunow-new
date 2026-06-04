@@ -348,9 +348,23 @@ function PlaceDetail() {
               About
             </h2>
             <p
-              className="text-lg leading-relaxed"
+              className="text-lg leading-relaxed mb-4"
               dangerouslySetInnerHTML={{ __html: linkedDescription }}
             />
+            {listing.tags && listing.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {listing.tags.map((tag: string) => (
+                  <Link
+                    key={tag}
+                    to="/tag/$tag"
+                    params={{ tag: encodeURIComponent(tag.toLowerCase()) }}
+                    className="px-3 py-1 text-[11px] font-bold uppercase tracking-wide border border-foreground/20 hover:bg-foreground/5 transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>

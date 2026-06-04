@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { useStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth.functions";
@@ -23,6 +23,9 @@ export const Route = createFileRoute("/offers")({
 function Offers() {
   const { user } = Route.useLoaderData();
   const offers = useStore((s) => s.offers).filter((o) => o.status === "active");
+  const listings = useStore((s) => s.listings);
+  const events = useStore((s) => s.events).filter((e) => e.status === "published");
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <PublicLayout>
@@ -76,9 +79,40 @@ function Offers() {
             <div className="text-[10px] font-mono uppercase text-accent mb-2">{o.businessName}</div>
             <h3 className="text-2xl font-bold mb-3 leading-tight">{o.title}</h3>
             <p className="text-sm text-muted-foreground mb-4 flex-1">{o.description}</p>
-            <div className="text-[10px] font-mono uppercase text-muted-foreground">
+            <div className="text-[10px] font-mono uppercase text-muted-foreground mb-3">
               Ends {new Date(o.endDate).toLocaleDateString("en-GB")}
             </div>
+            {(() => {
+              const listing = listings.find((l) => l.id === o.listingId);
+              const upcomingEvents = listing
+                ? events
+                    .filter((e) => e.locationName.toLowerCase() === listing.name.toLowerCase() && e.startDate >= today)
+                    .slice(0, 2)
+                : [];
+              return (
+                <div className="mt-auto pt-3 border-t border-foreground/10 space-y-2">
+                  {listing && (
+                    <Link
+                      to="/places/$slug"
+                      params={{ slug: listing.slug }}
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase hover:text-accent transition-colors"
+                    >
+                      <span className="text-foreground/40">📍</span> {listing.name}
+                    </Link>
+                  )}
+                  {upcomingEvents.map((e) => (
+                    <Link
+                      key={e.id}
+                      to="/events/$slug"
+                      params={{ slug: e.slug }}
+                      className="block text-[10px] font-mono text-muted-foreground hover:text-accent transition-colors truncate"
+                    >
+                      {new Date(`${e.startDate}T12:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} · {e.title}
+                    </Link>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
         ))}
       </section>

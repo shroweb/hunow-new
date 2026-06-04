@@ -76,6 +76,7 @@ export interface Listing {
   featuredImage: string;
   gallery?: string[];
   hours?: WeekHours;
+  tags?: string[];
   isFeatured: boolean;
   isHiddenGem: boolean;
   isIndependent: boolean;
