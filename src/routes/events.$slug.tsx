@@ -132,11 +132,19 @@ function EventDetail() {
             <div>
               <div className="text-muted-foreground mb-1">Date</div>
               <div className="font-bold">
-                {new Date(event.startDate).toLocaleDateString("en-GB", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                })}
+                {event.endDate ? (
+                  <>
+                    {new Date(event.startDate).toLocaleDateString("en-GB", { day: "numeric", month: "long" })}
+                    {" – "}
+                    {new Date(event.endDate).toLocaleDateString("en-GB", { day: "numeric", month: "long" })}
+                  </>
+                ) : (
+                  new Date(event.startDate).toLocaleDateString("en-GB", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                  })
+                )}
               </div>
             </div>
             <div>
@@ -152,6 +160,28 @@ function EventDetail() {
             </div>
           </div>
           <p className="text-xl leading-relaxed mb-8">{event.description}</p>
+          {event.gallery && event.gallery.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10">
+              {event.gallery.map((src, i) => (
+                <div key={i} className="aspect-square overflow-hidden bg-stone-200">
+                  <img
+                    src={img(src, 600, 600)}
+                    alt={`${event.title} — photo ${i + 2}`}
+                    width={600}
+                    height={600}
+                    decoding="async"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          {event.content ? (
+            <div
+              className="mb-8 [&_h2]:font-display [&_h2]:uppercase [&_h2]:text-3xl [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:leading-none [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:text-lg [&_ul]:leading-relaxed [&_ul]:mb-4 [&_ul]:pl-6 [&_ul]:list-disc [&_li]:mb-2 [&_strong]:font-bold"
+              dangerouslySetInnerHTML={{ __html: event.content }}
+            />
+          ) : null}
           <div className="border border-border p-6 mb-8">
             <div className="font-mono text-[10px] uppercase text-muted-foreground mb-1">Venue</div>
             <div className="font-bold text-lg">

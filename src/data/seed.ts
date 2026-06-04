@@ -427,16 +427,45 @@ export const seedEvents: EventItem[] = [
     title: "Hull Fair 2026",
     slug: "hull-fair-2026",
     description:
-      "Europe's largest travelling fair returns to Walton Street for its 134th year. Running for nine nights from 9–17 October, Hull Fair takes over the entire Walton Street site with over 250 rides and stalls — from white-knuckle rollercoasters and ghost trains to traditional gallopers, hook-a-duck and the brandy snap stalls that have been a fixture for generations.\n\nEntry to the fairground is free. Rides and stalls are individually priced, with most rides costing £2–5 per person. The fair opens at noon daily and runs until 11pm, with the biggest crowds on Friday and Saturday evenings.\n\nParking is limited in the immediate area — the council runs dedicated park-and-ride services from several sites around the city during fair week. The fairground is a 20-minute walk from Hull city centre, or a short bus ride on routes serving Anlaby Road and Hessle Road.\n\nHull Fair has been held annually since 1278, making it one of the oldest surviving fairs in the world. It was originally a charter fair granted by King Edward I and has been held on or near Walton Street since the Victorian era. For most Hull families it is a fixed point in the autumn calendar — the smell of brandy snap, the sound of generators and the glow of lights visible from miles away are as much a part of the city as anything else.",
+      "Europe's largest travelling fair returns to Walton Street for its 134th year — nine nights of rides, lights, and brandy snap from 9–17 October. Entry to the fairground is free; rides and stalls are individually priced.",
+    content: `
+<h2>What to expect</h2>
+<p>Hull Fair takes over the entire Walton Street site with over 250 rides and stalls. From white-knuckle rollercoasters and ghost trains to traditional gallopers, hook-a-duck and the brandy snap stalls that have been a fixture for generations — there's something for every age.</p>
+<p>Entry to the fairground is free. Rides and stalls are individually priced, with most rides costing £2–5 per person. The fair opens at noon daily and runs until 11pm, with the biggest crowds on Friday and Saturday evenings.</p>
+
+<h2>Tips for visiting</h2>
+<ul>
+  <li><strong>Go mid-week</strong> — Thursday afternoons are the quietest; Friday and Saturday evenings are the busiest.</li>
+  <li><strong>Bring cash</strong> — most rides and stalls are cash only, though some now accept card.</li>
+  <li><strong>Dress for October</strong> — it can be cold and wet. Comfortable shoes are essential on the uneven ground.</li>
+  <li><strong>Budget around £20–30 per person</strong> for a few rides and something to eat.</li>
+  <li><strong>Try the brandy snap</strong> — Hull Fair's signature treat, sold fresh from stalls that have traded here for generations.</li>
+</ul>
+
+<h2>Getting there</h2>
+<p>Parking is very limited in the immediate area. Hull City Council runs <strong>dedicated park-and-ride services</strong> from several sites around the city during fair week — the most convenient option for most visitors.</p>
+<p>The fairground is a <strong>20-minute walk</strong> from Hull city centre, or a short bus ride on routes serving Anlaby Road and Hessle Road. East Yorkshire buses run additional services during fair week.</p>
+
+<h2>A Hull institution since 1278</h2>
+<p>Hull Fair has been held annually since 1278, making it one of the oldest surviving fairs in the world. It was originally a charter fair granted by King Edward I and has been held on or near Walton Street since the Victorian era.</p>
+<p>For most Hull families it is a fixed point in the autumn calendar — the smell of brandy snap, the sound of generators, and the glow of lights visible from miles away are as much a part of the city as the Humber itself.</p>
+    `.trim(),
     category: "Family",
     startDate: "2026-10-09",
+    endDate: "2026-10-17",
     startTime: "12:00",
     endTime: "23:00",
     locationName: "Walton Street Fairground",
     address: "Walton Street, Hull HU3 6HR",
     price: "Free entry · rides £2–5 each",
     isFree: true,
-    featuredImage: "photo-1567095761054-7a02e69e5c43",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Hull_Fair_2009.jpg/1280px-Hull_Fair_2009.jpg",
+    gallery: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Hull_Fair_-_geograph.org.uk_-_1542911.jpg/1280px-Hull_Fair_-_geograph.org.uk_-_1542911.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Hull_Fair_2010.jpg/1280px-Hull_Fair_2010.jpg",
+      "photo-1518611012118-696072aa579a",
+      "photo-1535813547-99c456a41d4a",
+    ],
     status: "published",
     isFeatured: true,
     isSponsored: false,

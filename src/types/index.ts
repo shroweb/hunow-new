@@ -37,8 +37,10 @@ export interface EventItem {
   title: string;
   slug: string;
   description: string;
+  content?: string; // rich HTML body
   category: string;
   startDate: string; // ISO
+  endDate?: string; // ISO — for multi-day events
   startTime: string;
   endTime?: string;
   locationName: string;
@@ -47,6 +49,7 @@ export interface EventItem {
   isFree: boolean;
   ticketUrl?: string;
   featuredImage: string;
+  gallery?: string[]; // additional image IDs/URLs
   status: Status;
   isFeatured: boolean;
   isSponsored: boolean;
