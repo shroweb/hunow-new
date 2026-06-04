@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { ListingCard, EventCard, OfferCard } from "@/components/cards";
+import { ArticleCard, ListingCard, EventCard, OfferCard } from "@/components/cards";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SaveButton } from "@/components/SaveButton";
 import { ShareMenu } from "@/components/ShareMenu";
@@ -113,6 +113,14 @@ function PlaceDetail() {
       (l) => l.id !== listing.id && (l.category === listing.category || l.area === listing.area),
     )
     .slice(0, 3);
+  const relatedArticles = articles
+    .filter((a) => {
+      if (a.status !== "published") return false;
+      const text = `${a.title} ${a.excerpt} ${a.content}`.toLowerCase();
+      return text.includes(listing.name.toLowerCase()) || text.includes(listing.area.toLowerCase());
+    })
+    .slice(0, 3);
+
   const nearbyEvents = events
     .filter(
       (e) =>
@@ -380,6 +388,17 @@ function PlaceDetail() {
             ))}
             {nearbyOffers.map((o) => (
               <OfferCard key={o.id} offer={o} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {relatedArticles.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 py-16 border-t-2 border-foreground">
+          <h2 className="text-4xl font-display uppercase mb-8">From the Guide</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {relatedArticles.map((a) => (
+              <ArticleCard key={a.id} article={a} />
             ))}
           </div>
         </section>

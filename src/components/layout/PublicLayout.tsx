@@ -432,6 +432,9 @@ function Footer() {
           <p className="text-sm text-white/60 mb-5 leading-relaxed">
             The best events, food guides and hidden gems. Every Thursday.
           </p>
+          <Link to="/newsletter" className="block text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-4">
+            Archive & more info →
+          </Link>
           {subscribed ? (
             <p className="text-sm font-bold text-accent">Thanks — see you Thursday.</p>
           ) : (

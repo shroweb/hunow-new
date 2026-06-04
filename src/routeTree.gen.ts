@@ -21,6 +21,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as OpenNowRouteImport } from './routes/open-now'
 import { Route as OffersRouteImport } from './routes/offers'
+import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AreasRouteImport } from './routes/areas'
@@ -116,6 +117,11 @@ const OpenNowRoute = OpenNowRouteImport.update({
 const OffersRoute = OffersRouteImport.update({
   id: '/offers',
   path: '/offers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsletterRoute = NewsletterRouteImport.update({
+  id: '/newsletter',
+  path: '/newsletter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ListingsRoute = ListingsRouteImport.update({
@@ -309,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
+  '/newsletter': typeof NewsletterRoute
   '/listings': typeof ListingsRoute
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
@@ -358,6 +365,7 @@ export interface FileRoutesByTo {
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
+  '/newsletter': typeof NewsletterRoute
   '/listings': typeof ListingsRoute
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
@@ -409,6 +417,7 @@ export interface FileRoutesById {
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
+  '/newsletter': typeof NewsletterRoute
   '/listings': typeof ListingsRoute
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
@@ -704,6 +713,13 @@ declare module '@tanstack/react-router' {
       path: '/offers'
       fullPath: '/offers'
       preLoaderRoute: typeof OffersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletter': {
+      id: '/newsletter'
+      path: '/newsletter'
+      fullPath: '/newsletter'
+      preLoaderRoute: typeof NewsletterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/listings': {
@@ -1060,6 +1076,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdvertiseRoute: AdvertiseRoute,
   AreasRoute: AreasRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  NewsletterRoute: NewsletterRoute,
   ListingsRoute: ListingsRoute,
   OffersRoute: OffersRoute,
   OpenNowRoute: OpenNowRoute,
