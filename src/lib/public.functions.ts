@@ -28,6 +28,32 @@ export const submitForReview = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const submitContact = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      name: z.string().min(1),
+      email: z.string().email(),
+      enquiryType: z.enum(["news-tip", "press-release", "general"]),
+      subject: z.string().min(1),
+      message: z.string().min(10),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { addPublicSubmission } = await import("./db.server");
+    const { uid } = await import("./auth.server").then(() => ({ uid: () => crypto.randomUUID() }));
+    await addPublicSubmission({
+      id: crypto.randomUUID(),
+      type: "contact",
+      title: `[${data.enquiryType}] ${data.subject}`,
+      contactName: data.name,
+      contactEmail: data.email,
+      data: { enquiryType: data.enquiryType, subject: data.subject, message: data.message },
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    });
+    return { ok: true };
+  });
+
 export const redeemOffer = createServerFn({ method: "POST" })
   .inputValidator(z.object({ offerId: z.string().min(1) }))
   .handler(async ({ data }) => {

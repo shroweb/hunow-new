@@ -106,7 +106,7 @@ export interface Offer {
 
 export interface Submission {
   id: string;
-  type: "event" | "listing";
+  type: "event" | "listing" | "contact";
   title: string;
   contactName: string;
   contactEmail: string;

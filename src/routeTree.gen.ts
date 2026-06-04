@@ -24,6 +24,7 @@ import { Route as OffersRouteImport } from './routes/offers'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AreasRouteImport } from './routes/areas'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
@@ -127,6 +128,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const AreasRoute = AreasRouteImport.update({
   id: '/areas',
   path: '/areas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdvertiseRoute = AdvertiseRouteImport.update({
@@ -281,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
+  '/contact': typeof ContactRoute
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
@@ -326,6 +333,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
+  '/contact': typeof ContactRoute
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
@@ -373,6 +381,7 @@ export interface FileRoutesById {
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
+  '/contact': typeof ContactRoute
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
@@ -691,6 +700,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/advertise': {
       id: '/advertise'
       path: '/advertise'
@@ -989,6 +1005,7 @@ const rootRouteChildren: RootRouteChildren = {
   TaxonomyRoute: TaxonomyRouteWithChildren,
   AccountRoute: AccountRoute,
   AdminRoute: AdminRouteWithChildren,
+  ContactRoute: ContactRoute,
   AdvertiseRoute: AdvertiseRoute,
   AreasRoute: AreasRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,

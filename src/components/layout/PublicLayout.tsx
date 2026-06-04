@@ -402,9 +402,9 @@ function Footer() {
       <div className="max-w-7xl mx-auto pt-20 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/10 mt-20">
         <div className="text-4xl font-display">HU NOW</div>
         <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-white/40">
-          <Link to="/advertise">Advertise</Link>
+          <Link to="/contact">Contact</Link>
           <Link to="/submit">Submit</Link>
-          <a href="#">Privacy</a>
+          <Link to="/advertise">Advertise</Link>
         </div>
         <div className="text-[10px] font-mono text-white/20 uppercase">
           Hull's Independent City Guide

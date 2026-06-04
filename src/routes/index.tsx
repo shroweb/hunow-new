@@ -268,25 +268,25 @@ function Index() {
 
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
 
-      {/* Advertise CTA */}
+      {/* News tips CTA */}
       <section className="max-w-7xl mx-auto px-4 my-20">
-        <div className="bg-accent text-foreground p-10 md:p-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+        <div className="border-2 border-foreground p-10 md:p-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
-            <div className="text-[10px] font-mono uppercase tracking-widest mb-3">
-              For Local Businesses
+            <div className="text-[10px] font-mono uppercase tracking-widest mb-3 text-accent">
+              Got a story?
             </div>
             <h2 className="text-4xl md:text-6xl font-display uppercase leading-none">
-              Advertise in HU NOW
+              Send us a tip
             </h2>
-            <p className="mt-4 max-w-xl">
-              Reach Hull's most engaged locals through our website, newsletter and social channels.
+            <p className="mt-4 max-w-xl text-muted-foreground">
+              News tips, press releases, events, openings — if it's happening in Hull, we want to know.
             </p>
           </div>
           <Link
-            to="/advertise"
-            className="bg-foreground text-background px-8 py-4 font-bold uppercase tracking-widest text-xs shrink-0 hover:bg-background hover:text-foreground border-2 border-foreground transition-colors"
+            to="/contact"
+            className="bg-foreground text-background px-8 py-4 font-bold uppercase tracking-widest text-xs shrink-0 hover:bg-accent transition-colors"
           >
-            See Packages
+            Get in touch →
           </Link>
         </div>
       </section>
