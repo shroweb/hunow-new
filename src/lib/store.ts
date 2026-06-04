@@ -1,13 +1,5 @@
 import { useSyncExternalStore } from "react";
-import {
-  seedAds,
-  seedArticles,
-  seedEvents,
-  seedListings,
-  seedMedia,
-  seedOffers,
-  seedSubmissions,
-} from "@/data/seed";
+import { seedArticles, seedEvents, seedListings, seedMedia } from "@/data/seed";
 import type {
   AdPlacement,
   Article,
@@ -40,9 +32,9 @@ const initial: Store = {
   articles: seedArticles,
   events: seedEvents,
   listings: seedListings,
-  offers: seedOffers,
-  submissions: seedSubmissions,
-  ads: seedAds,
+  offers: [],
+  submissions: [],
+  ads: [],
   media: seedMedia,
   newsletter: [],
 };
