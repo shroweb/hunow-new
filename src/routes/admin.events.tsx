@@ -12,6 +12,7 @@ import {
 } from "@/components/admin/AdminLayout";
 import { GalleryUpload } from "@/components/admin/GalleryUpload";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { TiptapEditor } from "@/components/admin/TiptapEditor";
 import { PublishWorkflow } from "@/components/admin/PublishWorkflow";
 import { SeoFields } from "@/components/admin/SeoFields";
 import { ValidationErrors } from "@/components/admin/ValidationErrors";
@@ -179,14 +180,8 @@ function AdminEvents() {
                       className={adminInput}
                     />
                   </AdminField>
-                  <AdminField label="Full content (HTML — optional)">
-                    <textarea
-                      name="content"
-                      defaultValue={editing?.content}
-                      rows={10}
-                      placeholder={"<h2>About</h2>\n<p>Longer HTML body shown on the event page...</p>"}
-                      className={`${adminInput} font-mono text-xs`}
-                    />
+                  <AdminField label="Full content (optional)">
+                    <TiptapEditor name="content" defaultValue={editing?.content} />
                   </AdminField>
                   <div className="grid md:grid-cols-2 gap-3">
                     <AdminField label="Venue">
