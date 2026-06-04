@@ -10,6 +10,7 @@ import {
   adminBtnOutline,
   adminInput,
 } from "@/components/admin/AdminLayout";
+import { GalleryUpload } from "@/components/admin/GalleryUpload";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { PublishWorkflow } from "@/components/admin/PublishWorkflow";
 import { SeoFields } from "@/components/admin/SeoFields";
@@ -59,13 +60,20 @@ function AdminEvents() {
       setErrors(nextErrors);
       return;
     }
+    const galleryRaw = String(fd.get("gallery") || "");
+    const gallery = galleryRaw
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
     const v: EventItem = {
       id: editing?.id ?? uid(),
       title,
       slug,
       description: String(fd.get("description")),
+      content: String(fd.get("content") || "") || undefined,
       category: String(fd.get("category")),
       startDate: String(fd.get("startDate")),
+      endDate: String(fd.get("endDate") || "") || undefined,
       startTime: String(fd.get("startTime")),
       endTime: String(fd.get("endTime") || "") || undefined,
       locationName: String(fd.get("locationName")),
@@ -74,16 +82,18 @@ function AdminEvents() {
       isFree: fd.get("isFree") === "on",
       ticketUrl: ticketUrl || undefined,
       featuredImage: String(fd.get("featuredImage") || "photo-1514525253161-7a46d19cd819"),
+      gallery: gallery.length > 0 ? gallery : undefined,
       status,
       isFeatured: fd.get("isFeatured") === "on",
       isSponsored: fd.get("isSponsored") === "on",
       scheduledFor: String(fd.get("scheduledFor") || "") || undefined,
-      recurrence: fd.get("recurrenceType") && fd.get("recurrenceType") !== "none"
-        ? {
-            type: fd.get("recurrenceType") as "weekly" | "biweekly" | "monthly",
-            until: String(fd.get("recurrenceUntil") || "") || undefined,
-          }
-        : undefined,
+      recurrence:
+        fd.get("recurrenceType") && fd.get("recurrenceType") !== "none"
+          ? {
+              type: fd.get("recurrenceType") as "weekly" | "biweekly" | "monthly",
+              until: String(fd.get("recurrenceUntil") || "") || undefined,
+            }
+          : undefined,
       seo: readSeo(fd),
     };
     setState((s) => ({
@@ -146,7 +156,9 @@ function AdminEvents() {
           <AdminFormPanel title={editing ? "Edit Event" : "New Event"}>
             <ValidationErrors errors={errors} />
             <form onSubmit={onSubmit} className="space-y-6">
+              {/* Main two-column grid */}
               <div className="grid lg:grid-cols-[1fr_320px] gap-6">
+                {/* Left column */}
                 <div className="space-y-4">
                   <AdminField label="Title">
                     <input
@@ -162,9 +174,18 @@ function AdminEvents() {
                       name="description"
                       defaultValue={editing?.description}
                       required
-                      rows={5}
-                      placeholder="Public event description"
+                      rows={3}
+                      placeholder="Short public description (shown in listings and cards)"
                       className={adminInput}
+                    />
+                  </AdminField>
+                  <AdminField label="Full content (HTML — optional)">
+                    <textarea
+                      name="content"
+                      defaultValue={editing?.content}
+                      rows={10}
+                      placeholder={"<h2>About</h2>\n<p>Longer HTML body shown on the event page...</p>"}
+                      className={`${adminInput} font-mono text-xs`}
                     />
                   </AdminField>
                   <div className="grid md:grid-cols-2 gap-3">
@@ -188,6 +209,8 @@ function AdminEvents() {
                     </AdminField>
                   </div>
                 </div>
+
+                {/* Right column */}
                 <div className="space-y-4">
                   <AdminField label="Slug">
                     <input
@@ -214,13 +237,21 @@ function AdminEvents() {
                   <PublishWorkflow
                     status={editing?.status}
                     dateName="startDate"
-                    dateLabel="Event date"
+                    dateLabel="Start date"
                     dateValue={editing?.startDate}
                     scheduledFor={editing?.scheduledFor}
                     previewHref={`/events/${editing?.slug ?? "preview"}`}
                   />
+                  <AdminField label="End date (multi-day events)">
+                    <input
+                      name="endDate"
+                      type="date"
+                      defaultValue={editing?.endDate}
+                      className={adminInput}
+                    />
+                  </AdminField>
                   <div className="grid grid-cols-2 gap-3">
-                    <AdminField label="Start">
+                    <AdminField label="Start time">
                       <input
                         name="startTime"
                         type="time"
@@ -229,7 +260,7 @@ function AdminEvents() {
                         className={adminInput}
                       />
                     </AdminField>
-                    <AdminField label="End">
+                    <AdminField label="End time">
                       <input
                         name="endTime"
                         type="time"
@@ -237,14 +268,14 @@ function AdminEvents() {
                         className={adminInput}
                       />
                     </AdminField>
-                    <AdminField label="Price">
-                      <input
-                        name="price"
-                        defaultValue={editing?.price ?? "Free"}
-                        className={adminInput}
-                      />
-                    </AdminField>
                   </div>
+                  <AdminField label="Price">
+                    <input
+                      name="price"
+                      defaultValue={editing?.price ?? "Free"}
+                      className={adminInput}
+                    />
+                  </AdminField>
                   <AdminField label="Ticket URL">
                     <input
                       name="ticketUrl"
@@ -257,7 +288,7 @@ function AdminEvents() {
                   <ImageUpload
                     name="featuredImage"
                     defaultValue={editing?.featuredImage}
-                    label="Featured image"
+                    label="Cover image"
                   />
                   <div className="flex flex-wrap gap-4 text-xs font-mono uppercase">
                     <label className="flex items-center gap-2">
@@ -283,6 +314,15 @@ function AdminEvents() {
                   </div>
                 </div>
               </div>
+
+              {/* Full-width gallery */}
+              <GalleryUpload
+                name="gallery"
+                defaultValue={editing?.gallery}
+                label="Gallery images"
+              />
+
+              {/* Recurrence + SEO */}
               <div className="grid grid-cols-2 gap-4">
                 <AdminField label="Recurrence">
                   <select
@@ -339,7 +379,7 @@ function AdminEvents() {
               )}
             </span>,
             <span className="font-mono text-xs">
-              {e.startDate} {e.startTime}
+              {e.startDate}{e.endDate ? ` – ${e.endDate}` : ""} {e.startTime}
             </span>,
             e.category,
             <span className="text-xs">{e.locationName}</span>,

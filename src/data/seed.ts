@@ -460,12 +460,6 @@ export const seedEvents: EventItem[] = [
     price: "Free entry · rides £2–5 each",
     isFree: true,
     featuredImage: "photo-1567095761054-7a02e69e5c43",
-    gallery: [
-      "photo-1567095761054-7a02e69e5c43",
-      "photo-1513151233558-d860c5398176",
-      "photo-1531058020387-3be344556be6",
-      "photo-1499364615650-ec38552f4f34",
-    ],
     status: "published",
     isFeatured: true,
     isSponsored: false,
