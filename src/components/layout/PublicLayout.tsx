@@ -357,57 +357,93 @@ export function PublicLayout({ children }: { children: ReactNode }) {
 }
 
 function Footer() {
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const email = String(new FormData(e.currentTarget).get("email") || "");
+    if (!email) return;
+    void subscribeNewsletter({ data: { email } }).catch(() => {});
+    import("@/lib/store").then(({ setState }) => {
+      setState((s) => ({ ...s, newsletter: [...s.newsletter, email] }), { persist: false });
+    });
+    setSubscribed(true);
+  };
+
   return (
-    <footer className="bg-foreground text-background py-20 px-4 mt-20">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-5xl md:text-7xl font-display mb-6 tracking-wide">
-          GET HULL IN YOUR INBOX
-        </h2>
-        <p className="text-background/60 mb-10 max-w-xl mx-auto">
-          The best events, food guides and hidden gems sent every Thursday afternoon. Just in time
-          for the weekend.
-        </p>
-        <form
-          className="flex flex-col md:flex-row gap-0 max-w-md mx-auto"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const data = new FormData(e.currentTarget);
-            const email = String(data.get("email") || "");
-            if (email) {
-              void subscribeNewsletter({ data: { email } }).catch((error) => {
-                console.error("Unable to subscribe newsletter email", error);
-              });
-              import("@/lib/store").then(({ setState }) => {
-                setState((s) => ({ ...s, newsletter: [...s.newsletter, email] }), {
-                  persist: false,
-                });
-              });
-              (e.currentTarget as HTMLFormElement).reset();
-              alert("Thanks — see you Thursday.");
-            }
-          }}
-        >
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="your@email.com"
-            className="flex-grow bg-transparent border-2 border-background px-6 py-4 font-mono text-sm focus:outline-none placeholder:text-background/40"
-          />
-          <button className="bg-background text-foreground px-8 py-4 font-bold uppercase tracking-widest hover:bg-accent hover:text-background transition-colors">
-            Join
-          </button>
-        </form>
-      </div>
-      <div className="max-w-7xl mx-auto pt-20 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/10 mt-20">
-        <div className="text-4xl font-display">HU NOW</div>
-        <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-white/40">
-          <Link to="/contact">Contact</Link>
-          <Link to="/submit">Submit</Link>
-          <Link to="/advertise">Advertise</Link>
+    <footer className="bg-foreground text-background mt-20">
+      {/* Main grid */}
+      <div className="max-w-7xl mx-auto px-4 pt-16 pb-12 grid grid-cols-2 md:grid-cols-4 gap-10 border-b border-white/10">
+        {/* Explore */}
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">Explore</div>
+          <ul className="space-y-3 text-sm font-medium text-white/70">
+            <li><Link to="/whats-on" className="hover:text-white transition-colors">What's On</Link></li>
+            <li><Link to="/places" className="hover:text-white transition-colors">Places</Link></li>
+            <li><Link to="/stories" className="hover:text-white transition-colors">Stories</Link></li>
+            <li><Link to="/offers" className="hover:text-white transition-colors">Offers</Link></li>
+            <li><Link to="/open-now" className="hover:text-white transition-colors">Open Now</Link></li>
+          </ul>
         </div>
-        <div className="text-[10px] font-mono text-white/20 uppercase">
-          Hull's Independent City Guide
+
+        {/* Categories */}
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">Food & Drink</div>
+          <ul className="space-y-3 text-sm font-medium text-white/70">
+            <li><Link to="/c/$section" params={{ section: "food-and-drink" }} className="hover:text-white transition-colors">Restaurants</Link></li>
+            <li><Link to="/c/$section/$sub" params={{ section: "food-and-drink", sub: "bars" }} className="hover:text-white transition-colors">Bars & Pubs</Link></li>
+            <li><Link to="/c/$section/$sub" params={{ section: "food-and-drink", sub: "takeaways" }} className="hover:text-white transition-colors">Takeaways</Link></li>
+            <li><Link to="/c/$section/$sub" params={{ section: "things-to-do", sub: "days-out" }} className="hover:text-white transition-colors">Days Out</Link></li>
+            <li><Link to="/c/$section/$sub" params={{ section: "community", sub: "family" }} className="hover:text-white transition-colors">Family</Link></li>
+          </ul>
+        </div>
+
+        {/* HU NOW */}
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">HU NOW</div>
+          <ul className="space-y-3 text-sm font-medium text-white/70">
+            <li><Link to="/contact" className="hover:text-white transition-colors">Contact us</Link></li>
+            <li><Link to="/contact" className="hover:text-white transition-colors">Send a news tip</Link></li>
+            <li><Link to="/submit" className="hover:text-white transition-colors">Submit an event</Link></li>
+            <li><Link to="/advertise" className="hover:text-white transition-colors">Advertise</Link></li>
+            <li><Link to="/saved" className="hover:text-white transition-colors">Saved</Link></li>
+          </ul>
+        </div>
+
+        {/* Newsletter */}
+        <div className="col-span-2 md:col-span-1">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">Newsletter</div>
+          <p className="text-sm text-white/60 mb-5 leading-relaxed">
+            The best events, food guides and hidden gems. Every Thursday.
+          </p>
+          {subscribed ? (
+            <p className="text-sm font-bold text-accent">Thanks — see you Thursday.</p>
+          ) : (
+            <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+              <input
+                name="email"
+                type="email"
+                required
+                placeholder="your@email.com"
+                className="bg-white/10 border border-white/20 px-4 py-3 font-mono text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/50"
+              />
+              <button className="bg-accent text-foreground px-4 py-3 font-bold uppercase tracking-widest text-xs hover:bg-white transition-colors">
+                Subscribe
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="font-display text-3xl tracking-wide">HU NOW</div>
+        <div className="text-[10px] font-mono text-white/30 uppercase text-center">
+          Hull's Independent City Guide · © {new Date().getFullYear()}
+        </div>
+        <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-white/30">
+          <a href="mailto:hello@hunow.co.uk" className="hover:text-white/60 transition-colors">hello@hunow.co.uk</a>
+          <a href="#" className="hover:text-white/60 transition-colors">Privacy</a>
         </div>
       </div>
     </footer>
