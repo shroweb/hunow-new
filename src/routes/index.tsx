@@ -54,12 +54,17 @@ function Index() {
     ...featuredEvents.map((e) => ({ label: e.title, href: `/events/${e.slug}` })),
     ...featuredListings.map((l) => ({ label: l.name, href: `/places/${l.slug}` })),
   ].slice(0, 8);
-  const todayEvents = publishedEvents.filter((event) => event.startDate === todayIso()).slice(0, 3);
-  const weekendEvents = publishedEvents
-    .filter((event) => isThisWeekend(event.startDate))
-    .slice(0, 3);
-  const spotlightEvents = todayEvents.length > 0 ? todayEvents : weekendEvents;
-  const spotlightLabel = todayEvents.length > 0 ? "Today in Hull" : "This weekend";
+  const todayEvents = publishedEvents.filter((event) => event.startDate === todayIso());
+  const weekendEvents = publishedEvents.filter((event) => isThisWeekend(event.startDate));
+  const weekEvents = publishedEvents.filter((event) => isThisWeek(event.startDate));
+  const [spotlightTab, setSpotlightTab] = useState<"today" | "weekend" | "week">(
+    todayEvents.length > 0 ? "today" : weekendEvents.length > 0 ? "weekend" : "week",
+  );
+  const spotlightEvents = (
+    spotlightTab === "today" ? todayEvents
+    : spotlightTab === "weekend" ? weekendEvents
+    : weekEvents
+  ).slice(0, 3);
 
   return (
     <PublicLayout>
@@ -130,12 +135,34 @@ function Index() {
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-10">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <div className="mb-2 text-[10px] font-mono uppercase tracking-widest text-accent">
+              <div className="mb-3 text-[10px] font-mono uppercase tracking-widest text-accent">
                 Live city picks
               </div>
-              <h2 className="font-display text-4xl md:text-5xl uppercase leading-none">
-                {spotlightLabel}
-              </h2>
+              <div className="flex gap-1">
+                {(["today", "weekend", "week"] as const).map((tab) => {
+                  const labels = { today: "Today", weekend: "Weekend", week: "This week" };
+                  const counts = { today: todayEvents.length, weekend: weekendEvents.length, week: weekEvents.length };
+                  const active = spotlightTab === tab;
+                  return (
+                    <button
+                      key={tab}
+                      onClick={() => setSpotlightTab(tab)}
+                      className={`px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${
+                        active
+                          ? "bg-foreground text-background"
+                          : "border-2 border-foreground/30 text-foreground/50 hover:border-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {labels[tab]}
+                      {counts[tab] > 0 && (
+                        <span className={`ml-1.5 text-[10px] ${active ? "opacity-60" : "text-accent"}`}>
+                          {counts[tab]}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <Link
               to="/whats-on"
@@ -296,6 +323,14 @@ function Index() {
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function isThisWeek(date: string) {
+  const today = todayIso();
+  const d = new Date();
+  d.setDate(d.getDate() + 6);
+  const weekEnd = d.toISOString().slice(0, 10);
+  return date >= today && date <= weekEnd;
 }
 
 function isThisWeekend(date: string) {
