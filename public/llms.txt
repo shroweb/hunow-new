@@ -1,0 +1,22 @@
+# HU NOW
+
+> Hull's independent city guide — events, food, culture, hidden gems and independent businesses across the city, all in one place.
+
+HU NOW is a digital publication and directory for Hull, UK. We curate what's happening in the city, spotlight independent businesses, publish editorial stories, and negotiate exclusive reader offers. Local businesses can also advertise with us through website features, sponsored articles, newsletter placements and social campaigns.
+
+## Pages
+
+- [/](/): Homepage with featured events, latest stories, independent business highlights and reader offers.
+- [/whats-on](/whats-on): Full events calendar for Hull. Filter by category (Music, Food & Drink, Arts, Comedy, Family, Theatre, Nightlife) or free-only events.
+- [/places](/places): Directory of Hull's independent businesses, attractions, restaurants and hidden gems. Filter by category (Eat, Drink, Things To Do, Shops, Attractions) or toggle hidden gems and independent-only.
+- [/stories](/stories): Editorial long reads — interviews, guides, culture pieces and independent business spotlights from across Hull.
+- [/offers](/offers): Exclusive discounts and freebies from Hull's best independent businesses, redeemable by HU NOW readers.
+- [/advertise](/advertise): Advertising packages and media kit for local businesses — website features, sponsored articles, newsletter sponsorships, social boosts and bundles.
+- [/submit](/submit): Free submission form for events and business listings. Editors review within 48 hours.
+- [/c/$section](/c/eat-and-drink): Content section pages grouping stories by theme (e.g. Eat & Drink, Culture, Hidden Gems).
+
+## Dynamic Content
+
+- [/events/$slug](/events/jazz-at-the-polar-bear): Individual event detail pages with date, time, venue, pricing and ticketing information.
+- [/places/$slug](/places/thieving-harrys): Individual place detail pages with descriptions, opening hours, location and contact details.
+- [/stories/$slug](/stories/the-new-adelphi-club): Individual article pages with full editorial content.

@@ -1,0 +1,262 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { PublicLayout } from "@/components/layout/PublicLayout";
+import { EventCard, ListingCard } from "@/components/cards";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SaveButton } from "@/components/SaveButton";
+import { ShareMenu } from "@/components/ShareMenu";
+import { downloadICS, googleCalUrl } from "@/lib/ics";
+import { useStore } from "@/lib/store";
+import { fetchEventBySlug } from "@/lib/store.functions";
+import { getEventRsvp, toggleRsvp } from "@/lib/rsvp.functions";
+import { addToHistory } from "@/lib/reading-history";
+import { img } from "@/data/seed";
+
+export const Route = createFileRoute("/events/$slug")({
+  component: EventDetail,
+  loader: async ({ params }) => {
+    const event = await fetchEventBySlug({ data: { slug: params.slug } });
+    if (!event) throw notFound();
+    return { event };
+  },
+  head: ({ loaderData, params }) => {
+    const e = loaderData?.event;
+    if (!e) return {};
+    const title = e.seo?.title ?? `${e.title} — HU NOW`;
+    const description = e.seo?.description ?? e.description;
+    const image = e.seo?.ogImage ?? img(e.featuredImage, 1200, 630);
+    const url = `/events/${params.slug}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        ...(e.seo?.noIndex ? [{ name: "robots", content: "noindex,nofollow" }] : []),
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "event" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: image },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: image },
+      ],
+      links: [{ rel: "canonical", href: e.seo?.canonicalUrl ?? url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Event",
+            name: e.title,
+            description: e.description,
+            startDate: `${e.startDate}T${e.startTime}`,
+            endDate: e.endTime ? `${e.startDate}T${e.endTime}` : undefined,
+            image,
+            url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+            location: {
+              "@type": "Place",
+              name: e.locationName,
+              address: { "@type": "PostalAddress", streetAddress: e.address },
+            },
+            offers: e.isFree
+              ? { "@type": "Offer", price: "0", priceCurrency: "GBP", availability: "https://schema.org/InStock" }
+              : { "@type": "Offer", price: e.price, priceCurrency: "GBP", url: e.ticketUrl },
+            organizer: { "@type": "Organization", name: "HU NOW" },
+          }),
+        },
+      ],
+    };
+  },
+  notFoundComponent: () => (
+    <PublicLayout>
+      <div className="max-w-3xl mx-auto px-4 py-32 text-center">
+        <h1 className="font-display text-6xl mb-4">EVENT NOT FOUND</h1>
+        <Link to="/whats-on" className="underline">
+          Back to What's On
+        </Link>
+      </div>
+    </PublicLayout>
+  ),
+});
+
+function EventDetail() {
+  const { slug } = Route.useParams();
+  const { event: loadedEvent } = Route.useLoaderData();
+  const events = useStore((s) => s.events);
+  const listings = useStore((s) => s.listings);
+  const event = events.find((e) => e.slug === slug) ?? loadedEvent;
+  if (!event) throw notFound();
+
+  useEffect(() => {
+    addToHistory({ kind: "event", id: event.id, slug: event.slug, title: event.title });
+  }, [event.id]);
+
+  const related = events
+    .filter((e) => e.id !== event.id && e.category === event.category)
+    .slice(0, 3);
+  const venue = listings.find((l) => l.name.toLowerCase() === event.locationName.toLowerCase());
+
+  return (
+    <PublicLayout>
+      <Breadcrumbs
+        items={[
+          { label: "Home", to: "/" },
+          { label: "What's On", to: "/whats-on" },
+          { label: event.category },
+          { label: event.title },
+        ]}
+      />
+      <article>
+        <div className="w-full aspect-[21/9] bg-stone-200 overflow-hidden">
+          <img
+            src={img(event.featuredImage, 1600, 700)}
+            alt={`${event.title} at ${event.locationName}`}
+            width={1600}
+            height={700}
+            decoding="async"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="max-w-4xl mx-auto px-4 py-12">
+          {event.isSponsored && (
+            <div className="inline-block bg-accent text-background text-[10px] font-bold uppercase px-3 py-1 mb-4">
+              Sponsored
+            </div>
+          )}
+          <div className="font-mono text-[10px] uppercase text-accent mb-4">{event.category}</div>
+          <h1 className="text-5xl md:text-7xl font-display uppercase leading-none mb-8">
+            {event.title}
+          </h1>
+          <div className="grid md:grid-cols-3 gap-6 border-y-2 border-foreground py-6 mb-8 font-mono text-xs uppercase">
+            <div>
+              <div className="text-muted-foreground mb-1">Date</div>
+              <div className="font-bold">
+                {new Date(event.startDate).toLocaleDateString("en-GB", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="text-muted-foreground mb-1">Time</div>
+              <div className="font-bold">
+                {event.startTime}
+                {event.endTime ? ` – ${event.endTime}` : ""}
+              </div>
+            </div>
+            <div>
+              <div className="text-muted-foreground mb-1">Price</div>
+              <div className="font-bold">{event.isFree ? "FREE" : event.price}</div>
+            </div>
+          </div>
+          <p className="text-xl leading-relaxed mb-8">{event.description}</p>
+          <div className="border border-border p-6 mb-8">
+            <div className="font-mono text-[10px] uppercase text-muted-foreground mb-1">Venue</div>
+            <div className="font-bold text-lg">
+              {venue ? (
+                <Link to="/places/$slug" params={{ slug: venue.slug }} className="hover:underline">
+                  {event.locationName}
+                </Link>
+              ) : (
+                event.locationName
+              )}
+            </div>
+            <div className="text-sm text-muted-foreground">{event.address}</div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {event.ticketUrl && (
+              <a
+                href={event.ticketUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block bg-foreground text-background px-8 py-4 font-bold uppercase tracking-widest text-xs hover:bg-accent"
+              >
+                Get Tickets →
+              </a>
+            )}
+            <a
+              href={googleCalUrl(event)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block px-5 py-4 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+            >
+              + Google Calendar
+            </a>
+            <button
+              onClick={() => downloadICS(event)}
+              className="px-5 py-4 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+            >
+              Download .ics
+            </button>
+            <SaveButton
+              kind="event"
+              id={event.id}
+              slug={event.slug}
+              title={event.title}
+              className="px-5 py-4 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+            />
+            <ShareMenu title={event.title} text={event.description} className="px-5 py-4 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors" />
+            <RsvpButton eventId={event.id} />
+          </div>
+        </div>
+      </article>
+
+      {related.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 py-16 border-t border-border">
+          <h2 className="text-4xl font-display uppercase mb-8">Related Events</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {related.map((e) => (
+              <EventCard key={e.id} event={e} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {venue && (
+        <section className="max-w-7xl mx-auto px-4 py-16 border-t border-border">
+          <h2 className="text-4xl font-display uppercase mb-8">The Venue</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <ListingCard listing={venue} />
+          </div>
+        </section>
+      )}
+    </PublicLayout>
+  );
+}
+
+function RsvpButton({ eventId }: { eventId: string }) {
+  const [going, setGoing] = useState(false);
+  const [count, setCount] = useState(0);
+  const [hasUser, setHasUser] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getEventRsvp({ data: { eventId } })
+      .then((r) => { setGoing(r.going); setCount(r.count); setHasUser(!!r.userId); })
+      .catch(() => {});
+  }, [eventId]);
+
+  const toggle = async () => {
+    if (!hasUser) { window.location.href = "/sign-in"; return; }
+    setLoading(true);
+    try {
+      const r = await toggleRsvp({ data: { eventId } });
+      setGoing(r.going);
+      setCount((c) => r.going ? c + 1 : Math.max(0, c - 1));
+    } catch { /* ignore */ }
+    setLoading(false);
+  };
+
+  return (
+    <button
+      onClick={toggle}
+      disabled={loading}
+      className={`px-5 py-4 border-2 text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50 ${going ? "bg-accent text-background border-accent" : "border-foreground hover:bg-foreground hover:text-background"}`}
+    >
+      {going ? "✓ Going" : "I'm going"}
+      {count > 0 && <span className="ml-2 opacity-60">{count}</span>}
+    </button>
+  );
+}
