@@ -15,6 +15,7 @@ import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as SeriesRouteImport } from './routes/series'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -24,8 +25,8 @@ import { Route as OffersRouteImport } from './routes/offers'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as AreasRouteImport } from './routes/areas'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
@@ -35,7 +36,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
-import { Route as SeriesRouteImport } from './routes/series'
 import { Route as SeriesSeriesRouteImport } from './routes/series.$series'
 import { Route as PlacesSlugRouteImport } from './routes/places.$slug'
 import { Route as FeedEventsDotrssRouteImport } from './routes/feed.events[.]rss'
@@ -45,16 +45,16 @@ import { Route as CSectionRouteImport } from './routes/c.$section'
 import { Route as AuthorsAuthorRouteImport } from './routes/authors.$author'
 import { Route as AreasAreaRouteImport } from './routes/areas.$area'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
-import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
-import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
-import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
-import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
 import { Route as AdminTaxonomyRouteImport } from './routes/admin.taxonomy'
+import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminRedirectsRouteImport } from './routes/admin.redirects'
 import { Route as AdminOffersRouteImport } from './routes/admin.offers'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
+import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as AdminAdsRouteImport } from './routes/admin.ads'
 import { Route as TaxonomySlugRouteImport } from './routes/$taxonomy.$slug'
@@ -88,6 +88,11 @@ const SignUpRoute = SignUpRouteImport.update({
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeriesRoute = SeriesRouteImport.update({
+  id: '/series',
+  path: '/series',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -135,14 +140,14 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AreasRoute = AreasRouteImport.update({
-  id: '/areas',
-  path: '/areas',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AreasRoute = AreasRouteImport.update({
+  id: '/areas',
+  path: '/areas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdvertiseRoute = AdvertiseRouteImport.update({
@@ -190,15 +195,10 @@ const StoriesSlugRoute = StoriesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => StoriesRoute,
 } as any)
-const SeriesRoute = SeriesRouteImport.update({
-  id: '/series',
-  path: '/series',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SeriesSeriesRoute = SeriesSeriesRouteImport.update({
-  id: '/series/$series',
-  path: '/series/$series',
-  getParentRoute: () => rootRouteImport,
+  id: '/$series',
+  path: '/$series',
+  getParentRoute: () => SeriesRoute,
 } as any)
 const PlacesSlugRoute = PlacesSlugRouteImport.update({
   id: '/$slug',
@@ -240,14 +240,14 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTaxonomyRoute = AdminTaxonomyRouteImport.update({
+  id: '/taxonomy',
+  path: '/taxonomy',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminReviewsRoute = AdminReviewsRouteImport.update({
-  id: '/reviews',
-  path: '/reviews',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -255,14 +255,9 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminCommentsRoute = AdminCommentsRouteImport.update({
-  id: '/comments',
-  path: '/comments',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTaxonomyRoute = AdminTaxonomyRouteImport.update({
-  id: '/taxonomy',
-  path: '/taxonomy',
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRedirectsRoute = AdminRedirectsRouteImport.update({
@@ -288,6 +283,11 @@ const AdminListingsRoute = AdminListingsRouteImport.update({
 const AdminEventsRoute = AdminEventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCommentsRoute = AdminCommentsRouteImport.update({
+  id: '/comments',
+  path: '/comments',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminArticlesRoute = AdminArticlesRouteImport.update({
@@ -317,18 +317,19 @@ export interface FileRoutesByFullPath {
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
-  '/contact': typeof ContactRoute
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
+  '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/newsletter': typeof NewsletterRoute
   '/listings': typeof ListingsRoute
+  '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
+  '/series': typeof SeriesRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -338,16 +339,16 @@ export interface FileRoutesByFullPath {
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/comments': typeof AdminCommentsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/admin/comments': typeof AdminCommentsRoute
-  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
@@ -356,7 +357,6 @@ export interface FileRoutesByFullPath {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
-  '/series': typeof SeriesRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -368,18 +368,19 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
-  '/contact': typeof ContactRoute
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
+  '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/newsletter': typeof NewsletterRoute
   '/listings': typeof ListingsRoute
+  '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
+  '/series': typeof SeriesRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -389,16 +390,16 @@ export interface FileRoutesByTo {
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/comments': typeof AdminCommentsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/admin/comments': typeof AdminCommentsRoute
-  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
@@ -407,7 +408,6 @@ export interface FileRoutesByTo {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
-  '/series': typeof SeriesRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -421,18 +421,19 @@ export interface FileRoutesById {
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
-  '/contact': typeof ContactRoute
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
+  '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/newsletter': typeof NewsletterRoute
   '/listings': typeof ListingsRoute
+  '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
+  '/series': typeof SeriesRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -442,16 +443,16 @@ export interface FileRoutesById {
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/comments': typeof AdminCommentsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/admin/comments': typeof AdminCommentsRoute
-  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
@@ -460,7 +461,6 @@ export interface FileRoutesById {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
-  '/series': typeof SeriesRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -477,14 +477,17 @@ export interface FileRouteTypes {
     | '/admin'
     | '/advertise'
     | '/areas'
+    | '/contact'
     | '/forgot-password'
     | '/listings'
+    | '/newsletter'
     | '/offers'
     | '/open-now'
     | '/places'
     | '/reset-password'
     | '/saved'
     | '/search'
+    | '/series'
     | '/sign-in'
     | '/sign-up'
     | '/sitemap.xml'
@@ -494,13 +497,16 @@ export interface FileRouteTypes {
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/articles'
+    | '/admin/comments'
     | '/admin/events'
     | '/admin/listings'
     | '/admin/media'
     | '/admin/offers'
     | '/admin/redirects'
     | '/admin/reviews'
+    | '/admin/settings'
     | '/admin/submissions'
+    | '/admin/taxonomy'
     | '/admin/users'
     | '/areas/$area'
     | '/authors/$author'
@@ -522,14 +528,17 @@ export interface FileRouteTypes {
     | '/account'
     | '/advertise'
     | '/areas'
+    | '/contact'
     | '/forgot-password'
     | '/listings'
+    | '/newsletter'
     | '/offers'
     | '/open-now'
     | '/places'
     | '/reset-password'
     | '/saved'
     | '/search'
+    | '/series'
     | '/sign-in'
     | '/sign-up'
     | '/sitemap.xml'
@@ -539,13 +548,16 @@ export interface FileRouteTypes {
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/articles'
+    | '/admin/comments'
     | '/admin/events'
     | '/admin/listings'
     | '/admin/media'
     | '/admin/offers'
     | '/admin/redirects'
     | '/admin/reviews'
+    | '/admin/settings'
     | '/admin/submissions'
+    | '/admin/taxonomy'
     | '/admin/users'
     | '/areas/$area'
     | '/authors/$author'
@@ -568,14 +580,17 @@ export interface FileRouteTypes {
     | '/admin'
     | '/advertise'
     | '/areas'
+    | '/contact'
     | '/forgot-password'
     | '/listings'
+    | '/newsletter'
     | '/offers'
     | '/open-now'
     | '/places'
     | '/reset-password'
     | '/saved'
     | '/search'
+    | '/series'
     | '/sign-in'
     | '/sign-up'
     | '/sitemap.xml'
@@ -585,13 +600,16 @@ export interface FileRouteTypes {
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/articles'
+    | '/admin/comments'
     | '/admin/events'
     | '/admin/listings'
     | '/admin/media'
     | '/admin/offers'
     | '/admin/redirects'
     | '/admin/reviews'
+    | '/admin/settings'
     | '/admin/submissions'
+    | '/admin/taxonomy'
     | '/admin/users'
     | '/areas/$area'
     | '/authors/$author'
@@ -615,14 +633,17 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AdvertiseRoute: typeof AdvertiseRoute
   AreasRoute: typeof AreasRouteWithChildren
+  ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   ListingsRoute: typeof ListingsRoute
+  NewsletterRoute: typeof NewsletterRoute
   OffersRoute: typeof OffersRoute
   OpenNowRoute: typeof OpenNowRoute
   PlacesRoute: typeof PlacesRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   SavedRoute: typeof SavedRoute
   SearchRoute: typeof SearchRoute
+  SeriesRoute: typeof SeriesRouteWithChildren
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -634,7 +655,6 @@ export interface RootRouteChildren {
   EventsSlugRoute: typeof EventsSlugRoute
   FeedArticlesDotrssRoute: typeof FeedArticlesDotrssRoute
   FeedEventsDotrssRoute: typeof FeedEventsDotrssRoute
-  SeriesSeriesRoute: typeof SeriesSeriesRoute
   TagTagRoute: typeof TagTagRoute
 }
 
@@ -680,6 +700,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/series': {
+      id: '/series'
+      path: '/series'
+      fullPath: '/series'
+      preLoaderRoute: typeof SeriesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -745,18 +772,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/areas': {
-      id: '/areas'
-      path: '/areas'
-      fullPath: '/areas'
-      preLoaderRoute: typeof AreasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/contact': {
       id: '/contact'
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/areas': {
+      id: '/areas'
+      path: '/areas'
+      fullPath: '/areas'
+      preLoaderRoute: typeof AreasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/advertise': {
@@ -822,19 +849,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoriesSlugRouteImport
       parentRoute: typeof StoriesRoute
     }
-    '/series': {
-      id: '/series'
-      path: '/series'
-      fullPath: '/series'
-      preLoaderRoute: typeof SeriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/series/$series': {
       id: '/series/$series'
-      path: '/series/$series'
+      path: '/$series'
       fullPath: '/series/$series'
       preLoaderRoute: typeof SeriesSeriesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SeriesRoute
     }
     '/places/$slug': {
       id: '/places/$slug'
@@ -892,18 +912,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/taxonomy': {
+      id: '/admin/taxonomy'
+      path: '/taxonomy'
+      fullPath: '/admin/taxonomy'
+      preLoaderRoute: typeof AdminTaxonomyRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/submissions': {
       id: '/admin/submissions'
       path: '/submissions'
       fullPath: '/admin/submissions'
       preLoaderRoute: typeof AdminSubmissionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/reviews': {
-      id: '/admin/reviews'
-      path: '/reviews'
-      fullPath: '/admin/reviews'
-      preLoaderRoute: typeof AdminReviewsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/settings': {
@@ -913,18 +933,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/comments': {
-      id: '/admin/comments'
-      path: '/comments'
-      fullPath: '/admin/comments'
-      preLoaderRoute: typeof AdminCommentsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/taxonomy': {
-      id: '/admin/taxonomy'
-      path: '/taxonomy'
-      fullPath: '/admin/taxonomy'
-      preLoaderRoute: typeof AdminTaxonomyRouteImport
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/redirects': {
@@ -960,6 +973,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/admin/events'
       preLoaderRoute: typeof AdminEventsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/comments': {
+      id: '/admin/comments'
+      path: '/comments'
+      fullPath: '/admin/comments'
+      preLoaderRoute: typeof AdminCommentsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/articles': {
@@ -1008,13 +1028,16 @@ const TaxonomyRouteWithChildren = TaxonomyRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminAdsRoute: typeof AdminAdsRoute
   AdminArticlesRoute: typeof AdminArticlesRoute
+  AdminCommentsRoute: typeof AdminCommentsRoute
   AdminEventsRoute: typeof AdminEventsRoute
   AdminListingsRoute: typeof AdminListingsRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminOffersRoute: typeof AdminOffersRoute
   AdminRedirectsRoute: typeof AdminRedirectsRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+  AdminTaxonomyRoute: typeof AdminTaxonomyRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -1022,16 +1045,16 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdsRoute: AdminAdsRoute,
   AdminArticlesRoute: AdminArticlesRoute,
+  AdminCommentsRoute: AdminCommentsRoute,
   AdminEventsRoute: AdminEventsRoute,
   AdminListingsRoute: AdminListingsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminOffersRoute: AdminOffersRoute,
-  AdminSettingsRoute: AdminSettingsRoute,
-  AdminCommentsRoute: AdminCommentsRoute,
-  AdminTaxonomyRoute: AdminTaxonomyRoute,
   AdminRedirectsRoute: AdminRedirectsRoute,
   AdminReviewsRoute: AdminReviewsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
+  AdminTaxonomyRoute: AdminTaxonomyRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -1058,6 +1081,17 @@ const PlacesRouteChildren: PlacesRouteChildren = {
 
 const PlacesRouteWithChildren =
   PlacesRoute._addFileChildren(PlacesRouteChildren)
+
+interface SeriesRouteChildren {
+  SeriesSeriesRoute: typeof SeriesSeriesRoute
+}
+
+const SeriesRouteChildren: SeriesRouteChildren = {
+  SeriesSeriesRoute: SeriesSeriesRoute,
+}
+
+const SeriesRouteWithChildren =
+  SeriesRoute._addFileChildren(SeriesRouteChildren)
 
 interface StoriesRouteChildren {
   StoriesSlugRoute: typeof StoriesSlugRoute
@@ -1088,18 +1122,19 @@ const rootRouteChildren: RootRouteChildren = {
   TaxonomyRoute: TaxonomyRouteWithChildren,
   AccountRoute: AccountRoute,
   AdminRoute: AdminRouteWithChildren,
-  ContactRoute: ContactRoute,
   AdvertiseRoute: AdvertiseRoute,
   AreasRoute: AreasRouteWithChildren,
+  ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
-  NewsletterRoute: NewsletterRoute,
   ListingsRoute: ListingsRoute,
+  NewsletterRoute: NewsletterRoute,
   OffersRoute: OffersRoute,
   OpenNowRoute: OpenNowRoute,
   PlacesRoute: PlacesRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   SavedRoute: SavedRoute,
   SearchRoute: SearchRoute,
+  SeriesRoute: SeriesRouteWithChildren,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -1111,10 +1146,18 @@ const rootRouteChildren: RootRouteChildren = {
   EventsSlugRoute: EventsSlugRoute,
   FeedArticlesDotrssRoute: FeedArticlesDotrssRoute,
   FeedEventsDotrssRoute: FeedEventsDotrssRoute,
-  SeriesRoute: SeriesRoute,
-  SeriesSeriesRoute: SeriesSeriesRoute,
   TagTagRoute: TagTagRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
