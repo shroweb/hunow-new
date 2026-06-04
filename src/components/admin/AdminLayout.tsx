@@ -15,6 +15,7 @@ const nav = [
   { to: "/admin/reviews", label: "Reviews" },
   { to: "/admin/users", label: "Users" },
   { to: "/admin/redirects", label: "Redirects" },
+  { to: "/admin/taxonomy", label: "Taxonomy" },
 ];
 
 export function AdminLayout() {

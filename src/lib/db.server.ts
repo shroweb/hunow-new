@@ -232,6 +232,11 @@ create table if not exists redirects (
   created_at timestamptz not null default now()
 );
 create index if not exists redirects_from_path_idx on redirects (from_path);
+
+create table if not exists taxonomy (
+  key text primary key,
+  items jsonb not null default '[]'
+);
 `;
 
 async function ensureSchema() {
@@ -546,4 +551,49 @@ export async function checkRedirect(path: string) {
     [path],
   );
   return result.rows[0] ?? null;
+}
+
+const TAXONOMY_DEFAULTS: Record<string, string[]> = {
+  event_categories: ["Music", "Food & Drink", "Arts", "Comedy", "Family", "Theatre", "Nightlife", "Sport", "Markets", "Community", "Talks & Lectures", "Exhibitions"],
+  listing_categories: ["Restaurants", "Bars & Pubs", "Cafes", "Takeaways", "Shopping", "Entertainment", "Health & Beauty", "Hotels", "Attractions", "Services"],
+  areas: ["Old Town", "Fruit Market", "City Centre", "Avenues", "Hessle Road", "Marina", "East Hull", "Bransholme", "Kingswood", "Beverley Road", "Anlaby Road", "Spring Bank"],
+};
+
+export async function getTaxonomyKey(key: string): Promise<string[]> {
+  await ensureSchema();
+  const result = await getPool().query<{ items: string[] }>(
+    "select items from taxonomy where key = $1",
+    [key],
+  );
+  if (result.rows[0]) return result.rows[0].items;
+  // Seed defaults on first access
+  const defaults = TAXONOMY_DEFAULTS[key] ?? [];
+  await getPool().query(
+    "insert into taxonomy (key, items) values ($1, $2) on conflict (key) do nothing",
+    [key, JSON.stringify(defaults)],
+  );
+  return defaults;
+}
+
+export async function getAllTaxonomy(): Promise<Record<string, string[]>> {
+  await ensureSchema();
+  // Ensure all default keys exist
+  for (const [key, defaults] of Object.entries(TAXONOMY_DEFAULTS)) {
+    await getPool().query(
+      "insert into taxonomy (key, items) values ($1, $2) on conflict (key) do nothing",
+      [key, JSON.stringify(defaults)],
+    );
+  }
+  const result = await getPool().query<{ key: string; items: string[] }>(
+    "select key, items from taxonomy order by key",
+  );
+  return Object.fromEntries(result.rows.map((r) => [r.key, r.items]));
+}
+
+export async function setTaxonomyKey(key: string, items: string[]) {
+  await ensureSchema();
+  await getPool().query(
+    "insert into taxonomy (key, items) values ($1, $2) on conflict (key) do update set items = $2",
+    [key, JSON.stringify(items)],
+  );
 }

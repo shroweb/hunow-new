@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { setState, uid } from "@/lib/store";
 import { submitForReview } from "@/lib/public.functions";
+import { getTaxonomy } from "@/lib/taxonomy-config.functions";
 import type { Submission } from "@/types";
 
 export const Route = createFileRoute("/submit")({
@@ -12,6 +13,10 @@ export const Route = createFileRoute("/submit")({
       { name: "description", content: "Submit your event or business listing to HU NOW for free." },
     ],
   }),
+  loader: async () => {
+    const taxonomy = await getTaxonomy();
+    return { taxonomy };
+  },
   component: Submit,
 });
 
@@ -19,6 +24,7 @@ type Step = 0 | 1 | 2 | 3;
 type Data = Record<string, string>;
 
 function Submit() {
+  const { taxonomy } = Route.useLoaderData();
   const [type, setType] = useState<"event" | "listing">("event");
   const [step, setStep] = useState<Step>(0);
   const [data, setData] = useState<Data>({});
@@ -46,25 +52,8 @@ function Submit() {
 
   const required: Record<string, true> =
     type === "event"
-      ? {
-          title: true,
-          description: true,
-          date: true,
-          time: true,
-          venue: true,
-          category: true,
-          contactName: true,
-          contactEmail: true,
-        }
-      : {
-          name: true,
-          description: true,
-          category: true,
-          area: true,
-          address: true,
-          contactName: true,
-          contactEmail: true,
-        };
+      ? { title: true, description: true, date: true, time: true, venue: true, category: true, contactName: true, contactEmail: true }
+      : { name: true, description: true, category: true, area: true, address: true, contactName: true, contactEmail: true };
 
   const stepValid = steps[step].fields.every(
     (f) => !required[f] || (data[f] && data[f].trim().length > 0),
@@ -84,16 +73,19 @@ function Submit() {
     void submitForReview({ data: submission }).catch((error) => {
       console.error("Unable to submit for review", error);
     });
-    setState(
-      (s) => ({
-        ...s,
-        submissions: [...s.submissions, submission],
-      }),
-      { persist: false },
-    );
+    setState((s) => ({ ...s, submissions: [...s.submissions, submission] }), { persist: false });
     setData({});
     setStep(0);
     setDone(true);
+  };
+
+  const eventCategories = taxonomy.event_categories ?? [];
+  const listingCategories = taxonomy.listing_categories ?? [];
+  const areas = taxonomy.areas ?? [];
+
+  const selectOptions: Record<string, string[]> = {
+    category: type === "event" ? eventCategories : listingCategories,
+    area: areas,
   };
 
   return (
@@ -112,12 +104,7 @@ function Submit() {
           {(["event", "listing"] as const).map((t) => (
             <button
               key={t}
-              onClick={() => {
-                setType(t);
-                setDone(false);
-                setStep(0);
-                setData({});
-              }}
+              onClick={() => { setType(t); setDone(false); setStep(0); setData({}); }}
               className={`px-6 py-3 text-xs font-bold uppercase ${type === t ? "bg-foreground text-background" : "border-2 border-foreground"}`}
             >
               {t === "event" ? "Submit Event" : "Submit Listing"}
@@ -129,16 +116,11 @@ function Submit() {
           <div className="border-2 border-foreground p-8 text-center bg-accent/5">
             <div className="text-[10px] font-mono uppercase text-accent mb-2">Received</div>
             <h2 className="text-3xl font-display uppercase mb-4">Thanks — we'll take a look.</h2>
-            <p className="text-muted-foreground mb-4">
-              Our editors review submissions within 48 hours.
-            </p>
-            <button onClick={() => setDone(false)} className="underline text-sm">
-              Submit another
-            </button>
+            <p className="text-muted-foreground mb-4">Our editors review submissions within 48 hours.</p>
+            <button onClick={() => setDone(false)} className="underline text-sm">Submit another</button>
           </div>
         ) : (
           <div>
-            {/* Progress dots */}
             <ol className="flex items-center gap-3 mb-8" aria-label="Submission progress">
               {steps.map((s, i) => (
                 <li key={s.title} className="flex items-center gap-3">
@@ -149,9 +131,7 @@ function Submit() {
                     className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest ${i === step ? "text-foreground" : i < step ? "text-accent" : "text-muted-foreground"}`}
                     aria-current={i === step ? "step" : undefined}
                   >
-                    <span
-                      className={`size-6 grid place-items-center border-2 ${i === step ? "border-foreground bg-foreground text-background" : i < step ? "border-accent bg-accent text-background" : "border-foreground/30"}`}
-                    >
+                    <span className={`size-6 grid place-items-center border-2 ${i === step ? "border-foreground bg-foreground text-background" : i < step ? "border-accent bg-accent text-background" : "border-foreground/30"}`}>
                       {i < step ? "✓" : i + 1}
                     </span>
                     <span className="hidden sm:inline">{s.title}</span>
@@ -163,7 +143,13 @@ function Submit() {
 
             <div className="space-y-3" key={`${type}-${step}`}>
               {steps[step].fields.map((f) => (
-                <WizardField key={f} field={f} value={data[f] || ""} onChange={(v) => set(f, v)} />
+                <WizardField
+                  key={f}
+                  field={f}
+                  value={data[f] || ""}
+                  onChange={(v) => set(f, v)}
+                  options={selectOptions[f]}
+                />
               ))}
             </div>
 
@@ -203,18 +189,15 @@ function Submit() {
   );
 }
 
-const FIELD_META: Record<
-  string,
-  { label: string; placeholder: string; type?: string; multiline?: boolean }
-> = {
+const FIELD_META: Record<string, { label: string; placeholder: string; type?: string; multiline?: boolean }> = {
   title: { label: "Event title", placeholder: "e.g. Jazz at the Polar Bear" },
   name: { label: "Business name", placeholder: "e.g. Thieving Harry's" },
   description: { label: "Description", placeholder: "Tell us about it...", multiline: true },
   date: { label: "Date", placeholder: "", type: "date" },
   time: { label: "Start time", placeholder: "", type: "time" },
   venue: { label: "Venue / location", placeholder: "Where is it happening?" },
-  category: { label: "Category", placeholder: "Music, Food, Arts..." },
-  area: { label: "Area of Hull", placeholder: "Old Town, Avenues..." },
+  category: { label: "Category", placeholder: "Select a category" },
+  area: { label: "Area of Hull", placeholder: "Select an area" },
   address: { label: "Address", placeholder: "Street address" },
   price: { label: "Price", placeholder: "Free, £10, etc." },
   ticketUrl: { label: "Ticket URL", placeholder: "https://...", type: "url" },
@@ -225,33 +208,36 @@ const FIELD_META: Record<
   contactEmail: { label: "Your email", placeholder: "you@example.com", type: "email" },
 };
 
-function WizardField({
-  field,
-  value,
-  onChange,
-}: {
+const fieldCls = "w-full bg-white border-2 border-foreground px-6 py-4 font-mono text-sm focus:outline-none focus:border-accent";
+
+function WizardField({ field, value, onChange, options }: {
   field: string;
   value: string;
   onChange: (v: string) => void;
+  options?: string[];
 }) {
   const meta = FIELD_META[field] ?? { label: field, placeholder: "" };
   const id = `wiz-${field}`;
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block text-[10px] font-mono uppercase text-muted-foreground mb-1"
-      >
+      <label htmlFor={id} className="block text-[10px] font-mono uppercase text-muted-foreground mb-1">
         {meta.label}
       </label>
-      {meta.multiline ? (
+      {options && options.length > 0 ? (
+        <select id={id} value={value} onChange={(e) => onChange(e.target.value)} className={fieldCls}>
+          <option value="">{meta.placeholder}</option>
+          {options.map((o) => (
+            <option key={o} value={o}>{o}</option>
+          ))}
+        </select>
+      ) : meta.multiline ? (
         <textarea
           id={id}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           rows={4}
           placeholder={meta.placeholder}
-          className="w-full bg-white border-2 border-foreground px-6 py-4 font-mono text-sm"
+          className={fieldCls}
         />
       ) : (
         <input
@@ -260,7 +246,7 @@ function WizardField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={meta.placeholder}
-          className="w-full bg-white border-2 border-foreground px-6 py-4 font-mono text-sm"
+          className={fieldCls}
         />
       )}
     </div>

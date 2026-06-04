@@ -45,6 +45,7 @@ import { Route as AreasAreaRouteImport } from './routes/areas.$area'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
+import { Route as AdminTaxonomyRouteImport } from './routes/admin.taxonomy'
 import { Route as AdminRedirectsRouteImport } from './routes/admin.redirects'
 import { Route as AdminOffersRouteImport } from './routes/admin.offers'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
@@ -235,6 +236,11 @@ const AdminReviewsRoute = AdminReviewsRouteImport.update({
   path: '/reviews',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTaxonomyRoute = AdminTaxonomyRouteImport.update({
+  id: '/taxonomy',
+  path: '/taxonomy',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRedirectsRoute = AdminRedirectsRouteImport.update({
   id: '/redirects',
   path: '/redirects',
@@ -311,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
@@ -357,6 +364,7 @@ export interface FileRoutesByTo {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
@@ -405,6 +413,7 @@ export interface FileRoutesById {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
@@ -847,6 +856,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReviewsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/taxonomy': {
+      id: '/admin/taxonomy'
+      path: '/taxonomy'
+      fullPath: '/admin/taxonomy'
+      preLoaderRoute: typeof AdminTaxonomyRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/redirects': {
       id: '/admin/redirects'
       path: '/redirects'
@@ -946,6 +962,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminListingsRoute: AdminListingsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminOffersRoute: AdminOffersRoute,
+  AdminTaxonomyRoute: AdminTaxonomyRoute,
   AdminRedirectsRoute: AdminRedirectsRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
