@@ -227,7 +227,7 @@ function AdminListings() {
                       className={adminInput}
                     />
                   </AdminField>
-                  <GalleryUpload name="gallery" defaultValue={editing?.gallery} />
+                  <GalleryUpload key={editing?.id ?? "new"} name="gallery" defaultValue={editing?.gallery} />
                 </div>
 
                 <div className="space-y-4">
@@ -308,6 +308,7 @@ function AdminListings() {
                     </select>
                   </AdminField>
                   <ImageUpload
+                    key={`img-${editing?.id ?? "new"}`}
                     name="featuredImage"
                     defaultValue={editing?.featuredImage}
                     label="Featured image"

@@ -23,6 +23,8 @@ export const NAV_SECTIONS: NavSection[] = [
       { slug: "hull-kr", label: "Hull KR" },
       { slug: "hull-fc", label: "Hull FC" },
       { slug: "hull-city", label: "Hull City" },
+      { slug: "hull-seahawks", label: "Hull Seahawks" },
+      { slug: "hull-jets", label: "Hull Jets" },
     ],
   },
   {

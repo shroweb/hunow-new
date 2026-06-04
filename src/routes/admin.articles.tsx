@@ -286,6 +286,7 @@ function AdminArticles() {
                     </datalist>
                   </AdminField>
                   <ImageUpload
+                    key={`img-${editing?.id ?? "new"}`}
                     name="featuredImage"
                     defaultValue={editing?.featuredImage}
                     label="Featured image"

@@ -281,6 +281,7 @@ function AdminEvents() {
                     />
                   </AdminField>
                   <ImageUpload
+                    key={`img-${editing?.id ?? "new"}`}
                     name="featuredImage"
                     defaultValue={editing?.featuredImage}
                     label="Cover image"
@@ -312,6 +313,7 @@ function AdminEvents() {
 
               {/* Full-width gallery */}
               <GalleryUpload
+                key={editing?.id ?? "new"}
                 name="gallery"
                 defaultValue={editing?.gallery}
                 label="Gallery images"

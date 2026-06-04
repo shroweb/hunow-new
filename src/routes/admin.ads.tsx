@@ -126,7 +126,7 @@ function AdminAds() {
                       className={adminInput}
                     />
                   </AdminField>
-                  <ImageUpload name="image" defaultValue={editing?.image} label="Creative image" />
+                  <ImageUpload key={`img-${editing?.id ?? "new"}`} name="image" defaultValue={editing?.image} label="Creative image" />
                 </div>
                 <div className="space-y-4">
                   <AdminField label="Placement">
