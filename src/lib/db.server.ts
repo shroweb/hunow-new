@@ -286,16 +286,14 @@ async function seedIfEmpty() {
     await saveDatabaseStore((await legacyStore()) ?? fallbackStore);
     return;
   }
-  // DB already has data — upsert editorial seed records so field additions are reflected.
-  // Ads, offers, and submissions are admin-managed and must not be re-seeded on every boot.
-  // Admin-created records have random IDs so they're never affected by seed upserts.
+  // DB already has data — insert any seed records that don't exist yet (new additions).
+  // DO NOTHING on conflict so admin edits to existing records are never overwritten.
   const editorialCollections = ["articles", "events", "listings", "media"] as const;
   for (const collection of editorialCollections) {
     const records = fallbackStore[collection] as StoredRecord[];
     for (const record of records) {
       await getPool().query(
-        `insert into ${tables[collection]} (id, data) values ($1, $2)
-         on conflict (id) do update set data = excluded.data`,
+        `insert into ${tables[collection]} (id, data) values ($1, $2) on conflict (id) do nothing`,
         [record.id, JSON.stringify(record)],
       );
     }
