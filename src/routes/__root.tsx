@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { getSettings } from "../lib/settings.functions";
 
 function NotFoundComponent() {
   return (
@@ -73,37 +74,51 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "HU NOW — Hull's Independent City Guide" },
-      {
-        name: "description",
-        content: "Events, places, stories and independent businesses across Hull.",
-      },
-      { name: "author", content: "HU NOW" },
-      { property: "og:title", content: "HU NOW — Hull's Independent City Guide" },
-      {
-        property: "og:description",
-        content: "Find what's on, where to eat and what to explore in Hull.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap",
-      },
-    ],
-  }),
+  loader: async () => {
+    try {
+      const settings = await getSettings();
+      return { settings };
+    } catch {
+      return { settings: {} as Record<string, string> };
+    }
+  },
+  head: ({ loaderData }) => {
+    const s = loaderData?.settings ?? {};
+    const siteName = s.site_name || "HU NOW";
+    const tagline = s.site_tagline || "Hull's Independent City Guide";
+    const desc = s.meta_description || "Events, places, stories and independent businesses across Hull.";
+    const ogDesc = s.meta_description_og || "Find what's on, where to eat and what to explore in Hull.";
+    const title = `${siteName} — ${tagline}`;
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title },
+        { name: "description", content: desc },
+        { name: "author", content: siteName },
+        { property: "og:title", content: title },
+        { property: "og:description", content: ogDesc },
+        { property: "og:type", content: "website" },
+        ...(s.og_image ? [{ property: "og:image", content: s.og_image }] : []),
+        { name: "twitter:card", content: s.og_image ? "summary_large_image" : "summary" },
+        ...(s.ga_id ? [{ "data-ga-id": s.ga_id }] : []),
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap",
+        },
+        ...(s.ga_id ? [{ rel: "preconnect", href: "https://www.googletagmanager.com" }] : []),
+      ],
+      scripts: s.ga_id ? [
+        { src: `https://www.googletagmanager.com/gtag/js?id=${s.ga_id}`, async: true },
+        { children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${s.ga_id}');` },
+      ] : [],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

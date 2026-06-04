@@ -16,17 +16,79 @@ export const Route = createFileRoute("/admin/settings")({
   },
 });
 
-const SOCIAL_FIELDS = [
-  { key: "social_facebook", label: "Facebook URL", placeholder: "https://facebook.com/hunow" },
-  { key: "social_instagram", label: "Instagram URL", placeholder: "https://instagram.com/hunow" },
-  { key: "social_twitter", label: "X / Twitter URL", placeholder: "https://x.com/hunow" },
-  { key: "social_tiktok", label: "TikTok URL", placeholder: "https://tiktok.com/@hunow" },
-  { key: "social_youtube", label: "YouTube URL", placeholder: "https://youtube.com/@hunow" },
+interface FieldDef {
+  key: string;
+  label: string;
+  placeholder?: string;
+  type?: "text" | "url" | "email" | "tel" | "textarea";
+  hint?: string;
+}
+
+const SECTIONS: { title: string; fields: FieldDef[] }[] = [
+  {
+    title: "Site identity",
+    fields: [
+      { key: "site_name", label: "Site name", placeholder: "HU NOW" },
+      { key: "site_tagline", label: "Tagline", placeholder: "Hull's Independent City Guide" },
+    ],
+  },
+  {
+    title: "SEO & metadata",
+    fields: [
+      {
+        key: "meta_description",
+        label: "Default meta description",
+        type: "textarea",
+        placeholder: "Events, places, stories and independent businesses across Hull.",
+        hint: "Used on pages that don't have their own description. Keep under 160 characters.",
+      },
+      {
+        key: "meta_description_og",
+        label: "Default Open Graph description",
+        type: "textarea",
+        placeholder: "Find what's on, where to eat and what to explore in Hull.",
+        hint: "Shown when the site is shared on social media. Can differ from the meta description.",
+      },
+      {
+        key: "og_image",
+        label: "Default OG image URL",
+        type: "url",
+        placeholder: "https://hunow.co.uk/og-default.jpg",
+        hint: "Fallback social share image (1200×630px recommended). Leave blank to use Twitter summary card.",
+      },
+      {
+        key: "ga_id",
+        label: "Google Analytics measurement ID",
+        placeholder: "G-XXXXXXXXXX",
+        hint: "Paste your GA4 measurement ID to enable analytics. Leave blank to disable.",
+      },
+    ],
+  },
+  {
+    title: "Contact details",
+    fields: [
+      { key: "contact_email", label: "Contact email", type: "email", placeholder: "hello@hunow.co.uk" },
+      { key: "contact_phone", label: "Phone (optional)", type: "tel", placeholder: "01482 000000" },
+      { key: "privacy_url", label: "Privacy policy URL", type: "url", placeholder: "https://hunow.co.uk/privacy" },
+    ],
+  },
+  {
+    title: "Social media links",
+    fields: [
+      { key: "social_facebook", label: "Facebook", type: "url", placeholder: "https://facebook.com/hunow" },
+      { key: "social_instagram", label: "Instagram", type: "url", placeholder: "https://instagram.com/hunow" },
+      { key: "social_twitter", label: "X / Twitter", type: "url", placeholder: "https://x.com/hunow" },
+      { key: "social_tiktok", label: "TikTok", type: "url", placeholder: "https://tiktok.com/@hunow" },
+      { key: "social_youtube", label: "YouTube", type: "url", placeholder: "https://youtube.com/@hunow" },
+    ],
+  },
 ];
+
+const ALL_KEYS = SECTIONS.flatMap((s) => s.fields.map((f) => f.key));
 
 function AdminSettings() {
   const { settings: initial } = Route.useLoaderData();
-  const [settings, setSettings] = useState(initial);
+  const [settings, setSettings] = useState<Record<string, string>>(initial);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -36,13 +98,11 @@ function AdminSettings() {
     setSaving(true);
     setSaved(false);
     try {
-      for (const { key } of SOCIAL_FIELDS) {
+      for (const key of ALL_KEYS) {
         await saveSetting({ data: { key, value: String(fd.get(key) || "") } });
       }
-      const updated = Object.fromEntries(
-        SOCIAL_FIELDS.map(({ key }) => [key, String(fd.get(key) || "")]),
-      );
-      setSettings((s: Record<string, string>) => ({ ...s, ...updated }));
+      const updated = Object.fromEntries(ALL_KEYS.map((k) => [k, String(fd.get(k) || "")]));
+      setSettings((s) => ({ ...s, ...updated }));
       setSaved(true);
     } finally {
       setSaving(false);
@@ -51,26 +111,44 @@ function AdminSettings() {
 
   return (
     <div>
-      <AdminHeader title="Settings" subtitle="Social links and site-wide configuration" />
+      <AdminHeader title="Settings" subtitle="Site identity, SEO, contact details and social links" />
       <div className="p-6 md:p-10 max-w-2xl">
-        <form onSubmit={onSubmit} className="space-y-6">
-          <div className="border border-border p-6 space-y-4">
-            <div className="font-bold text-sm uppercase tracking-wide mb-4">Social media links</div>
-            {SOCIAL_FIELDS.map(({ key, label, placeholder }) => (
-              <AdminField key={key} label={label}>
-                <input
-                  name={key}
-                  type="url"
-                  defaultValue={settings[key] ?? ""}
-                  placeholder={placeholder}
-                  className={adminInput}
-                />
-              </AdminField>
-            ))}
-          </div>
-          <div className="flex items-center gap-4">
+        <form onSubmit={onSubmit} className="space-y-8">
+          {SECTIONS.map((section) => (
+            <div key={section.title} className="border border-border p-6 space-y-4">
+              <div className="font-bold text-sm uppercase tracking-wide border-b border-border pb-3 mb-2">
+                {section.title}
+              </div>
+              {section.fields.map(({ key, label, placeholder, type = "text", hint }) => (
+                <AdminField key={key} label={label}>
+                  {type === "textarea" ? (
+                    <textarea
+                      name={key}
+                      defaultValue={settings[key] ?? ""}
+                      placeholder={placeholder}
+                      rows={3}
+                      className={adminInput}
+                    />
+                  ) : (
+                    <input
+                      name={key}
+                      type={type}
+                      defaultValue={settings[key] ?? ""}
+                      placeholder={placeholder}
+                      className={adminInput}
+                    />
+                  )}
+                  {hint && (
+                    <p className="mt-1 text-[11px] text-muted-foreground font-mono">{hint}</p>
+                  )}
+                </AdminField>
+              ))}
+            </div>
+          ))}
+
+          <div className="flex items-center gap-4 pt-2">
             <button className={adminBtn} disabled={saving}>
-              {saving ? "Saving…" : "Save settings"}
+              {saving ? "Saving…" : "Save all settings"}
             </button>
             {saved && <span className="text-sm text-accent font-bold">Saved ✓</span>}
           </div>

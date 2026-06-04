@@ -676,6 +676,19 @@ export async function deleteComment(id: string) {
 // ---- Site settings ----
 
 const SETTING_DEFAULTS: Record<string, string> = {
+  // Site identity
+  site_name: "HU NOW",
+  site_tagline: "Hull's Independent City Guide",
+  // SEO / metadata
+  meta_description: "Events, places, stories and independent businesses across Hull.",
+  meta_description_og: "Find what's on, where to eat and what to explore in Hull.",
+  og_image: "",
+  ga_id: "",
+  // Contact
+  contact_email: "hello@hunow.co.uk",
+  contact_phone: "",
+  privacy_url: "",
+  // Social
   social_facebook: "",
   social_instagram: "",
   social_twitter: "",
