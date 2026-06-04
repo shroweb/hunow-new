@@ -280,9 +280,6 @@ async function legacyStore(): Promise<AppStore | undefined> {
 }
 
 async function seedIfEmpty() {
-  // Never auto-seed in production — use admin to create real content
-  if (process.env.NODE_ENV === "production") return;
-
   const count = await typedRecordCount();
   if (count === 0) {
     // First run — full seed (including legacy migration)
