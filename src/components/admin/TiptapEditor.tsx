@@ -50,7 +50,7 @@ export function TiptapEditor({
           Link.configure({ openOnClick: false }),
           Image,
         ],
-        content: defaultValue || "",
+        content: defaultValue || undefined,
         onUpdate: ({ editor: e }) => {
           if (hiddenRef.current) hiddenRef.current.value = e.getHTML();
           updateToolbar(e);
@@ -61,20 +61,15 @@ export function TiptapEditor({
         editorProps: {
           handleKeyDown: (_view, event) => {
             if (event.key === "Tab") {
-              // Let Tiptap's ListItem extension handle Tab inside lists;
-              // outside lists, just swallow it so focus doesn't leave the editor.
-              const { $from } = _view.state.selection;
-              let inList = false;
-              for (let d = $from.depth; d >= 0; d--) {
-                if (_view.state.doc.resolve($from.before(d + 1)).parent.type.name === "listItem") {
-                  inList = true;
-                  break;
-                }
+              event.preventDefault();
+              // Delegate to Tiptap's list-item indent/outdent; if not in a list
+              // these are no-ops and Tab is simply swallowed to keep focus here.
+              if (event.shiftKey) {
+                editor.chain().focus().liftListItem("listItem").run();
+              } else {
+                editor.chain().focus().sinkListItem("listItem").run();
               }
-              if (!inList) {
-                event.preventDefault();
-                return true;
-              }
+              return true;
             }
             return false;
           },

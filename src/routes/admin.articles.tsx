@@ -165,7 +165,7 @@ function AdminArticles() {
                   <AdminField
                     label="Body"
                   >
-                    <TiptapEditor name="content" defaultValue={editing?.content} />
+                    <TiptapEditor key={editing?.id ?? "new"} name="content" defaultValue={editing?.content} />
                   </AdminField>
                 </div>
 

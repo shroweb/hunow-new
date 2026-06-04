@@ -181,7 +181,7 @@ function AdminEvents() {
                     />
                   </AdminField>
                   <AdminField label="Full content (optional)">
-                    <TiptapEditor name="content" defaultValue={editing?.content} />
+                    <TiptapEditor key={editing?.id ?? "new"} name="content" defaultValue={editing?.content} />
                   </AdminField>
                   <div className="grid md:grid-cols-2 gap-3">
                     <AdminField label="Venue">
