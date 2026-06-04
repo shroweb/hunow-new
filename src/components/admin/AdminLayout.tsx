@@ -1,23 +1,40 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import {
+  LayoutDashboard,
+  FileText,
+  CalendarDays,
+  MapPin,
+  Tag,
+  Inbox,
+  Megaphone,
+  Image,
+  Star,
+  Users,
+  MessageSquare,
+  ArrowLeftRight,
+  Layers,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 import { getCurrentUser, signOutUser } from "@/lib/auth.functions";
 import type { AuthUser } from "@/lib/auth.server";
 
-const nav = [
-  { to: "/admin", label: "Dashboard" },
-  { to: "/admin/articles", label: "Posts" },
-  { to: "/admin/events", label: "Events" },
-  { to: "/admin/listings", label: "Listings" },
-  { to: "/admin/offers", label: "Offers" },
-  { to: "/admin/submissions", label: "Submissions" },
-  { to: "/admin/ads", label: "Ads" },
-  { to: "/admin/media", label: "Media" },
-  { to: "/admin/reviews", label: "Reviews" },
-  { to: "/admin/users", label: "Users" },
-  { to: "/admin/comments", label: "Comments" },
-  { to: "/admin/redirects", label: "Redirects" },
-  { to: "/admin/taxonomy", label: "Taxonomy" },
-  { to: "/admin/settings", label: "Settings" },
+const nav: { to: string; label: string; icon: LucideIcon }[] = [
+  { to: "/admin",              label: "Dashboard",   icon: LayoutDashboard },
+  { to: "/admin/articles",     label: "Posts",       icon: FileText },
+  { to: "/admin/events",       label: "Events",      icon: CalendarDays },
+  { to: "/admin/listings",     label: "Listings",    icon: MapPin },
+  { to: "/admin/offers",       label: "Offers",      icon: Tag },
+  { to: "/admin/submissions",  label: "Submissions", icon: Inbox },
+  { to: "/admin/ads",          label: "Ads",         icon: Megaphone },
+  { to: "/admin/media",        label: "Media",       icon: Image },
+  { to: "/admin/reviews",      label: "Reviews",     icon: Star },
+  { to: "/admin/users",        label: "Users",       icon: Users },
+  { to: "/admin/comments",     label: "Comments",    icon: MessageSquare },
+  { to: "/admin/redirects",    label: "Redirects",   icon: ArrowLeftRight },
+  { to: "/admin/taxonomy",     label: "Taxonomy",    icon: Layers },
+  { to: "/admin/settings",     label: "Settings",    icon: Settings },
 ];
 
 export function AdminLayout() {
@@ -80,13 +97,15 @@ export function AdminLayout() {
         <nav className="flex md:flex-col overflow-x-auto md:overflow-visible p-3 gap-1">
           {nav.map((n) => {
             const active = n.to === "/admin" ? pathname === "/admin" : pathname.startsWith(n.to);
+            const Icon = n.icon;
             return (
               <Link
                 key={n.to}
                 to={n.to}
                 activeOptions={{ exact: n.to === "/admin" }}
-                className={`shrink-0 px-4 py-3 text-[11px] font-bold uppercase tracking-wider ${active ? "bg-accent text-foreground" : "text-background/70 hover:bg-white/5"}`}
+                className={`shrink-0 flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${active ? "bg-accent text-foreground" : "text-background/70 hover:bg-white/5 hover:text-background"}`}
               >
+                <Icon size={14} strokeWidth={2} className="shrink-0" />
                 {n.label}
               </Link>
             );
