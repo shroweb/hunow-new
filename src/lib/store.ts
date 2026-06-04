@@ -82,11 +82,24 @@ async function hydrateFromDatabase() {
     hydratePromise = import("./store.functions")
       .then(({ getStoreFromDatabase }) => getStoreFromDatabase())
       .then((remoteState) => {
-        state = pendingHydrationUpdaters.reduce((next, updater) => updater(next), remoteState);
+        // If DB returned empty collections, seed it and fall back to initial data
+        const hasContent =
+          remoteState.articles.length > 0 ||
+          remoteState.events.length > 0 ||
+          remoteState.listings.length > 0;
+        const effective = hasContent ? remoteState : initial;
+        state = pendingHydrationUpdaters.reduce((next, updater) => updater(next), effective);
         pendingHydrationUpdaters.length = 0;
         hydratedFromDatabase = true;
-        persist();
+        // Only persist if we got real data, to avoid caching empty state
+        if (hasContent) persist();
         emit();
+        // If DB was empty, trigger a background seed
+        if (!hasContent) {
+          void import("./store.functions")
+            .then(({ saveStoreToDatabase }) => saveStoreToDatabase({ data: initial }))
+            .catch(() => {});
+        }
       })
       .catch((error) => {
         console.error("Unable to load database-backed store", error);
