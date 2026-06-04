@@ -8,6 +8,7 @@ import { SaveButton } from "@/components/SaveButton";
 import { ShareMenu } from "@/components/ShareMenu";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { useStore } from "@/lib/store";
+import { ArticleContent, TableOfContents } from "@/components/ArticleContent";
 import { img } from "@/data/seed";
 
 export const Route = createFileRoute("/stories/$slug")({
@@ -85,6 +86,12 @@ function StoryDetail() {
     )
     .slice(0, 2);
 
+  const entities = [
+    ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+    ...events.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
+    ...articles.filter((a) => a.id !== article.id).map((a) => ({ name: a.title, path: articlePath(a) })),
+  ];
+
   return (
     <PublicLayout>
       <ReadingProgress />
@@ -139,11 +146,8 @@ function StoryDetail() {
               />
             </div>
           </div>
-          <div className="text-lg leading-relaxed space-y-6">
-            {article.content.split("\n\n").map((p: string, i: number) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
+          <TableOfContents content={article.content} />
+          <ArticleContent content={article.content} entities={entities} />
           <div className="mt-12 flex flex-wrap gap-3 border-t border-border pt-8">
             <ShareMenu title={article.title} text={article.excerpt} />
             <SaveButton kind="story" id={article.id} slug={article.slug} title={article.title} />

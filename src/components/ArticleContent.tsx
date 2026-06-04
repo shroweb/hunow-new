@@ -1,5 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { subscribeNewsletter } from "@/lib/public.functions";
+import { autoLink, autoLinkMarkdown, type Entity } from "@/lib/autolink";
 
 interface Block {
   type: "p" | "h2" | "h3" | "blockquote" | "image" | "divider";
@@ -145,23 +146,24 @@ function InlineNewsletter() {
 }
 
 /** Renders HTML content from the Tiptap editor */
-export function ArticleHtml({ content }: { content: string }) {
+export function ArticleHtml({ content, entities }: { content: string; entities?: Entity[] }) {
+  const html = entities?.length ? autoLink(content, entities) : content;
   return (
     <div
       className="prose-hunow"
       // Content is admin-authored only — safe to render
-      dangerouslySetInnerHTML={{ __html: content }}
+      dangerouslySetInnerHTML={{ __html: html }}
     />
   );
 }
 
 /** Auto-detects HTML vs legacy markdown */
-export function ArticleContent({ content }: { content: string }) {
-  if (content.trimStart().startsWith("<")) return <ArticleHtml content={content} />;
-  return <ArticleContentLegacy content={content} />;
+export function ArticleContent({ content, entities }: { content: string; entities?: Entity[] }) {
+  if (content.trimStart().startsWith("<")) return <ArticleHtml content={content} entities={entities} />;
+  return <ArticleContentLegacy content={content} entities={entities} />;
 }
 
-function ArticleContentLegacy({ content }: { content: string }) {
+function ArticleContentLegacy({ content, entities }: { content: string; entities?: Entity[] }) {
   const blocks = parseContent(content);
   let pCount = 0;
   return (
@@ -194,9 +196,10 @@ function ArticleContentLegacy({ content }: { content: string }) {
           );
         if (block.type === "divider")
           return <hr key={i} className="my-10 border-foreground/20" />;
-        // Paragraph
+        // Paragraph — apply auto-linking before inline markdown
         pCount++;
-        const node = <p key={i} className="mb-6">{applyInline(block.text ?? "")}</p>;
+        const text = entities?.length ? autoLinkMarkdown(block.text ?? "", entities) : (block.text ?? "");
+        const node = <p key={i} className="mb-6">{applyInline(text)}</p>;
         if (pCount === 3) {
           return (
             <div key={i}>

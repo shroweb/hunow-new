@@ -121,6 +121,12 @@ function ArticleDetail() {
     )
     .slice(0, 2);
 
+  const entities = [
+    ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+    ...events.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
+    ...articles.filter((a) => a.id !== article.id).map((a) => ({ name: a.title, path: articlePath(a) })),
+  ];
+
   return (
     <PublicLayout>
       <ReadingProgress />
@@ -187,7 +193,7 @@ function ArticleDetail() {
             <SeriesNav current={article} seriesArticles={seriesArticles} />
           )}
           <TableOfContents content={article.content} />
-          <ArticleContent content={article.content} />
+          <ArticleContent content={article.content} entities={entities} />
           {article.tags.length > 0 && (
             <div className="mt-10 flex flex-wrap gap-2">
               {article.tags.map((tag: string) => (

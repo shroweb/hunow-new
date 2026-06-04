@@ -1,4 +1,4 @@
-interface Entity {
+export interface Entity {
   name: string;
   path: string;
 }
@@ -34,5 +34,27 @@ export function autoLink(html: string, entities: Entity[]): string {
     }
   }
 
+  return result;
+}
+
+/** For legacy markdown content — converts first entity mention to a Markdown link [name](path) */
+export function autoLinkMarkdown(text: string, entities: Entity[]): string {
+  if (!text || entities.length === 0) return text;
+  const sorted = [...entities].sort((a, b) => b.name.length - a.name.length);
+  let result = text;
+  const linked = new Set<string>();
+
+  for (const { name, path } of sorted) {
+    if (linked.has(path)) continue;
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const next = result.replace(new RegExp(`\\b${escaped}\\b`, "i"), (match) => {
+      linked.add(path);
+      return `[${match}](${path})`;
+    });
+    if (next !== result) {
+      result = next;
+      linked.add(path);
+    }
+  }
   return result;
 }

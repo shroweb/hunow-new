@@ -10,6 +10,7 @@ import { openStatus, formatWeek } from "@/lib/hours";
 import { addToHistory } from "@/lib/reading-history";
 import { useStore } from "@/lib/store";
 import { fetchListingBySlug } from "@/lib/store.functions";
+import { autoLink } from "@/lib/autolink";
 import { getListingReviews, submitReview, deleteReview, type Review } from "@/lib/reviews.functions";
 import { getCurrentUser } from "@/lib/auth.functions";
 import { img } from "@/data/seed";
@@ -85,10 +86,18 @@ function PlaceDetail() {
   const { slug } = Route.useParams();
   const { listing: loadedListing, reviews: initialReviews, user } = Route.useLoaderData();
   const listings = useStore((s) => s.listings);
+  const articles = useStore((s) => s.articles);
   const offers = useStore((s) => s.offers);
   const events = useStore((s) => s.events);
   const listing = listings.find((l) => l.slug === slug) ?? loadedListing;
   if (!listing) throw notFound();
+
+  const entities = [
+    ...listings.filter((l) => l.id !== listing.id).map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+    ...events.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
+    ...articles.map((a) => ({ name: a.title, path: `/stories/${a.slug}` })),
+  ];
+  const linkedDescription = autoLink(listing.description, entities);
 
   useEffect(() => {
     addToHistory({ kind: "place", id: listing.id, slug: listing.slug, title: listing.name });
@@ -330,7 +339,10 @@ function PlaceDetail() {
             <h2 className="text-3xl font-display uppercase border-b-2 border-foreground pb-2 mb-4">
               About
             </h2>
-            <p className="text-lg leading-relaxed">{listing.description}</p>
+            <p
+              className="text-lg leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: linkedDescription }}
+            />
           </div>
 
           <div>
