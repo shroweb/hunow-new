@@ -44,7 +44,7 @@ function Dashboard() {
             label="Active Offers"
             value={offers.filter((o) => o.status === "active").length}
           />
-          <StatCard label="Pending Reviews" value={pending} accent />
+          <StatCard label="Pending Submissions" value={pending} accent />
           <StatCard label="Newsletter" value={newsletter.length} />
           <StatCard label="Active Ads" value={ads.filter((a) => a.status === "active").length} />
         </section>

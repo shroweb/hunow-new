@@ -21,12 +21,24 @@ export const uploadImage = createServerFn({ method: "POST" })
     const mime = match[1];
     const ext = extensionFor(mime, data.fileName);
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
+    const buffer = Buffer.from(match[2], "base64");
+
+    // Use Vercel Blob in production, local disk in development
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      const { put } = await import("@vercel/blob");
+      const blob = await put(`uploads/${id}`, buffer, {
+        access: "public",
+        contentType: mime,
+        addRandomSuffix: false,
+      });
+      return { url: blob.url };
+    }
+
+    // Local fallback for development
     const uploadDir = resolve(process.cwd(), "public/uploads");
     const filePath = resolve(uploadDir, id);
-
     await mkdir(uploadDir, { recursive: true });
-    await writeFile(filePath, Buffer.from(match[2], "base64"));
-
+    await writeFile(filePath, buffer);
     return { url: `/uploads/${id}` };
   });
 
