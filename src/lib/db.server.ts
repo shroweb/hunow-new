@@ -286,9 +286,11 @@ async function seedIfEmpty() {
     await saveDatabaseStore((await legacyStore()) ?? fallbackStore);
     return;
   }
-  // DB already has data — upsert all seed records so field additions (e.g. lat/lng) are reflected.
+  // DB already has data — upsert editorial seed records so field additions are reflected.
+  // Ads, offers, and submissions are admin-managed and must not be re-seeded on every boot.
   // Admin-created records have random IDs so they're never affected by seed upserts.
-  for (const collection of collections) {
+  const editorialCollections = ["articles", "events", "listings", "media"] as const;
+  for (const collection of editorialCollections) {
     const records = fallbackStore[collection] as StoredRecord[];
     for (const record of records) {
       await getPool().query(
