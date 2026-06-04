@@ -10,6 +10,7 @@ import { useStore } from "@/lib/store";
 import { fetchEventBySlug } from "@/lib/store.functions";
 import { getEventRsvp, toggleRsvp } from "@/lib/rsvp.functions";
 import { addToHistory } from "@/lib/reading-history";
+import { autoLink } from "@/lib/autolink";
 import { img } from "@/data/seed";
 
 export const Route = createFileRoute("/events/$slug")({
@@ -92,10 +93,22 @@ function EventDetail() {
     addToHistory({ kind: "event", id: event.id, slug: event.slug, title: event.title });
   }, [event.id]);
 
+  const articles = useStore((s) => s.articles);
   const related = events
     .filter((e) => e.id !== event.id && e.category === event.category)
     .slice(0, 3);
   const venue = listings.find((l) => l.name.toLowerCase() === event.locationName.toLowerCase());
+
+  const linkedContent = event.content
+    ? autoLink(
+        event.content,
+        [
+          ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+          ...events.filter((e) => e.id !== event.id).map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
+          ...articles.map((a) => ({ name: a.title, path: `/stories/${a.slug}` })),
+        ],
+      )
+    : undefined;
 
   return (
     <PublicLayout>
@@ -162,7 +175,7 @@ function EventDetail() {
           <p className="text-xl leading-relaxed mb-8">{event.description}</p>
           {event.gallery && event.gallery.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10">
-              {event.gallery.map((src, i) => (
+              {event.gallery.map((src: string, i: number) => (
                 <div key={i} className="aspect-square overflow-hidden bg-stone-200">
                   <img
                     src={img(src, 600, 600)}
@@ -176,10 +189,10 @@ function EventDetail() {
               ))}
             </div>
           )}
-          {event.content ? (
+          {linkedContent ? (
             <div
               className="mb-8 [&_h2]:font-display [&_h2]:uppercase [&_h2]:text-3xl [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:leading-none [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:text-lg [&_ul]:leading-relaxed [&_ul]:mb-4 [&_ul]:pl-6 [&_ul]:list-disc [&_li]:mb-2 [&_strong]:font-bold"
-              dangerouslySetInnerHTML={{ __html: event.content }}
+              dangerouslySetInnerHTML={{ __html: linkedContent }}
             />
           ) : null}
           <div className="border border-border p-6 mb-8">

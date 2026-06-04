@@ -105,7 +105,7 @@ function ArticleDetail() {
   const related = articles
     .filter((a) => a.id !== article.id && a.category === article.category && a.series !== article.series)
     .slice(0, 3);
-  const tagSet = new Set(article.tags.map((t) => t.toLowerCase()));
+  const tagSet = new Set(article.tags.map((t: string) => t.toLowerCase()));
   const relatedEvents = events
     .filter(
       (e) =>
@@ -190,7 +190,7 @@ function ArticleDetail() {
           <ArticleContent content={article.content} />
           {article.tags.length > 0 && (
             <div className="mt-10 flex flex-wrap gap-2">
-              {article.tags.map((tag) => (
+              {article.tags.map((tag: string) => (
                 <a
                   key={tag}
                   href={`/tag/${encodeURIComponent(tag.toLowerCase())}`}

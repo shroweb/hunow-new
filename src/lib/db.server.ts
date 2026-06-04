@@ -223,6 +223,15 @@ drop trigger if exists users_set_updated_at on users;
 create trigger users_set_updated_at before update on users for each row execute function set_updated_at();
 drop trigger if exists app_records_set_updated_at on app_records;
 create trigger app_records_set_updated_at before update on app_records for each row execute function set_updated_at();
+
+create table if not exists redirects (
+  id text primary key,
+  from_path text not null unique,
+  to_path text not null,
+  permanent boolean not null default true,
+  created_at timestamptz not null default now()
+);
+create index if not exists redirects_from_path_idx on redirects (from_path);
 `;
 
 async function ensureSchema() {
@@ -498,4 +507,43 @@ export async function incrementOfferRedemption(offerId: string) {
     ["offers", offerId, JSON.stringify(next)],
   );
   return next;
+}
+
+export async function getAllRedirects() {
+  await ensureSchema();
+  const result = await getPool().query<{
+    id: string; from_path: string; to_path: string; permanent: boolean; created_at: string;
+  }>("select id, from_path, to_path, permanent, created_at from redirects order by created_at desc");
+  return result.rows.map((r) => ({
+    id: r.id,
+    from: r.from_path,
+    to: r.to_path,
+    permanent: r.permanent,
+    createdAt: r.created_at,
+  }));
+}
+
+export async function upsertRedirect(id: string, from: string, to: string, permanent: boolean) {
+  await ensureSchema();
+  const normalFrom = from.startsWith("/") ? from : `/${from}`;
+  await getPool().query(
+    `insert into redirects (id, from_path, to_path, permanent)
+     values ($1, $2, $3, $4)
+     on conflict (id) do update set from_path = $2, to_path = $3, permanent = $4`,
+    [id, normalFrom, to, permanent],
+  );
+}
+
+export async function deleteRedirect(id: string) {
+  await ensureSchema();
+  await getPool().query("delete from redirects where id = $1", [id]);
+}
+
+export async function checkRedirect(path: string) {
+  await ensureSchema();
+  const result = await getPool().query<{ to_path: string; permanent: boolean }>(
+    "select to_path, permanent from redirects where from_path = $1 limit 1",
+    [path],
+  );
+  return result.rows[0] ?? null;
 }

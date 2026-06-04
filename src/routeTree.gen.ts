@@ -28,6 +28,7 @@ import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as TaxonomyRouteImport } from './routes/$taxonomy'
+import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
@@ -43,6 +44,7 @@ import { Route as AreasAreaRouteImport } from './routes/areas.$area'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
+import { Route as AdminRedirectsRouteImport } from './routes/admin.redirects'
 import { Route as AdminOffersRouteImport } from './routes/admin.offers'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
@@ -147,6 +149,11 @@ const TaxonomyRoute = TaxonomyRouteImport.update({
   path: '/$taxonomy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -222,6 +229,11 @@ const AdminReviewsRoute = AdminReviewsRouteImport.update({
   path: '/reviews',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRedirectsRoute = AdminRedirectsRouteImport.update({
+  id: '/redirects',
+  path: '/redirects',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminOffersRoute = AdminOffersRouteImport.update({
   id: '/offers',
   path: '/offers',
@@ -265,6 +277,7 @@ const CSectionSubRoute = CSectionSubRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
@@ -291,6 +304,7 @@ export interface FileRoutesByFullPath {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -309,6 +323,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
   '/advertise': typeof AdvertiseRoute
@@ -334,6 +349,7 @@ export interface FileRoutesByTo {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -353,6 +369,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/$taxonomy': typeof TaxonomyRouteWithChildren
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
@@ -379,6 +396,7 @@ export interface FileRoutesById {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -399,6 +417,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$'
     | '/$taxonomy'
     | '/account'
     | '/admin'
@@ -425,6 +444,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/media'
     | '/admin/offers'
+    | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/submissions'
     | '/admin/users'
@@ -443,6 +463,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$'
     | '/$taxonomy'
     | '/account'
     | '/advertise'
@@ -468,6 +489,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/media'
     | '/admin/offers'
+    | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/submissions'
     | '/admin/users'
@@ -486,6 +508,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$'
     | '/$taxonomy'
     | '/account'
     | '/admin'
@@ -512,6 +535,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/media'
     | '/admin/offers'
+    | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/submissions'
     | '/admin/users'
@@ -531,6 +555,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
   TaxonomyRoute: typeof TaxonomyRouteWithChildren
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRouteWithChildren
@@ -694,6 +719,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TaxonomyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -799,6 +831,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReviewsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/redirects': {
+      id: '/admin/redirects'
+      path: '/redirects'
+      fullPath: '/admin/redirects'
+      preLoaderRoute: typeof AdminRedirectsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/offers': {
       id: '/admin/offers'
       path: '/offers'
@@ -877,6 +916,7 @@ interface AdminRouteChildren {
   AdminListingsRoute: typeof AdminListingsRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminOffersRoute: typeof AdminOffersRoute
+  AdminRedirectsRoute: typeof AdminRedirectsRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -890,6 +930,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminListingsRoute: AdminListingsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminOffersRoute: AdminOffersRoute,
+  AdminRedirectsRoute: AdminRedirectsRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
   AdminUsersRoute: AdminUsersRoute,
@@ -944,6 +985,7 @@ const CSectionRouteWithChildren = CSectionRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SplatRoute: SplatRoute,
   TaxonomyRoute: TaxonomyRouteWithChildren,
   AccountRoute: AccountRoute,
   AdminRoute: AdminRouteWithChildren,
@@ -974,13 +1016,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

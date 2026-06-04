@@ -128,6 +128,14 @@ export interface AdPlacement {
   status: "active" | "paused" | "expired";
 }
 
+export interface Redirect {
+  id: string;
+  from: string;
+  to: string;
+  permanent: boolean;
+  createdAt: string;
+}
+
 export interface MediaAsset {
   id: string;
   url: string;

@@ -69,7 +69,7 @@ function StoryDetail() {
   const related = articles
     .filter((a) => a.id !== article.id && a.category === article.category)
     .slice(0, 3);
-  const tagSet = new Set(article.tags.map((t) => t.toLowerCase()));
+  const tagSet = new Set(article.tags.map((t: string) => t.toLowerCase()));
   const relatedEvents = events
     .filter(
       (e) =>
@@ -140,7 +140,7 @@ function StoryDetail() {
             </div>
           </div>
           <div className="text-lg leading-relaxed space-y-6">
-            {article.content.split("\n\n").map((p, i) => (
+            {article.content.split("\n\n").map((p: string, i: number) => (
               <p key={i}>{p}</p>
             ))}
           </div>
