@@ -141,7 +141,6 @@ function Index() {
               <div className="flex gap-1">
                 {(["today", "weekend", "week"] as const).map((tab) => {
                   const labels = { today: "Today", weekend: "Weekend", week: "This week" };
-                  const counts = { today: todayEvents.length, weekend: weekendEvents.length, week: weekEvents.length };
                   const active = spotlightTab === tab;
                   return (
                     <button
@@ -154,11 +153,6 @@ function Index() {
                       }`}
                     >
                       {labels[tab]}
-                      {counts[tab] > 0 && (
-                        <span className={`ml-1.5 text-[10px] ${active ? "opacity-60" : "text-accent"}`}>
-                          {counts[tab]}
-                        </span>
-                      )}
                     </button>
                   );
                 })}
