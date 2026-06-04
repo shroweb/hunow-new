@@ -427,23 +427,23 @@ export const seedEvents: EventItem[] = [
     title: "Hull Fair 2026",
     slug: "hull-fair-2026",
     description:
-      "Europe's largest travelling fair returns to Walton Street for its annual nine-day run. Rides, lights, food and the unmistakable smell of brandy snap — Hull's biggest autumn tradition.",
+      "Europe's largest travelling fair returns to Walton Street for its 134th year. Running for nine nights from 9–17 October, Hull Fair takes over the entire Walton Street site with over 250 rides and stalls — from white-knuckle rollercoasters and ghost trains to traditional gallopers, hook-a-duck and the brandy snap stalls that have been a fixture for generations.\n\nEntry to the fairground is free. Rides and stalls are individually priced, with most rides costing £2–5 per person. The fair opens at noon daily and runs until 11pm, with the biggest crowds on Friday and Saturday evenings.\n\nParking is limited in the immediate area — the council runs dedicated park-and-ride services from several sites around the city during fair week. The fairground is a 20-minute walk from Hull city centre, or a short bus ride on routes serving Anlaby Road and Hessle Road.\n\nHull Fair has been held annually since 1278, making it one of the oldest surviving fairs in the world. It was originally a charter fair granted by King Edward I and has been held on or near Walton Street since the Victorian era. For most Hull families it is a fixed point in the autumn calendar — the smell of brandy snap, the sound of generators and the glow of lights visible from miles away are as much a part of the city as anything else.",
     category: "Family",
     startDate: "2026-10-09",
     startTime: "12:00",
     endTime: "23:00",
     locationName: "Walton Street Fairground",
     address: "Walton Street, Hull HU3 6HR",
-    price: "Free entry, rides priced individually",
+    price: "Free entry · rides £2–5 each",
     isFree: true,
     featuredImage: "photo-1567095761054-7a02e69e5c43",
     status: "published",
     isFeatured: true,
     isSponsored: false,
     seo: {
-      title: "Hull Fair 2026 — Europe's Largest Travelling Fair",
+      title: "Hull Fair 2026 — 9–17 October, Walton Street",
       description:
-        "Hull Fair 2026 runs 9–17 October at Walton Street. Free entry, hundreds of rides and stalls, and the city's biggest annual event.",
+        "Hull Fair 2026 runs 9–17 October at Walton Street. Europe's largest travelling fair, free entry, 250+ rides and stalls. One of the world's oldest charter fairs, held in Hull since 1278.",
     },
   },
 ];
