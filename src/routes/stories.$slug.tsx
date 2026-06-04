@@ -9,6 +9,7 @@ import { ShareMenu } from "@/components/ShareMenu";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { useStore } from "@/lib/store";
 import { ArticleContent, TableOfContents } from "@/components/ArticleContent";
+import { ArticleComments } from "@/components/ArticleComments";
 import { img } from "@/data/seed";
 
 export const Route = createFileRoute("/stories/$slug")({
@@ -157,6 +158,7 @@ function StoryDetail() {
               Sponsored by {article.sponsorName}
             </div>
           )}
+          <ArticleComments articleId={article.id} />
         </div>
       </article>
       {related.length > 0 && (

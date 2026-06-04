@@ -14,8 +14,10 @@ const nav = [
   { to: "/admin/media", label: "Media" },
   { to: "/admin/reviews", label: "Reviews" },
   { to: "/admin/users", label: "Users" },
+  { to: "/admin/comments", label: "Comments" },
   { to: "/admin/redirects", label: "Redirects" },
   { to: "/admin/taxonomy", label: "Taxonomy" },
+  { to: "/admin/settings", label: "Settings" },
 ];
 
 export function AdminLayout() {

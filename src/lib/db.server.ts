@@ -238,6 +238,23 @@ create table if not exists taxonomy (
   key text primary key,
   items jsonb not null default '[]'
 );
+
+create table if not exists article_comments (
+  id text primary key,
+  article_id text not null,
+  author_name text not null,
+  author_email text not null,
+  body text not null,
+  approved boolean not null default false,
+  created_at timestamptz not null default now()
+);
+create index if not exists article_comments_article_id_idx on article_comments (article_id);
+create index if not exists article_comments_approved_idx on article_comments (approved);
+
+create table if not exists site_settings (
+  key text primary key,
+  value text not null default ''
+);
 `;
 
 async function ensureSchema() {
@@ -606,5 +623,82 @@ export async function setTaxonomyKey(key: string, items: string[]) {
   await getPool().query(
     "insert into taxonomy (key, items) values ($1, $2) on conflict (key) do update set items = $2",
     [key, JSON.stringify(items)],
+  );
+}
+
+// ---- Article comments ----
+
+export interface ArticleComment {
+  id: string;
+  articleId: string;
+  authorName: string;
+  authorEmail: string;
+  body: string;
+  approved: boolean;
+  createdAt: string;
+}
+
+export async function getApprovedComments(articleId: string): Promise<ArticleComment[]> {
+  await ensureSchema();
+  const r = await getPool().query<{ id: string; article_id: string; author_name: string; author_email: string; body: string; approved: boolean; created_at: string }>(
+    "select * from article_comments where article_id = $1 and approved = true order by created_at asc",
+    [articleId],
+  );
+  return r.rows.map((row) => ({ id: row.id, articleId: row.article_id, authorName: row.author_name, authorEmail: row.author_email, body: row.body, approved: row.approved, createdAt: row.created_at }));
+}
+
+export async function getAllComments(): Promise<ArticleComment[]> {
+  await ensureSchema();
+  const r = await getPool().query<{ id: string; article_id: string; author_name: string; author_email: string; body: string; approved: boolean; created_at: string }>(
+    "select * from article_comments order by created_at desc",
+  );
+  return r.rows.map((row) => ({ id: row.id, articleId: row.article_id, authorName: row.author_name, authorEmail: row.author_email, body: row.body, approved: row.approved, createdAt: row.created_at }));
+}
+
+export async function insertComment(c: ArticleComment) {
+  await ensureSchema();
+  await getPool().query(
+    "insert into article_comments (id, article_id, author_name, author_email, body, approved) values ($1, $2, $3, $4, $5, $6)",
+    [c.id, c.articleId, c.authorName, c.authorEmail, c.body, c.approved],
+  );
+}
+
+export async function setCommentApproved(id: string, approved: boolean) {
+  await ensureSchema();
+  await getPool().query("update article_comments set approved = $2 where id = $1", [id, approved]);
+}
+
+export async function deleteComment(id: string) {
+  await ensureSchema();
+  await getPool().query("delete from article_comments where id = $1", [id]);
+}
+
+// ---- Site settings ----
+
+const SETTING_DEFAULTS: Record<string, string> = {
+  social_facebook: "",
+  social_instagram: "",
+  social_twitter: "",
+  social_tiktok: "",
+  social_youtube: "",
+};
+
+export async function getSiteSettings(): Promise<Record<string, string>> {
+  await ensureSchema();
+  for (const [key, value] of Object.entries(SETTING_DEFAULTS)) {
+    await getPool().query(
+      "insert into site_settings (key, value) values ($1, $2) on conflict (key) do nothing",
+      [key, value],
+    );
+  }
+  const r = await getPool().query<{ key: string; value: string }>("select key, value from site_settings");
+  return Object.fromEntries(r.rows.map((row) => [row.key, row.value]));
+}
+
+export async function setSiteSetting(key: string, value: string) {
+  await ensureSchema();
+  await getPool().query(
+    "insert into site_settings (key, value) values ($1, $2) on conflict (key) do update set value = $2",
+    [key, value],
   );
 }

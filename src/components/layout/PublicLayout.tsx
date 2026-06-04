@@ -4,6 +4,7 @@ import { NAV_SECTIONS } from "@/lib/nav";
 import { findTaxonomy, sectionTaxonomySlug, sectionHref } from "@/lib/taxonomy";
 import { getCurrentUser } from "@/lib/auth.functions";
 import { subscribeNewsletter } from "@/lib/public.functions";
+import { getSettings } from "@/lib/settings.functions";
 import { CommandPalette } from "@/components/CommandPalette";
 
 export function PublicLayout({ children }: { children: ReactNode }) {
@@ -356,8 +357,23 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   );
 }
 
+const SOCIAL_LABELS: Record<string, string> = {
+  social_facebook: "Facebook",
+  social_instagram: "Instagram",
+  social_twitter: "X",
+  social_tiktok: "TikTok",
+  social_youtube: "YouTube",
+};
+
 function Footer() {
   const [subscribed, setSubscribed] = useState(false);
+  const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    getSettings()
+      .then((s) => setSocialLinks(s))
+      .catch(() => {});
+  }, []);
 
   const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -436,11 +452,20 @@ function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="font-display text-3xl tracking-wide">HU NOW</div>
-        <div className="text-[10px] font-mono text-white/30 uppercase text-center">
-          Hull's Independent City Guide · © {new Date().getFullYear()}
-        </div>
+        {/* Social links */}
+        {Object.entries(SOCIAL_LABELS).some(([key]) => socialLinks[key]) && (
+          <div className="flex gap-5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+            {Object.entries(SOCIAL_LABELS).map(([key, label]) =>
+              socialLinks[key] ? (
+                <a key={key} href={socialLinks[key]} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  {label}
+                </a>
+              ) : null,
+            )}
+          </div>
+        )}
         <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-white/30">
           <a href="mailto:hello@hunow.co.uk" className="hover:text-white/60 transition-colors">hello@hunow.co.uk</a>
           <a href="#" className="hover:text-white/60 transition-colors">Privacy</a>

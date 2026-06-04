@@ -7,6 +7,7 @@ import { SaveButton } from "@/components/SaveButton";
 import { ShareMenu } from "@/components/ShareMenu";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { ArticleContent, TableOfContents } from "@/components/ArticleContent";
+import { ArticleComments } from "@/components/ArticleComments";
 import { SeriesNav } from "@/components/SeriesNav";
 import { useStore } from "@/lib/store";
 import { addToHistory } from "@/lib/reading-history";
@@ -216,6 +217,7 @@ function ArticleDetail() {
               Sponsored by {article.sponsorName}
             </div>
           )}
+          <ArticleComments articleId={article.id} />
         </div>
       </article>
       {related.length > 0 && (
