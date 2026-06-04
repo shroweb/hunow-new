@@ -43,6 +43,7 @@ const fallbackStore: AppStore = {
 
 let pool: pg.Pool | undefined;
 let schemaReady: Promise<void> | undefined;
+let seedReady: Promise<void> | undefined;
 
 function getDatabaseUrl() {
   const databaseUrl = process.env.DATABASE_URL;
@@ -248,6 +249,16 @@ async function ensureSchema() {
   await schemaReady;
 }
 
+async function ensureSeeded() {
+  await ensureSchema();
+  // Seed once per function instance so any entry point (article, event, place page)
+  // gets seed data without requiring a store hydration first.
+  if (!seedReady) {
+    seedReady = seedIfEmpty();
+  }
+  await seedReady;
+}
+
 function emptyStore(): AppStore {
   return {
     articles: [],
@@ -402,7 +413,7 @@ export async function saveDatabaseStore(store: AppStore) {
 }
 
 export async function getArticleBySlug(slug: string) {
-  await ensureSchema();
+  await ensureSeeded();
   const result = await getPool().query<{ data: unknown }>(
     "select data from articles where slug = $1 limit 1",
     [slug],
@@ -411,7 +422,7 @@ export async function getArticleBySlug(slug: string) {
 }
 
 export async function getEventBySlug(slug: string) {
-  await ensureSchema();
+  await ensureSeeded();
   const result = await getPool().query<{ data: unknown }>(
     "select data from events where slug = $1 limit 1",
     [slug],
@@ -420,7 +431,7 @@ export async function getEventBySlug(slug: string) {
 }
 
 export async function getListingBySlug(slug: string) {
-  await ensureSchema();
+  await ensureSeeded();
   const result = await getPool().query<{ data: unknown }>(
     "select data from listings where slug = $1 limit 1",
     [slug],
