@@ -121,14 +121,23 @@ function AdminSettings() {
     if (!second) return;
     setResetting(true);
     try {
-      // Run the reset entirely on the server — delete all DB content and
-      // re-insert seed data in one transaction, then sync client state
+      // Run the reset entirely on the server
       const seed = await resetStoreToSeed();
+
+      // Sanity-check what came back before touching anything
+      const counts = `articles: ${seed.articles.length}, events: ${seed.events.length}, listings: ${seed.listings.length}`;
+      const proceed = confirm(`Server reset complete (${counts}). Click OK to reload with seed data.`);
+      if (!proceed) { setResetting(false); return; }
+
+      // Clear localStorage so stale user data can't override the DB on reload
+      try { localStorage.removeItem("hunow:store:v3"); } catch { /* ignore */ }
+
       setState(() => seed);
       window.location.reload();
     } catch (err) {
       console.error("Reset failed:", err);
-      alert("Reset failed — check the browser console for details.");
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(`Reset failed: ${msg}`);
     } finally {
       setResetting(false);
     }
