@@ -54,6 +54,7 @@ const listeners = new Set<() => void>();
 let hydratedFromDatabase = false;
 let hydratePromise: Promise<void> | undefined;
 const pendingHydrationUpdaters: Array<(s: Store) => Store> = [];
+let dbSaveTimer: ReturnType<typeof setTimeout> | null = null;
 
 function persist() {
   if (typeof window === "undefined") return;
@@ -106,12 +107,21 @@ async function hydrateFromDatabase() {
 
 function persistToDatabase() {
   if (typeof window === "undefined" || !hydratedFromDatabase) return;
-  const snapshot = state;
-  void import("./store.functions")
-    .then(({ saveStoreToDatabase }) => saveStoreToDatabase({ data: snapshot }))
-    .catch((error) => {
-      console.error("Unable to persist database-backed store", error);
-    });
+  // Debounce: cancel any pending save and schedule a fresh one.
+  // saveDatabaseStore uses DELETE-WHERE-NOT-IN, so two concurrent saves with
+  // different snapshots can delete each other's new records. By always saving
+  // the latest state after a short delay we coalesce rapid changes into one
+  // write and guarantee no stale snapshot can overwrite a newer one.
+  if (dbSaveTimer) clearTimeout(dbSaveTimer);
+  dbSaveTimer = setTimeout(() => {
+    dbSaveTimer = null;
+    const snapshot = state; // capture latest state at fire time
+    void import("./store.functions")
+      .then(({ saveStoreToDatabase }) => saveStoreToDatabase({ data: snapshot }))
+      .catch((error) => {
+        console.error("Unable to persist database-backed store", error);
+      });
+  }, 800);
 }
 
 export function getState(): Store {
