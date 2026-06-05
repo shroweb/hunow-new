@@ -48,6 +48,7 @@ import { Route as AuthorsAuthorRouteImport } from './routes/authors.$author'
 import { Route as AreasAreaRouteImport } from './routes/areas.$area'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTaxonomyRouteImport } from './routes/admin.taxonomy'
+import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
@@ -261,6 +262,11 @@ const AdminTaxonomyRoute = AdminTaxonomyRouteImport.update({
   path: '/taxonomy',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSubscribersRoute = AdminSubscribersRouteImport.update({
+  id: '/subscribers',
+  path: '/subscribers',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
@@ -389,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/areas/$area': typeof AreasAreaRoute
@@ -446,6 +453,7 @@ export interface FileRoutesByTo {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/areas/$area': typeof AreasAreaRoute
@@ -505,6 +513,7 @@ export interface FileRoutesById {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/areas/$area': typeof AreasAreaRoute
@@ -565,6 +574,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/settings'
     | '/admin/submissions'
+    | '/admin/subscribers'
     | '/admin/taxonomy'
     | '/admin/users'
     | '/areas/$area'
@@ -622,6 +632,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/settings'
     | '/admin/submissions'
+    | '/admin/subscribers'
     | '/admin/taxonomy'
     | '/admin/users'
     | '/areas/$area'
@@ -680,6 +691,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/settings'
     | '/admin/submissions'
+    | '/admin/subscribers'
     | '/admin/taxonomy'
     | '/admin/users'
     | '/areas/$area'
@@ -1007,6 +1019,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTaxonomyRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/subscribers': {
+      id: '/admin/subscribers'
+      path: '/subscribers'
+      fullPath: '/admin/subscribers'
+      preLoaderRoute: typeof AdminSubscribersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/submissions': {
       id: '/admin/submissions'
       path: '/submissions'
@@ -1157,6 +1176,7 @@ interface AdminRouteChildren {
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+  AdminSubscribersRoute: typeof AdminSubscribersRoute
   AdminTaxonomyRoute: typeof AdminTaxonomyRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1178,6 +1198,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
+  AdminSubscribersRoute: AdminSubscribersRoute,
   AdminTaxonomyRoute: AdminTaxonomyRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,

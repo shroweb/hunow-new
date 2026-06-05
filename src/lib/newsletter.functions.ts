@@ -4,6 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const newsletterSegmentSchema = z.enum(["all", "events", "offers", "businesses"]);
+const newsletterTemplateSchema = z.enum(["weekly", "events", "offers", "business"]);
 
 const selectedSchema = z.object({
   articles: z.array(z.string()),
@@ -16,6 +17,7 @@ const issueSchema = z.object({
   subject: z.string().min(1),
   intro: z.string().min(1),
   segment: newsletterSegmentSchema.default("all"),
+  template: newsletterTemplateSchema.default("weekly"),
   selected: selectedSchema,
   scheduledFor: z.string().optional().nullable(),
 });
@@ -44,6 +46,7 @@ async function renderIssue(data: z.infer<typeof issueSchema>, unsubscribeUrl?: s
     intro: data.intro,
     issue,
     unsubscribeUrl,
+    template: data.template,
   });
 }
 
@@ -76,12 +79,14 @@ async function sendResendEmail(input: { to: string; subject: string; html: strin
 
 export const getNewsletterBuilder = createServerFn({ method: "GET" }).handler(async () => {
   const { requireAdmin } = await import("./auth.server");
-  const { getNewsletterBuilderData, getNewsletterCampaignHistory } = await import("./db.server");
+  const { getNewsletterBuilderData, getNewsletterCampaignHistory, getNewsletterSubscriberSummary } =
+    await import("./db.server");
   const { renderNewsletterTemplate } = await import("./newsletter-template.server");
   await requireAdmin();
-  const [builder, campaigns] = await Promise.all([
+  const [builder, campaigns, subscriberSummary] = await Promise.all([
     getNewsletterBuilderData(),
     getNewsletterCampaignHistory(),
+    getNewsletterSubscriberSummary(),
   ]);
   const suggestedSelection = {
     articles: builder.articles.slice(0, 4).map((item) => item.id),
@@ -92,6 +97,7 @@ export const getNewsletterBuilder = createServerFn({ method: "GET" }).handler(as
   const preview = renderNewsletterTemplate({
     subject: "This week in Hull",
     intro: "The best events, stories and offers to know about this week.",
+    template: "weekly",
     issue: {
       articles: builder.articles.filter((item) => suggestedSelection.articles.includes(item.id)),
       events: builder.events.filter((item) => suggestedSelection.events.includes(item.id)),
@@ -99,7 +105,14 @@ export const getNewsletterBuilder = createServerFn({ method: "GET" }).handler(as
       listings: builder.listings.filter((item) => suggestedSelection.listings.includes(item.id)),
     },
   });
-  return { ...builder, campaigns, suggestedSelection, preview };
+  return { ...builder, campaigns, subscriberSummary, suggestedSelection, preview };
+});
+
+export const getNewsletterSubscribers = createServerFn({ method: "GET" }).handler(async () => {
+  const { requireAdmin } = await import("./auth.server");
+  const { getNewsletterSubscriberSummary } = await import("./db.server");
+  await requireAdmin();
+  return getNewsletterSubscriberSummary();
 });
 
 export const renderNewsletterIssue = createServerFn({ method: "POST" })

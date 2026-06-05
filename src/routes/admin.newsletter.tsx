@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { AdminField, AdminHeader, adminBtn, adminInput } from "@/components/admin/AdminLayout";
 import {
@@ -15,12 +15,20 @@ export const Route = createFileRoute("/admin/newsletter")({
 });
 
 type NewsletterSegment = "all" | "events" | "offers" | "businesses";
+type NewsletterTemplate = "weekly" | "events" | "offers" | "business";
 
 const segments: { value: NewsletterSegment; label: string; note: string }[] = [
   { value: "all", label: "All", note: "Everyone on the list" },
   { value: "events", label: "Events", note: "Subscribers tagged for what's on" },
   { value: "offers", label: "Offers", note: "Subscribers tagged for deals" },
   { value: "businesses", label: "Business", note: "Owners and advertisers" },
+];
+
+const templates: { value: NewsletterTemplate; label: string; note: string }[] = [
+  { value: "weekly", label: "Weekly Edit", note: "Balanced stories, events, offers and places." },
+  { value: "events", label: "What's On", note: "Event-first issue with dates and venues up top." },
+  { value: "offers", label: "Offers Drop", note: "Deal-led campaign for active offers." },
+  { value: "business", label: "Business", note: "Directory and independent business focus." },
 ];
 
 function AdminNewsletter() {
@@ -31,6 +39,7 @@ function AdminNewsletter() {
     "The best events, stories and offers to know about this week.",
   );
   const [segment, setSegment] = useState<NewsletterSegment>("all");
+  const [template, setTemplate] = useState<NewsletterTemplate>("weekly");
   const [scheduledFor, setScheduledFor] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [selected, setSelected] = useState(data.suggestedSelection);
@@ -43,10 +52,11 @@ function AdminNewsletter() {
       subject,
       intro,
       segment,
+      template,
       selected,
       scheduledFor: scheduledFor ? new Date(scheduledFor).toISOString() : null,
     }),
-    [intro, scheduledFor, segment, selected, subject],
+    [intro, scheduledFor, segment, selected, subject, template],
   );
 
   const issueCounts = {
@@ -55,6 +65,7 @@ function AdminNewsletter() {
     offers: selected.offers.length,
     places: selected.listings.length,
   };
+  const audienceCount = data.subscriberSummary.segments[segment];
 
   const refreshPreview = async () => {
     setBusy("preview");
@@ -110,6 +121,11 @@ function AdminNewsletter() {
       <AdminHeader
         title="Newsletter"
         subtitle={`${data.subscribers} subscribers · build, preview and send a branded HU NOW issue.`}
+        action={
+          <Link to="/admin/subscribers" className={adminBtn}>
+            View Subscribers
+          </Link>
+        }
       />
       <div className="p-6 md:p-10 grid 2xl:grid-cols-[minmax(0,1fr)_620px] gap-8">
         <div className="space-y-6">
@@ -139,6 +155,28 @@ function AdminNewsletter() {
                 className={adminInput}
               />
             </AdminField>
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+                Template
+              </div>
+              <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-2">
+                {templates.map((item) => (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => setTemplate(item.value)}
+                    className={`border-2 p-3 text-left ${
+                      template === item.value
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-border bg-background"
+                    }`}
+                  >
+                    <span className="block font-display text-xl uppercase">{item.label}</span>
+                    <span className="block text-xs opacity-75">{item.note}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
                 Segment
@@ -221,6 +259,18 @@ function AdminNewsletter() {
 
         <aside className="space-y-6">
           <section className="border-2 border-foreground bg-white p-5 sticky top-6">
+            <div className="border-2 border-accent bg-accent/5 p-4 mb-4">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Send audience
+              </div>
+              <div className="font-display text-5xl leading-none">{audienceCount}</div>
+              <p className="text-xs text-muted-foreground">
+                Subscribers in the {segment} segment.{" "}
+                <Link to="/admin/subscribers" className="underline font-bold">
+                  View list
+                </Link>
+              </p>
+            </div>
             <div className="flex flex-wrap gap-2 mb-4">
               <button
                 type="button"

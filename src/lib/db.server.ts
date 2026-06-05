@@ -1207,6 +1207,39 @@ export async function getNewsletterRecipients(segment: NewsletterSegment) {
   return recipients;
 }
 
+export async function getNewsletterSubscriberSummary() {
+  await ensureSchema();
+  const result = await getPool().query<{
+    email: string;
+    unsubscribe_token: string | null;
+    segments: string[];
+    created_at: string;
+  }>(
+    `select email, unsubscribe_token, segments, created_at
+     from newsletter_subscribers
+     order by created_at desc`,
+  );
+
+  const subscribers = result.rows.map((row) => ({
+    email: row.email,
+    hasUnsubscribeToken: Boolean(row.unsubscribe_token),
+    segments: Array.isArray(row.segments) ? row.segments : ["all"],
+    createdAt: row.created_at,
+  }));
+
+  return {
+    total: subscribers.length,
+    segments: {
+      all: subscribers.length,
+      events: subscribers.filter((subscriber) => subscriber.segments.includes("events")).length,
+      offers: subscribers.filter((subscriber) => subscriber.segments.includes("offers")).length,
+      businesses: subscribers.filter((subscriber) => subscriber.segments.includes("businesses"))
+        .length,
+    },
+    subscribers,
+  };
+}
+
 export async function unsubscribeNewsletterToken(token: string) {
   await ensureSchema();
   const result = await getPool().query<{ email: string }>(

@@ -9,11 +9,14 @@ export interface NewsletterIssue {
   listings: Listing[];
 }
 
+export type NewsletterTemplateKind = "weekly" | "events" | "offers" | "business";
+
 export interface NewsletterTemplateInput {
   subject: string;
   intro: string;
   issue: NewsletterIssue;
   unsubscribeUrl?: string;
+  template?: NewsletterTemplateKind;
 }
 
 const SITE_URL = (process.env.SITE_URL || "https://hunow.co.uk").replace(/\/$/, "");
@@ -122,12 +125,98 @@ function section(title: string, body: string) {
   `;
 }
 
+const templateConfigs: Record<
+  NewsletterTemplateKind,
+  {
+    kicker: string;
+    masthead: string;
+    cta: string;
+    ctaHref: string;
+    className: string;
+    sections: (issue: NewsletterIssue, lead?: Article, remainingArticles?: Article[]) => string;
+  }
+> = {
+  weekly: {
+    kicker: "Newsletter",
+    masthead: "Hull's weekly edit",
+    cta: "Explore HU NOW",
+    ctaHref: "/",
+    className: "weekly",
+    sections: (issue, lead, remainingArticles = []) => `
+      ${lead ? section("Lead story", articleCard(lead, true)) : ""}
+      ${section("More stories", remainingArticles.map((article) => articleCard(article)).join(""))}
+      ${section("What's on", issue.events.map(eventRow).join(""))}
+      ${section("Offers", issue.offers.map(offerRow).join(""))}
+      ${section("Places to know", issue.listings.map(listingRow).join(""))}
+    `,
+  },
+  events: {
+    kicker: "What's on",
+    masthead: "Events, gigs and dates",
+    cta: "See all events",
+    ctaHref: "/events",
+    className: "events",
+    sections: (issue, lead, remainingArticles = []) => `
+      ${section("This week", issue.events.map(eventRow).join(""))}
+      ${section(
+        "Event reads",
+        [lead, ...remainingArticles]
+          .filter(Boolean)
+          .map((article) => articleCard(article as Article))
+          .join(""),
+      )}
+      ${section("Places nearby", issue.listings.map(listingRow).join(""))}
+      ${section("Good deals", issue.offers.map(offerRow).join(""))}
+    `,
+  },
+  offers: {
+    kicker: "Offers drop",
+    masthead: "Deals worth leaving the house for",
+    cta: "Browse offers",
+    ctaHref: "/offers",
+    className: "offers",
+    sections: (issue, lead, remainingArticles = []) => `
+      ${section("Active offers", issue.offers.map(offerRow).join(""))}
+      ${section("Places with perks", issue.listings.map(listingRow).join(""))}
+      ${section(
+        "Food and drink reads",
+        [lead, ...remainingArticles]
+          .filter(Boolean)
+          .map((article) => articleCard(article as Article))
+          .join(""),
+      )}
+      ${section("Also happening", issue.events.map(eventRow).join(""))}
+    `,
+  },
+  business: {
+    kicker: "Business bulletin",
+    masthead: "For Hull independents",
+    cta: "View business tools",
+    ctaHref: "/business/listings",
+    className: "business",
+    sections: (issue, lead, remainingArticles = []) => `
+      ${section("Featured places", issue.listings.map(listingRow).join(""))}
+      ${section(
+        "Business stories",
+        [lead, ...remainingArticles]
+          .filter(Boolean)
+          .map((article) => articleCard(article as Article))
+          .join(""),
+      )}
+      ${section("Current offers", issue.offers.map(offerRow).join(""))}
+      ${section("Networking and events", issue.events.map(eventRow).join(""))}
+    `,
+  },
+};
+
 export function renderNewsletterTemplate({
   subject,
   intro,
   issue,
   unsubscribeUrl = "{{unsubscribeUrl}}",
+  template = "weekly",
 }: NewsletterTemplateInput) {
+  const config = templateConfigs[template];
   const lead = issue.articles[0];
   const remainingArticles = issue.articles.slice(1);
   const html = `<!doctype html>
@@ -162,6 +251,16 @@ export function renderNewsletterTemplate({
       .split-copy { width: 56%; padding: 0 30px 24px 18px; vertical-align: top; }
       .offer-card { border-top: 1px solid #d8d1c5; }
       .footer { padding: 24px 30px 30px; border-top: 3px solid #080d2d; color: #555b71; font-size: 12px; line-height: 1.5; }
+      .events .hero { background: #080d2d; color: #fffaf1; }
+      .events .hero p { color: #fffaf1; }
+      .events .button { background: #dcae3a; color: #080d2d !important; border-color: #dcae3a; }
+      .offers .hero { background: #dcae3a; }
+      .offers .hero .kicker { color: #080d2d; }
+      .offers .offer-card { border: 3px solid #080d2d; margin: 0 30px 18px; padding: 20px; background: #fffaf1; display: block; }
+      .business .shell { background: #f4f7f2; }
+      .business .hero { border-bottom-color: #4a8f51; }
+      .business .kicker, .business .section-title { color: #4a8f51; }
+      .business .button { background: #4a8f51; border-color: #4a8f51; }
       @media (max-width: 560px) {
         .hero h1 { font-size: 44px; }
         .split-image, .split-copy { display: block; width: auto; padding: 0 24px 18px; }
@@ -171,26 +270,22 @@ export function renderNewsletterTemplate({
   </head>
   <body>
     <div class="wrap">
-      <table class="shell" role="presentation" width="640" align="center">
+      <table class="shell ${escapeHtml(config.className)}" role="presentation" width="640" align="center">
         <tr>
           <td class="masthead">
             <div class="logo">HU NOW</div>
-            <div class="kicker">Hull's weekly edit</div>
+            <div class="kicker">${escapeHtml(config.masthead)}</div>
           </td>
         </tr>
         <tr>
           <td class="hero">
-            <div class="kicker">Newsletter</div>
+            <div class="kicker">${escapeHtml(config.kicker)}</div>
             <h1>${escapeHtml(subject)}</h1>
             <p>${escapeHtml(intro)}</p>
-            ${button("Explore HU NOW", "/")}
+            ${button(config.cta, config.ctaHref)}
           </td>
         </tr>
-        ${lead ? section("Lead story", articleCard(lead, true)) : ""}
-        ${section("More stories", remainingArticles.map((article) => articleCard(article)).join(""))}
-        ${section("What's on", issue.events.map(eventRow).join(""))}
-        ${section("Offers", issue.offers.map(offerRow).join(""))}
-        ${section("Places to know", issue.listings.map(listingRow).join(""))}
+        ${config.sections(issue, lead, remainingArticles)}
         <tr>
           <td class="footer">
             You are receiving this because you subscribed to HU NOW. 
@@ -204,6 +299,7 @@ export function renderNewsletterTemplate({
 
   const text = [
     subject,
+    config.kicker,
     "",
     intro,
     "",

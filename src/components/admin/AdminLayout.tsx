@@ -24,25 +24,56 @@ import {
 import { getCurrentUser, signOutUser } from "@/lib/auth.functions";
 import type { AuthUser } from "@/lib/auth.server";
 
-const nav: { to: string; label: string; icon: LucideIcon }[] = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/admin/articles", label: "Posts", icon: FileText },
-  { to: "/admin/events", label: "Events", icon: CalendarDays },
-  { to: "/admin/listings", label: "Listings", icon: MapPin },
-  { to: "/admin/offers", label: "Offers", icon: Tag },
-  { to: "/admin/submissions", label: "Submissions", icon: Inbox },
-  { to: "/admin/ads", label: "Ads", icon: Megaphone },
-  { to: "/admin/media", label: "Media", icon: Image },
-  { to: "/admin/editorial-picks", label: "Picks", icon: Sparkles },
-  { to: "/admin/newsletter", label: "Newsletter", icon: Mail },
-  { to: "/admin/claims", label: "Claims", icon: BadgeCheck },
-  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/admin/reviews", label: "Reviews", icon: Star },
-  { to: "/admin/users", label: "Users", icon: Users },
-  { to: "/admin/comments", label: "Comments", icon: MessageSquare },
-  { to: "/admin/redirects", label: "Redirects", icon: ArrowLeftRight },
-  { to: "/admin/taxonomy", label: "Taxonomy", icon: Layers },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
+const navSections: { title: string; items: { to: string; label: string; icon: LucideIcon }[] }[] = [
+  {
+    title: "Overview",
+    items: [
+      { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+    ],
+  },
+  {
+    title: "Content",
+    items: [
+      { to: "/admin/articles", label: "Posts", icon: FileText },
+      { to: "/admin/events", label: "Events", icon: CalendarDays },
+      { to: "/admin/media", label: "Media", icon: Image },
+      { to: "/admin/editorial-picks", label: "Picks", icon: Sparkles },
+      { to: "/admin/comments", label: "Comments", icon: MessageSquare },
+    ],
+  },
+  {
+    title: "Directory",
+    items: [
+      { to: "/admin/listings", label: "Listings", icon: MapPin },
+      { to: "/admin/offers", label: "Offers", icon: Tag },
+      { to: "/admin/claims", label: "Claims", icon: BadgeCheck },
+      { to: "/admin/reviews", label: "Reviews", icon: Star },
+    ],
+  },
+  {
+    title: "Marketing",
+    items: [
+      { to: "/admin/newsletter", label: "Newsletter", icon: Mail },
+      { to: "/admin/subscribers", label: "Subscribers", icon: Users },
+      { to: "/admin/ads", label: "Ads", icon: Megaphone },
+    ],
+  },
+  {
+    title: "Community",
+    items: [
+      { to: "/admin/submissions", label: "Submissions", icon: Inbox },
+      { to: "/admin/users", label: "Users", icon: Users },
+    ],
+  },
+  {
+    title: "System",
+    items: [
+      { to: "/admin/redirects", label: "Redirects", icon: ArrowLeftRight },
+      { to: "/admin/taxonomy", label: "Taxonomy", icon: Layers },
+      { to: "/admin/settings", label: "Settings", icon: Settings },
+    ],
+  },
 ];
 
 export function AdminLayout() {
@@ -102,22 +133,30 @@ export function AdminLayout() {
             {user.email}
           </div>
         </div>
-        <nav className="flex md:flex-col overflow-x-auto md:overflow-visible p-3 gap-1">
-          {nav.map((n) => {
-            const active = n.to === "/admin" ? pathname === "/admin" : pathname.startsWith(n.to);
-            const Icon = n.icon;
-            return (
-              <Link
-                key={n.to}
-                to={n.to}
-                activeOptions={{ exact: n.to === "/admin" }}
-                className={`shrink-0 flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${active ? "bg-accent text-foreground" : "text-background/70 hover:bg-white/5 hover:text-background"}`}
-              >
-                <Icon size={14} strokeWidth={2} className="shrink-0" />
-                {n.label}
-              </Link>
-            );
-          })}
+        <nav className="flex md:flex-col overflow-x-auto md:overflow-visible p-3 gap-4 md:gap-3">
+          {navSections.map((section) => (
+            <div key={section.title} className="flex md:flex-col gap-1 shrink-0">
+              <div className="px-4 py-2 text-[9px] font-mono uppercase tracking-widest text-background/35">
+                {section.title}
+              </div>
+              {section.items.map((n) => {
+                const active =
+                  n.to === "/admin" ? pathname === "/admin" : pathname.startsWith(n.to);
+                const Icon = n.icon;
+                return (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    activeOptions={{ exact: n.to === "/admin" }}
+                    className={`shrink-0 flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${active ? "bg-accent text-foreground" : "text-background/70 hover:bg-white/5 hover:text-background"}`}
+                  >
+                    <Icon size={14} strokeWidth={2} className="shrink-0" />
+                    {n.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
         <div className="hidden md:block p-6 mt-8 border-t border-white/10">
           <div className="text-[10px] font-mono uppercase tracking-wider text-background/40 mb-3">
