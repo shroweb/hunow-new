@@ -429,20 +429,23 @@ export async function saveDatabaseStore(store: AppStore) {
   }
 }
 
-export async function resetDatabaseToSeed() {
+export async function resetDatabaseToEmpty() {
   await ensureSchema();
-  const seed: AppStore = {
-    articles: seedArticles,
-    events: seedEvents,
-    listings: seedListings,
-    offers: [],
-    submissions: [],
-    ads: [],
-    media: seedMedia,
-    newsletter: [],
-  };
-  await saveDatabaseStore(seed);
-  return seed;
+  const client = await getPool().connect();
+  try {
+    await client.query("begin");
+    for (const table of Object.values(tables)) {
+      await client.query(`delete from ${table}`);
+    }
+    await client.query("delete from app_records");
+    await client.query("delete from newsletter_subscribers");
+    await client.query("commit");
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function getArticleBySlug(slug: string) {

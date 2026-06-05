@@ -34,12 +34,12 @@ export const saveStoreToDatabase = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const resetStoreToSeed = createServerFn({ method: "POST" }).handler(async () => {
+export const resetStoreToEmpty = createServerFn({ method: "POST" }).handler(async () => {
   const { requireAdmin } = await import("./auth.server");
-  const { resetDatabaseToSeed } = await import("./db.server");
+  const { resetDatabaseToEmpty } = await import("./db.server");
   await requireAdmin();
-  const seed = await resetDatabaseToSeed();
-  return seed;
+  await resetDatabaseToEmpty();
+  return { ok: true };
 });
 
 export const fetchArticleBySlug = createServerFn({ method: "GET" })

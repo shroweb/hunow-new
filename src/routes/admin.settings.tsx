@@ -7,7 +7,7 @@ import {
   adminInput,
 } from "@/components/admin/AdminLayout";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
-import { resetStoreToSeed } from "@/lib/store.functions";
+import { resetStoreToEmpty } from "@/lib/store.functions";
 import { setState } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/settings")({
@@ -114,25 +114,22 @@ function AdminSettings() {
 
   const onReset = async () => {
     const first = confirm(
-      "This will permanently delete ALL articles, events, places, media and other content and replace it with the demo seed data. Are you sure?",
+      "This will permanently delete ALL articles, events, places, media and other content. The site will be completely empty. Are you sure?",
     );
     if (!first) return;
     const second = confirm("Last chance — this cannot be undone. Reset everything?");
     if (!second) return;
     setResetting(true);
     try {
-      // Run the reset entirely on the server
-      const seed = await resetStoreToSeed();
+      // Wipe everything on the server
+      await resetStoreToEmpty();
 
-      // Sanity-check what came back before touching anything
-      const counts = `articles: ${seed.articles.length}, events: ${seed.events.length}, listings: ${seed.listings.length}`;
-      const proceed = confirm(`Server reset complete (${counts}). Click OK to reload with seed data.`);
-      if (!proceed) { setResetting(false); return; }
-
-      // Clear localStorage so stale user data can't override the DB on reload
+      // Clear local state and localStorage
       try { localStorage.removeItem("hunow:store:v3"); } catch { /* ignore */ }
-
-      setState(() => seed);
+      setState(() => ({
+        articles: [], events: [], listings: [], offers: [],
+        submissions: [], ads: [], media: [], newsletter: [],
+      }));
       window.location.reload();
     } catch (err) {
       console.error("Reset failed:", err);
@@ -195,8 +192,7 @@ function AdminSettings() {
           </div>
           <p className="text-sm text-muted-foreground mb-4">
             Permanently deletes all articles, events, places, media and other
-            content and replaces everything with the original demo data.
-            This cannot be undone.
+            content. The site will be completely empty. This cannot be undone.
           </p>
           <button
             type="button"
