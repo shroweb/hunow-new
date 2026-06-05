@@ -3,6 +3,7 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
 import { findSection, findSub, type NavSub } from "@/lib/nav";
+import { AdSlot } from "@/components/AdSlot";
 
 export const Route = createFileRoute("/c/$section/$sub")({
   loader: ({ params }) => {
@@ -98,6 +99,10 @@ function SubPage() {
           ))}
         </div>
       </section>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <AdSlot placement={`${sub.label} Category`} />
+      </div>
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         {!hasContent ? (

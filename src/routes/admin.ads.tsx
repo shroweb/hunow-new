@@ -20,9 +20,43 @@ import type { AdPlacement } from "@/types";
 export const Route = createFileRoute("/admin/ads")({ component: AdminAds });
 
 const PLACEMENTS = [
+  // Global slots
   "Homepage Hero Sponsor",
   "Homepage Inline Banner",
   "Sidebar Ad",
+  // Taxonomy category pages (/sport, /arts etc.)
+  "Sport Category",
+  "Arts Category",
+  "Music Category",
+  "Events Category",
+  "Eat Category",
+  "Drink Category",
+  "Restaurants Category",
+  "Bars Category",
+  "Pubs Category",
+  "Shopping Category",
+  "Attractions Category",
+  "Fun Category",
+  "Outdoors Category",
+  "Days Out Category",
+  "Community Category",
+  "Family Category",
+  "History Category",
+  "Travel Category",
+  "Business Category",
+  "Health Category",
+  // Nav section pages (/c/whats-on etc.)
+  "What's On Section",
+  "Things to Do Section",
+  "Food & Drink Section",
+  "Community Section",
+  // Nav sub pages (/c/whats-on/hull-kr etc.)
+  "Hull KR Category",
+  "Hull FC Category",
+  "Hull City Category",
+  "Hull Seahawks Category",
+  "Hull Jets Category",
+  // Content pages
   "Listing Detail Sponsor",
   "Story Inline Sponsor",
   "Newsletter Sponsor",

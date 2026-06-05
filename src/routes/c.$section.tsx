@@ -3,6 +3,7 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
 import { findSection, NAV_SECTIONS, type NavSub } from "@/lib/nav";
+import { AdSlot } from "@/components/AdSlot";
 
 export const Route = createFileRoute("/c/$section")({
   loader: ({ params }) => {
@@ -84,6 +85,10 @@ function SectionIndex() {
           ))}
         </div>
       </section>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <AdSlot placement={`${section.label} Section`} />
+      </div>
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         {articles.length === 0 ? (

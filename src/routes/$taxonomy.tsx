@@ -9,6 +9,7 @@ import {
   listingMatchesTaxonomy,
 } from "@/lib/taxonomy";
 import { useStore } from "@/lib/store";
+import { AdSlot } from "@/components/AdSlot";
 
 export const Route = createFileRoute("/$taxonomy")({
   loader: ({ params }) => {
@@ -64,6 +65,10 @@ function TaxonomyPage() {
         </h1>
         <p className="text-xl max-w-2xl text-muted-foreground">{taxonomy.description}</p>
       </section>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <AdSlot placement={`${taxonomy.label} Category`} />
+      </div>
 
       <section className="max-w-7xl mx-auto px-4 py-6 border-b border-border">
         <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-widest">
