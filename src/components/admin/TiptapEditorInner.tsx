@@ -5,7 +5,6 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
-import { useEffect } from "react";
 
 interface Props {
   defaultValue?: string;
@@ -39,13 +38,10 @@ export default function TiptapEditorInner({ defaultValue, onUpdate }: Props) {
           "focus:outline-none min-h-[320px] px-4 py-3 text-base leading-relaxed prose-hunow",
       },
     },
+    // onCreate fires after the editor is fully initialised (schema ready)
+    onCreate: ({ editor: e }) => onUpdate(e.getHTML()),
     onUpdate: ({ editor: e }) => onUpdate(e.getHTML()),
   });
-
-  // Sync the hidden input on first render so an empty new post still submits ""
-  useEffect(() => {
-    if (editor) onUpdate(editor.getHTML());
-  }, [editor]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Toolbar button helpers
   const baseClass =
