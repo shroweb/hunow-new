@@ -81,6 +81,7 @@ export interface Listing {
   isHiddenGem: boolean;
   isIndependent: boolean;
   isVerified?: boolean;
+  ownerUserId?: string;
   activeOfferId?: string;
   seo?: SeoMeta;
 }
@@ -102,6 +103,7 @@ export interface Offer {
   redemptionCount: number;
   category: string;
   status: "active" | "expired";
+  isFeatured?: boolean;
   seo?: SeoMeta;
 }
 

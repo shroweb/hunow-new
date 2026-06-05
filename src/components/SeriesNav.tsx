@@ -3,7 +3,10 @@ import { useHistory } from "@/lib/reading-history";
 import type { Article } from "@/types";
 
 function seriesSlug(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 export function SeriesNav({
@@ -16,9 +19,7 @@ export function SeriesNav({
   const history = useHistory();
   const readIds = new Set(history.filter((h) => h.kind === "article").map((h) => h.id));
 
-  const sorted = [...seriesArticles].sort(
-    (a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0),
-  );
+  const sorted = [...seriesArticles].sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0));
   const currentIdx = sorted.findIndex((a) => a.id === current.id);
   const prev = currentIdx > 0 ? sorted[currentIdx - 1] : null;
   const next = currentIdx < sorted.length - 1 ? sorted[currentIdx + 1] : null;
@@ -51,10 +52,14 @@ export function SeriesNav({
               href={articlePath(a)}
               className={`flex items-center gap-4 px-5 py-3 hover:bg-foreground/5 transition-colors ${isCurrent ? "bg-accent/5" : ""}`}
             >
-              <span className={`text-[10px] font-mono w-5 shrink-0 ${isRead ? "text-accent" : "text-muted-foreground"}`}>
+              <span
+                className={`text-[10px] font-mono w-5 shrink-0 ${isRead ? "text-accent" : "text-muted-foreground"}`}
+              >
                 {isRead ? "✓" : String(i + 1).padStart(2, "0")}
               </span>
-              <span className={`text-sm flex-1 leading-snug ${isCurrent ? "font-bold" : isRead ? "text-muted-foreground" : ""}`}>
+              <span
+                className={`text-sm flex-1 leading-snug ${isCurrent ? "font-bold" : isRead ? "text-muted-foreground" : ""}`}
+              >
                 {a.title}
               </span>
               {isCurrent && (
@@ -75,7 +80,9 @@ export function SeriesNav({
             >
               ← {prev.title}
             </a>
-          ) : <div className="flex-1" />}
+          ) : (
+            <div className="flex-1" />
+          )}
           {next && (
             <a
               href={articlePath(next)}

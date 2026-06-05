@@ -61,7 +61,12 @@ export const Route = createFileRoute("/events/$slug")({
               address: { "@type": "PostalAddress", streetAddress: e.address },
             },
             offers: e.isFree
-              ? { "@type": "Offer", price: "0", priceCurrency: "GBP", availability: "https://schema.org/InStock" }
+              ? {
+                  "@type": "Offer",
+                  price: "0",
+                  priceCurrency: "GBP",
+                  availability: "https://schema.org/InStock",
+                }
               : { "@type": "Offer", price: e.price, priceCurrency: "GBP", url: e.ticketUrl },
             organizer: { "@type": "Organization", name: "HU NOW" },
           }),
@@ -100,14 +105,13 @@ function EventDetail() {
   const venue = listings.find((l) => l.name.toLowerCase() === event.locationName.toLowerCase());
 
   const linkedContent = event.content
-    ? autoLink(
-        event.content,
-        [
-          ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
-          ...events.filter((e) => e.id !== event.id).map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
-          ...articles.map((a) => ({ name: a.title, path: `/stories/${a.slug}` })),
-        ],
-      )
+    ? autoLink(event.content, [
+        ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+        ...events
+          .filter((e) => e.id !== event.id)
+          .map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
+        ...articles.map((a) => ({ name: a.title, path: `/stories/${a.slug}` })),
+      ])
     : undefined;
 
   return (
@@ -147,9 +151,15 @@ function EventDetail() {
               <div className="font-bold">
                 {event.endDate ? (
                   <>
-                    {new Date(event.startDate).toLocaleDateString("en-GB", { day: "numeric", month: "long" })}
+                    {new Date(event.startDate).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                    })}
                     {" – "}
-                    {new Date(event.endDate).toLocaleDateString("en-GB", { day: "numeric", month: "long" })}
+                    {new Date(event.endDate).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                    })}
                   </>
                 ) : (
                   new Date(event.startDate).toLocaleDateString("en-GB", {
@@ -240,7 +250,11 @@ function EventDetail() {
               title={event.title}
               className="px-5 py-4 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
             />
-            <ShareMenu title={event.title} text={event.description} className="px-5 py-4 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors" />
+            <ShareMenu
+              title={event.title}
+              text={event.description}
+              className="px-5 py-4 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+            />
             <RsvpButton eventId={event.id} />
           </div>
         </div>
@@ -277,18 +291,27 @@ function RsvpButton({ eventId }: { eventId: string }) {
 
   useEffect(() => {
     getEventRsvp({ data: { eventId } })
-      .then((r) => { setGoing(r.going); setCount(r.count); setHasUser(!!r.userId); })
+      .then((r) => {
+        setGoing(r.going);
+        setCount(r.count);
+        setHasUser(!!r.userId);
+      })
       .catch(() => {});
   }, [eventId]);
 
   const toggle = async () => {
-    if (!hasUser) { window.location.href = "/sign-in"; return; }
+    if (!hasUser) {
+      window.location.href = "/sign-in";
+      return;
+    }
     setLoading(true);
     try {
       const r = await toggleRsvp({ data: { eventId } });
       setGoing(r.going);
-      setCount((c) => r.going ? c + 1 : Math.max(0, c - 1));
-    } catch { /* ignore */ }
+      setCount((c) => (r.going ? c + 1 : Math.max(0, c - 1)));
+    } catch {
+      /* ignore */
+    }
     setLoading(false);
   };
 

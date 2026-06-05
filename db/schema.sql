@@ -204,3 +204,25 @@ create table if not exists saved_items (
   unique(user_id, kind, item_id)
 );
 create index if not exists saved_items_user_id_idx on saved_items (user_id);
+
+create table if not exists listing_claims (
+  id text primary key,
+  listing_id text not null,
+  user_id text not null references users(id) on delete cascade,
+  message text,
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists listing_claims_status_idx on listing_claims (status);
+create index if not exists listing_claims_listing_id_idx on listing_claims (listing_id);
+
+create table if not exists site_analytics (
+  id bigserial primary key,
+  event_type text not null,
+  path text,
+  label text,
+  created_at timestamptz not null default now()
+);
+create index if not exists site_analytics_event_type_idx on site_analytics (event_type);
+create index if not exists site_analytics_created_at_idx on site_analytics (created_at);

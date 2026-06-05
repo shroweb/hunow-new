@@ -7,7 +7,10 @@ export const Route = createFileRoute("/newsletter")({
   head: () => ({
     meta: [
       { title: "Newsletter — HU NOW" },
-      { name: "description", content: "Get Hull's best events, food guides and hidden gems every Thursday." },
+      {
+        name: "description",
+        content: "Get Hull's best events, food guides and hidden gems every Thursday.",
+      },
     ],
   }),
   component: Newsletter,
@@ -33,18 +36,23 @@ function Newsletter() {
   return (
     <PublicLayout>
       <div className="max-w-3xl mx-auto px-4 py-20">
-        <div className="font-mono text-[10px] uppercase text-accent mb-4 tracking-widest">Every Thursday</div>
+        <div className="font-mono text-[10px] uppercase text-accent mb-4 tracking-widest">
+          Every Thursday
+        </div>
         <h1 className="font-display text-6xl md:text-8xl uppercase leading-none mb-6">
           Hull in your inbox
         </h1>
         <p className="text-xl text-muted-foreground mb-12 max-w-xl">
-          The week's best events, new openings, food guides and stories — written for people who actually live here. Free, every Thursday afternoon.
+          The week's best events, new openings, food guides and stories — written for people who
+          actually live here. Free, every Thursday afternoon.
         </p>
 
         {done ? (
           <div className="border-2 border-foreground p-10">
             <div className="font-display text-4xl uppercase mb-2">You're in.</div>
-            <p className="text-muted-foreground">First issue lands this Thursday. Check your spam if it doesn't show.</p>
+            <p className="text-muted-foreground">
+              First issue lands this Thursday. Check your spam if it doesn't show.
+            </p>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-0 max-w-md">
@@ -66,12 +74,23 @@ function Newsletter() {
         )}
 
         <div className="mt-16 pt-10 border-t border-border">
-          <div className="font-mono text-[10px] uppercase text-muted-foreground mb-6 tracking-widest">What you'll get</div>
+          <div className="font-mono text-[10px] uppercase text-muted-foreground mb-6 tracking-widest">
+            What you'll get
+          </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: "What's on", body: "The week's best events — gigs, markets, openings, family days — chosen by us, not an algorithm." },
-              { title: "Where to go", body: "New places to eat and drink, hidden gems, and honest takes on what's actually worth your time." },
-              { title: "Hull stories", body: "Long reads and local news about the city, its people and what's changing." },
+              {
+                title: "What's on",
+                body: "The week's best events — gigs, markets, openings, family days — chosen by us, not an algorithm.",
+              },
+              {
+                title: "Where to go",
+                body: "New places to eat and drink, hidden gems, and honest takes on what's actually worth your time.",
+              },
+              {
+                title: "Hull stories",
+                body: "Long reads and local news about the city, its people and what's changing.",
+              },
             ].map((item) => (
               <div key={item.title} className="border border-border p-5">
                 <div className="font-display text-xl uppercase mb-2">{item.title}</div>

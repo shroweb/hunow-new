@@ -41,6 +41,12 @@ function Account() {
                 <AccountStat label="Role" value={user.role} />
               </div>
               <div className="flex flex-wrap gap-3">
+                <Link
+                  to="/business/listings"
+                  className="border-2 border-foreground px-6 py-3 text-xs font-bold uppercase tracking-widest"
+                >
+                  Business listings
+                </Link>
                 {user.role === "admin" && (
                   <Link
                     to="/admin"

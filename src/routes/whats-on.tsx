@@ -21,7 +21,16 @@ export const Route = createFileRoute("/whats-on")({
   component: WhatsOn,
 });
 
-const CATEGORIES = ["All", "Music", "Food & Drink", "Arts", "Comedy", "Family", "Theatre", "Nightlife"];
+const CATEGORIES = [
+  "All",
+  "Music",
+  "Food & Drink",
+  "Arts",
+  "Comedy",
+  "Family",
+  "Theatre",
+  "Nightlife",
+];
 
 function WhatsOn() {
   const events = useStore((s) => s.events).filter((e) => e.status === "published");
@@ -43,7 +52,9 @@ function WhatsOn() {
       ),
     [events, category, freeOnly, query],
   );
-  useEffect(() => { setPage(1); }, [category, freeOnly, query, view]);
+  useEffect(() => {
+    setPage(1);
+  }, [category, freeOnly, query, view]);
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
@@ -74,22 +85,31 @@ function WhatsOn() {
       <section className="max-w-7xl mx-auto px-4 py-5 border-b border-border">
         <div className="flex flex-wrap gap-2 items-center">
           {CATEGORIES.map((c) => (
-            <button key={c} onClick={() => setCategory(c)}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase ${category === c ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}>
+            <button
+              key={c}
+              onClick={() => setCategory(c)}
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase ${category === c ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+            >
               {c}
             </button>
           ))}
-          <button onClick={() => setFreeOnly((v) => !v)}
-            className={`px-3 py-1.5 text-[10px] font-bold uppercase ml-2 ${freeOnly ? "bg-foreground text-background" : "border border-foreground/20"}`}>
+          <button
+            onClick={() => setFreeOnly((v) => !v)}
+            className={`px-3 py-1.5 text-[10px] font-bold uppercase ml-2 ${freeOnly ? "bg-foreground text-background" : "border border-foreground/20"}`}
+          >
             Free Only
           </button>
           <div className="flex gap-1 ml-auto">
-            <button onClick={() => setView("list")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase ${view === "list" ? "bg-foreground text-background" : "border border-foreground/20"}`}>
+            <button
+              onClick={() => setView("list")}
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase ${view === "list" ? "bg-foreground text-background" : "border border-foreground/20"}`}
+            >
               List
             </button>
-            <button onClick={() => setView("calendar")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase ${view === "calendar" ? "bg-foreground text-background" : "border border-foreground/20"}`}>
+            <button
+              onClick={() => setView("calendar")}
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase ${view === "calendar" ? "bg-foreground text-background" : "border border-foreground/20"}`}
+            >
               Calendar
             </button>
           </div>
@@ -106,9 +126,18 @@ function WhatsOn() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
-              {paged.map((e) => <EventCard key={e.id} event={e} />)}
+              {paged.map((e) => (
+                <EventCard key={e.id} event={e} />
+              ))}
             </div>
-            <PaginationControls page={page} totalPages={totalPages} total={filtered.length} perPage={PER_PAGE} onPrev={() => setPage((p) => p - 1)} onNext={() => setPage((p) => p + 1)} />
+            <PaginationControls
+              page={page}
+              totalPages={totalPages}
+              total={filtered.length}
+              perPage={PER_PAGE}
+              onPrev={() => setPage((p) => p - 1)}
+              onNext={() => setPage((p) => p + 1)}
+            />
           </>
         )}
       </section>
@@ -137,8 +166,18 @@ function CalendarView({ events }: { events: EventItem[] }) {
   }, [events]);
 
   const monthName = firstDay.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
-  const prev = () => { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); };
-  const next = () => { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); };
+  const prev = () => {
+    if (month === 0) {
+      setMonth(11);
+      setYear((y) => y - 1);
+    } else setMonth((m) => m - 1);
+  };
+  const next = () => {
+    if (month === 11) {
+      setMonth(0);
+      setYear((y) => y + 1);
+    } else setMonth((m) => m + 1);
+  };
 
   const todayStr = today.toISOString().slice(0, 10);
 
@@ -146,15 +185,28 @@ function CalendarView({ events }: { events: EventItem[] }) {
     <div>
       {/* Month nav */}
       <div className="flex items-center justify-between mb-6">
-        <button onClick={prev} className="px-4 py-2 border-2 border-foreground text-xs font-bold uppercase hover:bg-foreground hover:text-background transition-colors">← Prev</button>
+        <button
+          onClick={prev}
+          className="px-4 py-2 border-2 border-foreground text-xs font-bold uppercase hover:bg-foreground hover:text-background transition-colors"
+        >
+          ← Prev
+        </button>
         <h2 className="font-display text-3xl uppercase">{monthName}</h2>
-        <button onClick={next} className="px-4 py-2 border-2 border-foreground text-xs font-bold uppercase hover:bg-foreground hover:text-background transition-colors">Next →</button>
+        <button
+          onClick={next}
+          className="px-4 py-2 border-2 border-foreground text-xs font-bold uppercase hover:bg-foreground hover:text-background transition-colors"
+        >
+          Next →
+        </button>
       </div>
 
       {/* Day-of-week headers */}
       <div className="grid grid-cols-7 border-2 border-foreground border-b-0">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-          <div key={d} className="bg-foreground text-background text-center py-2 text-[10px] font-bold uppercase border-r border-white/10 last:border-r-0">
+          <div
+            key={d}
+            className="bg-foreground text-background text-center py-2 text-[10px] font-bold uppercase border-r border-white/10 last:border-r-0"
+          >
             {d}
           </div>
         ))}
@@ -168,21 +220,34 @@ function CalendarView({ events }: { events: EventItem[] }) {
               const cellIdx = wi * 7 + di;
               const dayNum = cellIdx - startPad + 1;
               if (dayNum < 1 || dayNum > lastDay.getDate()) {
-                return <div key={di} className="min-h-[80px] bg-stone-50 border-r border-foreground/10 last:border-r-0" />;
+                return (
+                  <div
+                    key={di}
+                    className="min-h-[80px] bg-stone-50 border-r border-foreground/10 last:border-r-0"
+                  />
+                );
               }
               const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
               const dayEvents = byDate[dateStr] ?? [];
               const isToday = dateStr === todayStr;
               return (
-                <div key={di} className={`min-h-[80px] p-1.5 border-r border-foreground/10 last:border-r-0 ${isToday ? "bg-accent/5" : ""}`}>
-                  <div className={`text-[11px] font-bold mb-1 w-6 h-6 flex items-center justify-center ${isToday ? "bg-accent text-background rounded-none" : "text-muted-foreground"}`}>
+                <div
+                  key={di}
+                  className={`min-h-[80px] p-1.5 border-r border-foreground/10 last:border-r-0 ${isToday ? "bg-accent/5" : ""}`}
+                >
+                  <div
+                    className={`text-[11px] font-bold mb-1 w-6 h-6 flex items-center justify-center ${isToday ? "bg-accent text-background rounded-none" : "text-muted-foreground"}`}
+                  >
                     {dayNum}
                   </div>
                   <div className="space-y-0.5">
                     {dayEvents.slice(0, 3).map((e) => (
-                      <a key={e.id} href={`/events/${e.slug}`}
+                      <a
+                        key={e.id}
+                        href={`/events/${e.slug}`}
                         className="block text-[10px] font-bold leading-tight px-1 py-0.5 bg-foreground text-background hover:bg-accent transition-colors truncate"
-                        title={e.title}>
+                        title={e.title}
+                      >
                         {e.title}
                       </a>
                     ))}

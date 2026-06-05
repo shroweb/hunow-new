@@ -37,12 +37,15 @@ export function ArticleComments({ articleId }: { articleId: string }) {
     }
   };
 
-  const fieldCls = "w-full border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none focus:border-accent bg-transparent";
+  const fieldCls =
+    "w-full border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none focus:border-accent bg-transparent";
 
   return (
     <section className="mt-16 pt-10 border-t-2 border-foreground">
       <h2 className="font-display text-3xl uppercase mb-8">
-        {comments.length > 0 ? `${comments.length} Comment${comments.length !== 1 ? "s" : ""}` : "Leave a comment"}
+        {comments.length > 0
+          ? `${comments.length} Comment${comments.length !== 1 ? "s" : ""}`
+          : "Leave a comment"}
       </h2>
 
       {comments.length > 0 && (
@@ -52,7 +55,11 @@ export function ArticleComments({ articleId }: { articleId: string }) {
               <div className="flex items-baseline gap-3 mb-2">
                 <span className="font-bold text-sm">{c.authorName}</span>
                 <span className="font-mono text-[10px] text-muted-foreground">
-                  {new Date(c.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                  {new Date(c.createdAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </span>
               </div>
               <p className="text-sm leading-relaxed text-foreground/80">{c.body}</p>
@@ -73,13 +80,28 @@ export function ArticleComments({ articleId }: { articleId: string }) {
               <input name="authorName" required placeholder="Your name" className={fieldCls} />
             </div>
             <div>
-              <label className="block font-mono text-[10px] uppercase mb-1">Email <span className="text-muted-foreground">(not published)</span></label>
-              <input name="authorEmail" type="email" required placeholder="you@example.com" className={fieldCls} />
+              <label className="block font-mono text-[10px] uppercase mb-1">
+                Email <span className="text-muted-foreground">(not published)</span>
+              </label>
+              <input
+                name="authorEmail"
+                type="email"
+                required
+                placeholder="you@example.com"
+                className={fieldCls}
+              />
             </div>
           </div>
           <div>
             <label className="block font-mono text-[10px] uppercase mb-1">Comment</label>
-            <textarea name="body" required minLength={3} rows={5} placeholder="Share your thoughts..." className={fieldCls} />
+            <textarea
+              name="body"
+              required
+              minLength={3}
+              rows={5}
+              placeholder="Share your thoughts..."
+              className={fieldCls}
+            />
           </div>
           {error && <p className="text-sm text-red-600 font-bold">{error}</p>}
           <button

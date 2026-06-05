@@ -40,10 +40,10 @@ export const toggleRsvp = createServerFn({ method: "POST" })
       [data.eventId, user.id],
     );
     if ((existing.rowCount ?? 0) > 0) {
-      await getPool().query(
-        "delete from event_rsvps where event_id = $1 and user_id = $2",
-        [data.eventId, user.id],
-      );
+      await getPool().query("delete from event_rsvps where event_id = $1 and user_id = $2", [
+        data.eventId,
+        user.id,
+      ]);
       return { going: false };
     }
     const id = crypto.randomUUID();

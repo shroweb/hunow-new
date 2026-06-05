@@ -13,11 +13,17 @@ function AdminReviews() {
 
   const load = async () => {
     setLoading(true);
-    try { setReviews(await getPendingReviews()); } catch { /* ignore */ }
+    try {
+      setReviews(await getPendingReviews());
+    } catch {
+      /* ignore */
+    }
     setLoading(false);
   };
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    void load();
+  }, []);
 
   const act = async (reviewId: string, action: "approve" | "reject") => {
     setActing(reviewId);
@@ -31,7 +37,11 @@ function AdminReviews() {
       <AdminHeader
         title="Review Moderation"
         subtitle={`${reviews.length} pending review${reviews.length !== 1 ? "s" : ""}`}
-        action={<button onClick={() => void load()} className={adminBtnOutline}>Refresh</button>}
+        action={
+          <button onClick={() => void load()} className={adminBtnOutline}>
+            Refresh
+          </button>
+        }
       />
       <div className="p-6 md:p-10">
         {loading ? (
@@ -46,8 +56,13 @@ function AdminReviews() {
             rows={reviews.map((r) => [
               <span className="font-mono text-xs">{r.listingId}</span>,
               <span className="font-bold">{r.userName}</span>,
-              <span className="font-display text-2xl">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>,
-              <span className="text-sm max-w-xs line-clamp-2">{r.body ?? <em className="text-muted-foreground">No comment</em>}</span>,
+              <span className="font-display text-2xl">
+                {"★".repeat(r.rating)}
+                {"☆".repeat(5 - r.rating)}
+              </span>,
+              <span className="text-sm max-w-xs line-clamp-2">
+                {r.body ?? <em className="text-muted-foreground">No comment</em>}
+              </span>,
               <span className="font-mono text-[10px] text-muted-foreground">
                 {new Date(r.createdAt).toLocaleDateString("en-GB")}
               </span>,

@@ -25,7 +25,9 @@ export const Route = createFileRoute("/authors/$author")({
     <PublicLayout>
       <div className="max-w-3xl mx-auto px-4 py-32 text-center">
         <h1 className="font-display text-6xl mb-4">AUTHOR NOT FOUND</h1>
-        <Link to="/" className="underline">Back to home</Link>
+        <Link to="/" className="underline">
+          Back to home
+        </Link>
       </div>
     </PublicLayout>
   ),
@@ -45,9 +47,7 @@ function AuthorPage() {
         <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
           {author.name}
         </h1>
-        {author.bio && (
-          <p className="text-xl max-w-2xl text-muted-foreground">{author.bio}</p>
-        )}
+        {author.bio && <p className="text-xl max-w-2xl text-muted-foreground">{author.bio}</p>}
       </section>
 
       <section className="max-w-7xl mx-auto px-4 py-12">

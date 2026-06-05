@@ -6,7 +6,10 @@ import { getState } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
 
 function seriesSlug(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 export function seriesPath(name: string) {
@@ -35,7 +38,9 @@ export const Route = createFileRoute("/series/$series")({
     <PublicLayout>
       <div className="max-w-3xl mx-auto px-4 py-32 text-center">
         <h1 className="font-display text-6xl mb-4">SERIES NOT FOUND</h1>
-        <Link to="/" className="underline">Back to home</Link>
+        <Link to="/" className="underline">
+          Back to home
+        </Link>
       </div>
     </PublicLayout>
   ),
@@ -56,7 +61,10 @@ function SeriesPage() {
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
         <div className="flex items-center gap-3 mb-4">
           <span className="text-[10px] font-mono uppercase text-accent">Series</span>
-          <a href="/series" className="text-[10px] font-mono uppercase text-muted-foreground hover:text-accent transition-colors">
+          <a
+            href="/series"
+            className="text-[10px] font-mono uppercase text-muted-foreground hover:text-accent transition-colors"
+          >
             ← All series
           </a>
         </div>
@@ -93,7 +101,8 @@ function SeriesPage() {
                 </p>
               </div>
               <span className="text-[10px] font-mono uppercase shrink-0 pt-1 text-right">
-                {a.readingMinutes} min<br />→
+                {a.readingMinutes} min
+                <br />→
               </span>
             </a>
           ))}

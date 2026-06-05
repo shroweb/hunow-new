@@ -6,10 +6,7 @@ import { AuthShell, AuthField } from "./sign-in";
 
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
-    meta: [
-      { title: "Forgot password — HU NOW" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Forgot password — HU NOW" }, { name: "robots", content: "noindex" }],
   }),
   component: ForgotPassword,
 });
@@ -46,7 +43,10 @@ function ForgotPassword() {
                 <p className="text-[10px] font-mono uppercase font-bold text-accent">
                   Dev mode — reset link:
                 </p>
-                <a href={devUrl} className="text-xs font-mono break-all underline hover:text-accent">
+                <a
+                  href={devUrl}
+                  className="text-xs font-mono break-all underline hover:text-accent"
+                >
                   {devUrl}
                 </a>
               </div>

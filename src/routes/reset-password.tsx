@@ -9,10 +9,7 @@ export const Route = createFileRoute("/reset-password")({
     token: typeof search.token === "string" ? search.token : "",
   }),
   head: () => ({
-    meta: [
-      { title: "Set new password — HU NOW" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Set new password — HU NOW" }, { name: "robots", content: "noindex" }],
   }),
   component: ResetPassword,
 });

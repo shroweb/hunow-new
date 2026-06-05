@@ -46,7 +46,9 @@ function StoriesIndex() {
     () => articles.filter((a) => cat === "All" || a.category === cat),
     [articles, cat],
   );
-  useEffect(() => { setPage(1); }, [cat]);
+  useEffect(() => {
+    setPage(1);
+  }, [cat]);
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
   return (
@@ -78,7 +80,14 @@ function StoriesIndex() {
             <ArticleCard key={a.id} article={a} />
           ))}
         </div>
-        <PaginationControls page={page} totalPages={totalPages} total={filtered.length} perPage={PER_PAGE} onPrev={() => setPage((p) => p - 1)} onNext={() => setPage((p) => p + 1)} />
+        <PaginationControls
+          page={page}
+          totalPages={totalPages}
+          total={filtered.length}
+          perPage={PER_PAGE}
+          onPrev={() => setPage((p) => p - 1)}
+          onNext={() => setPage((p) => p + 1)}
+        />
       </section>
     </PublicLayout>
   );

@@ -1,4 +1,5 @@
 import process from "node:process";
+import crypto from "node:crypto";
 import pg from "pg";
 
 import {
@@ -55,7 +56,7 @@ function getDatabaseUrl() {
   return databaseUrl;
 }
 
-function getPool() {
+export function getPool() {
   if (!pool) {
     pool = new Pool({ connectionString: getDatabaseUrl() });
   }
@@ -255,6 +256,28 @@ create table if not exists site_settings (
   key text primary key,
   value text not null default ''
 );
+
+create table if not exists listing_claims (
+  id text primary key,
+  listing_id text not null,
+  user_id text not null references users(id) on delete cascade,
+  message text,
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists listing_claims_status_idx on listing_claims (status);
+create index if not exists listing_claims_listing_id_idx on listing_claims (listing_id);
+
+create table if not exists site_analytics (
+  id bigserial primary key,
+  event_type text not null,
+  path text,
+  label text,
+  created_at timestamptz not null default now()
+);
+create index if not exists site_analytics_event_type_idx on site_analytics (event_type);
+create index if not exists site_analytics_created_at_idx on site_analytics (created_at);
 `;
 
 async function ensureSchema() {
@@ -564,8 +587,14 @@ export async function incrementOfferRedemption(offerId: string) {
 export async function getAllRedirects() {
   await ensureSchema();
   const result = await getPool().query<{
-    id: string; from_path: string; to_path: string; permanent: boolean; created_at: string;
-  }>("select id, from_path, to_path, permanent, created_at from redirects order by created_at desc");
+    id: string;
+    from_path: string;
+    to_path: string;
+    permanent: boolean;
+    created_at: string;
+  }>(
+    "select id, from_path, to_path, permanent, created_at from redirects order by created_at desc",
+  );
   return result.rows.map((r) => ({
     id: r.id,
     from: r.from_path,
@@ -601,9 +630,46 @@ export async function checkRedirect(path: string) {
 }
 
 const TAXONOMY_DEFAULTS: Record<string, string[]> = {
-  event_categories: ["Music", "Food & Drink", "Arts", "Comedy", "Family", "Theatre", "Nightlife", "Sport", "Markets", "Community", "Talks & Lectures", "Exhibitions"],
-  listing_categories: ["Restaurants", "Bars & Pubs", "Cafes", "Takeaways", "Shopping", "Entertainment", "Health & Beauty", "Hotels", "Attractions", "Services"],
-  areas: ["Old Town", "Fruit Market", "City Centre", "Avenues", "Hessle Road", "Marina", "East Hull", "Bransholme", "Kingswood", "Beverley Road", "Anlaby Road", "Spring Bank"],
+  event_categories: [
+    "Music",
+    "Food & Drink",
+    "Arts",
+    "Comedy",
+    "Family",
+    "Theatre",
+    "Nightlife",
+    "Sport",
+    "Markets",
+    "Community",
+    "Talks & Lectures",
+    "Exhibitions",
+  ],
+  listing_categories: [
+    "Restaurants",
+    "Bars & Pubs",
+    "Cafes",
+    "Takeaways",
+    "Shopping",
+    "Entertainment",
+    "Health & Beauty",
+    "Hotels",
+    "Attractions",
+    "Services",
+  ],
+  areas: [
+    "Old Town",
+    "Fruit Market",
+    "City Centre",
+    "Avenues",
+    "Hessle Road",
+    "Marina",
+    "East Hull",
+    "Bransholme",
+    "Kingswood",
+    "Beverley Road",
+    "Anlaby Road",
+    "Spring Bank",
+  ],
 };
 
 export async function getTaxonomyKey(key: string): Promise<string[]> {
@@ -659,19 +725,49 @@ export interface ArticleComment {
 
 export async function getApprovedComments(articleId: string): Promise<ArticleComment[]> {
   await ensureSchema();
-  const r = await getPool().query<{ id: string; article_id: string; author_name: string; author_email: string; body: string; approved: boolean; created_at: string }>(
+  const r = await getPool().query<{
+    id: string;
+    article_id: string;
+    author_name: string;
+    author_email: string;
+    body: string;
+    approved: boolean;
+    created_at: string;
+  }>(
     "select * from article_comments where article_id = $1 and approved = true order by created_at asc",
     [articleId],
   );
-  return r.rows.map((row) => ({ id: row.id, articleId: row.article_id, authorName: row.author_name, authorEmail: row.author_email, body: row.body, approved: row.approved, createdAt: row.created_at }));
+  return r.rows.map((row) => ({
+    id: row.id,
+    articleId: row.article_id,
+    authorName: row.author_name,
+    authorEmail: row.author_email,
+    body: row.body,
+    approved: row.approved,
+    createdAt: row.created_at,
+  }));
 }
 
 export async function getAllComments(): Promise<ArticleComment[]> {
   await ensureSchema();
-  const r = await getPool().query<{ id: string; article_id: string; author_name: string; author_email: string; body: string; approved: boolean; created_at: string }>(
-    "select * from article_comments order by created_at desc",
-  );
-  return r.rows.map((row) => ({ id: row.id, articleId: row.article_id, authorName: row.author_name, authorEmail: row.author_email, body: row.body, approved: row.approved, createdAt: row.created_at }));
+  const r = await getPool().query<{
+    id: string;
+    article_id: string;
+    author_name: string;
+    author_email: string;
+    body: string;
+    approved: boolean;
+    created_at: string;
+  }>("select * from article_comments order by created_at desc");
+  return r.rows.map((row) => ({
+    id: row.id,
+    articleId: row.article_id,
+    authorName: row.author_name,
+    authorEmail: row.author_email,
+    body: row.body,
+    approved: row.approved,
+    createdAt: row.created_at,
+  }));
 }
 
 export async function insertComment(c: ArticleComment) {
@@ -723,7 +819,9 @@ export async function getSiteSettings(): Promise<Record<string, string>> {
       [key, value],
     );
   }
-  const r = await getPool().query<{ key: string; value: string }>("select key, value from site_settings");
+  const r = await getPool().query<{ key: string; value: string }>(
+    "select key, value from site_settings",
+  );
   return Object.fromEntries(r.rows.map((row) => [row.key, row.value]));
 }
 
@@ -733,4 +831,219 @@ export async function setSiteSetting(key: string, value: string) {
     "insert into site_settings (key, value) values ($1, $2) on conflict (key) do update set value = $2",
     [key, value],
   );
+}
+
+export interface ListingClaimRow {
+  id: string;
+  listingId: string;
+  listingName: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  message: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+}
+
+export async function createListingClaim(input: {
+  listingId: string;
+  userId: string;
+  message: string;
+}) {
+  await ensureSchema();
+  const existing = await getPool().query<{ id: string }>(
+    "select id from listing_claims where listing_id = $1 and user_id = $2 and status = 'pending' limit 1",
+    [input.listingId, input.userId],
+  );
+  if (existing.rows[0]) return { ok: true, id: existing.rows[0].id };
+  const id = crypto.randomUUID();
+  await getPool().query(
+    "insert into listing_claims (id, listing_id, user_id, message) values ($1, $2, $3, $4)",
+    [id, input.listingId, input.userId, input.message],
+  );
+  return { ok: true, id };
+}
+
+export async function getListingClaims(status = "pending"): Promise<ListingClaimRow[]> {
+  await ensureSchema();
+  const result = await getPool().query<{
+    id: string;
+    listing_id: string;
+    listing_name: string | null;
+    user_id: string;
+    user_name: string;
+    user_email: string;
+    message: string | null;
+    status: ListingClaimRow["status"];
+    created_at: Date;
+  }>(
+    `
+    select
+      listing_claims.id,
+      listing_claims.listing_id,
+      listings.data->>'name' as listing_name,
+      listing_claims.user_id,
+      users.name as user_name,
+      users.email as user_email,
+      listing_claims.message,
+      listing_claims.status,
+      listing_claims.created_at
+    from listing_claims
+    join users on users.id = listing_claims.user_id
+    left join listings on listings.id = listing_claims.listing_id
+    where ($1 = 'all' or listing_claims.status = $1)
+    order by listing_claims.created_at desc
+    `,
+    [status],
+  );
+  return result.rows.map((row) => ({
+    id: row.id,
+    listingId: row.listing_id,
+    listingName: row.listing_name ?? "Unknown listing",
+    userId: row.user_id,
+    userName: row.user_name,
+    userEmail: row.user_email,
+    message: row.message ?? "",
+    status: row.status,
+    createdAt: row.created_at.toISOString(),
+  }));
+}
+
+export async function moderateListingClaim(claimId: string, action: "approve" | "reject") {
+  await ensureSchema();
+  const claim = await getPool().query<{ listing_id: string; user_id: string }>(
+    "select listing_id, user_id from listing_claims where id = $1",
+    [claimId],
+  );
+  const row = claim.rows[0];
+  if (!row) throw new Error("Claim not found.");
+  const status = action === "approve" ? "approved" : "rejected";
+  await getPool().query("update listing_claims set status = $2, updated_at = now() where id = $1", [
+    claimId,
+    status,
+  ]);
+  if (action === "approve") {
+    await getPool().query(
+      `
+      update listings
+      set data = jsonb_set(
+        jsonb_set(data, '{ownerUserId}', to_jsonb($2::text), true),
+        '{isVerified}', 'true'::jsonb,
+        true
+      )
+      where id = $1
+      `,
+      [row.listing_id, row.user_id],
+    );
+  }
+  return { ok: true };
+}
+
+export async function getOwnedListings(userId: string) {
+  await ensureSeeded();
+  const result = await getPool().query<{ data: unknown }>(
+    "select data from listings where data->>'ownerUserId' = $1 order by data->>'name'",
+    [userId],
+  );
+  return result.rows.map((row) => row.data) as import("@/types").Listing[];
+}
+
+export async function updateOwnedListing(
+  userId: string,
+  listingId: string,
+  patch: Pick<
+    import("@/types").Listing,
+    "description" | "openingHours" | "website" | "phone" | "email" | "hours"
+  >,
+) {
+  await ensureSchema();
+  const result = await getPool().query<{ data: import("@/types").Listing }>(
+    "select data from listings where id = $1 and data->>'ownerUserId' = $2",
+    [listingId, userId],
+  );
+  const listing = result.rows[0]?.data;
+  if (!listing) throw new Error("Listing not found or not owned by this account.");
+  const next = { ...listing, ...patch };
+  await getPool().query("update listings set data = $2 where id = $1", [
+    listingId,
+    JSON.stringify(next),
+  ]);
+  return next;
+}
+
+export async function recordAnalyticsEvent(input: {
+  eventType: string;
+  path?: string;
+  label?: string;
+}) {
+  await ensureSchema();
+  await getPool().query(
+    "insert into site_analytics (event_type, path, label) values ($1, $2, $3)",
+    [input.eventType, input.path ?? null, input.label ?? null],
+  );
+  return { ok: true };
+}
+
+export async function getAnalyticsSummary() {
+  await ensureSchema();
+  const [eventsByType, popularPaths, searches, adEvents, totals] = await Promise.all([
+    getPool().query<{ event_type: string; count: string }>(
+      "select event_type, count(*)::text as count from site_analytics group by event_type order by count(*) desc",
+    ),
+    getPool().query<{ path: string; count: string }>(
+      "select path, count(*)::text as count from site_analytics where path is not null group by path order by count(*) desc limit 10",
+    ),
+    getPool().query<{ label: string; count: string }>(
+      "select label, count(*)::text as count from site_analytics where event_type = 'search' and label is not null group by label order by count(*) desc limit 10",
+    ),
+    getPool().query<{ event_type: string; count: string }>(
+      "select event_type, count(*)::text as count from ad_events group by event_type",
+    ),
+    getPool().query<{
+      users: string;
+      subscribers: string;
+      claims: string;
+    }>(
+      `
+      select
+        (select count(*)::text from users) as users,
+        (select count(*)::text from newsletter_subscribers) as subscribers,
+        (select count(*)::text from listing_claims where status = 'pending') as claims
+      `,
+    ),
+  ]);
+  return {
+    eventsByType: eventsByType.rows.map((row) => ({
+      label: row.event_type,
+      count: Number(row.count),
+    })),
+    popularPaths: popularPaths.rows.map((row) => ({ label: row.path, count: Number(row.count) })),
+    searches: searches.rows.map((row) => ({ label: row.label, count: Number(row.count) })),
+    adEvents: adEvents.rows.map((row) => ({ label: row.event_type, count: Number(row.count) })),
+    totals: {
+      users: Number(totals.rows[0]?.users ?? 0),
+      subscribers: Number(totals.rows[0]?.subscribers ?? 0),
+      pendingClaims: Number(totals.rows[0]?.claims ?? 0),
+    },
+  };
+}
+
+export async function getNewsletterBuilderData() {
+  await ensureSeeded();
+  const store = await getDatabaseStore();
+  return {
+    subscribers: store.newsletter.length,
+    articles: store.articles
+      .filter((article) => article.status === "published")
+      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+      .slice(0, 8),
+    events: store.events
+      .filter((event) => event.status === "published")
+      .sort((a, b) => a.startDate.localeCompare(b.startDate))
+      .slice(0, 8),
+    offers: store.offers.filter((offer) => offer.status === "active").slice(0, 8),
+    listings: store.listings
+      .filter((listing) => listing.isFeatured || listing.isHiddenGem)
+      .slice(0, 8),
+  };
 }

@@ -44,7 +44,6 @@ export const Route = createFileRoute("/$taxonomy")({
 function TaxonomyPage() {
   const { taxonomy } = Route.useLoaderData();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  if (pathname !== `/${taxonomy.slug}`) return <Outlet />;
   const articles = useStore((s) => s.articles)
     .filter((article) => article.status === "published")
     .filter((article) => articleMatchesTaxonomy(article, taxonomy));
@@ -55,6 +54,8 @@ function TaxonomyPage() {
     listingMatchesTaxonomy(listing, taxonomy),
   );
   const total = articles.length + events.length + listings.length;
+
+  if (pathname !== `/${taxonomy.slug}`) return <Outlet />;
 
   return (
     <PublicLayout>

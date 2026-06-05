@@ -90,7 +90,9 @@ function StoryDetail() {
   const entities = [
     ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
     ...events.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
-    ...articles.filter((a) => a.id !== article.id).map((a) => ({ name: a.title, path: articlePath(a) })),
+    ...articles
+      .filter((a) => a.id !== article.id)
+      .map((a) => ({ name: a.title, path: articlePath(a) })),
   ];
 
   return (

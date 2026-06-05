@@ -30,9 +30,7 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2;
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
   return R * 2 * Math.asin(Math.sqrt(a));
 }
 
@@ -53,7 +51,9 @@ function ListingsPage() {
     try {
       const saved = localStorage.getItem(NEAR_KEY);
       if (saved) setUserCoords(JSON.parse(saved) as { lat: number; lng: number });
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const locateMe = () => {
@@ -68,7 +68,11 @@ function ListingsPage() {
         const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setUserCoords(coords);
         setGeoLoading(false);
-        try { localStorage.setItem(NEAR_KEY, JSON.stringify(coords)); } catch { /* ignore */ }
+        try {
+          localStorage.setItem(NEAR_KEY, JSON.stringify(coords));
+        } catch {
+          /* ignore */
+        }
       },
       () => {
         setGeoError("Couldn't get your location.");
@@ -80,7 +84,11 @@ function ListingsPage() {
 
   const clearLocation = () => {
     setUserCoords(null);
-    try { localStorage.removeItem(NEAR_KEY); } catch { /* ignore */ }
+    try {
+      localStorage.removeItem(NEAR_KEY);
+    } catch {
+      /* ignore */
+    }
   };
 
   const categories = useMemo(
@@ -117,7 +125,9 @@ function ListingsPage() {
   }, [listings, cat, area, q, openNow, userCoords]);
 
   // Reset to page 1 when filters change
-  useEffect(() => { setPage(1); }, [cat, area, q, openNow, userCoords]);
+  useEffect(() => {
+    setPage(1);
+  }, [cat, area, q, openNow, userCoords]);
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -163,7 +173,9 @@ function ListingsPage() {
         <div className="flex flex-wrap gap-3 items-center">
           {/* Category dropdown */}
           <div className="relative">
-            <label className="sr-only" htmlFor="filter-cat">Category</label>
+            <label className="sr-only" htmlFor="filter-cat">
+              Category
+            </label>
             <select
               id="filter-cat"
               value={cat}
@@ -171,15 +183,21 @@ function ListingsPage() {
               className={`appearance-none pl-3 pr-8 py-2.5 border-2 text-[11px] font-bold uppercase tracking-widest bg-background focus:outline-none cursor-pointer transition-colors ${cat !== "All" ? "border-accent text-accent" : "border-foreground/30 hover:border-foreground"}`}
             >
               {categories.map((c) => (
-                <option key={c} value={c}>{c === "All" ? "Category" : c}</option>
+                <option key={c} value={c}>
+                  {c === "All" ? "Category" : c}
+                </option>
               ))}
             </select>
-            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px]">▾</span>
+            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px]">
+              ▾
+            </span>
           </div>
 
           {/* Area dropdown */}
           <div className="relative">
-            <label className="sr-only" htmlFor="filter-area">Area</label>
+            <label className="sr-only" htmlFor="filter-area">
+              Area
+            </label>
             <select
               id="filter-area"
               value={area}
@@ -187,10 +205,14 @@ function ListingsPage() {
               className={`appearance-none pl-3 pr-8 py-2.5 border-2 text-[11px] font-bold uppercase tracking-widest bg-background focus:outline-none cursor-pointer transition-colors ${area !== "All" ? "border-accent text-accent" : "border-foreground/30 hover:border-foreground"}`}
             >
               {areas.map((a) => (
-                <option key={a} value={a}>{a === "All" ? "Area" : a}</option>
+                <option key={a} value={a}>
+                  {a === "All" ? "Area" : a}
+                </option>
               ))}
             </select>
-            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px]">▾</span>
+            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px]">
+              ▾
+            </span>
           </div>
 
           {/* Open Now toggle */}
@@ -198,14 +220,20 @@ function ListingsPage() {
             onClick={() => setOpenNow((v) => !v)}
             className={`flex items-center gap-2 px-3 py-2.5 border-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${openNow ? "border-[oklch(0.58_0.15_145)] text-[oklch(0.58_0.15_145)]" : "border-foreground/30 hover:border-foreground"}`}
           >
-            <span className={`size-2 rounded-full ${openNow ? "bg-[oklch(0.58_0.15_145)]" : "bg-foreground/30"}`} />
+            <span
+              className={`size-2 rounded-full ${openNow ? "bg-[oklch(0.58_0.15_145)]" : "bg-foreground/30"}`}
+            />
             Open Now
           </button>
 
           {/* Clear filters */}
           {(cat !== "All" || area !== "All" || openNow) && (
             <button
-              onClick={() => { setCat("All"); setArea("All"); setOpenNow(false); }}
+              onClick={() => {
+                setCat("All");
+                setArea("All");
+                setOpenNow(false);
+              }}
               className="px-3 py-2.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground underline underline-offset-2"
             >
               Clear
@@ -256,7 +284,14 @@ function ListingsPage() {
                 </div>
               ))}
             </div>
-            <PaginationControls page={page} totalPages={totalPages} total={filtered.length} perPage={PER_PAGE} onPrev={() => setPage((p) => p - 1)} onNext={() => setPage((p) => p + 1)} />
+            <PaginationControls
+              page={page}
+              totalPages={totalPages}
+              total={filtered.length}
+              perPage={PER_PAGE}
+              onPrev={() => setPage((p) => p - 1)}
+              onNext={() => setPage((p) => p + 1)}
+            />
           </>
         )}
       </section>
@@ -299,10 +334,12 @@ function MapView({
       const map = L.default.map(mapRef.current!).setView(defaultCenter, 13);
       mapInstanceRef.current = map;
 
-      L.default.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
-        maxZoom: 19,
-      }).addTo(map);
+      L.default
+        .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+          maxZoom: 19,
+        })
+        .addTo(map);
 
       const bounds: [number, number][] = [];
 
@@ -314,7 +351,8 @@ function MapView({
           iconSize: [14, 14],
           iconAnchor: [7, 7],
         });
-        L.default.marker([userCoords.lat, userCoords.lng], { icon: userIcon })
+        L.default
+          .marker([userCoords.lat, userCoords.lng], { icon: userIcon })
           .addTo(map)
           .bindPopup("You are here");
         bounds.push([userCoords.lat, userCoords.lng]);
@@ -346,23 +384,30 @@ function MapView({
         mapInstanceRef.current = null;
       }
     };
-  // Re-init map when listings or userCoords change
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Re-init map when listings or userCoords change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listings.map((l) => l.id).join(","), userCoords?.lat, userCoords?.lng]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-      <div className="md:col-span-8 border-2 border-foreground overflow-hidden" style={{ height: "560px" }}>
+      <div
+        className="md:col-span-8 border-2 border-foreground overflow-hidden"
+        style={{ height: "560px" }}
+      >
         {/* Leaflet CSS */}
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <div ref={mapRef} style={{ height: "100%", width: "100%" }} />
         {withCoords.length < listings.length && (
           <div className="absolute bottom-0 left-0 right-0 bg-background/80 text-[9px] font-mono uppercase px-3 py-1 text-muted-foreground">
-            {listings.length - withCoords.length} listing{listings.length - withCoords.length !== 1 ? "s" : ""} without coordinates hidden
+            {listings.length - withCoords.length} listing
+            {listings.length - withCoords.length !== 1 ? "s" : ""} without coordinates hidden
           </div>
         )}
       </div>
-      <ul className="md:col-span-4 divide-y divide-foreground/10 border-2 border-foreground bg-white overflow-y-auto" style={{ maxHeight: "560px" }}>
+      <ul
+        className="md:col-span-4 divide-y divide-foreground/10 border-2 border-foreground bg-white overflow-y-auto"
+        style={{ maxHeight: "560px" }}
+      >
         {listings.map((l) => (
           <li key={l.id}>
             <a

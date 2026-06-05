@@ -1,11 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import {
-  AdminField,
-  AdminHeader,
-  adminBtn,
-  adminInput,
-} from "@/components/admin/AdminLayout";
+import { AdminField, AdminHeader, adminBtn, adminInput } from "@/components/admin/AdminLayout";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
 import { resetStoreToEmpty } from "@/lib/store.functions";
 import { setState } from "@/lib/store";
@@ -69,19 +64,54 @@ const SECTIONS: { title: string; fields: FieldDef[] }[] = [
   {
     title: "Contact details",
     fields: [
-      { key: "contact_email", label: "Contact email", type: "email", placeholder: "hello@hunow.co.uk" },
+      {
+        key: "contact_email",
+        label: "Contact email",
+        type: "email",
+        placeholder: "hello@hunow.co.uk",
+      },
       { key: "contact_phone", label: "Phone (optional)", type: "tel", placeholder: "01482 000000" },
-      { key: "privacy_url", label: "Privacy policy URL", type: "url", placeholder: "https://hunow.co.uk/privacy" },
+      {
+        key: "privacy_url",
+        label: "Privacy policy URL",
+        type: "url",
+        placeholder: "https://hunow.co.uk/privacy",
+      },
     ],
   },
   {
     title: "Social media links",
     fields: [
-      { key: "social_facebook", label: "Facebook", type: "url", placeholder: "https://facebook.com/hunow" },
-      { key: "social_instagram", label: "Instagram", type: "url", placeholder: "https://instagram.com/hunow" },
-      { key: "social_twitter", label: "X / Twitter", type: "url", placeholder: "https://x.com/hunow" },
-      { key: "social_tiktok", label: "TikTok", type: "url", placeholder: "https://tiktok.com/@hunow" },
-      { key: "social_youtube", label: "YouTube", type: "url", placeholder: "https://youtube.com/@hunow" },
+      {
+        key: "social_facebook",
+        label: "Facebook",
+        type: "url",
+        placeholder: "https://facebook.com/hunow",
+      },
+      {
+        key: "social_instagram",
+        label: "Instagram",
+        type: "url",
+        placeholder: "https://instagram.com/hunow",
+      },
+      {
+        key: "social_twitter",
+        label: "X / Twitter",
+        type: "url",
+        placeholder: "https://x.com/hunow",
+      },
+      {
+        key: "social_tiktok",
+        label: "TikTok",
+        type: "url",
+        placeholder: "https://tiktok.com/@hunow",
+      },
+      {
+        key: "social_youtube",
+        label: "YouTube",
+        type: "url",
+        placeholder: "https://youtube.com/@hunow",
+      },
     ],
   },
 ];
@@ -125,10 +155,20 @@ function AdminSettings() {
       await resetStoreToEmpty();
 
       // Clear local state and localStorage
-      try { localStorage.removeItem("hunow:store:v3"); } catch { /* ignore */ }
+      try {
+        localStorage.removeItem("hunow:store:v3");
+      } catch {
+        /* ignore */
+      }
       setState(() => ({
-        articles: [], events: [], listings: [], offers: [],
-        submissions: [], ads: [], media: [], newsletter: [],
+        articles: [],
+        events: [],
+        listings: [],
+        offers: [],
+        submissions: [],
+        ads: [],
+        media: [],
+        newsletter: [],
       }));
       window.location.reload();
     } catch (err) {
@@ -142,7 +182,10 @@ function AdminSettings() {
 
   return (
     <div>
-      <AdminHeader title="Settings" subtitle="Site identity, SEO, contact details and social links" />
+      <AdminHeader
+        title="Settings"
+        subtitle="Site identity, SEO, contact details and social links"
+      />
       <div className="p-6 md:p-10 max-w-2xl">
         <form onSubmit={onSubmit} className="space-y-8">
           {SECTIONS.map((section) => (
@@ -191,8 +234,8 @@ function AdminSettings() {
             Danger zone
           </div>
           <p className="text-sm text-muted-foreground mb-4">
-            Permanently deletes all articles, events, places, media and other
-            content. The site will be completely empty. This cannot be undone.
+            Permanently deletes all articles, events, places, media and other content. The site will
+            be completely empty. This cannot be undone.
           </p>
           <button
             type="button"

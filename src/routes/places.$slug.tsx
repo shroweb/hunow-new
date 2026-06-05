@@ -11,8 +11,14 @@ import { addToHistory } from "@/lib/reading-history";
 import { useStore } from "@/lib/store";
 import { fetchListingBySlug } from "@/lib/store.functions";
 import { autoLink } from "@/lib/autolink";
-import { getListingReviews, submitReview, deleteReview, type Review } from "@/lib/reviews.functions";
+import {
+  getListingReviews,
+  submitReview,
+  deleteReview,
+  type Review,
+} from "@/lib/reviews.functions";
 import { getCurrentUser } from "@/lib/auth.functions";
+import { claimListing } from "@/lib/business.functions";
 import { img } from "@/data/seed";
 import type { Listing } from "@/types";
 
@@ -62,8 +68,16 @@ export const Route = createFileRoute("/places/$slug")({
             url: l.website ?? `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
             sameAs: l.website,
             telephone: l.phone,
-            address: { "@type": "PostalAddress", streetAddress: l.address, addressLocality: "Hull", addressCountry: "GB" },
-            geo: l.latitude != null ? { "@type": "GeoCoordinates", latitude: l.latitude, longitude: l.longitude } : undefined,
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: l.address,
+              addressLocality: "Hull",
+              addressCountry: "GB",
+            },
+            geo:
+              l.latitude != null
+                ? { "@type": "GeoCoordinates", latitude: l.latitude, longitude: l.longitude }
+                : undefined,
             openingHours: l.openingHours,
           }),
         },
@@ -93,7 +107,9 @@ function PlaceDetail() {
   if (!listing) throw notFound();
 
   const entities = [
-    ...listings.filter((l) => l.id !== listing.id).map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+    ...listings
+      .filter((l) => l.id !== listing.id)
+      .map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
     ...events.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
     ...articles.map((a) => ({ name: a.title, path: `/stories/${a.slug}` })),
   ];
@@ -315,6 +331,11 @@ function PlaceDetail() {
             >
               Suggest an edit
             </Link>
+            <ClaimListingPanel
+              listingId={listing.id}
+              user={user}
+              owned={user?.id === listing.ownerUserId}
+            />
           </div>
         </aside>
 
@@ -386,7 +407,11 @@ function PlaceDetail() {
             </div>
           </div>
 
-          <ReviewsSection listingId={listing.id} initialReviews={initialReviews ?? []} user={user} />
+          <ReviewsSection
+            listingId={listing.id}
+            initialReviews={initialReviews ?? []}
+            user={user}
+          />
         </div>
       </section>
 
@@ -430,6 +455,89 @@ function PlaceDetail() {
       )}
     </PublicLayout>
   );
+}
+
+function ClaimListingPanel({
+  listingId,
+  user,
+  owned,
+}: {
+  listingId: string;
+  user: { id: string; name: string } | null;
+  owned: boolean;
+}) {
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
+
+  if (owned) {
+    return (
+      <Link
+        to="/business/listings"
+        className="block text-center px-4 py-3 border-2 border-accent bg-accent/10 text-[10px] font-bold uppercase tracking-widest hover:bg-accent hover:text-background transition-colors"
+      >
+        Manage this listing
+      </Link>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="border-2 border-foreground bg-white p-4">
+        <div className="font-mono text-[10px] uppercase text-muted-foreground mb-2">
+          Own this business?
+        </div>
+        <Link
+          to="/sign-in"
+          search={{ redirect: windowSafePath() }}
+          className="font-bold text-xs uppercase underline"
+        >
+          Sign in to claim it
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        setStatus("Sending...");
+        void claimListing({ data: { listingId, message } })
+          .then(() => setStatus("Claim sent for review"))
+          .catch((error) => setStatus(error instanceof Error ? error.message : "Unable to claim."));
+      }}
+      className="border-2 border-foreground bg-white p-4 space-y-3"
+    >
+      <div>
+        <div className="font-mono text-[10px] uppercase text-muted-foreground mb-1">
+          Own this business?
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Claim it to manage basic listing details from your account.
+        </p>
+      </div>
+      <textarea
+        value={message}
+        onChange={(event) => setMessage(event.target.value)}
+        rows={3}
+        maxLength={1000}
+        placeholder="Tell us your role at the business"
+        className="w-full border border-foreground/30 bg-background p-3 text-xs font-mono"
+      />
+      <button
+        type="submit"
+        className="w-full bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors"
+      >
+        Claim this listing
+      </button>
+      {status && <p className="text-xs font-bold">{status}</p>}
+    </form>
+  );
+}
+
+function windowSafePath() {
+  if (typeof window === "undefined") return "/business/listings";
+  return window.location.pathname;
 }
 
 function StarPicker({ value, onChange }: { value: number; onChange: (n: number) => void }) {
@@ -503,8 +611,13 @@ function ReviewsSection({
       </div>
 
       {user && !userReview && (
-        <form onSubmit={handleSubmit} className="border-2 border-foreground p-5 mb-8 space-y-4 bg-white">
-          <div className="text-[10px] font-mono uppercase font-bold tracking-widest">Leave a review</div>
+        <form
+          onSubmit={handleSubmit}
+          className="border-2 border-foreground p-5 mb-8 space-y-4 bg-white"
+        >
+          <div className="text-[10px] font-mono uppercase font-bold tracking-widest">
+            Leave a review
+          </div>
           <StarPicker value={rating} onChange={setRating} />
           <textarea
             value={body}
@@ -527,7 +640,10 @@ function ReviewsSection({
 
       {!user && (
         <p className="mb-6 text-sm text-muted-foreground">
-          <a href="/sign-in" className="font-bold underline hover:text-accent">Sign in</a> to leave a review.
+          <a href="/sign-in" className="font-bold underline hover:text-accent">
+            Sign in
+          </a>{" "}
+          to leave a review.
         </p>
       )}
 
@@ -541,14 +657,19 @@ function ReviewsSection({
                 <div>
                   <span className="font-bold text-sm">{r.userName}</span>
                   <span className="ml-3 text-accent tracking-widest">
-                    {"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}
+                    {"★".repeat(r.rating)}
+                    {"☆".repeat(5 - r.rating)}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-mono text-muted-foreground">
-                    {new Date(r.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                    {new Date(r.createdAt).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </span>
-                  {user && (user.id === r.userId) && (
+                  {user && user.id === r.userId && (
                     <button
                       onClick={() => handleDelete(r.id)}
                       className="text-[10px] uppercase font-bold text-muted-foreground hover:text-red-600"
@@ -612,7 +733,9 @@ function ListingMap({ listing }: { listing: Listing }) {
             lat = parseFloat(data[0].lat);
             lng = parseFloat(data[0].lon!);
           }
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       }
 
       if (lat == null || lng == null) return; // can't render

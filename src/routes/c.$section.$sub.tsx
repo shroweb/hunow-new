@@ -49,10 +49,8 @@ function SubPage() {
   const articles = useStore((s) => s.articles).filter(
     (a) =>
       a.status === "published" &&
-      (
-        (a.section === section.slug && a.subcategory === sub.slug) ||
-        a.tags.some((t) => t.toLowerCase() === sub.slug)
-      ),
+      ((a.section === section.slug && a.subcategory === sub.slug) ||
+        a.tags.some((t) => t.toLowerCase() === sub.slug)),
   );
   const events = useStore((s) => s.events).filter(
     (e) => e.status === "published" && e.category.toLowerCase() === sub.slug,
@@ -124,7 +122,9 @@ function SubPage() {
               <div>
                 <h2 className="font-display text-3xl uppercase mb-6">Upcoming</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8">
-                  {events.map((e) => <EventCard key={e.id} event={e} />)}
+                  {events.map((e) => (
+                    <EventCard key={e.id} event={e} />
+                  ))}
                 </div>
               </div>
             )}
@@ -132,7 +132,9 @@ function SubPage() {
               <div>
                 <h2 className="font-display text-3xl uppercase mb-6">Stories</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-                  {articles.map((a) => <ArticleCard key={a.id} article={a} />)}
+                  {articles.map((a) => (
+                    <ArticleCard key={a.id} article={a} />
+                  ))}
                 </div>
               </div>
             )}

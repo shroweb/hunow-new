@@ -4,7 +4,10 @@ import { useStore } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
 
 function seriesSlug(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 export const Route = createFileRoute("/series")({
@@ -18,9 +21,7 @@ export const Route = createFileRoute("/series")({
 });
 
 function SeriesIndex() {
-  const articles = useStore((s) => s.articles).filter(
-    (a) => a.status === "published" && a.series,
-  );
+  const articles = useStore((s) => s.articles).filter((a) => a.status === "published" && a.series);
 
   const seriesMap = new Map<string, typeof articles>();
   for (const a of articles) {
@@ -59,7 +60,11 @@ function SeriesIndex() {
                     {arts.length} {arts.length === 1 ? "part" : "parts"}
                   </div>
                   <h2 className="font-display text-3xl uppercase leading-none">
-                    <Link to="/series/$series" params={{ series: slug }} className="hover:text-accent transition-colors">
+                    <Link
+                      to="/series/$series"
+                      params={{ series: slug }}
+                      className="hover:text-accent transition-colors"
+                    >
                       {name}
                     </Link>
                   </h2>

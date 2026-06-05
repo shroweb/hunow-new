@@ -54,7 +54,10 @@ function AdminEvents() {
     const q = query.toLowerCase();
     return (
       (statusFilter === "all" || e.status === statusFilter) &&
-      (!q || e.title.toLowerCase().includes(q) || e.category.toLowerCase().includes(q) || e.locationName?.toLowerCase().includes(q))
+      (!q ||
+        e.title.toLowerCase().includes(q) ||
+        e.category.toLowerCase().includes(q) ||
+        e.locationName?.toLowerCase().includes(q))
     );
   });
 
@@ -152,7 +155,10 @@ function AdminEvents() {
                 const count = events.filter(
                   (e) => e.status === "published" && e.startDate < today,
                 ).length;
-                if (count === 0) { alert("No past events to archive."); return; }
+                if (count === 0) {
+                  alert("No past events to archive.");
+                  return;
+                }
                 if (!confirm(`Archive ${count} past event${count !== 1 ? "s" : ""}?`)) return;
                 setState((s) => ({
                   ...s,
@@ -212,7 +218,11 @@ function AdminEvents() {
                     />
                   </AdminField>
                   <AdminField label="Full content (optional)">
-                    <TiptapEditor key={editing?.id ?? "new"} name="content" defaultValue={editing?.content} />
+                    <TiptapEditor
+                      key={editing?.id ?? "new"}
+                      name="content"
+                      defaultValue={editing?.content}
+                    />
                   </AdminField>
                   <div className="grid md:grid-cols-2 gap-3">
                     <AdminField label="Venue">
@@ -242,7 +252,10 @@ function AdminEvents() {
                     <input
                       name="slug"
                       value={slugDraft}
-                      onChange={(e) => { setSlugDraft(e.target.value); setSlugManual(true); }}
+                      onChange={(e) => {
+                        setSlugDraft(e.target.value);
+                        setSlugManual(true);
+                      }}
                       placeholder="auto-generated-from-title"
                       className={adminInput}
                     />
@@ -433,11 +446,16 @@ function AdminEvents() {
               )}
             </span>,
             <span className="font-mono text-xs">
-              {e.startDate}{e.endDate ? ` – ${e.endDate}` : ""} {e.startTime}
+              {e.startDate}
+              {e.endDate ? ` – ${e.endDate}` : ""} {e.startTime}
             </span>,
             e.category,
             <span className="text-xs">{e.locationName}</span>,
-            <button onClick={() => toggleStatus(e.id)} title="Click to publish/unpublish" className="cursor-pointer">
+            <button
+              onClick={() => toggleStatus(e.id)}
+              title="Click to publish/unpublish"
+              className="cursor-pointer"
+            >
               <AdminStatus status={e.status} />
             </button>,
             <div className="flex gap-3">

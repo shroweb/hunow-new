@@ -19,6 +19,7 @@ function OpenNow() {
   const listings = useStore((s) => s.listings);
   const [now, setNow] = useState(() => new Date());
   const [cat, setCat] = useState("All");
+  const [mode, setMode] = useState<"now" | "late" | "sunday">("now");
 
   // Refresh every minute
   useEffect(() => {
@@ -26,10 +27,16 @@ function OpenNow() {
     return () => clearInterval(id);
   }, []);
 
-  const open = useMemo(
-    () => listings.filter((l) => l.hours && openStatus(l.hours, now).open),
-    [listings, now],
-  );
+  const open = useMemo(() => {
+    return listings.filter((l) => {
+      if (!l.hours) return false;
+      if (mode === "now") return openStatus(l.hours, now).open;
+      if (mode === "late") {
+        return Object.values(l.hours).some((hours) => hours && hours.close >= "21:00");
+      }
+      return !!l.hours.sun;
+    });
+  }, [listings, now, mode]);
 
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(open.map((l) => l.category)))],
@@ -46,15 +53,32 @@ function OpenNow() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Right now · {timeStr}</div>
+        <div className="text-[10px] font-mono uppercase mb-4 text-accent">
+          Right now · {timeStr}
+        </div>
         <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">Open Now</h1>
         <p className="text-xl max-w-2xl text-muted-foreground">
-          {open.length} {open.length === 1 ? "place" : "places"} open in Hull right now.
+          {open.length} {open.length === 1 ? "place" : "places"} matching your opening-hours filter.
         </p>
       </section>
 
-      {categories.length > 1 && (
-        <section className="max-w-7xl mx-auto px-4 py-5 border-b border-border">
+      {
+        <section className="max-w-7xl mx-auto px-4 py-5 border-b border-border space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {[
+              ["now", "Open now"],
+              ["late", "Open late"],
+              ["sunday", "Open Sunday"],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setMode(key as "now" | "late" | "sunday")}
+                className={`px-3 py-1.5 text-[10px] font-bold uppercase ${mode === key ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           <div className="flex flex-wrap gap-2">
             {categories.map((c) => (
               <button
@@ -67,7 +91,7 @@ function OpenNow() {
             ))}
           </div>
         </section>
-      )}
+      }
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         {filtered.length === 0 ? (
@@ -75,7 +99,10 @@ function OpenNow() {
             <p className="font-display text-4xl uppercase mb-4">Nothing open right now</p>
             <p className="text-muted-foreground">
               Check back soon, or browse{" "}
-              <a href="/listings" className="underline font-bold">all listings</a>.
+              <a href="/listings" className="underline font-bold">
+                all listings
+              </a>
+              .
             </p>
           </div>
         ) : (

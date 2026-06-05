@@ -4,13 +4,7 @@ import { adminInput } from "@/components/admin/AdminLayout";
 // The inner editor is lazy-loaded so Tiptap never runs on the server
 const TiptapEditorInner = lazy(() => import("./TiptapEditorInner"));
 
-export function TiptapEditor({
-  name,
-  defaultValue,
-}: {
-  name: string;
-  defaultValue?: string;
-}) {
+export function TiptapEditor({ name, defaultValue }: { name: string; defaultValue?: string }) {
   const hiddenRef = useRef<HTMLInputElement>(null);
 
   return (

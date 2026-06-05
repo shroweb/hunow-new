@@ -5,7 +5,11 @@ import { articlePath } from "@/lib/taxonomy";
 const BASE = (process.env.SITE_URL ?? "https://hunow.co.uk").replace(/\/$/, "");
 
 function escape(s: string) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 export const Route = createFileRoute("/feed/articles.rss")({

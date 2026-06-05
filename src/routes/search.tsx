@@ -1,38 +1,46 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { useStore } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
+import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 
 export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>) => ({
     q: typeof s.q === "string" ? s.q : "",
   }),
   head: () => ({
-    meta: [
-      { title: "Search — HU NOW" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Search — HU NOW" }, { name: "robots", content: "noindex" }],
   }),
   component: SearchPage,
 });
 
 function SearchPage() {
   const { q } = Route.useSearch();
+  const [type, setType] = useState("all");
   const articles = useStore((s) => s.articles);
   const events = useStore((s) => s.events);
   const listings = useStore((s) => s.listings);
+  const offers = useStore((s) => s.offers);
 
   const term = q.toLowerCase().trim();
 
+  useEffect(() => {
+    if (term.length < 2) return;
+    const id = window.setTimeout(() => {
+      void trackAnalyticsEvent({
+        data: { eventType: "search", path: "/search", label: term },
+      }).catch(() => {});
+    }, 500);
+    return () => window.clearTimeout(id);
+  }, [term]);
+
   const results = useMemo(() => {
-    if (!term) return { articles: [], events: [], listings: [] };
+    if (!term) return { articles: [], events: [], listings: [], offers: [] };
     const matchA = articles.filter(
       (a) =>
         a.status === "published" &&
-        (`${a.title} ${a.excerpt} ${a.tags.join(" ")} ${a.category}`
-          .toLowerCase()
-          .includes(term)),
+        `${a.title} ${a.excerpt} ${a.tags.join(" ")} ${a.category}`.toLowerCase().includes(term),
     );
     const matchE = events.filter(
       (e) =>
@@ -40,12 +48,27 @@ function SearchPage() {
         `${e.title} ${e.description} ${e.locationName}`.toLowerCase().includes(term),
     );
     const matchL = listings.filter((l) =>
-      `${l.name} ${l.description} ${l.category} ${l.area}`.toLowerCase().includes(term),
+      `${l.name} ${l.description} ${l.category} ${l.area} ${l.tags?.join(" ") ?? ""}`
+        .toLowerCase()
+        .includes(term),
     );
-    return { articles: matchA, events: matchE, listings: matchL };
-  }, [term, articles, events, listings]);
+    const matchO = offers.filter(
+      (o) =>
+        o.status === "active" &&
+        `${o.title} ${o.businessName} ${o.description} ${o.category}`.toLowerCase().includes(term),
+    );
+    return { articles: matchA, events: matchE, listings: matchL, offers: matchO };
+  }, [term, articles, events, listings, offers]);
 
-  const total = results.articles.length + results.events.length + results.listings.length;
+  const total =
+    results.articles.length +
+    results.events.length +
+    results.listings.length +
+    results.offers.length;
+  const showArticles = type === "all" || type === "stories";
+  const showEvents = type === "all" || type === "events";
+  const showListings = type === "all" || type === "places";
+  const showOffers = type === "all" || type === "offers";
 
   return (
     <PublicLayout>
@@ -73,6 +96,28 @@ function SearchPage() {
             {total} result{total !== 1 ? "s" : ""} for &ldquo;{q}&rdquo;
           </p>
         )}
+        {term && total > 0 && (
+          <div className="flex flex-wrap gap-2 mt-5">
+            {[
+              ["all", `All (${total})`],
+              ["stories", `Stories (${results.articles.length})`],
+              ["events", `Events (${results.events.length})`],
+              ["places", `Places (${results.listings.length})`],
+              ["offers", `Offers (${results.offers.length})`],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setType(key)}
+                className={`px-3 py-1.5 text-[10px] font-bold uppercase ${
+                  type === key ? "bg-accent text-background" : "border border-foreground/30"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       {!term && (
@@ -90,20 +135,28 @@ function SearchPage() {
 
       {term && total > 0 && (
         <div className="max-w-7xl mx-auto px-4 py-12 space-y-12">
-          {results.articles.length > 0 && (
+          {showArticles && results.articles.length > 0 && (
             <section>
               <h2 className="font-display text-3xl uppercase border-b-2 border-foreground pb-2 mb-6">
-                Stories <span className="text-muted-foreground text-xl">({results.articles.length})</span>
+                Stories{" "}
+                <span className="text-muted-foreground text-xl">({results.articles.length})</span>
               </h2>
               <ul className="divide-y divide-foreground/10">
                 {results.articles.map((a) => (
                   <li key={a.id} className="py-4">
-                    <a href={articlePath(a)} className="group flex items-start justify-between gap-4">
+                    <a
+                      href={articlePath(a)}
+                      className="group flex items-start justify-between gap-4"
+                    >
                       <div>
                         <p className="font-bold group-hover:underline">{a.title}</p>
-                        <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{a.excerpt}</p>
+                        <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
+                          {a.excerpt}
+                        </p>
                       </div>
-                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">{a.category}</span>
+                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
+                        {a.category}
+                      </span>
                     </a>
                   </li>
                 ))}
@@ -111,20 +164,29 @@ function SearchPage() {
             </section>
           )}
 
-          {results.events.length > 0 && (
+          {showEvents && results.events.length > 0 && (
             <section>
               <h2 className="font-display text-3xl uppercase border-b-2 border-foreground pb-2 mb-6">
-                Events <span className="text-muted-foreground text-xl">({results.events.length})</span>
+                Events{" "}
+                <span className="text-muted-foreground text-xl">({results.events.length})</span>
               </h2>
               <ul className="divide-y divide-foreground/10">
                 {results.events.map((e) => (
                   <li key={e.id} className="py-4">
-                    <Link to="/events/$slug" params={{ slug: e.slug }} className="group flex items-start justify-between gap-4">
+                    <Link
+                      to="/events/$slug"
+                      params={{ slug: e.slug }}
+                      className="group flex items-start justify-between gap-4"
+                    >
                       <div>
                         <p className="font-bold group-hover:underline">{e.title}</p>
-                        <p className="text-sm text-muted-foreground mt-0.5">{e.locationName} · {e.startDate}</p>
+                        <p className="text-sm text-muted-foreground mt-0.5">
+                          {e.locationName} · {e.startDate}
+                        </p>
                       </div>
-                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">{e.category}</span>
+                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
+                        {e.category}
+                      </span>
                     </Link>
                   </li>
                 ))}
@@ -132,20 +194,54 @@ function SearchPage() {
             </section>
           )}
 
-          {results.listings.length > 0 && (
+          {showListings && results.listings.length > 0 && (
             <section>
               <h2 className="font-display text-3xl uppercase border-b-2 border-foreground pb-2 mb-6">
-                Places <span className="text-muted-foreground text-xl">({results.listings.length})</span>
+                Places{" "}
+                <span className="text-muted-foreground text-xl">({results.listings.length})</span>
               </h2>
               <ul className="divide-y divide-foreground/10">
                 {results.listings.map((l) => (
                   <li key={l.id} className="py-4">
-                    <Link to="/places/$slug" params={{ slug: l.slug }} className="group flex items-start justify-between gap-4">
+                    <Link
+                      to="/places/$slug"
+                      params={{ slug: l.slug }}
+                      className="group flex items-start justify-between gap-4"
+                    >
                       <div>
                         <p className="font-bold group-hover:underline">{l.name}</p>
-                        <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{l.description}</p>
+                        <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
+                          {l.description}
+                        </p>
                       </div>
-                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">{l.category} · {l.area}</span>
+                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
+                        {l.category} · {l.area}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {showOffers && results.offers.length > 0 && (
+            <section>
+              <h2 className="font-display text-3xl uppercase border-b-2 border-foreground pb-2 mb-6">
+                Offers{" "}
+                <span className="text-muted-foreground text-xl">({results.offers.length})</span>
+              </h2>
+              <ul className="divide-y divide-foreground/10">
+                {results.offers.map((o) => (
+                  <li key={o.id} className="py-4">
+                    <Link to="/offers" className="group flex items-start justify-between gap-4">
+                      <div>
+                        <p className="font-bold group-hover:underline">{o.title}</p>
+                        <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
+                          {o.businessName} · {o.description}
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
+                        {o.category}
+                      </span>
                     </Link>
                   </li>
                 ))}

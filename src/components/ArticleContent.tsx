@@ -30,7 +30,13 @@ function applyInline(text: string) {
     else if (m[3]) parts.push(<em key={key++}>{m[3]}</em>);
     else if (m[4] && m[5])
       parts.push(
-        <a key={key++} href={m[5]} target="_blank" rel="noopener noreferrer" className="underline hover:text-accent">
+        <a
+          key={key++}
+          href={m[5]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-accent"
+        >
           {m[4]}
         </a>,
       );
@@ -46,7 +52,10 @@ export function parseContent(raw: string): Block[] {
   let i = 0;
   while (i < lines.length) {
     const line = lines[i].trim();
-    if (!line) { i++; continue; }
+    if (!line) {
+      i++;
+      continue;
+    }
     if (line.startsWith("## ")) {
       const text = line.slice(3);
       blocks.push({ type: "h2", text, id: slugId(text) });
@@ -63,7 +72,14 @@ export function parseContent(raw: string): Block[] {
     } else {
       // Accumulate paragraph lines
       const para: string[] = [line];
-      while (i + 1 < lines.length && lines[i + 1].trim() && !lines[i + 1].startsWith("#") && !lines[i + 1].startsWith(">") && !lines[i + 1].startsWith("---") && !lines[i + 1].match(/^!\[/)) {
+      while (
+        i + 1 < lines.length &&
+        lines[i + 1].trim() &&
+        !lines[i + 1].startsWith("#") &&
+        !lines[i + 1].startsWith(">") &&
+        !lines[i + 1].startsWith("---") &&
+        !lines[i + 1].match(/^!\[/)
+      ) {
         i++;
         para.push(lines[i].trim());
       }
@@ -113,9 +129,7 @@ function InlineNewsletter() {
       <div className="text-[10px] font-mono uppercase tracking-widest text-accent mb-2">
         HU NOW Newsletter
       </div>
-      <p className="font-display text-2xl uppercase leading-tight mb-1">
-        Get Hull in your inbox
-      </p>
+      <p className="font-display text-2xl uppercase leading-tight mb-1">Get Hull in your inbox</p>
       <p className="text-sm text-background/70 mb-4">
         The best events, food guides and hidden gems every Thursday.
       </p>
@@ -159,7 +173,8 @@ export function ArticleHtml({ content, entities }: { content: string; entities?:
 
 /** Auto-detects HTML vs legacy markdown */
 export function ArticleContent({ content, entities }: { content: string; entities?: Entity[] }) {
-  if (content.trimStart().startsWith("<")) return <ArticleHtml content={content} entities={entities} />;
+  if (content.trimStart().startsWith("<"))
+    return <ArticleHtml content={content} entities={entities} />;
   return <ArticleContentLegacy content={content} entities={entities} />;
 }
 
@@ -171,19 +186,30 @@ function ArticleContentLegacy({ content, entities }: { content: string; entities
       {blocks.map((block, i) => {
         if (block.type === "h2")
           return (
-            <h2 key={i} id={block.id} className="text-3xl font-bold mt-12 mb-4 leading-tight scroll-mt-24">
+            <h2
+              key={i}
+              id={block.id}
+              className="text-3xl font-bold mt-12 mb-4 leading-tight scroll-mt-24"
+            >
               {block.text}
             </h2>
           );
         if (block.type === "h3")
           return (
-            <h3 key={i} id={block.id} className="text-xl font-bold mt-8 mb-3 leading-tight scroll-mt-24">
+            <h3
+              key={i}
+              id={block.id}
+              className="text-xl font-bold mt-8 mb-3 leading-tight scroll-mt-24"
+            >
               {block.text}
             </h3>
           );
         if (block.type === "blockquote")
           return (
-            <blockquote key={i} className="my-8 pl-6 border-l-4 border-accent text-xl italic text-muted-foreground">
+            <blockquote
+              key={i}
+              className="my-8 pl-6 border-l-4 border-accent text-xl italic text-muted-foreground"
+            >
               {block.text}
             </blockquote>
           );
@@ -191,15 +217,24 @@ function ArticleContentLegacy({ content, entities }: { content: string; entities
           return (
             <figure key={i} className="my-8">
               <img src={block.src} alt={block.alt} className="w-full" loading="lazy" />
-              {block.alt && <figcaption className="mt-2 text-xs font-mono text-muted-foreground">{block.alt}</figcaption>}
+              {block.alt && (
+                <figcaption className="mt-2 text-xs font-mono text-muted-foreground">
+                  {block.alt}
+                </figcaption>
+              )}
             </figure>
           );
-        if (block.type === "divider")
-          return <hr key={i} className="my-10 border-foreground/20" />;
+        if (block.type === "divider") return <hr key={i} className="my-10 border-foreground/20" />;
         // Paragraph — apply auto-linking before inline markdown
         pCount++;
-        const text = entities?.length ? autoLinkMarkdown(block.text ?? "", entities) : (block.text ?? "");
-        const node = <p key={i} className="mb-6">{applyInline(text)}</p>;
+        const text = entities?.length
+          ? autoLinkMarkdown(block.text ?? "", entities)
+          : (block.text ?? "");
+        const node = (
+          <p key={i} className="mb-6">
+            {applyInline(text)}
+          </p>
+        );
         if (pCount === 3) {
           return (
             <div key={i}>

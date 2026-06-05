@@ -49,7 +49,10 @@ function AdminListings() {
     const q = query.toLowerCase();
     return (
       (categoryFilter === "all" || l.category === categoryFilter) &&
-      (!q || l.name.toLowerCase().includes(q) || l.area?.toLowerCase().includes(q) || l.category.toLowerCase().includes(q))
+      (!q ||
+        l.name.toLowerCase().includes(q) ||
+        l.area?.toLowerCase().includes(q) ||
+        l.category.toLowerCase().includes(q))
     );
   });
 
@@ -103,13 +106,22 @@ function AdminListings() {
       longitude,
       mapUrl: mapUrl || undefined,
       openingHours: String(fd.get("openingHours") || ""),
-      hours: (() => { try { return JSON.parse(String(fd.get("hours") || "null")) as WeekHours; } catch { return undefined; } })(),
+      hours: (() => {
+        try {
+          return JSON.parse(String(fd.get("hours") || "null")) as WeekHours;
+        } catch {
+          return undefined;
+        }
+      })(),
       website: website || undefined,
       phone: String(fd.get("phone") || "") || undefined,
       email: String(fd.get("email") || "") || undefined,
       featuredImage: String(fd.get("featuredImage") || "photo-1568901346375-23c9450c58cd"),
       gallery: gallery.length > 0 ? gallery : undefined,
-      tags: String(fd.get("tags") || "").split(",").map((t) => t.trim()).filter(Boolean),
+      tags: String(fd.get("tags") || "")
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
       isFeatured: fd.get("isFeatured") === "on",
       isHiddenGem: fd.get("isHiddenGem") === "on",
       isIndependent: fd.get("isIndependent") === "on",
@@ -239,7 +251,11 @@ function AdminListings() {
                       className={adminInput}
                     />
                   </AdminField>
-                  <GalleryUpload key={editing?.id ?? "new"} name="gallery" defaultValue={editing?.gallery} />
+                  <GalleryUpload
+                    key={editing?.id ?? "new"}
+                    name="gallery"
+                    defaultValue={editing?.gallery}
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -405,7 +421,11 @@ function AdminListings() {
             className={`${adminInput} w-auto`}
           >
             <option value="all">All categories</option>
-            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </select>
           {filtered.length !== listings.length && (
             <span className="text-xs font-mono text-muted-foreground self-center">

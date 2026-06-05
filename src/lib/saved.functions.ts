@@ -12,7 +12,9 @@ function getPool() {
 }
 
 async function ensureTable() {
-  await getPool().query(`
+  await getPool()
+    .query(
+      `
     create table if not exists saved_items (
       id text primary key,
       user_id text not null references users(id) on delete cascade,
@@ -25,7 +27,9 @@ async function ensureTable() {
       unique(user_id, kind, item_id)
     );
     create index if not exists saved_items_user_id_idx on saved_items (user_id);
-  `).catch(() => {});
+  `,
+    )
+    .catch(() => {});
 }
 
 export const getServerSavedItems = createServerFn({ method: "GET" }).handler(async () => {
@@ -35,8 +39,13 @@ export const getServerSavedItems = createServerFn({ method: "GET" }).handler(asy
 
   await ensureTable();
   const result = await getPool().query<{
-    id: string; kind: string; item_id: string; slug: string; title: string;
-    subcategory: string | null; saved_at: Date;
+    id: string;
+    kind: string;
+    item_id: string;
+    slug: string;
+    title: string;
+    subcategory: string | null;
+    saved_at: Date;
   }>(
     "select id, kind, item_id, slug, title, subcategory, saved_at from saved_items where user_id = $1 order by saved_at desc",
     [user.id],
@@ -53,14 +62,16 @@ export const getServerSavedItems = createServerFn({ method: "GET" }).handler(asy
 });
 
 export const syncSavedItem = createServerFn({ method: "POST" })
-  .inputValidator(z.object({
-    kind: z.enum(["event", "place", "story", "offer"]),
-    id: z.string(),
-    slug: z.string(),
-    title: z.string(),
-    subcategory: z.string().optional(),
-    action: z.enum(["save", "remove"]),
-  }))
+  .inputValidator(
+    z.object({
+      kind: z.enum(["event", "place", "story", "offer"]),
+      id: z.string(),
+      slug: z.string(),
+      title: z.string(),
+      subcategory: z.string().optional(),
+      action: z.enum(["save", "remove"]),
+    }),
+  )
   .handler(async ({ data }) => {
     const { currentUser } = await import("./auth.server");
     const user = await currentUser().catch(() => null);

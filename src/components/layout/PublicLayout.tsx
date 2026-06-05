@@ -5,6 +5,7 @@ import { findTaxonomy, sectionTaxonomySlug, sectionHref } from "@/lib/taxonomy";
 import { getCurrentUser } from "@/lib/auth.functions";
 import { subscribeNewsletter } from "@/lib/public.functions";
 import { getSettings } from "@/lib/settings.functions";
+import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 import { CommandPalette } from "@/components/CommandPalette";
 
 export function PublicLayout({ children }: { children: ReactNode }) {
@@ -19,6 +20,10 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       .then((user) => setAccountLabel(user ? "Account" : "Sign in"))
       .catch(() => setAccountLabel("Sign in"));
   }, []);
+
+  useEffect(() => {
+    void trackAnalyticsEvent({ data: { eventType: "pageview", path: pathname } }).catch(() => {});
+  }, [pathname]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -163,9 +168,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               {NAV_SECTIONS.map((s) => {
                 const href = sectionHref(s.slug);
                 const active =
-                  pathname === href ||
-                  pathname.startsWith(`/c/${s.slug}`) ||
-                  open === s.slug;
+                  pathname === href || pathname.startsWith(`/c/${s.slug}`) || open === s.slug;
                 return (
                   <div key={s.slug} onMouseEnter={() => setOpen(s.slug)} className="relative">
                     <a
@@ -392,47 +395,138 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 pt-16 pb-12 grid grid-cols-2 md:grid-cols-4 gap-10 border-b border-white/10">
         {/* Explore */}
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">Explore</div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">
+            Explore
+          </div>
           <ul className="space-y-3 text-sm font-medium text-white/70">
-            <li><Link to="/whats-on" className="hover:text-white transition-colors">What's On</Link></li>
-            <li><Link to="/places" className="hover:text-white transition-colors">Places</Link></li>
-            <li><Link to="/stories" className="hover:text-white transition-colors">Stories</Link></li>
-            <li><Link to="/offers" className="hover:text-white transition-colors">Offers</Link></li>
-            <li><Link to="/open-now" className="hover:text-white transition-colors">Open Now</Link></li>
+            <li>
+              <Link to="/whats-on" className="hover:text-white transition-colors">
+                What's On
+              </Link>
+            </li>
+            <li>
+              <Link to="/places" className="hover:text-white transition-colors">
+                Places
+              </Link>
+            </li>
+            <li>
+              <Link to="/stories" className="hover:text-white transition-colors">
+                Stories
+              </Link>
+            </li>
+            <li>
+              <Link to="/offers" className="hover:text-white transition-colors">
+                Offers
+              </Link>
+            </li>
+            <li>
+              <Link to="/open-now" className="hover:text-white transition-colors">
+                Open Now
+              </Link>
+            </li>
           </ul>
         </div>
 
         {/* Categories */}
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">Food & Drink</div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">
+            Food & Drink
+          </div>
           <ul className="space-y-3 text-sm font-medium text-white/70">
-            <li><Link to="/c/$section" params={{ section: "food-and-drink" }} className="hover:text-white transition-colors">Restaurants</Link></li>
-            <li><Link to="/c/$section/$sub" params={{ section: "food-and-drink", sub: "bars" }} className="hover:text-white transition-colors">Bars & Pubs</Link></li>
-            <li><Link to="/c/$section/$sub" params={{ section: "food-and-drink", sub: "takeaways" }} className="hover:text-white transition-colors">Takeaways</Link></li>
-            <li><Link to="/c/$section/$sub" params={{ section: "things-to-do", sub: "days-out" }} className="hover:text-white transition-colors">Days Out</Link></li>
-            <li><Link to="/c/$section/$sub" params={{ section: "community", sub: "family" }} className="hover:text-white transition-colors">Family</Link></li>
+            <li>
+              <Link
+                to="/c/$section"
+                params={{ section: "food-and-drink" }}
+                className="hover:text-white transition-colors"
+              >
+                Restaurants
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/c/$section/$sub"
+                params={{ section: "food-and-drink", sub: "bars" }}
+                className="hover:text-white transition-colors"
+              >
+                Bars & Pubs
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/c/$section/$sub"
+                params={{ section: "food-and-drink", sub: "takeaways" }}
+                className="hover:text-white transition-colors"
+              >
+                Takeaways
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/c/$section/$sub"
+                params={{ section: "things-to-do", sub: "days-out" }}
+                className="hover:text-white transition-colors"
+              >
+                Days Out
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/c/$section/$sub"
+                params={{ section: "community", sub: "family" }}
+                className="hover:text-white transition-colors"
+              >
+                Family
+              </Link>
+            </li>
           </ul>
         </div>
 
         {/* HU NOW */}
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">HU NOW</div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">
+            HU NOW
+          </div>
           <ul className="space-y-3 text-sm font-medium text-white/70">
-            <li><Link to="/contact" className="hover:text-white transition-colors">Contact us</Link></li>
-            <li><Link to="/contact" className="hover:text-white transition-colors">Send a news tip</Link></li>
-            <li><Link to="/submit" className="hover:text-white transition-colors">Submit an event</Link></li>
-            <li><Link to="/advertise" className="hover:text-white transition-colors">Advertise</Link></li>
-            <li><Link to="/saved" className="hover:text-white transition-colors">Saved</Link></li>
+            <li>
+              <Link to="/contact" className="hover:text-white transition-colors">
+                Contact us
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="hover:text-white transition-colors">
+                Send a news tip
+              </Link>
+            </li>
+            <li>
+              <Link to="/submit" className="hover:text-white transition-colors">
+                Submit an event
+              </Link>
+            </li>
+            <li>
+              <Link to="/advertise" className="hover:text-white transition-colors">
+                Advertise
+              </Link>
+            </li>
+            <li>
+              <Link to="/saved" className="hover:text-white transition-colors">
+                Saved
+              </Link>
+            </li>
           </ul>
         </div>
 
         {/* Newsletter */}
         <div className="col-span-2 md:col-span-1">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">Newsletter</div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">
+            Newsletter
+          </div>
           <p className="text-sm text-white/60 mb-5 leading-relaxed">
             The best events, food guides and hidden gems. Every Thursday.
           </p>
-          <Link to="/newsletter" className="block text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-4">
+          <Link
+            to="/newsletter"
+            className="block text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-4"
+          >
             Archive & more info →
           </Link>
           {subscribed ? (
@@ -462,7 +556,13 @@ function Footer() {
           <div className="flex gap-5 text-[10px] font-bold uppercase tracking-widest text-white/40">
             {Object.entries(SOCIAL_LABELS).map(([key, label]) =>
               socialLinks[key] ? (
-                <a key={key} href={socialLinks[key]} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <a
+                  key={key}
+                  href={socialLinks[key]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
                   {label}
                 </a>
               ) : null,
@@ -470,8 +570,12 @@ function Footer() {
           </div>
         )}
         <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-white/30">
-          <a href="mailto:hello@hunow.co.uk" className="hover:text-white/60 transition-colors">hello@hunow.co.uk</a>
-          <a href="#" className="hover:text-white/60 transition-colors">Privacy</a>
+          <a href="mailto:hello@hunow.co.uk" className="hover:text-white/60 transition-colors">
+            hello@hunow.co.uk
+          </a>
+          <a href="#" className="hover:text-white/60 transition-colors">
+            Privacy
+          </a>
         </div>
       </div>
     </footer>

@@ -7,7 +7,11 @@ import {
   adminBtn,
   adminBtnOutline,
 } from "@/components/admin/AdminLayout";
-import { adminGetAllComments, adminApproveComment, adminDeleteComment } from "@/lib/comments.functions";
+import {
+  adminGetAllComments,
+  adminApproveComment,
+  adminDeleteComment,
+} from "@/lib/comments.functions";
 import type { ArticleComment } from "@/lib/db.server";
 
 export const Route = createFileRoute("/admin/comments")({
@@ -74,10 +78,7 @@ function AdminComments() {
                     Unpublish
                   </button>
                 ) : (
-                  <button
-                    onClick={() => toggle(c.id, true)}
-                    className={adminBtn + " text-[10px]"}
-                  >
+                  <button onClick={() => toggle(c.id, true)} className={adminBtn + " text-[10px]"}>
                     Approve
                   </button>
                 )}

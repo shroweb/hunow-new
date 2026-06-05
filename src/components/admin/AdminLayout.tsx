@@ -15,26 +15,34 @@ import {
   ArrowLeftRight,
   Layers,
   Settings,
+  BarChart3,
+  BadgeCheck,
+  Mail,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import { getCurrentUser, signOutUser } from "@/lib/auth.functions";
 import type { AuthUser } from "@/lib/auth.server";
 
 const nav: { to: string; label: string; icon: LucideIcon }[] = [
-  { to: "/admin",              label: "Dashboard",   icon: LayoutDashboard },
-  { to: "/admin/articles",     label: "Posts",       icon: FileText },
-  { to: "/admin/events",       label: "Events",      icon: CalendarDays },
-  { to: "/admin/listings",     label: "Listings",    icon: MapPin },
-  { to: "/admin/offers",       label: "Offers",      icon: Tag },
-  { to: "/admin/submissions",  label: "Submissions", icon: Inbox },
-  { to: "/admin/ads",          label: "Ads",         icon: Megaphone },
-  { to: "/admin/media",        label: "Media",       icon: Image },
-  { to: "/admin/reviews",      label: "Reviews",     icon: Star },
-  { to: "/admin/users",        label: "Users",       icon: Users },
-  { to: "/admin/comments",     label: "Comments",    icon: MessageSquare },
-  { to: "/admin/redirects",    label: "Redirects",   icon: ArrowLeftRight },
-  { to: "/admin/taxonomy",     label: "Taxonomy",    icon: Layers },
-  { to: "/admin/settings",     label: "Settings",    icon: Settings },
+  { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/admin/articles", label: "Posts", icon: FileText },
+  { to: "/admin/events", label: "Events", icon: CalendarDays },
+  { to: "/admin/listings", label: "Listings", icon: MapPin },
+  { to: "/admin/offers", label: "Offers", icon: Tag },
+  { to: "/admin/submissions", label: "Submissions", icon: Inbox },
+  { to: "/admin/ads", label: "Ads", icon: Megaphone },
+  { to: "/admin/media", label: "Media", icon: Image },
+  { to: "/admin/editorial-picks", label: "Picks", icon: Sparkles },
+  { to: "/admin/newsletter", label: "Newsletter", icon: Mail },
+  { to: "/admin/claims", label: "Claims", icon: BadgeCheck },
+  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/admin/reviews", label: "Reviews", icon: Star },
+  { to: "/admin/users", label: "Users", icon: Users },
+  { to: "/admin/comments", label: "Comments", icon: MessageSquare },
+  { to: "/admin/redirects", label: "Redirects", icon: ArrowLeftRight },
+  { to: "/admin/taxonomy", label: "Taxonomy", icon: Layers },
+  { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export function AdminLayout() {

@@ -42,7 +42,10 @@ function AdminRedirects() {
     const nextErrors: string[] = [];
     if (!from.startsWith("/")) nextErrors.push("From path must start with /");
     if (!to) nextErrors.push("Destination is required");
-    if (nextErrors.length > 0) { setErrors(nextErrors); return; }
+    if (nextErrors.length > 0) {
+      setErrors(nextErrors);
+      return;
+    }
 
     setSaving(true);
     try {
@@ -78,7 +81,11 @@ function AdminRedirects() {
         subtitle={`${redirects.length} total`}
         action={
           <button
-            onClick={() => { setEditing(null); setErrors([]); setShowForm(true); }}
+            onClick={() => {
+              setEditing(null);
+              setErrors([]);
+              setShowForm(true);
+            }}
             className={adminBtn}
           >
             + Add redirect
@@ -124,7 +131,11 @@ function AdminRedirects() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setShowForm(false); setEditing(null); setErrors([]); }}
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditing(null);
+                    setErrors([]);
+                  }}
                   className={adminBtnOutline}
                 >
                   Cancel
@@ -149,7 +160,11 @@ function AdminRedirects() {
               </span>,
               <div className="flex gap-3">
                 <button
-                  onClick={() => { setEditing(r); setErrors([]); setShowForm(true); }}
+                  onClick={() => {
+                    setEditing(r);
+                    setErrors([]);
+                    setShowForm(true);
+                  }}
                   className="text-[10px] font-bold uppercase underline"
                 >
                   Edit

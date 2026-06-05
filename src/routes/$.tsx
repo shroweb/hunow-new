@@ -34,7 +34,7 @@ function NotFound() {
           </Link>
           <Link
             to="/search"
-            search={{}}
+            search={{ q: "" }}
             className="inline-block px-8 py-4 border-2 border-foreground font-bold uppercase tracking-widest text-xs hover:bg-foreground hover:text-background transition-colors"
           >
             Search

@@ -86,8 +86,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     const s = loaderData?.settings ?? {};
     const siteName = s.site_name || "HU NOW";
     const tagline = s.site_tagline || "Hull's Independent City Guide";
-    const desc = s.meta_description || "Events, places, stories and independent businesses across Hull.";
-    const ogDesc = s.meta_description_og || "Find what's on, where to eat and what to explore in Hull.";
+    const desc =
+      s.meta_description || "Events, places, stories and independent businesses across Hull.";
+    const ogDesc =
+      s.meta_description_og || "Find what's on, where to eat and what to explore in Hull.";
     const title = `${siteName} — ${tagline}`;
     return {
       meta: [
@@ -113,10 +115,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
         ...(s.ga_id ? [{ rel: "preconnect", href: "https://www.googletagmanager.com" }] : []),
       ],
-      scripts: s.ga_id ? [
-        { src: `https://www.googletagmanager.com/gtag/js?id=${s.ga_id}`, async: true },
-        { children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${s.ga_id}');` },
-      ] : [],
+      scripts: s.ga_id
+        ? [
+            { src: `https://www.googletagmanager.com/gtag/js?id=${s.ga_id}`, async: true },
+            {
+              children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${s.ga_id}');`,
+            },
+          ]
+        : [],
     };
   },
   shellComponent: RootShell,

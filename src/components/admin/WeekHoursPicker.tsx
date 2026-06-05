@@ -24,13 +24,15 @@ function hoursToState(hours?: WeekHours): Record<DayKey, DayState> {
     wed: { closed: false, open: "09:00", close: "17:00" },
     thu: { closed: false, open: "09:00", close: "17:00" },
     fri: { closed: false, open: "09:00", close: "17:00" },
-    sat: { closed: true,  open: "10:00", close: "16:00" },
-    sun: { closed: true,  open: "10:00", close: "16:00" },
+    sat: { closed: true, open: "10:00", close: "16:00" },
+    sun: { closed: true, open: "10:00", close: "16:00" },
   };
   if (!hours) return defaults;
   for (const day of DAYS) {
     const h = hours[day.key];
-    defaults[day.key] = h ? { closed: false, open: h.open, close: h.close } : { ...defaults[day.key], closed: true };
+    defaults[day.key] = h
+      ? { closed: false, open: h.open, close: h.close }
+      : { ...defaults[day.key], closed: true };
   }
   return defaults;
 }
@@ -44,7 +46,13 @@ function stateToHours(state: Record<DayKey, DayState>): WeekHours {
   return result;
 }
 
-export function WeekHoursPicker({ defaultValue, name }: { defaultValue?: WeekHours; name: string }) {
+export function WeekHoursPicker({
+  defaultValue,
+  name,
+}: {
+  defaultValue?: WeekHours;
+  name: string;
+}) {
   const [state, setState] = useState<Record<DayKey, DayState>>(() => hoursToState(defaultValue));
 
   const update = (key: DayKey, patch: Partial<DayState>) => {
@@ -71,7 +79,9 @@ export function WeekHoursPicker({ defaultValue, name }: { defaultValue?: WeekHou
                 />
                 Closed
               </label>
-              <div className={`flex items-center gap-2 flex-1 ${d.closed ? "opacity-30 pointer-events-none" : ""}`}>
+              <div
+                className={`flex items-center gap-2 flex-1 ${d.closed ? "opacity-30 pointer-events-none" : ""}`}
+              >
                 <input
                   type="time"
                   value={d.open}

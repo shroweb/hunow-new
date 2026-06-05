@@ -68,7 +68,11 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
             image,
             datePublished: a.publishedAt,
             author: { "@type": "Person", name: a.author },
-            publisher: { "@type": "Organization", name: "HU NOW", url: process.env.SITE_URL ?? "https://hunow.co.uk" },
+            publisher: {
+              "@type": "Organization",
+              name: "HU NOW",
+              url: process.env.SITE_URL ?? "https://hunow.co.uk",
+            },
             url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
           }),
         },
@@ -97,14 +101,22 @@ function ArticleDetail() {
   if (!article) throw notFound();
 
   useEffect(() => {
-    addToHistory({ kind: "article", id: article.id, slug: article.slug, title: article.title, subcategory: article.subcategory });
+    addToHistory({
+      kind: "article",
+      id: article.id,
+      slug: article.slug,
+      title: article.title,
+      subcategory: article.subcategory,
+    });
   }, [article.id]);
 
   const seriesArticles = article.series
     ? articles.filter((a) => a.series === article.series && a.status === "published")
     : [];
   const related = articles
-    .filter((a) => a.id !== article.id && a.category === article.category && a.series !== article.series)
+    .filter(
+      (a) => a.id !== article.id && a.category === article.category && a.series !== article.series,
+    )
     .slice(0, 3);
   const tagSet = new Set(article.tags.map((t: string) => t.toLowerCase()));
   const relatedEvents = events
@@ -125,7 +137,9 @@ function ArticleDetail() {
   const entities = [
     ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
     ...events.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
-    ...articles.filter((a) => a.id !== article.id).map((a) => ({ name: a.title, path: articlePath(a) })),
+    ...articles
+      .filter((a) => a.id !== article.id)
+      .map((a) => ({ name: a.title, path: articlePath(a) })),
   ];
 
   return (
@@ -134,9 +148,7 @@ function ArticleDetail() {
       <Breadcrumbs
         items={[
           { label: "Home", to: "/" },
-          ...(taxonomy
-            ? [{ label: taxonomy.eyebrow, to: `/${taxonomySlug}` as "/" }]
-            : []),
+          ...(taxonomy ? [{ label: taxonomy.eyebrow, to: `/${taxonomySlug}` as "/" }] : []),
           { label: article.category },
           { label: article.title },
         ]}
@@ -161,7 +173,8 @@ function ArticleDetail() {
                 className="font-mono text-[10px] uppercase text-muted-foreground hover:text-accent transition-colors"
               >
                 {article.series}
-                {article.seriesOrder && ` · Part ${article.seriesOrder} of ${seriesArticles.length}`}
+                {article.seriesOrder &&
+                  ` · Part ${article.seriesOrder} of ${seriesArticles.length}`}
               </a>
             )}
           </div>
@@ -221,7 +234,13 @@ function ArticleDetail() {
           )}
           <div className="mt-8 flex flex-wrap gap-3 border-t border-border pt-8">
             <ShareMenu title={article.title} text={article.excerpt} />
-            <SaveButton kind="story" id={article.id} slug={article.slug} title={article.title} subcategory={article.subcategory} />
+            <SaveButton
+              kind="story"
+              id={article.id}
+              slug={article.slug}
+              title={article.title}
+              subcategory={article.subcategory}
+            />
           </div>
           {article.isSponsored && (
             <div className="mt-12 p-6 border-2 border-accent bg-accent/5 font-mono text-xs uppercase">

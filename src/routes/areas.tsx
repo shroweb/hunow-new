@@ -20,7 +20,9 @@ function AreasIndex() {
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
         <div className="text-[10px] font-mono uppercase mb-4 text-accent">Neighbourhood Guide</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">Hull Areas</h1>
+        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
+          Hull Areas
+        </h1>
         <p className="text-xl max-w-2xl text-muted-foreground">
           Explore Hull neighbourhood by neighbourhood.
         </p>

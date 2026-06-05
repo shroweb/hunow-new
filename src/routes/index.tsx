@@ -61,9 +61,7 @@ function Index() {
     todayEvents.length > 0 ? "today" : weekendEvents.length > 0 ? "weekend" : "week",
   );
   const spotlightEvents = (
-    spotlightTab === "today" ? todayEvents
-    : spotlightTab === "weekend" ? weekendEvents
-    : weekEvents
+    spotlightTab === "today" ? todayEvents : spotlightTab === "weekend" ? weekendEvents : weekEvents
   ).slice(0, 3);
 
   return (
@@ -300,7 +298,8 @@ function Index() {
               Send us a tip
             </h2>
             <p className="mt-4 max-w-xl text-muted-foreground">
-              News tips, press releases, events, openings — if it's happening in Hull, we want to know.
+              News tips, press releases, events, openings — if it's happening in Hull, we want to
+              know.
             </p>
           </div>
           <Link

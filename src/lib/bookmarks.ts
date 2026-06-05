@@ -59,9 +59,7 @@ export function useBookmarks(): SavedItem[] {
 
 /** Merge server-side saved items into local cache (union, server items take priority) */
 export function syncWithServer(serverItems: SavedItem[]) {
-  const local = cache.filter(
-    (l) => !serverItems.some((s) => s.kind === l.kind && s.id === l.id),
-  );
+  const local = cache.filter((l) => !serverItems.some((s) => s.kind === l.kind && s.id === l.id));
   write([...serverItems, ...local]);
 }
 

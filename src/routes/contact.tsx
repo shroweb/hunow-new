@@ -7,16 +7,31 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact & News Tips — HU NOW" },
-      { name: "description", content: "Send HU NOW a news tip, press release, or general enquiry." },
+      {
+        name: "description",
+        content: "Send HU NOW a news tip, press release, or general enquiry.",
+      },
     ],
   }),
   component: Contact,
 });
 
 const ENQUIRY_TYPES = [
-  { value: "news-tip", label: "News tip", description: "Something happening in Hull we should cover" },
-  { value: "press-release", label: "Press release", description: "Official announcement or event information" },
-  { value: "general", label: "General enquiry", description: "Anything else — partnerships, corrections, feedback" },
+  {
+    value: "news-tip",
+    label: "News tip",
+    description: "Something happening in Hull we should cover",
+  },
+  {
+    value: "press-release",
+    label: "Press release",
+    description: "Official announcement or event information",
+  },
+  {
+    value: "general",
+    label: "General enquiry",
+    description: "Anything else — partnerships, corrections, feedback",
+  },
 ] as const;
 
 type EnquiryType = "news-tip" | "press-release" | "general";
@@ -84,7 +99,9 @@ function Contact() {
                     }`}
                   >
                     <div className="font-bold text-sm uppercase tracking-wide mb-1">{t.label}</div>
-                    <div className={`text-xs leading-snug ${enquiryType === t.value ? "text-background/70" : "text-muted-foreground"}`}>
+                    <div
+                      className={`text-xs leading-snug ${enquiryType === t.value ? "text-background/70" : "text-muted-foreground"}`}
+                    >
                       {t.description}
                     </div>
                   </button>
@@ -122,9 +139,11 @@ function Contact() {
                 name="subject"
                 required
                 placeholder={
-                  enquiryType === "news-tip" ? "e.g. New venue opening on Humber Street"
-                  : enquiryType === "press-release" ? "e.g. Hull Truck Theatre announces spring season"
-                  : "e.g. Question about advertising"
+                  enquiryType === "news-tip"
+                    ? "e.g. New venue opening on Humber Street"
+                    : enquiryType === "press-release"
+                      ? "e.g. Hull Truck Theatre announces spring season"
+                      : "e.g. Question about advertising"
                 }
                 className="w-full border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none focus:border-accent bg-transparent"
               />
@@ -144,16 +163,14 @@ function Contact() {
                   enquiryType === "news-tip"
                     ? "Tell us what you know — who, what, where, when. Include any links or sources."
                     : enquiryType === "press-release"
-                    ? "Paste your press release or provide the key details. Include contact info for follow-up."
-                    : "How can we help?"
+                      ? "Paste your press release or provide the key details. Include contact info for follow-up."
+                      : "How can we help?"
                 }
                 className="w-full border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none focus:border-accent bg-transparent resize-none"
               />
             </div>
 
-            {error && (
-              <p className="text-sm font-bold text-red-600">{error}</p>
-            )}
+            {error && <p className="text-sm font-bold text-red-600">{error}</p>}
 
             <button
               disabled={sending}
@@ -166,13 +183,15 @@ function Contact() {
 
         {/* Direct contact */}
         <div className="mt-20 pt-10 border-t border-border">
-          <div className="font-mono text-[10px] uppercase text-muted-foreground mb-2">Other ways to reach us</div>
+          <div className="font-mono text-[10px] uppercase text-muted-foreground mb-2">
+            Other ways to reach us
+          </div>
           <p className="text-sm text-muted-foreground">
             You can also email us directly at{" "}
             <a href="mailto:hello@hunow.co.uk" className="underline hover:text-accent">
               hello@hunow.co.uk
-            </a>
-            {" "}or find us on social media.
+            </a>{" "}
+            or find us on social media.
           </p>
         </div>
       </div>

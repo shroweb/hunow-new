@@ -72,12 +72,25 @@ export const getPendingReviews = createServerFn({ method: "GET" }).handler(async
   await requireAdmin();
   await ensureSchemaOnce();
   const result = await getPool().query<{
-    id: string; listing_id: string; user_id: string; user_name: string;
-    rating: number; body: string | null; status: string; created_at: Date;
-  }>("select id, listing_id, user_id, user_name, rating, body, status, created_at from reviews where status = 'pending' order by created_at desc");
+    id: string;
+    listing_id: string;
+    user_id: string;
+    user_name: string;
+    rating: number;
+    body: string | null;
+    status: string;
+    created_at: Date;
+  }>(
+    "select id, listing_id, user_id, user_name, rating, body, status, created_at from reviews where status = 'pending' order by created_at desc",
+  );
   return result.rows.map((r) => ({
-    id: r.id, listingId: r.listing_id, userId: r.user_id, userName: r.user_name,
-    rating: r.rating, body: r.body, status: r.status as Review["status"],
+    id: r.id,
+    listingId: r.listing_id,
+    userId: r.user_id,
+    userName: r.user_name,
+    rating: r.rating,
+    body: r.body,
+    status: r.status as Review["status"],
     createdAt: r.created_at.toISOString(),
   })) as Review[];
 });
@@ -102,9 +115,10 @@ export const deleteReview = createServerFn({ method: "POST" })
     if (!user) throw new Error("Not signed in.");
     const { getPool, ensureSchemaOnce } = await import("./db.server.review");
     await ensureSchemaOnce();
-    await getPool().query(
-      "delete from reviews where id = $1 and (user_id = $2 or $3 = 'admin')",
-      [data.reviewId, user.id, user.role],
-    );
+    await getPool().query("delete from reviews where id = $1 and (user_id = $2 or $3 = 'admin')", [
+      data.reviewId,
+      user.id,
+      user.role,
+    ]);
     return { ok: true };
   });

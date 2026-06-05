@@ -121,7 +121,8 @@ export function ArticleCard({ article }: { article: Article }) {
         </span>
         {article.series && (
           <span className="text-[10px] font-mono uppercase text-accent">
-            {article.series}{article.seriesOrder ? ` · Part ${article.seriesOrder}` : ""}
+            {article.series}
+            {article.seriesOrder ? ` · Part ${article.seriesOrder}` : ""}
           </span>
         )}
       </div>
@@ -176,7 +177,9 @@ export function ListingCard({ listing }: { listing: Listing }) {
           {listing.category} · {listing.area}
         </div>
         {status && (
-          <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 shrink-0 ${status.open ? "bg-[oklch(0.58_0.15_145)] text-background" : "border border-foreground/20 text-muted-foreground"}`}>
+          <span
+            className={`text-[9px] font-bold uppercase px-1.5 py-0.5 shrink-0 ${status.open ? "bg-[oklch(0.58_0.15_145)] text-background" : "border border-foreground/20 text-muted-foreground"}`}
+          >
             {status.open ? "Open" : "Closed"}
           </span>
         )}

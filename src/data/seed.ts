@@ -152,11 +152,14 @@ export const seedArticles: Article[] = [
     id: "a7",
     title: "The Fruit Market: How Humber Street Became Hull's Creative Quarter",
     slug: "fruit-market-humber-street-creative-quarter",
-    excerpt: "Ten years ago it was a wholesale market. Today it's home to galleries, restaurants, studios and one of the most talked-about independent coffee scenes in the north.",
-    content: "The Fruit Market didn't happen overnight. The regeneration of Hull's old wholesale produce district — a cluster of Victorian brick warehouses between the city centre and the Humber — took the better part of a decade, and the result is one of the UK's most convincing creative neighbourhood stories.\n\nHumber Street is the spine of it. Walk its length on a Saturday morning and you pass Humber Street Gallery, a cluster of independent cafés and restaurants, artists' studios above the shopfronts, and occasional weekend markets that spill onto the cobbles. The grain of the original warehouse district is still legible: wide arches, loading bays repurposed as shopfronts, names that nod to the area's trading past.\n\nWhat makes the Fruit Market work, compared with regeneration projects that land with a thud, is pace and mix. Independent operators moved in before the rent got steep. Galleries sat alongside food businesses from the start. The Humber Bridge is visible at the end of the street on a clear day, a constant reminder that this is a waterfront city that spent decades looking away from its own water.\n\nThe neighbourhood isn't finished. New buildings keep arriving and some of the rough edges that made it interesting are being smoothed. But the foundations are solid, and on a good evening — wine in hand outside one of the Humber Street terraces, the estuary catching the last of the light — it is hard to argue with what the city has managed here.",
+    excerpt:
+      "Ten years ago it was a wholesale market. Today it's home to galleries, restaurants, studios and one of the most talked-about independent coffee scenes in the north.",
+    content:
+      "The Fruit Market didn't happen overnight. The regeneration of Hull's old wholesale produce district — a cluster of Victorian brick warehouses between the city centre and the Humber — took the better part of a decade, and the result is one of the UK's most convincing creative neighbourhood stories.\n\nHumber Street is the spine of it. Walk its length on a Saturday morning and you pass Humber Street Gallery, a cluster of independent cafés and restaurants, artists' studios above the shopfronts, and occasional weekend markets that spill onto the cobbles. The grain of the original warehouse district is still legible: wide arches, loading bays repurposed as shopfronts, names that nod to the area's trading past.\n\nWhat makes the Fruit Market work, compared with regeneration projects that land with a thud, is pace and mix. Independent operators moved in before the rent got steep. Galleries sat alongside food businesses from the start. The Humber Bridge is visible at the end of the street on a clear day, a constant reminder that this is a waterfront city that spent decades looking away from its own water.\n\nThe neighbourhood isn't finished. New buildings keep arriving and some of the rough edges that made it interesting are being smoothed. But the foundations are solid, and on a good evening — wine in hand outside one of the Humber Street terraces, the estuary catching the last of the light — it is hard to argue with what the city has managed here.",
     category: "Culture",
     tags: ["fruit market", "humber street", "regeneration", "arts"],
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/e/e9/Horner%27s_Square%2C_Humber_Street%2C_Kingston_upon_Hull_-_geograph.org.uk_-_7960320.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/e/e9/Horner%27s_Square%2C_Humber_Street%2C_Kingston_upon_Hull_-_geograph.org.uk_-_7960320.jpg",
     author: "Sam Whitfield",
     status: "published",
     isFeatured: true,
@@ -170,8 +173,10 @@ export const seedArticles: Article[] = [
     id: "a8",
     title: "Hull's Best Brunches: Where to Go on a Saturday Morning",
     slug: "best-brunches-hull-saturday",
-    excerpt: "Smashed eggs, sourdough, shakshuka and the full works — our definitive guide to Hull's weekend brunch scene.",
-    content: "Hull's brunch scene has quietly matured into something worth setting an alarm for. The concentration of good options around Humber Street, Princes Avenue and the Old Town means you rarely have to travel more than a few minutes between decent choices, but the quality varies and the queues at the best spots are real.\n\nThieving Harry's on Humber Street is the obvious starting point. The space is small, the menu tight and seasonal, and the coffee — sourced from a local roaster — is consistently the best in the building. Weekend queues form before 10am; the trick is to arrive early or embrace the wait with a flat white.\n\nFor something heartier, the options around Princes Avenue lean towards the full English end of the spectrum, with a few places doing excellent eggs benedict variations that have gathered loyal followings over several years. Princes Avenue is also the right part of town for post-brunch wandering: good charity shops, a bookshop, a record store, and the park if the sun is out.\n\nIn the Old Town, brunch tends to happen inside historic buildings that reward a bit of curiosity — former banks, converted warehouses, courtyard spaces you'd walk past without looking up. If you're coming in from outside the city, the Old Town cluster is probably the most efficient route to a good morning.",
+    excerpt:
+      "Smashed eggs, sourdough, shakshuka and the full works — our definitive guide to Hull's weekend brunch scene.",
+    content:
+      "Hull's brunch scene has quietly matured into something worth setting an alarm for. The concentration of good options around Humber Street, Princes Avenue and the Old Town means you rarely have to travel more than a few minutes between decent choices, but the quality varies and the queues at the best spots are real.\n\nThieving Harry's on Humber Street is the obvious starting point. The space is small, the menu tight and seasonal, and the coffee — sourced from a local roaster — is consistently the best in the building. Weekend queues form before 10am; the trick is to arrive early or embrace the wait with a flat white.\n\nFor something heartier, the options around Princes Avenue lean towards the full English end of the spectrum, with a few places doing excellent eggs benedict variations that have gathered loyal followings over several years. Princes Avenue is also the right part of town for post-brunch wandering: good charity shops, a bookshop, a record store, and the park if the sun is out.\n\nIn the Old Town, brunch tends to happen inside historic buildings that reward a bit of curiosity — former banks, converted warehouses, courtyard spaces you'd walk past without looking up. If you're coming in from outside the city, the Old Town cluster is probably the most efficient route to a good morning.",
     category: "Eat & Drink",
     tags: ["brunch", "humber street", "breakfast", "café"],
     featuredImage: "photo-1504674900247-0877df9cc836",
@@ -188,11 +193,14 @@ export const seedArticles: Article[] = [
     id: "a9",
     title: "Walking the Humber Bridge: Everything You Need to Know",
     slug: "walking-humber-bridge-guide",
-    excerpt: "At 2.2km, it's one of the great walks in the north of England. Here's how to do it properly.",
-    content: "The Humber Bridge opened in 1981 and held the record for the world's longest single-span suspension bridge for sixteen years. Today it's open to pedestrians and cyclists from dawn to dusk, free of charge, and the walk across and back is one of the most underrated two hours you can spend in the area.\n\nThe pedestrian path is on the west side of the bridge — wide, well-surfaced and sheltered enough from traffic to feel calm even on a busy day. From the Hessle side, you walk out over the north bank of the estuary, the city of Hull visible to your right, open water stretching south. The central span is 1,410 metres and the towers rise 155 metres above the water; standing at mid-span with the wind coming off the Humber, it is genuinely vertiginous.\n\nThe best time to walk is late afternoon on a clear day, when the light drops low over the water and the bridge cables catch it at angles that make it look like something from a photograph rather than an engineering project. Sunset from the southern tower anchorage, looking back at the north bank, is one of those things that residents take for granted and visitors remember for years.\n\nPractical notes: the car park on the Hessle side has good facilities and the Country Park around the base is worth the additional half-hour. Allow ninety minutes for the crossing and back if you're walking at a normal pace. The bridge is occasionally closed in high winds; check before you go.",
+    excerpt:
+      "At 2.2km, it's one of the great walks in the north of England. Here's how to do it properly.",
+    content:
+      "The Humber Bridge opened in 1981 and held the record for the world's longest single-span suspension bridge for sixteen years. Today it's open to pedestrians and cyclists from dawn to dusk, free of charge, and the walk across and back is one of the most underrated two hours you can spend in the area.\n\nThe pedestrian path is on the west side of the bridge — wide, well-surfaced and sheltered enough from traffic to feel calm even on a busy day. From the Hessle side, you walk out over the north bank of the estuary, the city of Hull visible to your right, open water stretching south. The central span is 1,410 metres and the towers rise 155 metres above the water; standing at mid-span with the wind coming off the Humber, it is genuinely vertiginous.\n\nThe best time to walk is late afternoon on a clear day, when the light drops low over the water and the bridge cables catch it at angles that make it look like something from a photograph rather than an engineering project. Sunset from the southern tower anchorage, looking back at the north bank, is one of those things that residents take for granted and visitors remember for years.\n\nPractical notes: the car park on the Hessle side has good facilities and the Country Park around the base is worth the additional half-hour. Allow ninety minutes for the crossing and back if you're walking at a normal pace. The bridge is occasionally closed in high winds; check before you go.",
     category: "Outdoors",
     tags: ["humber bridge", "walking", "outdoors", "hessle"],
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/8/8b/Beautiful_sunny_day_at_Humber_Bridge_near_Hull%2C_UK_01.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/8/8b/Beautiful_sunny_day_at_Humber_Bridge_near_Hull%2C_UK_01.jpg",
     author: "Jordan Mills",
     status: "published",
     isFeatured: false,
@@ -206,8 +214,10 @@ export const seedArticles: Article[] = [
     id: "a10",
     title: "Hull City of Culture 2017: What the Legacy Looks Like Now",
     slug: "hull-city-of-culture-2017-legacy",
-    excerpt: "Nine years on from the year that changed how the city saw itself, we look at what actually stuck.",
-    content: "City of Culture 2017 was not a single event. It was 365 days of programming that ran from a spectacular opening night in Queen Victoria Square — white powder, fireworks, thousands of people — through twelve months of exhibitions, commissions, concerts, theatre and a lot of arguing about what culture means in a city that has spent decades being told it doesn't have any.\n\nThe infrastructure changes are the easiest to measure. Ferens Art Gallery closed for refurbishment before the year and reopened transformed: new galleries, better storage, a Caravaggio on loan that queued around the block. The Humber Street Gallery was new. Hull Truck got a new building. The Maritime Museum was refreshed. The investment was real and most of it has lasted.\n\nThe harder thing to measure is confidence. Hull before 2017 had a complicated relationship with its own reputation — funny about it, defensive about it, sometimes genuinely beaten down by it. What the City of Culture year did, at its best, was give the city a year of taking itself seriously in public. Artists from outside saw something worth engaging with. Artists from inside felt something worth staying for.\n\nNot all of it held. Some of the volunteer culture that built up during the year dispersed. Some of the cultural organisations that grew in 2017's atmosphere found the years after harder. But the Fruit Market kept growing, the gallery programme kept its ambition, and the city that you can walk around today — the waterfront, the Old Town, the art on the walls — has 2017 running through it whether people track the connection or not.",
+    excerpt:
+      "Nine years on from the year that changed how the city saw itself, we look at what actually stuck.",
+    content:
+      "City of Culture 2017 was not a single event. It was 365 days of programming that ran from a spectacular opening night in Queen Victoria Square — white powder, fireworks, thousands of people — through twelve months of exhibitions, commissions, concerts, theatre and a lot of arguing about what culture means in a city that has spent decades being told it doesn't have any.\n\nThe infrastructure changes are the easiest to measure. Ferens Art Gallery closed for refurbishment before the year and reopened transformed: new galleries, better storage, a Caravaggio on loan that queued around the block. The Humber Street Gallery was new. Hull Truck got a new building. The Maritime Museum was refreshed. The investment was real and most of it has lasted.\n\nThe harder thing to measure is confidence. Hull before 2017 had a complicated relationship with its own reputation — funny about it, defensive about it, sometimes genuinely beaten down by it. What the City of Culture year did, at its best, was give the city a year of taking itself seriously in public. Artists from outside saw something worth engaging with. Artists from inside felt something worth staying for.\n\nNot all of it held. Some of the volunteer culture that built up during the year dispersed. Some of the cultural organisations that grew in 2017's atmosphere found the years after harder. But the Fruit Market kept growing, the gallery programme kept its ambition, and the city that you can walk around today — the waterfront, the Old Town, the art on the walls — has 2017 running through it whether people track the connection or not.",
     category: "Culture",
     tags: ["city of culture", "history", "arts", "hull"],
     featuredImage: "photo-1541961017774-22349e4a1262",
@@ -224,11 +234,14 @@ export const seedArticles: Article[] = [
     id: "a11",
     title: "East Park: Hull's Most Underrated Green Space",
     slug: "east-park-hull-guide",
-    excerpt: "Splash park, boating lake, animal enclosure and 130 acres of Victorian parkland — and most people outside the east of the city have never been.",
-    content: "East Park sits about two miles from the city centre, in a part of Hull that doesn't often make it onto visitor itineraries. That's the first thing to know about it, and the first reason it's worth going: it is a proper Victorian municipal park, large and unhurried, used by the people who live near it rather than the people who write about Hull.\n\nThe park opened in 1887 and the bones of the original layout are still there — the boating lake, the formal gardens, the long sight lines that Victorian park designers were so good at. But East Park has also accumulated things over its 130-odd years: a small animal and bird enclosure where children can see wallabies and meerkats, a Splash Park that runs through the summer, a newly renovated café, and the Khyber Pass — a rockery feature that children have been climbing on for generations.\n\nIn summer the park fills up quickly on hot days and the splash park queue gets long. The better visiting time, if you're not bringing children specifically for the water, is a weekday morning in June or September when the park is quiet and the café is reliably open. The boating lake hire runs on warmer days and is exactly as leisurely as it sounds.\n\nEast Park is free. It always has been. In a city with a lot of pay-to-enter attractions, that still feels significant.",
+    excerpt:
+      "Splash park, boating lake, animal enclosure and 130 acres of Victorian parkland — and most people outside the east of the city have never been.",
+    content:
+      "East Park sits about two miles from the city centre, in a part of Hull that doesn't often make it onto visitor itineraries. That's the first thing to know about it, and the first reason it's worth going: it is a proper Victorian municipal park, large and unhurried, used by the people who live near it rather than the people who write about Hull.\n\nThe park opened in 1887 and the bones of the original layout are still there — the boating lake, the formal gardens, the long sight lines that Victorian park designers were so good at. But East Park has also accumulated things over its 130-odd years: a small animal and bird enclosure where children can see wallabies and meerkats, a Splash Park that runs through the summer, a newly renovated café, and the Khyber Pass — a rockery feature that children have been climbing on for generations.\n\nIn summer the park fills up quickly on hot days and the splash park queue gets long. The better visiting time, if you're not bringing children specifically for the water, is a weekday morning in June or September when the park is quiet and the café is reliably open. The boating lake hire runs on warmer days and is exactly as leisurely as it sounds.\n\nEast Park is free. It always has been. In a city with a lot of pay-to-enter attractions, that still feels significant.",
     category: "Outdoors",
     tags: ["park", "east hull", "outdoors", "family"],
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/2/26/East_Park_Avenue_of_Trees%2C_Kingston_upon_Hull_Sep25.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/2/26/East_Park_Avenue_of_Trees%2C_Kingston_upon_Hull_Sep25.jpg",
     author: "Priya Shah",
     status: "published",
     isFeatured: false,
@@ -255,7 +268,8 @@ export const seedEvents: EventItem[] = [
     address: "Queen Victoria Square and surrounding areas, Hull HU1",
     price: "Free",
     isFree: true,
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/0/0b/L%27Homme_Debout_giant_parade_at_Hull_Freedom_Festival_-_geograph.org.uk_-_5893946.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/0/0b/L%27Homme_Debout_giant_parade_at_Hull_Freedom_Festival_-_geograph.org.uk_-_5893946.jpg",
     status: "published",
     isFeatured: true,
     isSponsored: false,
@@ -279,7 +293,8 @@ export const seedEvents: EventItem[] = [
     address: "Humber Street, Hull HU1 1TU",
     price: "Free",
     isFree: true,
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/9/99/2015_Humber_Street_Sesh_Music_Festival_-_geograph.org.uk_-_4594036.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/9/99/2015_Humber_Street_Sesh_Music_Festival_-_geograph.org.uk_-_4594036.jpg",
     status: "published",
     isFeatured: true,
     isSponsored: false,
@@ -303,7 +318,8 @@ export const seedEvents: EventItem[] = [
     address: "East Park, Holderness Road, Hull HU8 8JU",
     price: "Free",
     isFree: true,
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/2/26/East_Park_Avenue_of_Trees%2C_Kingston_upon_Hull_Sep25.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/2/26/East_Park_Avenue_of_Trees%2C_Kingston_upon_Hull_Sep25.jpg",
     status: "published",
     isFeatured: true,
     isSponsored: false,
@@ -341,7 +357,8 @@ export const seedEvents: EventItem[] = [
     address: "Humber Street, Hull HU1 1TU",
     price: "Free",
     isFree: true,
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/e/e9/Horner%27s_Square%2C_Humber_Street%2C_Kingston_upon_Hull_-_geograph.org.uk_-_7960320.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/e/e9/Horner%27s_Square%2C_Humber_Street%2C_Kingston_upon_Hull_-_geograph.org.uk_-_7960320.jpg",
     status: "published",
     isFeatured: true,
     isSponsored: false,
@@ -397,7 +414,8 @@ export const seedEvents: EventItem[] = [
     address: "Queen Victoria Square, Hull HU1 3RA",
     price: "Free",
     isFree: true,
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ferens_Art_Gallery_Apr23.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ferens_Art_Gallery_Apr23.jpg",
     status: "published",
     isFeatured: false,
     isSponsored: false,
@@ -523,7 +541,8 @@ export const seedListings: Listing[] = [
     longitude: -0.3253,
     openingHours: "Daily 10:00–17:00",
     website: "https://www.thedeep.co.uk",
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/e/e2/The_Deep%2C_Kingston_upon_Hull_May24_%28cropped%29.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/e/e2/The_Deep%2C_Kingston_upon_Hull_May24_%28cropped%29.jpg",
     hours: {
       mon: { open: "10:00", close: "17:00" },
       tue: { open: "10:00", close: "17:00" },
@@ -551,7 +570,8 @@ export const seedListings: Listing[] = [
     longitude: -0.3392,
     openingHours: "Mon–Sat 10:00–17:00, Sun 11:00–16:30",
     website: "https://www.hullmuseums.co.uk/ferens",
-    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ferens_Art_Gallery_Apr23.jpg",
+    featuredImage:
+      "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ferens_Art_Gallery_Apr23.jpg",
     hours: {
       mon: { open: "10:00", close: "17:00" },
       tue: { open: "10:00", close: "17:00" },

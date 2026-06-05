@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { useStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth.functions";
+import { redeemOffer } from "@/lib/public.functions";
+import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 
 export const Route = createFileRoute("/offers")({
   head: () => ({
@@ -64,7 +66,17 @@ function Offers() {
           >
             {!user && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/60 backdrop-blur-[2px]">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
@@ -82,11 +94,30 @@ function Offers() {
             <div className="text-[10px] font-mono uppercase text-muted-foreground mb-3">
               Ends {new Date(o.endDate).toLocaleDateString("en-GB")}
             </div>
+            {user && (
+              <button
+                type="button"
+                onClick={() => {
+                  void redeemOffer({ data: { offerId: o.id } }).catch(() => {});
+                  void trackAnalyticsEvent({
+                    data: { eventType: "offer_claim", path: "/offers", label: o.title },
+                  }).catch(() => {});
+                  alert(o.code ? `Use code: ${o.code}` : "Offer claimed. Show this page in-store.");
+                }}
+                className="mb-3 bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors"
+              >
+                Claim Offer
+              </button>
+            )}
             {(() => {
               const listing = listings.find((l) => l.id === o.listingId);
               const upcomingEvents = listing
                 ? events
-                    .filter((e) => e.locationName.toLowerCase() === listing.name.toLowerCase() && e.startDate >= today)
+                    .filter(
+                      (e) =>
+                        e.locationName.toLowerCase() === listing.name.toLowerCase() &&
+                        e.startDate >= today,
+                    )
                     .slice(0, 2)
                 : [];
               return (
@@ -107,7 +138,11 @@ function Offers() {
                       params={{ slug: e.slug }}
                       className="block text-[10px] font-mono text-muted-foreground hover:text-accent transition-colors truncate"
                     >
-                      {new Date(`${e.startDate}T12:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} · {e.title}
+                      {new Date(`${e.startDate}T12:00`).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                      })}{" "}
+                      · {e.title}
                     </Link>
                   ))}
                 </div>

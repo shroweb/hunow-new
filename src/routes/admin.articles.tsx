@@ -194,10 +194,12 @@ function AdminArticles() {
                       className={adminInput}
                     />
                   </AdminField>
-                  <AdminField
-                    label="Body"
-                  >
-                    <TiptapEditor key={editing?.id ?? "new"} name="content" defaultValue={editing?.content} />
+                  <AdminField label="Body">
+                    <TiptapEditor
+                      key={editing?.id ?? "new"}
+                      name="content"
+                      defaultValue={editing?.content}
+                    />
                   </AdminField>
                 </div>
 
@@ -206,7 +208,10 @@ function AdminArticles() {
                     <input
                       name="slug"
                       value={slugDraft}
-                      onChange={(e) => { setSlugDraft(e.target.value); setSlugManual(true); }}
+                      onChange={(e) => {
+                        setSlugDraft(e.target.value);
+                        setSlugManual(true);
+                      }}
                       placeholder="auto-generated-from-title"
                       className={adminInput}
                     />
@@ -217,7 +222,10 @@ function AdminArticles() {
                     dateLabel="Publish date"
                     dateValue={editing?.publishedAt ?? today}
                     scheduledFor={editing?.scheduledFor}
-                    previewHref={articlePath({ subcategory: editing?.subcategory, slug: editing?.slug ?? "preview" })}
+                    previewHref={articlePath({
+                      subcategory: editing?.subcategory,
+                      slug: editing?.slug ?? "preview",
+                    })}
                   />
                   <AdminField label="Author">
                     <input
@@ -296,7 +304,10 @@ function AdminArticles() {
                       />
                     </AdminField>
                   </div>
-                  <AdminField label="Series" hint="Group related articles into an ordered collection">
+                  <AdminField
+                    label="Series"
+                    hint="Group related articles into an ordered collection"
+                  >
                     <input
                       name="series"
                       list="admin-series-list"
@@ -306,11 +317,7 @@ function AdminArticles() {
                     />
                     <datalist id="admin-series-list">
                       {Array.from(
-                        new Set(
-                          articles
-                            .filter((a) => a.series)
-                            .map((a) => a.series!)
-                        )
+                        new Set(articles.filter((a) => a.series).map((a) => a.series!)),
                       ).map((s) => (
                         <option key={s} value={s}>
                           {articles.filter((a) => a.series === s).length} parts

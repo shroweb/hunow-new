@@ -28,7 +28,9 @@ export const Route = createFileRoute("/areas/$area")({
     <PublicLayout>
       <div className="max-w-3xl mx-auto px-4 py-32 text-center">
         <h1 className="font-display text-6xl mb-4">AREA NOT FOUND</h1>
-        <Link to="/areas" className="underline">All areas</Link>
+        <Link to="/areas" className="underline">
+          All areas
+        </Link>
       </div>
     </PublicLayout>
   ),
@@ -44,13 +46,15 @@ function AreaPage() {
       (e.locationName.toLowerCase().includes(area.toLowerCase()) ||
         e.address.toLowerCase().includes(area.toLowerCase())),
   );
-  const articles = useStore((s) => s.articles).filter(
-    (a) =>
-      a.status === "published" &&
-      (a.tags.some((t) => t.toLowerCase().includes(area.toLowerCase())) ||
-        a.title.toLowerCase().includes(area.toLowerCase()) ||
-        a.content.toLowerCase().includes(area.toLowerCase())),
-  ).slice(0, 3);
+  const articles = useStore((s) => s.articles)
+    .filter(
+      (a) =>
+        a.status === "published" &&
+        (a.tags.some((t) => t.toLowerCase().includes(area.toLowerCase())) ||
+          a.title.toLowerCase().includes(area.toLowerCase()) ||
+          a.content.toLowerCase().includes(area.toLowerCase())),
+    )
+    .slice(0, 3);
 
   const featured = listings.filter((l) => l.isFeatured || l.isHiddenGem).slice(0, 3);
   const rest = listings.filter((l) => !featured.find((f) => f.id === l.id));
@@ -71,7 +75,9 @@ function AreaPage() {
         <section className="max-w-7xl mx-auto px-4 py-12 border-b border-border">
           <h2 className="text-4xl font-display uppercase mb-8">Highlights</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featured.map((l) => <ListingCard key={l.id} listing={l} />)}
+            {featured.map((l) => (
+              <ListingCard key={l.id} listing={l} />
+            ))}
           </div>
         </section>
       )}
@@ -80,7 +86,9 @@ function AreaPage() {
         <section className="max-w-7xl mx-auto px-4 py-12 border-b border-border">
           <h2 className="text-4xl font-display uppercase mb-8">Events in {area}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {events.slice(0, 3).map((e) => <EventCard key={e.id} event={e} />)}
+            {events.slice(0, 3).map((e) => (
+              <EventCard key={e.id} event={e} />
+            ))}
           </div>
         </section>
       )}
@@ -92,7 +100,9 @@ function AreaPage() {
             <span className="ml-3 text-xl font-mono text-muted-foreground">({rest.length})</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {rest.map((l) => <ListingCard key={l.id} listing={l} />)}
+            {rest.map((l) => (
+              <ListingCard key={l.id} listing={l} />
+            ))}
           </div>
         </section>
       )}
@@ -101,7 +111,9 @@ function AreaPage() {
         <section className="max-w-7xl mx-auto px-4 py-12">
           <h2 className="text-4xl font-display uppercase mb-8">Stories about {area}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16">
-            {articles.map((a) => <ArticleCard key={a.id} article={a} />)}
+            {articles.map((a) => (
+              <ArticleCard key={a.id} article={a} />
+            ))}
           </div>
         </section>
       )}

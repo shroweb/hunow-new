@@ -38,7 +38,10 @@ function AdminTaxonomy() {
 
   const save = async (key: string) => {
     setSaving(true);
-    const items = draft.split("\n").map((s) => s.trim()).filter(Boolean);
+    const items = draft
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
     try {
       await updateTaxonomyKey({ data: { key, items } });
       setTaxonomy((t: Record<string, string[]>) => ({ ...t, [key]: items }));
@@ -52,10 +55,7 @@ function AdminTaxonomy() {
 
   return (
     <div>
-      <AdminHeader
-        title="Taxonomy"
-        subtitle="Categories and areas used across forms and filters"
-      />
+      <AdminHeader title="Taxonomy" subtitle="Categories and areas used across forms and filters" />
       <div className="p-6 md:p-10 space-y-6">
         {keys.map((key) => {
           const items = taxonomy[key] ?? [];
@@ -85,17 +85,10 @@ function AdminTaxonomy() {
                     />
                   </AdminField>
                   <div className="flex gap-3">
-                    <button
-                      onClick={() => save(key)}
-                      disabled={saving}
-                      className={adminBtn}
-                    >
+                    <button onClick={() => save(key)} disabled={saving} className={adminBtn}>
                       {saving ? "Saving…" : "Save"}
                     </button>
-                    <button
-                      onClick={() => setEditing(null)}
-                      className={adminBtnOutline}
-                    >
+                    <button onClick={() => setEditing(null)} className={adminBtnOutline}>
                       Cancel
                     </button>
                   </div>

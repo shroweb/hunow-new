@@ -31,7 +31,9 @@ export const Route = createFileRoute("/tag/$tag")({
     <PublicLayout>
       <div className="max-w-3xl mx-auto px-4 py-32 text-center">
         <h1 className="font-display text-6xl mb-4">TAG NOT FOUND</h1>
-        <Link to="/" className="underline">Back to home</Link>
+        <Link to="/" className="underline">
+          Back to home
+        </Link>
       </div>
     </PublicLayout>
   ),
@@ -97,7 +99,9 @@ function TagPage() {
 
       {relatedTags.length > 0 && !also && (
         <section className="max-w-7xl mx-auto px-4 py-4 border-b border-border">
-          <span className="text-[10px] font-mono uppercase text-muted-foreground mr-3">Refine by:</span>
+          <span className="text-[10px] font-mono uppercase text-muted-foreground mr-3">
+            Refine by:
+          </span>
           {relatedTags.map((t) => (
             <button
               key={t}
@@ -118,7 +122,9 @@ function TagPage() {
           <div>
             <h2 className="font-display text-3xl uppercase mb-6">Events</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8">
-              {events.map((e) => <EventCard key={e.id} event={e} />)}
+              {events.map((e) => (
+                <EventCard key={e.id} event={e} />
+              ))}
             </div>
           </div>
         )}
@@ -126,13 +132,13 @@ function TagPage() {
           <div>
             <h2 className="font-display text-3xl uppercase mb-6">Stories</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-              {articles.map((a) => <ArticleCard key={a.id} article={a} />)}
+              {articles.map((a) => (
+                <ArticleCard key={a.id} article={a} />
+              ))}
             </div>
           </div>
         )}
-        {total === 0 && (
-          <p className="text-muted-foreground">Nothing matches both tags.</p>
-        )}
+        {total === 0 && <p className="text-muted-foreground">Nothing matches both tags.</p>}
       </section>
     </PublicLayout>
   );

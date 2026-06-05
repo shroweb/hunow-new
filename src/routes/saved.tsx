@@ -30,12 +30,16 @@ function SavedPage() {
   const history = useHistory();
 
   useEffect(() => {
-    getCurrentUser().then((user) => {
-      if (!user) return;
-      getServerSavedItems().then((serverItems) => {
-        if (serverItems.length > 0) syncWithServer(serverItems);
-      }).catch(() => {});
-    }).catch(() => {});
+    getCurrentUser()
+      .then((user) => {
+        if (!user) return;
+        getServerSavedItems()
+          .then((serverItems) => {
+            if (serverItems.length > 0) syncWithServer(serverItems);
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
   }, []);
   const grouped = (Object.keys(KIND_LABELS) as Array<keyof typeof KIND_LABELS>).map((k) => ({
     kind: k,
@@ -108,11 +112,16 @@ function SavedPage() {
                 h.kind === "article"
                   ? articlePath({ subcategory: h.subcategory, slug: h.slug })
                   : h.kind === "event"
-                  ? `/events/${h.slug}`
-                  : `/places/${h.slug}`;
+                    ? `/events/${h.slug}`
+                    : `/places/${h.slug}`;
               return (
-                <li key={`${h.kind}-${h.id}`} className="flex items-center justify-between py-3 gap-4">
-                  <a href={href} className="font-bold hover:underline truncate">{h.title}</a>
+                <li
+                  key={`${h.kind}-${h.id}`}
+                  className="flex items-center justify-between py-3 gap-4"
+                >
+                  <a href={href} className="font-bold hover:underline truncate">
+                    {h.title}
+                  </a>
                   <span className="text-[10px] font-mono uppercase text-muted-foreground shrink-0">
                     {h.kind}
                   </span>
