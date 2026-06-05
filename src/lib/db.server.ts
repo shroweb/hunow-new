@@ -133,6 +133,26 @@ create table if not exists newsletter_subscribers (
   email text primary key,
   created_at timestamptz not null default now()
 );
+alter table newsletter_subscribers add column if not exists unsubscribe_token text;
+alter table newsletter_subscribers add column if not exists segments jsonb not null default '["all"]'::jsonb;
+create unique index if not exists newsletter_unsubscribe_token_idx on newsletter_subscribers (unsubscribe_token) where unsubscribe_token is not null;
+create table if not exists newsletter_campaigns (
+  id text primary key,
+  subject text not null,
+  intro text not null,
+  segment text not null default 'all',
+  selected jsonb not null,
+  html text not null,
+  plain_text text not null,
+  status text not null default 'draft' check (status in ('draft', 'scheduled', 'sent', 'failed')),
+  scheduled_for timestamptz,
+  recipient_count integer not null default 0,
+  sent_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists newsletter_campaigns_status_idx on newsletter_campaigns (status);
+create index if not exists newsletter_campaigns_created_at_idx on newsletter_campaigns (created_at);
 create table if not exists users (
   id text primary key,
   email text not null unique,
@@ -225,6 +245,8 @@ drop trigger if exists users_set_updated_at on users;
 create trigger users_set_updated_at before update on users for each row execute function set_updated_at();
 drop trigger if exists app_records_set_updated_at on app_records;
 create trigger app_records_set_updated_at before update on app_records for each row execute function set_updated_at();
+drop trigger if exists newsletter_campaigns_set_updated_at on newsletter_campaigns;
+create trigger newsletter_campaigns_set_updated_at before update on newsletter_campaigns for each row execute function set_updated_at();
 
 create table if not exists redirects (
   id text primary key,
@@ -539,9 +561,16 @@ export async function recordAdEvent(adId: string, eventType: "impression" | "cli
 export async function addNewsletterSubscriber(email: string) {
   await ensureSchema();
   const normalised = email.trim().toLowerCase();
+  const token = await makeUniqueUnsubscribeToken();
   await getPool().query(
-    "insert into newsletter_subscribers (email) values ($1) on conflict do nothing",
-    [normalised],
+    `insert into newsletter_subscribers (email, unsubscribe_token, segments)
+     values ($1, $2, '["all"]'::jsonb)
+     on conflict (email) do update set
+       segments = case
+         when newsletter_subscribers.segments ? 'all' then newsletter_subscribers.segments
+         else newsletter_subscribers.segments || '["all"]'::jsonb
+       end`,
+    [normalised, token],
   );
   await getPool().query(
     "insert into app_records (collection, id, data) values ($1, $2, $3) on conflict do nothing",
@@ -1046,4 +1075,148 @@ export async function getNewsletterBuilderData() {
       .filter((listing) => listing.isFeatured || listing.isHiddenGem)
       .slice(0, 8),
   };
+}
+
+export type NewsletterSegment = "all" | "events" | "offers" | "businesses";
+export type NewsletterCampaignStatus = "draft" | "scheduled" | "sent" | "failed";
+
+export interface NewsletterCampaignInput {
+  subject: string;
+  intro: string;
+  segment: NewsletterSegment;
+  selected: {
+    articles: string[];
+    events: string[];
+    offers: string[];
+    listings: string[];
+  };
+  html: string;
+  text: string;
+  status: NewsletterCampaignStatus;
+  scheduledFor?: string | null;
+  recipientCount?: number;
+  sentAt?: string | null;
+}
+
+export async function getNewsletterCampaignHistory() {
+  await ensureSchema();
+  const result = await getPool().query<{
+    id: string;
+    subject: string;
+    intro: string;
+    segment: NewsletterSegment;
+    status: NewsletterCampaignStatus;
+    scheduled_for: string | null;
+    recipient_count: number;
+    sent_at: string | null;
+    created_at: string;
+  }>(
+    `select id, subject, intro, segment, status, scheduled_for, recipient_count, sent_at, created_at
+     from newsletter_campaigns
+     order by created_at desc
+     limit 20`,
+  );
+
+  return result.rows.map((row) => ({
+    id: row.id,
+    subject: row.subject,
+    intro: row.intro,
+    segment: row.segment,
+    status: row.status,
+    scheduledFor: row.scheduled_for,
+    recipientCount: Number(row.recipient_count),
+    sentAt: row.sent_at,
+    createdAt: row.created_at,
+  }));
+}
+
+export async function saveNewsletterCampaign(
+  input: NewsletterCampaignInput,
+  id = crypto.randomUUID(),
+) {
+  await ensureSchema();
+  await getPool().query(
+    `insert into newsletter_campaigns (
+      id, subject, intro, segment, selected, html, plain_text, status, scheduled_for, recipient_count, sent_at
+    ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    on conflict (id) do update set
+      subject = excluded.subject,
+      intro = excluded.intro,
+      segment = excluded.segment,
+      selected = excluded.selected,
+      html = excluded.html,
+      plain_text = excluded.plain_text,
+      status = excluded.status,
+      scheduled_for = excluded.scheduled_for,
+      recipient_count = excluded.recipient_count,
+      sent_at = excluded.sent_at`,
+    [
+      id,
+      input.subject,
+      input.intro,
+      input.segment,
+      JSON.stringify(input.selected),
+      input.html,
+      input.text,
+      input.status,
+      input.scheduledFor || null,
+      input.recipientCount ?? 0,
+      input.sentAt || null,
+    ],
+  );
+  return id;
+}
+
+async function makeUniqueUnsubscribeToken() {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const token = crypto.randomBytes(24).toString("hex");
+    const existing = await getPool().query<{ email: string }>(
+      "select email from newsletter_subscribers where unsubscribe_token = $1",
+      [token],
+    );
+    if (existing.rowCount === 0) return token;
+  }
+  return crypto.randomUUID().replaceAll("-", "");
+}
+
+export async function getNewsletterRecipients(segment: NewsletterSegment) {
+  await ensureSchema();
+  const result = await getPool().query<{
+    email: string;
+    unsubscribe_token: string | null;
+  }>(
+    `select email, unsubscribe_token
+     from newsletter_subscribers
+     where $1 = 'all' or segments ? $1
+     order by created_at desc`,
+    [segment],
+  );
+
+  const recipients = [];
+  for (const row of result.rows) {
+    const token = row.unsubscribe_token ?? (await makeUniqueUnsubscribeToken());
+    if (!row.unsubscribe_token) {
+      await getPool().query(
+        "update newsletter_subscribers set unsubscribe_token = $2 where email = $1",
+        [row.email, token],
+      );
+    }
+    recipients.push({ email: row.email, unsubscribeToken: token });
+  }
+
+  return recipients;
+}
+
+export async function unsubscribeNewsletterToken(token: string) {
+  await ensureSchema();
+  const result = await getPool().query<{ email: string }>(
+    "delete from newsletter_subscribers where unsubscribe_token = $1 returning email",
+    [token],
+  );
+  if (result.rows[0]?.email) {
+    await getPool().query("delete from app_records where collection = 'newsletter' and id = $1", [
+      result.rows[0].email,
+    ]);
+  }
+  return result.rows[0]?.email;
 }

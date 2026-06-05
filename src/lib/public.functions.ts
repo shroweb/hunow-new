@@ -9,6 +9,14 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const unsubscribeNewsletter = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ token: z.string().min(12) }))
+  .handler(async ({ data }) => {
+    const { unsubscribeNewsletterToken } = await import("./db.server");
+    const email = await unsubscribeNewsletterToken(data.token);
+    return { ok: Boolean(email), email };
+  });
+
 export const submitForReview = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({

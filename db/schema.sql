@@ -74,6 +74,27 @@ create table if not exists newsletter_subscribers (
   email text primary key,
   created_at timestamptz not null default now()
 );
+alter table newsletter_subscribers add column if not exists unsubscribe_token text;
+alter table newsletter_subscribers add column if not exists segments jsonb not null default '["all"]'::jsonb;
+create unique index if not exists newsletter_unsubscribe_token_idx on newsletter_subscribers (unsubscribe_token) where unsubscribe_token is not null;
+
+create table if not exists newsletter_campaigns (
+  id text primary key,
+  subject text not null,
+  intro text not null,
+  segment text not null default 'all',
+  selected jsonb not null,
+  html text not null,
+  plain_text text not null,
+  status text not null default 'draft' check (status in ('draft', 'scheduled', 'sent', 'failed')),
+  scheduled_for timestamptz,
+  recipient_count integer not null default 0,
+  sent_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists newsletter_campaigns_status_idx on newsletter_campaigns (status);
+create index if not exists newsletter_campaigns_created_at_idx on newsletter_campaigns (created_at);
 
 create table if not exists users (
   id text primary key,
@@ -190,6 +211,11 @@ for each row execute function set_updated_at();
 drop trigger if exists app_records_set_updated_at on app_records;
 create trigger app_records_set_updated_at
 before update on app_records
+for each row execute function set_updated_at();
+
+drop trigger if exists newsletter_campaigns_set_updated_at on newsletter_campaigns;
+create trigger newsletter_campaigns_set_updated_at
+before update on newsletter_campaigns
 for each row execute function set_updated_at();
 
 create table if not exists saved_items (

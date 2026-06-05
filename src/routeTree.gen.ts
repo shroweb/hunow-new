@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatsOnRouteImport } from './routes/whats-on'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -68,6 +69,11 @@ import { Route as CSectionSubRouteImport } from './routes/c.$section.$sub'
 const WhatsOnRoute = WhatsOnRouteImport.update({
   id: '/whats-on',
   path: '/whats-on',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubmitRoute = SubmitRouteImport.update({
@@ -365,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stories': typeof StoriesRouteWithChildren
   '/submit': typeof SubmitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
@@ -421,6 +428,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stories': typeof StoriesRouteWithChildren
   '/submit': typeof SubmitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
@@ -479,6 +487,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stories': typeof StoriesRouteWithChildren
   '/submit': typeof SubmitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
@@ -538,6 +547,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/stories'
     | '/submit'
+    | '/unsubscribe'
     | '/whats-on'
     | '/$taxonomy/$slug'
     | '/admin/ads'
@@ -594,6 +604,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/stories'
     | '/submit'
+    | '/unsubscribe'
     | '/whats-on'
     | '/$taxonomy/$slug'
     | '/admin/ads'
@@ -651,6 +662,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/stories'
     | '/submit'
+    | '/unsubscribe'
     | '/whats-on'
     | '/$taxonomy/$slug'
     | '/admin/ads'
@@ -709,6 +721,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StoriesRoute: typeof StoriesRouteWithChildren
   SubmitRoute: typeof SubmitRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   WhatsOnRoute: typeof WhatsOnRoute
   AuthorsAuthorRoute: typeof AuthorsAuthorRoute
   BusinessListingsRoute: typeof BusinessListingsRoute
@@ -726,6 +739,13 @@ declare module '@tanstack/react-router' {
       path: '/whats-on'
       fullPath: '/whats-on'
       preLoaderRoute: typeof WhatsOnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/submit': {
@@ -1244,6 +1264,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StoriesRoute: StoriesRouteWithChildren,
   SubmitRoute: SubmitRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   WhatsOnRoute: WhatsOnRoute,
   AuthorsAuthorRoute: AuthorsAuthorRoute,
   BusinessListingsRoute: BusinessListingsRoute,
