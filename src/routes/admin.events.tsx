@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, type FormEvent } from "react";
+import { Plus } from "lucide-react";
 import {
   AdminField,
   AdminFormPanel,
@@ -174,7 +175,7 @@ function AdminEvents() {
               }}
               className={adminBtn}
             >
-              + New Event
+              <Plus className="w-3 h-3" /> New Event
             </button>
           </div>
         }

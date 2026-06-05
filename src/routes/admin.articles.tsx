@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { articlePath } from "@/lib/taxonomy";
 import { useState, useEffect, type FormEvent } from "react";
+import { Plus } from "lucide-react";
 import {
   AdminField,
   AdminFormPanel,
@@ -160,7 +161,7 @@ function AdminArticles() {
         subtitle={`${articles.length} posts · ${published} published · ${drafts} drafts`}
         action={
           <button onClick={() => openForm(null)} className={adminBtn}>
-            New Post
+            <Plus className="w-3 h-3" /> New Post
           </button>
         }
       />

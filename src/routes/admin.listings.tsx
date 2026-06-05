@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
+import { Plus } from "lucide-react";
 import {
   AdminField,
   AdminFormPanel,
@@ -148,7 +149,7 @@ function AdminListings() {
         subtitle={`${listings.length} places · ${verified} verified · ${independents} independent`}
         action={
           <button onClick={() => openForm(null)} className={adminBtn}>
-            New Place
+            <Plus className="w-3 h-3" /> New Place
           </button>
         }
       />

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
+import { Plus } from "lucide-react";
 import {
   AdminField,
   AdminFormPanel,
@@ -97,7 +98,7 @@ function AdminAds() {
         subtitle={`${ads.length} placements · ${active} active`}
         action={
           <button onClick={() => openForm(null)} className={adminBtn}>
-            New Placement
+            <Plus className="w-3 h-3" /> New Placement
           </button>
         }
       />

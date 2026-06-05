@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AdminHeader, StatCard, adminBtn, adminBtnOutline } from "@/components/admin/AdminLayout";
 import { useStore } from "@/lib/store";
+import { Plus } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   component: Dashboard,
@@ -64,16 +65,16 @@ function Dashboard() {
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <Link to="/admin/articles" className={adminBtn}>
-                New Article
+                <Plus className="w-3 h-3" /> New Article
               </Link>
               <Link to="/admin/events" className={adminBtn}>
-                New Event
+                <Plus className="w-3 h-3" /> New Event
               </Link>
               <Link to="/admin/listings" className={adminBtn}>
-                New Place
+                <Plus className="w-3 h-3" /> New Place
               </Link>
               <Link to="/admin/offers" className={adminBtn}>
-                New Offer
+                <Plus className="w-3 h-3" /> New Offer
               </Link>
             </div>
           </div>

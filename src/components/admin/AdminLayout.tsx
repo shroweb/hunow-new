@@ -271,6 +271,6 @@ export function AdminStatus({ status }: { status: string }) {
 export const adminInput =
   "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";
 export const adminBtn =
-  "bg-foreground text-background px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-accent transition-colors";
+  "inline-flex items-center gap-1.5 bg-foreground text-background px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-accent transition-colors";
 export const adminBtnOutline =
-  "border-2 border-foreground px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground hover:text-background transition-colors";
+  "inline-flex items-center gap-1.5 border-2 border-foreground px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground hover:text-background transition-colors";
