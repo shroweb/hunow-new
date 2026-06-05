@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import {
   AdminField,
   AdminFormPanel,
@@ -38,6 +38,33 @@ function AdminEvents() {
   const [editing, setEditing] = useState<EventItem | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [slugDraft, setSlugDraft] = useState("");
+  const [slugManual, setSlugManual] = useState(false);
+  const today = new Date().toISOString().slice(0, 10);
+
+  useEffect(() => {
+    setSlugDraft(editing?.slug ?? "");
+    setSlugManual(!!editing?.slug);
+  }, [editing?.id, showForm]);
+
+  const filtered = events.filter((e) => {
+    const q = query.toLowerCase();
+    return (
+      (statusFilter === "all" || e.status === statusFilter) &&
+      (!q || e.title.toLowerCase().includes(q) || e.category.toLowerCase().includes(q) || e.locationName?.toLowerCase().includes(q))
+    );
+  });
+
+  const toggleStatus = (id: string) => {
+    setState((s) => ({
+      ...s,
+      events: s.events.map((e) =>
+        e.id === id ? { ...e, status: e.status === "published" ? "draft" : "published" } : e,
+      ),
+    }));
+  };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -168,6 +195,9 @@ function AdminEvents() {
                       required
                       placeholder="Event title"
                       className={adminInput}
+                      onChange={(e) => {
+                        if (!slugManual) setSlugDraft(slugify(e.target.value));
+                      }}
                     />
                   </AdminField>
                   <AdminField label="Description">
@@ -210,7 +240,8 @@ function AdminEvents() {
                   <AdminField label="Slug">
                     <input
                       name="slug"
-                      defaultValue={editing?.slug}
+                      value={slugDraft}
+                      onChange={(e) => { setSlugDraft(e.target.value); setSlugManual(true); }}
                       placeholder="auto-generated-from-title"
                       className={adminInput}
                     />
@@ -233,7 +264,7 @@ function AdminEvents() {
                     status={editing?.status}
                     dateName="startDate"
                     dateLabel="Start date"
-                    dateValue={editing?.startDate}
+                    dateValue={editing?.startDate ?? today}
                     scheduledFor={editing?.scheduledFor}
                     previewHref={`/events/${editing?.slug ?? "preview"}`}
                   />
@@ -364,9 +395,34 @@ function AdminEvents() {
             </form>
           </AdminFormPanel>
         )}
+        <div className="flex flex-wrap gap-3 mb-4">
+          <input
+            type="search"
+            placeholder="Search events…"
+            value={query}
+            onChange={(ev) => setQuery(ev.target.value)}
+            className={`${adminInput} max-w-xs`}
+          />
+          <select
+            value={statusFilter}
+            onChange={(ev) => setStatusFilter(ev.target.value)}
+            className={`${adminInput} w-auto`}
+          >
+            <option value="all">All statuses</option>
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="expired">Expired</option>
+          </select>
+          {filtered.length !== events.length && (
+            <span className="text-xs font-mono text-muted-foreground self-center">
+              {filtered.length} of {events.length}
+            </span>
+          )}
+        </div>
+
         <AdminTable
           headers={["Title", "Date", "Category", "Venue", "Status", "Actions"]}
-          rows={events.map((e) => [
+          rows={filtered.map((e) => [
             <span className="font-bold">
               {e.title}
               {e.isFeatured && (
@@ -380,7 +436,9 @@ function AdminEvents() {
             </span>,
             e.category,
             <span className="text-xs">{e.locationName}</span>,
-            <AdminStatus status={e.status} />,
+            <button onClick={() => toggleStatus(e.id)} title="Click to publish/unpublish" className="cursor-pointer">
+              <AdminStatus status={e.status} />
+            </button>,
             <div className="flex gap-3">
               <Link
                 to="/events/$slug"

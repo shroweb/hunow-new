@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { articlePath } from "@/lib/taxonomy";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import {
   AdminField,
   AdminFormPanel,
@@ -43,9 +43,28 @@ function AdminArticles() {
   const [showForm, setShowForm] = useState(false);
   const [section, setSection] = useState(editing?.section ?? "whats-on");
   const [errors, setErrors] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [slugDraft, setSlugDraft] = useState("");
+  const [slugManual, setSlugManual] = useState(false);
   const selectedSection = findSection(section) ?? NAV_SECTIONS[0];
   const published = articles.filter((a) => a.status === "published").length;
   const drafts = articles.filter((a) => a.status === "draft").length;
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Reset slug state when the form opens for a different article
+  useEffect(() => {
+    setSlugDraft(editing?.slug ?? "");
+    setSlugManual(!!editing?.slug);
+  }, [editing?.id, showForm]);
+
+  const filtered = articles.filter((a) => {
+    const q = query.toLowerCase();
+    return (
+      (statusFilter === "all" || a.status === statusFilter) &&
+      (!q || a.title.toLowerCase().includes(q) || a.category.toLowerCase().includes(q))
+    );
+  });
 
   const openForm = (article: Article | null) => {
     setEditing(article);
@@ -125,6 +144,15 @@ function AdminArticles() {
     }));
   };
 
+  const toggleStatus = (id: string) => {
+    setState((s) => ({
+      ...s,
+      articles: s.articles.map((a) =>
+        a.id === id ? { ...a, status: a.status === "published" ? "draft" : "published" } : a,
+      ),
+    }));
+  };
+
   return (
     <div>
       <AdminHeader
@@ -150,6 +178,9 @@ function AdminArticles() {
                       required
                       placeholder="Story headline"
                       className={adminInput}
+                      onChange={(e) => {
+                        if (!slugManual) setSlugDraft(slugify(e.target.value));
+                      }}
                     />
                   </AdminField>
                   <AdminField label="Excerpt">
@@ -173,7 +204,8 @@ function AdminArticles() {
                   <AdminField label="Slug">
                     <input
                       name="slug"
-                      defaultValue={editing?.slug}
+                      value={slugDraft}
+                      onChange={(e) => { setSlugDraft(e.target.value); setSlugManual(true); }}
                       placeholder="auto-generated-from-title"
                       className={adminInput}
                     />
@@ -182,7 +214,7 @@ function AdminArticles() {
                     status={editing?.status}
                     dateName="publishedAt"
                     dateLabel="Publish date"
-                    dateValue={editing?.publishedAt}
+                    dateValue={editing?.publishedAt ?? today}
                     scheduledFor={editing?.scheduledFor}
                     previewHref={articlePath({ subcategory: editing?.subcategory, slug: editing?.slug ?? "preview" })}
                   />
@@ -342,9 +374,35 @@ function AdminArticles() {
           </AdminFormPanel>
         )}
 
+        <div className="flex flex-wrap gap-3 mb-4">
+          <input
+            type="search"
+            placeholder="Search posts…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className={`${adminInput} max-w-xs`}
+          />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className={`${adminInput} w-auto`}
+          >
+            <option value="all">All statuses</option>
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="expired">Expired</option>
+          </select>
+          {filtered.length !== articles.length && (
+            <span className="text-xs font-mono text-muted-foreground self-center">
+              {filtered.length} of {articles.length}
+            </span>
+          )}
+        </div>
+
         <AdminTable
           headers={["Post", "Section", "Status", "Published", "Flags", "Actions"]}
-          rows={articles.map((a) => [
+          rows={filtered.map((a) => [
             <div>
               <div className="font-bold">{a.title}</div>
               <div className="font-mono text-[10px] uppercase text-muted-foreground">
@@ -355,7 +413,13 @@ function AdminArticles() {
               {a.section ?? "uncategorised"}
               {a.subcategory ? ` / ${a.subcategory}` : ""}
             </span>,
-            <AdminStatus status={a.status} />,
+            <button
+              onClick={() => toggleStatus(a.id)}
+              title="Click to publish/unpublish"
+              className="cursor-pointer"
+            >
+              <AdminStatus status={a.status} />
+            </button>,
             <span className="font-mono text-xs">{a.publishedAt}</span>,
             <div className="flex gap-1">
               <button

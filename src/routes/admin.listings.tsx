@@ -38,8 +38,19 @@ function AdminListings() {
   const [editing, setEditing] = useState<Listing | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const verified = listings.filter((l) => l.isVerified).length;
   const independents = listings.filter((l) => l.isIndependent).length;
+  const categories = Array.from(new Set(listings.map((l) => l.category))).sort();
+
+  const filtered = listings.filter((l) => {
+    const q = query.toLowerCase();
+    return (
+      (categoryFilter === "all" || l.category === categoryFilter) &&
+      (!q || l.name.toLowerCase().includes(q) || l.area?.toLowerCase().includes(q) || l.category.toLowerCase().includes(q))
+    );
+  });
 
   const openForm = (listing: Listing | null) => {
     setEditing(listing);
@@ -379,9 +390,32 @@ function AdminListings() {
             </form>
           </AdminFormPanel>
         )}
+        <div className="flex flex-wrap gap-3 mb-4">
+          <input
+            type="search"
+            placeholder="Search places…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className={`${adminInput} max-w-xs`}
+          />
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className={`${adminInput} w-auto`}
+          >
+            <option value="all">All categories</option>
+            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          {filtered.length !== listings.length && (
+            <span className="text-xs font-mono text-muted-foreground self-center">
+              {filtered.length} of {listings.length}
+            </span>
+          )}
+        </div>
+
         <AdminTable
           headers={["Place", "Category", "Area", "Offer", "Flags", "Actions"]}
-          rows={listings.map((l) => [
+          rows={filtered.map((l) => [
             <div>
               <div className="font-bold">{l.name}</div>
               <div className="font-mono text-[10px] uppercase text-muted-foreground">{l.slug}</div>
