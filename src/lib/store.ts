@@ -80,12 +80,16 @@ async function hydrateFromDatabase() {
           remoteState.events.length > 0 ||
           remoteState.listings.length > 0;
         const effective = hasContent ? remoteState : initial;
+        const hadPending = pendingHydrationUpdaters.length > 0;
         state = pendingHydrationUpdaters.reduce((next, updater) => updater(next), effective);
         pendingHydrationUpdaters.length = 0;
         hydratedFromDatabase = true;
         // Only persist if we got real data, to avoid caching empty state
         if (hasContent) persist();
         emit();
+        // If there were pre-hydration state changes (e.g. an image upload that
+        // completed before the DB fetch), save the merged result to the DB now.
+        if (hadPending) persistToDatabase();
         // If DB was empty, trigger a background seed
         if (!hasContent) {
           void import("./store.functions")
