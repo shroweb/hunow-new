@@ -7,7 +7,7 @@ import {
   adminInput,
 } from "@/components/admin/AdminLayout";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
-import { resetStore } from "@/lib/store";
+import { resetStore, getState } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/settings")({
   component: AdminSettings,
@@ -120,10 +120,16 @@ function AdminSettings() {
     if (!second) return;
     setResetting(true);
     try {
+      // Reset local state + localStorage immediately
       resetStore();
-      // Give the debounced DB save time to fire before navigating
-      await new Promise((r) => setTimeout(r, 1200));
+      // Directly await the DB save — don't rely on the debounced path,
+      // which might not complete before the page reloads
+      const { saveStoreToDatabase } = await import("@/lib/store.functions");
+      await saveStoreToDatabase({ data: getState() });
       window.location.reload();
+    } catch (err) {
+      console.error("Reset failed:", err);
+      alert("Reset failed — check the browser console for details.");
     } finally {
       setResetting(false);
     }
