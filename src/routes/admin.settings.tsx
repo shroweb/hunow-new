@@ -7,7 +7,8 @@ import {
   adminInput,
 } from "@/components/admin/AdminLayout";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
-import { resetStore, getState } from "@/lib/store";
+import { resetStoreToSeed } from "@/lib/store.functions";
+import { setState } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/settings")({
   component: AdminSettings,
@@ -120,12 +121,10 @@ function AdminSettings() {
     if (!second) return;
     setResetting(true);
     try {
-      // Reset local state + localStorage immediately
-      resetStore();
-      // Directly await the DB save — don't rely on the debounced path,
-      // which might not complete before the page reloads
-      const { saveStoreToDatabase } = await import("@/lib/store.functions");
-      await saveStoreToDatabase({ data: getState() });
+      // Run the reset entirely on the server — delete all DB content and
+      // re-insert seed data in one transaction, then sync client state
+      const seed = await resetStoreToSeed();
+      setState(() => seed);
       window.location.reload();
     } catch (err) {
       console.error("Reset failed:", err);

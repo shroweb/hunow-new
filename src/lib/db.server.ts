@@ -429,6 +429,22 @@ export async function saveDatabaseStore(store: AppStore) {
   }
 }
 
+export async function resetDatabaseToSeed() {
+  await ensureSchema();
+  const seed: AppStore = {
+    articles: seedArticles,
+    events: seedEvents,
+    listings: seedListings,
+    offers: [],
+    submissions: [],
+    ads: [],
+    media: seedMedia,
+    newsletter: [],
+  };
+  await saveDatabaseStore(seed);
+  return seed;
+}
+
 export async function getArticleBySlug(slug: string) {
   await ensureSeeded();
   const result = await getPool().query<{ data: unknown }>(

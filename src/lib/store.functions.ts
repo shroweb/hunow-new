@@ -34,6 +34,14 @@ export const saveStoreToDatabase = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const resetStoreToSeed = createServerFn({ method: "POST" }).handler(async () => {
+  const { requireAdmin } = await import("./auth.server");
+  const { resetDatabaseToSeed } = await import("./db.server");
+  await requireAdmin();
+  const seed = await resetDatabaseToSeed();
+  return seed;
+});
+
 export const fetchArticleBySlug = createServerFn({ method: "GET" })
   .inputValidator(z.object({ slug: z.string() }))
   .handler(async ({ data }) => {
