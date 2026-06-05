@@ -558,19 +558,21 @@ export async function recordAdEvent(adId: string, eventType: "impression" | "cli
   }
 }
 
-export async function addNewsletterSubscriber(email: string) {
+export async function addNewsletterSubscriber(
+  email: string,
+  segments: ("events" | "offers" | "businesses")[] = [],
+) {
   await ensureSchema();
   const normalised = email.trim().toLowerCase();
   const token = await makeUniqueUnsubscribeToken();
+  const uniqueSegments = ["all", ...Array.from(new Set(segments))];
   await getPool().query(
     `insert into newsletter_subscribers (email, unsubscribe_token, segments)
-     values ($1, $2, '["all"]'::jsonb)
+     values ($1, $2, $3::jsonb)
      on conflict (email) do update set
-       segments = case
-         when newsletter_subscribers.segments ? 'all' then newsletter_subscribers.segments
-         else newsletter_subscribers.segments || '["all"]'::jsonb
-       end`,
-    [normalised, token],
+       unsubscribe_token = coalesce(newsletter_subscribers.unsubscribe_token, excluded.unsubscribe_token),
+       segments = excluded.segments`,
+    [normalised, token, JSON.stringify(uniqueSegments)],
   );
   await getPool().query(
     "insert into app_records (collection, id, data) values ($1, $2, $3) on conflict do nothing",

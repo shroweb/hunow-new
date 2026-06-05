@@ -380,9 +380,15 @@ function Footer() {
 
   const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const email = String(new FormData(e.currentTarget).get("email") || "");
+    const formData = new FormData(e.currentTarget);
+    const email = String(formData.get("email") || "");
+    const segments = formData
+      .getAll("segments")
+      .filter((segment): segment is "events" | "offers" | "businesses" =>
+        ["events", "offers", "businesses"].includes(String(segment)),
+      );
     if (!email) return;
-    void subscribeNewsletter({ data: { email } }).catch(() => {});
+    void subscribeNewsletter({ data: { email, segments } }).catch(() => {});
     import("@/lib/store").then(({ setState }) => {
       setState((s) => ({ ...s, newsletter: [...s.newsletter, email] }), { persist: false });
     });
@@ -540,6 +546,27 @@ function Footer() {
                 placeholder="your@email.com"
                 className="bg-white/10 border border-white/20 px-4 py-3 font-mono text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/50"
               />
+              <fieldset className="grid gap-2 py-1">
+                <legend className="sr-only">Newsletter preferences</legend>
+                {[
+                  ["events", "What's On"],
+                  ["offers", "Offers"],
+                  ["businesses", "Business"],
+                ].map(([value, label]) => (
+                  <label
+                    key={value}
+                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/60"
+                  >
+                    <input
+                      type="checkbox"
+                      name="segments"
+                      value={value}
+                      defaultChecked={value !== "businesses"}
+                    />
+                    {label}
+                  </label>
+                ))}
+              </fieldset>
               <button className="bg-accent text-foreground px-4 py-3 font-bold uppercase tracking-widest text-xs hover:bg-white transition-colors">
                 Subscribe
               </button>

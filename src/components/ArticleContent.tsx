@@ -116,6 +116,10 @@ export function TableOfContents({ content }: { content: string }) {
 
 function InlineNewsletter() {
   const [email, setEmail] = useState("");
+  const [segments, setSegments] = useState<("events" | "offers" | "businesses")[]>([
+    "events",
+    "offers",
+  ]);
   const [done, setDone] = useState(false);
   if (done) {
     return (
@@ -134,26 +138,55 @@ function InlineNewsletter() {
         The best events, food guides and hidden gems every Thursday.
       </p>
       <form
-        className="flex gap-0"
+        className="space-y-3"
         onSubmit={(e) => {
           e.preventDefault();
           if (email) {
-            void subscribeNewsletter({ data: { email } }).catch(() => {});
+            void subscribeNewsletter({ data: { email, segments } }).catch(() => {});
             setDone(true);
           }
         }}
       >
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="your@email.com"
-          className="flex-1 bg-background text-foreground border-2 border-background px-4 py-3 font-mono text-sm focus:outline-none"
-        />
-        <button className="bg-accent text-foreground px-5 py-3 font-bold uppercase tracking-widest text-xs hover:bg-background transition-colors">
-          Join
-        </button>
+        <div className="flex gap-0">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="flex-1 bg-background text-foreground border-2 border-background px-4 py-3 font-mono text-sm focus:outline-none"
+          />
+          <button className="bg-accent text-foreground px-5 py-3 font-bold uppercase tracking-widest text-xs hover:bg-background transition-colors">
+            Join
+          </button>
+        </div>
+        <fieldset className="flex flex-wrap gap-2">
+          <legend className="sr-only">Newsletter preferences</legend>
+          {[
+            ["events", "What's On"],
+            ["offers", "Offers"],
+            ["businesses", "Business"],
+          ].map(([value, label]) => (
+            <label
+              key={value}
+              className="flex items-center gap-2 border border-background/25 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-background/70"
+            >
+              <input
+                type="checkbox"
+                checked={segments.includes(value as "events" | "offers" | "businesses")}
+                onChange={(event) => {
+                  const segment = value as "events" | "offers" | "businesses";
+                  setSegments((current) =>
+                    event.target.checked
+                      ? [...current, segment]
+                      : current.filter((item) => item !== segment),
+                  );
+                }}
+              />
+              {label}
+            </label>
+          ))}
+        </fieldset>
       </form>
     </aside>
   );

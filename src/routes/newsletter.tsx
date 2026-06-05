@@ -18,6 +18,7 @@ export const Route = createFileRoute("/newsletter")({
 
 function Newsletter() {
   const [email, setEmail] = useState("");
+  const [segments, setSegments] = useState<NewsletterSegment[]>(["events", "offers"]);
   const [done, setDone] = useState(false);
   const [sending, setSending] = useState(false);
 
@@ -26,7 +27,7 @@ function Newsletter() {
     if (!email) return;
     setSending(true);
     try {
-      await subscribeNewsletter({ data: { email } });
+      await subscribeNewsletter({ data: { email, segments } });
       setDone(true);
     } finally {
       setSending(false);
@@ -55,21 +56,27 @@ function Newsletter() {
             </p>
           </div>
         ) : (
-          <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-0 max-w-md">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              className="flex-1 bg-white border-2 border-foreground px-6 py-4 font-mono text-sm focus:outline-none focus:border-accent"
-            />
-            <button
-              disabled={sending}
-              className="bg-foreground text-background px-8 py-4 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors disabled:opacity-50 border-2 border-foreground"
-            >
-              {sending ? "…" : "Subscribe"}
-            </button>
+          <form onSubmit={onSubmit} className="max-w-xl">
+            <div className="flex flex-col sm:flex-row gap-0 max-w-md">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="flex-1 bg-white border-2 border-foreground px-6 py-4 font-mono text-sm focus:outline-none focus:border-accent"
+              />
+              <button
+                disabled={sending}
+                className="bg-foreground text-background px-8 py-4 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors disabled:opacity-50 border-2 border-foreground"
+              >
+                {sending ? "…" : "Subscribe"}
+              </button>
+            </div>
+            <SegmentPicker value={segments} onChange={setSegments} />
+            <p className="text-xs text-muted-foreground mt-3">
+              You will always get the main HU NOW edit. Segment choices control extra focused sends.
+            </p>
           </form>
         )}
 
@@ -101,5 +108,50 @@ function Newsletter() {
         </div>
       </div>
     </PublicLayout>
+  );
+}
+
+type NewsletterSegment = "events" | "offers" | "businesses";
+
+const segmentOptions: { value: NewsletterSegment; label: string }[] = [
+  { value: "events", label: "What's On" },
+  { value: "offers", label: "Offers" },
+  { value: "businesses", label: "Business" },
+];
+
+function SegmentPicker({
+  value,
+  onChange,
+}: {
+  value: NewsletterSegment[];
+  onChange: (segments: NewsletterSegment[]) => void;
+}) {
+  return (
+    <fieldset className="mt-5">
+      <legend className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+        Choose your updates
+      </legend>
+      <div className="flex flex-wrap gap-2">
+        {segmentOptions.map((option) => (
+          <label
+            key={option.value}
+            className="flex items-center gap-2 border-2 border-foreground px-3 py-2 text-xs font-bold uppercase tracking-widest"
+          >
+            <input
+              type="checkbox"
+              checked={value.includes(option.value)}
+              onChange={(event) =>
+                onChange(
+                  event.target.checked
+                    ? [...value, option.value]
+                    : value.filter((segment) => segment !== option.value),
+                )
+              }
+            />
+            {option.label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
 }

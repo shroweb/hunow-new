@@ -2,10 +2,15 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const subscribeNewsletter = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ email: z.string().email() }))
+  .inputValidator(
+    z.object({
+      email: z.string().email(),
+      segments: z.array(z.enum(["events", "offers", "businesses"])).default([]),
+    }),
+  )
   .handler(async ({ data }) => {
     const { addNewsletterSubscriber } = await import("./db.server");
-    await addNewsletterSubscriber(data.email);
+    await addNewsletterSubscriber(data.email, data.segments);
     return { ok: true };
   });
 
