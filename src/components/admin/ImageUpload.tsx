@@ -42,7 +42,8 @@ export function ImageUpload({ name, defaultValue = "", label = "Image" }: Props)
       }));
     } catch (uploadError) {
       console.error(uploadError);
-      setError("Upload failed. Try a smaller image or paste an image URL.");
+      const msg = uploadError instanceof Error ? uploadError.message : String(uploadError);
+      setError(msg || "Upload failed. Try a smaller image or paste an image URL.");
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";

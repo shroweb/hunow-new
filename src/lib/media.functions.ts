@@ -23,7 +23,7 @@ export const uploadImage = createServerFn({ method: "POST" })
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
     const buffer = Buffer.from(match[2], "base64");
 
-    // Use Vercel Blob in production, local disk in development
+    // Use Vercel Blob when token is available (production + any env with it set)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       const { put } = await import("@vercel/blob");
       const blob = await put(`uploads/${id}`, buffer, {
@@ -34,7 +34,14 @@ export const uploadImage = createServerFn({ method: "POST" })
       return { url: blob.url };
     }
 
-    // Local fallback for development
+    // On Vercel without a Blob token the filesystem is read-only — fail clearly
+    if (process.env.VERCEL) {
+      throw new Error(
+        "Image uploads are not configured. Add BLOB_READ_WRITE_TOKEN to your Vercel environment variables (Storage → Blob).",
+      );
+    }
+
+    // Local development: write to public/uploads/
     const uploadDir = resolve(process.cwd(), "public/uploads");
     const filePath = resolve(uploadDir, id);
     await mkdir(uploadDir, { recursive: true });
