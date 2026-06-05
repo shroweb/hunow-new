@@ -7,6 +7,7 @@ import {
   adminInput,
 } from "@/components/admin/AdminLayout";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
+import { resetStore } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/settings")({
   component: AdminSettings,
@@ -91,6 +92,7 @@ function AdminSettings() {
   const [settings, setSettings] = useState<Record<string, string>>(initial);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -106,6 +108,24 @@ function AdminSettings() {
       setSaved(true);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const onReset = async () => {
+    const first = confirm(
+      "This will permanently delete ALL articles, events, places, media and other content and replace it with the demo seed data. Are you sure?",
+    );
+    if (!first) return;
+    const second = confirm("Last chance — this cannot be undone. Reset everything?");
+    if (!second) return;
+    setResetting(true);
+    try {
+      resetStore();
+      // Give the debounced DB save time to fire before navigating
+      await new Promise((r) => setTimeout(r, 1200));
+      window.location.reload();
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -153,6 +173,26 @@ function AdminSettings() {
             {saved && <span className="text-sm text-accent font-bold">Saved ✓</span>}
           </div>
         </form>
+
+        {/* Danger zone */}
+        <div className="mt-12 border-2 border-red-600 p-6">
+          <div className="font-bold text-sm uppercase tracking-wide text-red-600 mb-1">
+            Danger zone
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Permanently deletes all articles, events, places, media and other
+            content and replaces everything with the original demo data.
+            This cannot be undone.
+          </p>
+          <button
+            type="button"
+            onClick={onReset}
+            disabled={resetting}
+            className="bg-red-600 text-white px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-red-700 transition-colors disabled:opacity-50"
+          >
+            {resetting ? "Resetting…" : "Reset all content"}
+          </button>
+        </div>
       </div>
     </div>
   );
