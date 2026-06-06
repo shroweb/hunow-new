@@ -21,7 +21,7 @@ function articleTokens(article: Article) {
     article.category,
     article.subcategory,
     article.series,
-    ...article.tags,
+    ...(article.tags ?? []),
   ]);
 }
 
@@ -108,7 +108,7 @@ export function relatedForListing(input: {
         return (
           overlap(tokens, articleTokens(item)) +
           (text.includes(norm(input.listing.name)) ? 5 : 0) +
-          (item.tags.map(norm).includes(norm(input.listing.area)) ? 3 : 0)
+          ((item.tags ?? []).map(norm).includes(norm(input.listing.area)) ? 3 : 0)
         );
       },
       3,
