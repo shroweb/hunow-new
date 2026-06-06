@@ -18,6 +18,7 @@ import { validateUniqueSlug, validateUrl } from "@/components/admin/validation-u
 import { readSeo } from "@/components/admin/seo-utils";
 import { WeekHoursPicker } from "@/components/admin/WeekHoursPicker";
 import { setState, slugify, uid, useStore } from "@/lib/store";
+import { upsertListingFn, deleteListingFn } from "@/lib/content.functions";
 import type { Listing, WeekHours } from "@/types";
 
 export const Route = createFileRoute("/admin/listings")({ component: AdminListings });
@@ -39,6 +40,7 @@ function AdminListings() {
   const [editing, setEditing] = useState<Listing | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const verified = listings.filter((l) => l.isVerified).length;
@@ -62,7 +64,7 @@ function AdminListings() {
     setShowForm(true);
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const name = String(fd.get("name"));
@@ -136,22 +138,34 @@ function AdminListings() {
         : undefined,
       seo: readSeo(fd),
     };
-    setState((s) => ({
-      ...s,
-      listings: editing ? s.listings.map((x) => (x.id === v.id ? v : x)) : [v, ...s.listings],
-    }));
-    setEditing(null);
-    setErrors([]);
-    setShowForm(false);
+    setSaving(true);
+    try {
+      await upsertListingFn({ data: v });
+      setState(
+        (s) => ({
+          ...s,
+          listings: editing ? s.listings.map((x) => (x.id === v.id ? v : x)) : [v, ...s.listings],
+        }),
+        { persist: false },
+      );
+      setEditing(null);
+      setErrors([]);
+      setShowForm(false);
+    } catch (err) {
+      setErrors([err instanceof Error ? err.message : "Save failed. Please try again."]);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const remove = (id: string) => {
+  const remove = async (id: string) => {
     if (offers.some((offer) => offer.listingId === id)) {
       alert("This listing has offers attached. Delete or reassign those offers first.");
       return;
     }
     if (!confirm("Delete this listing?")) return;
-    setState((s) => ({ ...s, listings: s.listings.filter((l) => l.id !== id) }));
+    await deleteListingFn({ data: { id } });
+    setState((s) => ({ ...s, listings: s.listings.filter((l) => l.id !== id) }), { persist: false });
   };
 
   return (
@@ -391,7 +405,9 @@ function AdminListings() {
                 fallbackDescription={editing?.description}
               />
               <div className="flex flex-wrap gap-3 pt-2">
-                <button className={adminBtn}>{editing ? "Save Place" : "Create Place"}</button>
+                <button disabled={saving} className={`${adminBtn} disabled:opacity-50`}>
+                  {saving ? "Saving…" : editing ? "Save Place" : "Create Place"}
+                </button>
                 <button
                   type="button"
                   onClick={() => {

@@ -21,6 +21,7 @@ import { readSeo } from "@/components/admin/seo-utils";
 import { TiptapEditor } from "@/components/admin/TiptapEditor";
 import { NAV_SECTIONS, findSection } from "@/lib/nav";
 import { setState, slugify, uid, useStore } from "@/lib/store";
+import { upsertArticleFn, deleteArticleFn } from "@/lib/content.functions";
 import type { Article } from "@/types";
 
 export const Route = createFileRoute("/admin/articles")({ component: AdminArticles });
@@ -44,6 +45,7 @@ function AdminArticles() {
   const [showForm, setShowForm] = useState(false);
   const [section, setSection] = useState(editing?.section ?? "whats-on");
   const [errors, setErrors] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [slugDraft, setSlugDraft] = useState("");
@@ -74,7 +76,7 @@ function AdminArticles() {
     setShowForm(true);
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const title = String(fd.get("title"));
@@ -124,34 +126,52 @@ function AdminArticles() {
       seriesOrder: Number(fd.get("seriesOrder") || 0) || undefined,
       seo: readSeo(fd),
     };
-    setState((s) => ({
-      ...s,
-      articles: editing ? s.articles.map((x) => (x.id === a.id ? a : x)) : [a, ...s.articles],
-    }));
-    setEditing(null);
-    setErrors([]);
-    setShowForm(false);
+    setSaving(true);
+    try {
+      await upsertArticleFn({ data: a });
+      setState(
+        (s) => ({
+          ...s,
+          articles: editing ? s.articles.map((x) => (x.id === a.id ? a : x)) : [a, ...s.articles],
+        }),
+        { persist: false },
+      );
+      setEditing(null);
+      setErrors([]);
+      setShowForm(false);
+    } catch (err) {
+      setErrors([err instanceof Error ? err.message : "Save failed. Please try again."]);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const remove = (id: string) => {
+  const remove = async (id: string) => {
     if (!confirm("Delete this post?")) return;
-    setState((s) => ({ ...s, articles: s.articles.filter((a) => a.id !== id) }));
+    await deleteArticleFn({ data: { id } });
+    setState((s) => ({ ...s, articles: s.articles.filter((a) => a.id !== id) }), { persist: false });
   };
 
-  const toggle = (id: string, key: "isFeatured" | "isSponsored") => {
-    setState((s) => ({
-      ...s,
-      articles: s.articles.map((a) => (a.id === id ? { ...a, [key]: !a[key] } : a)),
-    }));
+  const toggle = async (id: string, key: "isFeatured" | "isSponsored") => {
+    const article = articles.find((a) => a.id === id);
+    if (!article) return;
+    const updated = { ...article, [key]: !article[key] };
+    await upsertArticleFn({ data: updated });
+    setState(
+      (s) => ({ ...s, articles: s.articles.map((a) => (a.id === id ? updated : a)) }),
+      { persist: false },
+    );
   };
 
-  const toggleStatus = (id: string) => {
-    setState((s) => ({
-      ...s,
-      articles: s.articles.map((a) =>
-        a.id === id ? { ...a, status: a.status === "published" ? "draft" : "published" } : a,
-      ),
-    }));
+  const toggleStatus = async (id: string) => {
+    const article = articles.find((a) => a.id === id);
+    if (!article) return;
+    const updated = { ...article, status: article.status === "published" ? ("draft" as const) : ("published" as const) };
+    await upsertArticleFn({ data: updated });
+    setState(
+      (s) => ({ ...s, articles: s.articles.map((a) => (a.id === id ? updated : a)) }),
+      { persist: false },
+    );
   };
 
   return (
@@ -365,7 +385,9 @@ function AdminArticles() {
                 fallbackDescription={editing?.excerpt}
               />
               <div className="flex flex-wrap gap-3 pt-2">
-                <button className={adminBtn}>{editing ? "Save Post" : "Create Post"}</button>
+                <button disabled={saving} className={`${adminBtn} disabled:opacity-50`}>
+                  {saving ? "Saving…" : editing ? "Save Post" : "Create Post"}
+                </button>
                 <button
                   type="button"
                   onClick={() => {

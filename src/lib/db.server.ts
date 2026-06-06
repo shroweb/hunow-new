@@ -501,6 +501,67 @@ export async function saveDatabaseStore(store: AppStore) {
   }
 }
 
+// ---- Targeted single-record writes (avoids full-store replace) ----
+
+type UpsertTable = "articles" | "events" | "listings" | "offers" | "ads" | "media";
+
+async function upsertRecord(table: UpsertTable, id: string, data: unknown) {
+  await ensureSchema();
+  await getPool().query(
+    `insert into ${table} (id, data) values ($1, $2)
+     on conflict (id) do update set data = $2`,
+    [id, JSON.stringify(data)],
+  );
+}
+
+async function deleteRecord(table: UpsertTable, id: string) {
+  await ensureSchema();
+  await getPool().query(`delete from ${table} where id = $1`, [id]);
+}
+
+export async function upsertArticle(article: import("@/types").Article) {
+  await upsertRecord("articles", article.id, article);
+}
+export async function deleteArticle(id: string) {
+  await deleteRecord("articles", id);
+}
+
+export async function upsertEvent(event: import("@/types").EventItem) {
+  await upsertRecord("events", event.id, event);
+}
+export async function deleteEvent(id: string) {
+  await deleteRecord("events", id);
+}
+export async function bulkArchiveEvents(beforeDate: string) {
+  await ensureSchema();
+  const result = await getPool().query<{ id: string; data: import("@/types").EventItem }>(
+    "select id, data from events where status = 'published' and start_date < $1",
+    [beforeDate],
+  );
+  for (const row of result.rows) {
+    const updated = { ...row.data, status: "expired" as const };
+    await getPool().query("update events set data = $2 where id = $1", [
+      row.id,
+      JSON.stringify(updated),
+    ]);
+  }
+  return result.rowCount ?? 0;
+}
+
+export async function upsertListing(listing: import("@/types").Listing) {
+  await upsertRecord("listings", listing.id, listing);
+}
+export async function deleteListing(id: string) {
+  await deleteRecord("listings", id);
+}
+
+export async function upsertOffer(offer: import("@/types").Offer) {
+  await upsertRecord("offers", offer.id, offer);
+}
+export async function deleteOffer(id: string) {
+  await deleteRecord("offers", id);
+}
+
 export async function resetDatabaseToEmpty() {
   await ensureSchema();
   const client = await getPool().connect();

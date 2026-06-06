@@ -20,6 +20,7 @@ import { ValidationErrors } from "@/components/admin/ValidationErrors";
 import { validateUniqueSlug, validateUrl } from "@/components/admin/validation-utils";
 import { readSeo } from "@/components/admin/seo-utils";
 import { setState, slugify, uid, useStore } from "@/lib/store";
+import { upsertEventFn, deleteEventFn, bulkArchiveEventsFn } from "@/lib/content.functions";
 import type { EventItem } from "@/types";
 
 export const Route = createFileRoute("/admin/events")({ component: AdminEvents });
@@ -39,6 +40,7 @@ function AdminEvents() {
   const [editing, setEditing] = useState<EventItem | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [slugDraft, setSlugDraft] = useState("");
@@ -61,16 +63,18 @@ function AdminEvents() {
     );
   });
 
-  const toggleStatus = (id: string) => {
-    setState((s) => ({
-      ...s,
-      events: s.events.map((e) =>
-        e.id === id ? { ...e, status: e.status === "published" ? "draft" : "published" } : e,
-      ),
-    }));
+  const toggleStatus = async (id: string) => {
+    const event = events.find((e) => e.id === id);
+    if (!event) return;
+    const updated = { ...event, status: event.status === "published" ? ("draft" as const) : ("published" as const) };
+    await upsertEventFn({ data: updated });
+    setState(
+      (s) => ({ ...s, events: s.events.map((e) => (e.id === id ? updated : e)) }),
+      { persist: false },
+    );
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const title = String(fd.get("title"));
@@ -128,18 +132,30 @@ function AdminEvents() {
           : undefined,
       seo: readSeo(fd),
     };
-    setState((s) => ({
-      ...s,
-      events: editing ? s.events.map((x) => (x.id === v.id ? v : x)) : [v, ...s.events],
-    }));
-    setEditing(null);
-    setErrors([]);
-    setShowForm(false);
+    setSaving(true);
+    try {
+      await upsertEventFn({ data: v });
+      setState(
+        (s) => ({
+          ...s,
+          events: editing ? s.events.map((x) => (x.id === v.id ? v : x)) : [v, ...s.events],
+        }),
+        { persist: false },
+      );
+      setEditing(null);
+      setErrors([]);
+      setShowForm(false);
+    } catch (err) {
+      setErrors([err instanceof Error ? err.message : "Save failed. Please try again."]);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const remove = (id: string) => {
-    if (confirm("Delete?"))
-      setState((s) => ({ ...s, events: s.events.filter((e) => e.id !== id) }));
+  const remove = async (id: string) => {
+    if (!confirm("Delete?")) return;
+    await deleteEventFn({ data: { id } });
+    setState((s) => ({ ...s, events: s.events.filter((e) => e.id !== id) }), { persist: false });
   };
 
   return (
@@ -150,7 +166,7 @@ function AdminEvents() {
         action={
           <div className="flex gap-2">
             <button
-              onClick={() => {
+              onClick={async () => {
                 const today = new Date().toISOString().slice(0, 10);
                 const count = events.filter(
                   (e) => e.status === "published" && e.startDate < today,
@@ -160,14 +176,18 @@ function AdminEvents() {
                   return;
                 }
                 if (!confirm(`Archive ${count} past event${count !== 1 ? "s" : ""}?`)) return;
-                setState((s) => ({
-                  ...s,
-                  events: s.events.map((e) =>
-                    e.status === "published" && e.startDate < today
-                      ? { ...e, status: "expired" as const }
-                      : e,
-                  ),
-                }));
+                await bulkArchiveEventsFn({ data: { beforeDate: today } });
+                setState(
+                  (s) => ({
+                    ...s,
+                    events: s.events.map((e) =>
+                      e.status === "published" && e.startDate < today
+                        ? { ...e, status: "expired" as const }
+                        : e,
+                    ),
+                  }),
+                  { persist: false },
+                );
               }}
               className={adminBtnOutline}
             >
@@ -393,7 +413,9 @@ function AdminEvents() {
                 fallbackDescription={editing?.description}
               />
               <div className="flex flex-wrap gap-3 pt-2">
-                <button className={adminBtn}>{editing ? "Save Event" : "Create Event"}</button>
+                <button disabled={saving} className={`${adminBtn} disabled:opacity-50`}>
+                  {saving ? "Saving…" : editing ? "Save Event" : "Create Event"}
+                </button>
                 <button
                   type="button"
                   onClick={() => {
