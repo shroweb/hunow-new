@@ -41,11 +41,11 @@ export function ArticleComments({ articleId }: { articleId: string }) {
     "w-full border-2 border-foreground bg-white px-4 py-3 font-mono text-sm focus:outline-none focus:border-accent";
 
   return (
-    <section className="mt-12">
+    <section className="mt-10">
       {/* Existing comments */}
       {comments.length > 0 && (
-        <div className="mb-10">
-          <h2 className="font-display text-3xl uppercase mb-6 pb-3 border-b-2 border-foreground">
+        <div className="mb-8">
+          <h2 className="font-display text-2xl uppercase mb-5">
             {comments.length} Comment{comments.length !== 1 ? "s" : ""}
           </h2>
           <div className="divide-y divide-foreground/10">
@@ -69,8 +69,8 @@ export function ArticleComments({ articleId }: { articleId: string }) {
       )}
 
       {/* Comment form */}
-      <div className="bg-foreground/[0.04] border-2 border-foreground p-6 md:p-8">
-        <h2 className="font-display text-3xl uppercase mb-6">Leave a comment</h2>
+      <div className="bg-foreground/[0.03] p-6 md:p-8">
+        <h2 className="font-display text-2xl uppercase mb-6">Leave a comment</h2>
         {done ? (
           <div className="flex items-center gap-3">
             <span className="text-accent text-xl">✓</span>

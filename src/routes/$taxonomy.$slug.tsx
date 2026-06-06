@@ -225,7 +225,7 @@ function ArticleDetail() {
               ))}
             </div>
           )}
-          <div className="mt-8 flex flex-wrap gap-3 border-t border-border pt-8">
+          <div className="mt-6 flex flex-wrap gap-3">
             <ShareMenu title={article.title} text={article.excerpt} />
             <SaveButton
               kind="story"

@@ -144,7 +144,7 @@ function StoryDetail() {
           </div>
           <TableOfContents content={article.content} />
           <ArticleContent content={article.content} entities={entities} />
-          <div className="mt-12 flex flex-wrap gap-3 border-t border-border pt-8">
+          <div className="mt-6 flex flex-wrap gap-3">
             <ShareMenu title={article.title} text={article.excerpt} />
             <SaveButton kind="story" id={article.id} slug={article.slug} title={article.title} />
           </div>
