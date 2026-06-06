@@ -13,11 +13,18 @@ export const claimListing = createServerFn({ method: "POST" })
     const { createListingClaim } = await import("./db.server");
     const user = await currentUser();
     if (!user) throw new Error("Sign in to claim this listing.");
-    return createListingClaim({
+    const result = await createListingClaim({
       listingId: data.listingId,
       userId: user.id,
       message: data.message ?? "",
     });
+    void import("./email.server").then(({ sendAdminAlert }) =>
+      sendAdminAlert(
+        "New listing claim",
+        `User: ${user.name} (${user.email})\nListing ID: ${data.listingId}\nMessage: ${data.message ?? "(none)"}`,
+      ),
+    );
+    return result;
   });
 
 export const getAdminListingClaims = createServerFn({ method: "GET" }).handler(async () => {

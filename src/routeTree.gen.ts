@@ -59,6 +59,7 @@ import { Route as AdminOffersRouteImport } from './routes/admin.offers'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
+import { Route as AdminImportRouteImport } from './routes/admin.import'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminEditorialPicksRouteImport } from './routes/admin.editorial-picks'
 import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
@@ -69,6 +70,7 @@ import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminAdsRouteImport } from './routes/admin.ads'
 import { Route as TaxonomySlugRouteImport } from './routes/$taxonomy.$slug'
 import { Route as CSectionSubRouteImport } from './routes/c.$section.$sub'
+import { Route as ApiCronPublishRouteImport } from './routes/api.cron.publish'
 
 const WhatsOnRoute = WhatsOnRouteImport.update({
   id: '/whats-on',
@@ -320,6 +322,11 @@ const AdminListingsRoute = AdminListingsRouteImport.update({
   path: '/listings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminImportRoute = AdminImportRouteImport.update({
+  id: '/import',
+  path: '/import',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEventsRoute = AdminEventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -370,6 +377,11 @@ const CSectionSubRoute = CSectionSubRouteImport.update({
   path: '/$sub',
   getParentRoute: () => CSectionRoute,
 } as any)
+const ApiCronPublishRoute = ApiCronPublishRouteImport.update({
+  id: '/api/cron/publish',
+  path: '/api/cron/publish',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -406,6 +418,7 @@ export interface FileRoutesByFullPath {
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/import': typeof AdminImportRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -431,6 +444,7 @@ export interface FileRoutesByFullPath {
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/cron/publish': typeof ApiCronPublishRoute
   '/c/$section/$sub': typeof CSectionSubRoute
 }
 export interface FileRoutesByTo {
@@ -467,6 +481,7 @@ export interface FileRoutesByTo {
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/import': typeof AdminImportRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -492,6 +507,7 @@ export interface FileRoutesByTo {
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/admin': typeof AdminIndexRoute
+  '/api/cron/publish': typeof ApiCronPublishRoute
   '/c/$section/$sub': typeof CSectionSubRoute
 }
 export interface FileRoutesById {
@@ -530,6 +546,7 @@ export interface FileRoutesById {
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/import': typeof AdminImportRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -555,6 +572,7 @@ export interface FileRoutesById {
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/cron/publish': typeof ApiCronPublishRoute
   '/c/$section/$sub': typeof CSectionSubRoute
 }
 export interface FileRouteTypes {
@@ -594,6 +612,7 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
+    | '/admin/import'
     | '/admin/listings'
     | '/admin/media'
     | '/admin/newsletter'
@@ -619,6 +638,7 @@ export interface FileRouteTypes {
     | '/stories/$slug'
     | '/tag/$tag'
     | '/admin/'
+    | '/api/cron/publish'
     | '/c/$section/$sub'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -655,6 +675,7 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
+    | '/admin/import'
     | '/admin/listings'
     | '/admin/media'
     | '/admin/newsletter'
@@ -680,6 +701,7 @@ export interface FileRouteTypes {
     | '/stories/$slug'
     | '/tag/$tag'
     | '/admin'
+    | '/api/cron/publish'
     | '/c/$section/$sub'
   id:
     | '__root__'
@@ -717,6 +739,7 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
+    | '/admin/import'
     | '/admin/listings'
     | '/admin/media'
     | '/admin/newsletter'
@@ -742,6 +765,7 @@ export interface FileRouteTypes {
     | '/stories/$slug'
     | '/tag/$tag'
     | '/admin/'
+    | '/api/cron/publish'
     | '/c/$section/$sub'
   fileRoutesById: FileRoutesById
 }
@@ -779,6 +803,7 @@ export interface RootRouteChildren {
   FeedEventsDotrssRoute: typeof FeedEventsDotrssRoute
   ProfileUserIdRoute: typeof ProfileUserIdRoute
   TagTagRoute: typeof TagTagRoute
+  ApiCronPublishRoute: typeof ApiCronPublishRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1133,6 +1158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminListingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/import': {
+      id: '/admin/import'
+      path: '/import'
+      fullPath: '/admin/import'
+      preLoaderRoute: typeof AdminImportRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/events': {
       id: '/admin/events'
       path: '/events'
@@ -1203,6 +1235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSectionSubRouteImport
       parentRoute: typeof CSectionRoute
     }
+    '/api/cron/publish': {
+      id: '/api/cron/publish'
+      path: '/api/cron/publish'
+      fullPath: '/api/cron/publish'
+      preLoaderRoute: typeof ApiCronPublishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1227,6 +1266,7 @@ interface AdminRouteChildren {
   AdminCommentsRoute: typeof AdminCommentsRoute
   AdminEditorialPicksRoute: typeof AdminEditorialPicksRoute
   AdminEventsRoute: typeof AdminEventsRoute
+  AdminImportRoute: typeof AdminImportRoute
   AdminListingsRoute: typeof AdminListingsRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
@@ -1251,6 +1291,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCommentsRoute: AdminCommentsRoute,
   AdminEditorialPicksRoute: AdminEditorialPicksRoute,
   AdminEventsRoute: AdminEventsRoute,
+  AdminImportRoute: AdminImportRoute,
   AdminListingsRoute: AdminListingsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
@@ -1357,6 +1398,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedEventsDotrssRoute: FeedEventsDotrssRoute,
   ProfileUserIdRoute: ProfileUserIdRoute,
   TagTagRoute: TagTagRoute,
+  ApiCronPublishRoute: ApiCronPublishRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

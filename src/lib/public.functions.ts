@@ -36,8 +36,17 @@ export const submitForReview = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
+    const { checkRateLimit } = await import("./rate-limit.server");
+    const allowed = await checkRateLimit(`submit:${data.contactEmail}`, 5, 60 * 60);
+    if (!allowed) throw new Error("Too many submissions. Please try again later.");
     const { addPublicSubmission } = await import("./db.server");
     await addPublicSubmission(data);
+    void import("./email.server").then(({ sendAdminAlert }) =>
+      sendAdminAlert(
+        `New ${data.type} submission: ${data.title}`,
+        `From: ${data.contactName} (${data.contactEmail})\nType: ${data.type}\nTitle: ${data.title}`,
+      ),
+    );
     return { ok: true };
   });
 
@@ -64,6 +73,12 @@ export const submitContact = createServerFn({ method: "POST" })
       status: "pending",
       createdAt: new Date().toISOString(),
     });
+    void import("./email.server").then(({ sendAdminAlert }) =>
+      sendAdminAlert(
+        `Contact: ${data.subject}`,
+        `From: ${data.name} (${data.email})\nType: ${data.enquiryType}\n\n${data.message}`,
+      ),
+    );
     return { ok: true };
   });
 

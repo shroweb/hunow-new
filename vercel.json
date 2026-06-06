@@ -1,4 +1,7 @@
 {
+  "crons": [
+    { "path": "/api/cron/publish", "schedule": "*/15 * * * *" }
+  ],
   "redirects": [
     { "source": "/eat/:slug", "destination": "/places/:slug", "permanent": true },
     { "source": "/activities/:slug", "destination": "/places/:slug", "permanent": true },

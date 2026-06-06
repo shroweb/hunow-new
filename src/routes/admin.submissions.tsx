@@ -1,107 +1,84 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { AdminHeader, AdminTable, adminBtn, adminBtnOutline } from "@/components/admin/AdminLayout";
-import { uniqueSlug } from "@/components/admin/slug-utils";
-import { setState, slugify, uid, useStore } from "@/lib/store";
-import type { EventItem, Listing, Submission } from "@/types";
+import {
+  getAdminSubmissions,
+  approveAdminSubmission,
+  rejectAdminSubmission,
+} from "@/lib/submissions.functions";
+import type { Submission } from "@/types";
 
-export const Route = createFileRoute("/admin/submissions")({ component: AdminSubmissions });
+export const Route = createFileRoute("/admin/submissions")({
+  loader: async () => ({ submissions: await getAdminSubmissions() }),
+  component: AdminSubmissions,
+});
 
 function AdminSubmissions() {
-  const submissions = useStore((s) => s.submissions);
+  const { submissions: initial } = Route.useLoaderData();
+  const [submissions, setSubmissions] = useState<Submission[]>(initial);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
 
-  const reject = (id: string) => {
-    setState((s) => ({
-      ...s,
-      submissions: s.submissions.map((x) => (x.id === id ? { ...x, status: "rejected" } : x)),
-    }));
-  };
-
-  const approve = (submission: Submission) => {
-    const data = submission.data;
-    setState((s) => {
-      if (submission.type === "event") {
-        const title = data.title || submission.title;
-        const event: EventItem = {
-          id: uid(),
-          title,
-          slug: uniqueSlug(
-            slugify(title),
-            s.events.map((item) => item.slug),
-          ),
-          description:
-            data.description || "Submitted event. Add full editorial details before publishing.",
-          category: data.category || "Community",
-          startDate: data.date || new Date().toISOString().slice(0, 10),
-          startTime: data.time || "19:00",
-          locationName: data.venue || "Venue to confirm",
-          address: data.address || data.venue || "Address to confirm",
-          price: data.price || "Free",
-          isFree: !data.price || data.price.toLowerCase() === "free",
-          ticketUrl: data.ticketUrl || undefined,
-          featuredImage: "photo-1492684223066-81342ee5ff30",
-          status: "draft",
-          isFeatured: false,
-          isSponsored: false,
-        };
-        return {
-          ...s,
-          events: [event, ...s.events],
-          submissions: s.submissions.map((x) =>
-            x.id === submission.id ? { ...x, status: "approved" } : x,
-          ),
-        };
+  async function approve(submission: Submission) {
+    setBusy(submission.id);
+    setMessage("");
+    try {
+      const result = await approveAdminSubmission({ data: { submissionId: submission.id } });
+      setSubmissions((prev) =>
+        prev.map((s) => (s.id === submission.id ? { ...s, status: "approved" } : s)),
+      );
+      if (result.created) {
+        const path = result.created.type === "event"
+          ? `/admin/events`
+          : `/admin/listings`;
+        setMessage(`✓ Created draft ${result.created.type}. Edit it in ${result.created.type === "event" ? "Events" : "Listings"}.`);
+        // Link to the admin edit page
+        void path;
       }
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Error approving.");
+    } finally {
+      setBusy(null);
+    }
+  }
 
-      const name = data.name || submission.title;
-      const listing: Listing = {
-        id: uid(),
-        name,
-        slug: uniqueSlug(
-          slugify(name),
-          s.listings.map((item) => item.slug),
-        ),
-        description:
-          data.description || "Submitted listing. Add full editorial details before publishing.",
-        category: data.category || "Things To Do",
-        area: data.area || "Hull",
-        address: data.address || "Address to confirm",
-        openingHours: data.openingHours || "Check with venue",
-        website: data.website || undefined,
-        phone: data.phone || undefined,
-        email: data.email || undefined,
-        featuredImage: "photo-1554118811-1e0d58224f24",
-        isFeatured: false,
-        isHiddenGem: false,
-        isIndependent: true,
-        isVerified: false,
-      };
-      return {
-        ...s,
-        listings: [listing, ...s.listings],
-        submissions: s.submissions.map((x) =>
-          x.id === submission.id ? { ...x, status: "approved" } : x,
-        ),
-      };
-    });
-  };
+  async function reject(id: string) {
+    setBusy(id);
+    try {
+      await rejectAdminSubmission({ data: { submissionId: id } });
+      setSubmissions((prev) => prev.map((s) => (s.id === id ? { ...s, status: "rejected" } : s)));
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Error rejecting.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const pending = submissions.filter((s) => s.status === "pending").length;
 
   return (
     <div>
       <AdminHeader
         title="Submissions"
-        subtitle={`${submissions.filter((s) => s.status === "pending").length} pending review`}
+        subtitle={`${pending} pending review — approving creates a draft ready to edit and publish`}
       />
       <div className="p-6 md:p-10 space-y-6">
+        {message && (
+          <div className="border-2 border-accent bg-accent/5 px-5 py-3 text-sm font-bold flex items-center justify-between gap-4">
+            {message}
+            <button type="button" onClick={() => setMessage("")} className="text-muted-foreground hover:text-foreground">×</button>
+          </div>
+        )}
         {submissions.map((s) => (
           <div key={s.id} className="border-2 border-foreground bg-white p-6">
             <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
               <div>
                 <div className="text-[10px] font-mono uppercase text-accent mb-1">
-                  {s.type} · {s.createdAt}
+                  {s.type} · {new Date(s.createdAt).toLocaleDateString("en-GB")}
                 </div>
                 <h3 className="font-display text-2xl uppercase">{s.title}</h3>
                 <div className="text-sm text-muted-foreground">
-                  From {s.contactName} · {s.contactEmail}
+                  {s.contactName} · {s.contactEmail}
                 </div>
               </div>
               <span
@@ -126,12 +103,30 @@ function AdminSubmissions() {
             </div>
             {s.status === "pending" && (
               <div className="flex gap-2">
-                <button onClick={() => approve(s)} className={adminBtn}>
-                  Approve & Create Draft
+                <button
+                  disabled={busy === s.id}
+                  onClick={() => approve(s)}
+                  className={`${adminBtn} disabled:opacity-40`}
+                >
+                  {busy === s.id ? "Creating…" : "Approve & Create Draft"}
                 </button>
-                <button onClick={() => reject(s.id)} className={adminBtnOutline}>
+                <button
+                  disabled={busy === s.id}
+                  onClick={() => reject(s.id)}
+                  className={`${adminBtnOutline} disabled:opacity-40`}
+                >
                   Reject
                 </button>
+              </div>
+            )}
+            {s.status === "approved" && (
+              <div className="flex gap-3">
+                <Link
+                  to={s.type === "event" ? "/admin/events" : "/admin/listings"}
+                  className="text-[10px] font-bold uppercase underline text-accent"
+                >
+                  Edit in {s.type === "event" ? "Events" : "Listings"} →
+                </Link>
               </div>
             )}
           </div>

@@ -76,6 +76,14 @@ async function ensureAuthSchema() {
 export async function createAccount(input: { name: string; email: string; password: string }) {
   await ensureAuthSchema();
   const email = normaliseEmail(input.email);
+
+  // Optionally lock down self-registration to admin emails only
+  if (process.env.DISABLE_SELF_REGISTRATION === "true" && !isConfiguredAdmin(email)) {
+    throw new Error(
+      "Registration is currently invite-only. Contact the site admin to request access.",
+    );
+  }
+
   const existing = await getPool().query("select id from users where email = $1", [email]);
   if (existing.rowCount && existing.rowCount > 0) {
     throw new Error("An account already exists for that email.");
@@ -98,11 +106,18 @@ export async function createAccount(input: { name: string; email: string; passwo
     [user.id, user.email, user.name, await hashPassword(input.password), user.role],
   );
   await createSession(user.id);
+  // Fire-and-forget welcome email — don't block signup
+  void import("./email.server").then(({ sendWelcomeEmail }) =>
+    sendWelcomeEmail(user.email, user.name),
+  );
   return user;
 }
 
 export async function signIn(input: { email: string; password: string }) {
   await ensureAuthSchema();
+  const { checkRateLimit } = await import("./rate-limit.server");
+  const allowed = await checkRateLimit(`signin:${normaliseEmail(input.email)}`, 5, 15 * 60);
+  if (!allowed) throw new Error("Too many sign-in attempts. Please wait 15 minutes and try again.");
   const result = await getPool().query<{
     id: string;
     email: string;
@@ -160,6 +175,9 @@ export async function requireAdmin() {
 export async function requestPasswordReset(email: string) {
   await ensureAuthSchema();
   const normalised = normaliseEmail(email);
+  const { checkRateLimit } = await import("./rate-limit.server");
+  const allowed = await checkRateLimit(`pwreset:${normalised}`, 3, 60 * 60);
+  if (!allowed) throw new Error("Too many reset attempts. Please wait an hour and try again.");
   const userResult = await getPool().query<{ id: string }>(
     "select id from users where email = $1",
     [normalised],
@@ -178,6 +196,9 @@ export async function requestPasswordReset(email: string) {
   if (process.env.NODE_ENV !== "production") {
     console.info(`[Password Reset] ${normalised} → ${resetUrl}`);
   }
+  // Send reset email (fire-and-forget in dev; blocking in prod so errors surface)
+  const { sendPasswordResetEmail } = await import("./email.server");
+  await sendPasswordResetEmail(normalised, resetUrl);
   return { ok: true, _devResetUrl: process.env.NODE_ENV !== "production" ? resetUrl : undefined };
 }
 

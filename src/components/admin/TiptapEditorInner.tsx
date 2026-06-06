@@ -5,7 +5,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface Props {
   defaultValue?: string;
@@ -14,6 +14,8 @@ interface Props {
 
 export default function TiptapEditorInner({ defaultValue, onUpdate }: Props) {
   const [wordCount, setWordCount] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
     extensions: [StarterKit, Link.configure({ openOnClick: false }), Image],
@@ -109,14 +111,42 @@ export default function TiptapEditorInner({ defaultValue, onUpdate }: Props) {
           "Add link",
           editor?.isActive("link"),
         )}
-        {btn(
-          "🖼",
-          () => {
-            const url = prompt("Image URL:");
-            if (url) editor?.chain().focus().setImage({ src: url }).run();
-          },
-          "Add image",
-        )}
+        <button
+          type="button"
+          title="Upload image"
+          disabled={uploading}
+          onMouseDown={(e) => { e.preventDefault(); fileRef.current?.click(); }}
+          className={`${baseClass}${uploading ? " opacity-40" : ""}`}
+        >
+          {uploading ? "…" : "🖼"}
+        </button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            setUploading(true);
+            try {
+              const { uploadImage } = await import("@/lib/media.functions");
+              const reader = new FileReader();
+              const dataUrl = await new Promise<string>((res, rej) => {
+                reader.onload = () => res(String(reader.result ?? ""));
+                reader.onerror = () => rej(reader.error);
+                reader.readAsDataURL(file);
+              });
+              const result = await uploadImage({ data: { fileName: file.name, dataUrl } });
+              editor?.chain().focus().setImage({ src: result.url }).run();
+            } catch (err) {
+              alert(err instanceof Error ? err.message : "Upload failed");
+            } finally {
+              setUploading(false);
+              if (fileRef.current) fileRef.current.value = "";
+            }
+          }}
+        />
       </div>
 
       <EditorContent editor={editor} />

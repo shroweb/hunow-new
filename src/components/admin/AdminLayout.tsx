@@ -21,6 +21,7 @@ import {
   Sparkles,
   BarChart2,
   Map,
+  Download,
   type LucideIcon,
 } from "lucide-react";
 import { getCurrentUser, signOutUser } from "@/lib/auth.functions";
@@ -39,6 +40,7 @@ const navSections: { title: string; items: { to: string; label: string; icon: Lu
     items: [
       { to: "/admin/articles", label: "Posts", icon: FileText },
       { to: "/admin/events", label: "Events", icon: CalendarDays },
+      { to: "/admin/import", label: "Import", icon: Download },
       { to: "/admin/media", label: "Media", icon: Image },
       { to: "/admin/editorial-picks", label: "Picks", icon: Sparkles },
       { to: "/admin/comments", label: "Comments", icon: MessageSquare },

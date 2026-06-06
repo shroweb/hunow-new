@@ -332,9 +332,17 @@ create index if not exists listing_updates_listing_id_idx on listing_updates (li
 
 alter table users add column if not exists avatar_url text;
 alter table users add column if not exists bio text not null default '';
+
+create table if not exists rate_limits (
+  key text not null,
+  window_start timestamptz not null,
+  hits integer not null default 0,
+  primary key (key, window_start)
+);
+create index if not exists rate_limits_window_start_idx on rate_limits (window_start);
 `;
 
-async function ensureSchema() {
+export async function ensureSchema() {
   if (!schemaReady) {
     schemaReady = getPool()
       .query(SCHEMA_SQL)
