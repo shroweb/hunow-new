@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard, ListingCard } from "@/components/cards";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -15,6 +15,7 @@ import { authorSlug } from "@/lib/authors";
 import { fetchArticleBySlug } from "@/lib/store.functions";
 import { findTaxonomy, articlePath } from "@/lib/taxonomy";
 import { img } from "@/data/seed";
+import { subscribeNewsletter } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/$taxonomy/$slug")({
   component: ArticleDetail,
@@ -247,6 +248,7 @@ function ArticleDetail() {
               Sponsored by {article.sponsorName}
             </div>
           )}
+          <NewsletterStrip />
           <ArticleComments articleId={article.id} />
         </div>
       </article>
@@ -277,5 +279,63 @@ function ArticleDetail() {
         </section>
       )}
     </PublicLayout>
+  );
+}
+
+function NewsletterStrip() {
+  const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
+  const KEY = "hunow:nl_strip_dismissed";
+
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    setVisible(!localStorage.getItem(KEY));
+  }, []);
+
+  if (!visible) return null;
+
+  function dismiss() {
+    try { localStorage.setItem(KEY, "1"); } catch { /* quota */ }
+    setVisible(false);
+  }
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    try {
+      await subscribeNewsletter({ data: { email, segments: [] } });
+    } catch { /* ignore */ }
+    setDone(true);
+    dismiss();
+  }
+
+  return (
+    <div className="my-10 border-y-2 border-foreground py-8">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-accent mb-1">Newsletter</div>
+          <p className="font-bold text-lg leading-snug">The best of Hull, every Thursday.</p>
+          <p className="text-sm text-muted-foreground mt-1">Events, food guides and hidden gems — straight to your inbox.</p>
+        </div>
+        <button type="button" onClick={dismiss} className="text-muted-foreground hover:text-foreground text-xl leading-none shrink-0" aria-label="Dismiss">×</button>
+      </div>
+      {done ? (
+        <p className="font-bold text-accent">You're in. See you Thursday.</p>
+      ) : (
+        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="flex-1 bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none"
+          />
+          <button type="submit" className="bg-foreground text-background px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors whitespace-nowrap">
+            Subscribe
+          </button>
+        </form>
+      )}
+    </div>
   );
 }

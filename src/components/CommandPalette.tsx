@@ -128,7 +128,12 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
               }
               if (e.key === "Enter") {
                 e.preventDefault();
-                if (items[active]) choose(items[active]);
+                if (items[active]) {
+                  choose(items[active]);
+                } else if (q.trim()) {
+                  onClose();
+                  navigate({ to: "/search", search: { q: q.trim() } });
+                }
               }
             }}
             placeholder="Search events, places, stories, offers..."
@@ -162,8 +167,23 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
               Recent
             </li>
           )}
-          {items.length === 0 && (
-            <li className="px-4 py-8 text-center text-sm text-muted-foreground">No results.</li>
+          {items.length === 0 && q.trim() && (
+            <li>
+              <button
+                type="button"
+                onClick={() => { onClose(); navigate({ to: "/search", search: { q: q.trim() } }); }}
+                className="w-full text-left px-4 py-4 flex items-center justify-between gap-3 hover:bg-accent/10"
+              >
+                <div>
+                  <div className="font-bold">Search for &ldquo;{q.trim()}&rdquo;</div>
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground">Full results page</div>
+                </div>
+                <span className="text-[10px] font-mono uppercase text-muted-foreground shrink-0">↵</span>
+              </button>
+            </li>
+          )}
+          {items.length === 0 && !q.trim() && (
+            <li className="px-4 py-8 text-center text-sm text-muted-foreground">Start typing to search…</li>
           )}
           {items.map((r, i) => (
             <li key={`${r.kind}-${r.to}-${i}`} role="option" aria-selected={i === active}>
@@ -186,11 +206,20 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
             </li>
           ))}
         </ul>
+        {q.trim() && items.length > 0 && (
+          <div className="border-t border-foreground/10">
+            <button
+              type="button"
+              onClick={() => { onClose(); navigate({ to: "/search", search: { q: q.trim() } }); }}
+              className="w-full text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-accent hover:bg-accent/5 transition-colors"
+            >
+              See all results for &ldquo;{q.trim()}&rdquo; →
+            </button>
+          </div>
+        )}
         <div className="px-4 py-2 border-t border-foreground/10 text-[10px] font-mono uppercase text-muted-foreground flex justify-between">
           <span>↑↓ navigate · ↵ open · esc close</span>
-          <span>
-            {items.length} result{items.length === 1 ? "" : "s"}
-          </span>
+          <span>{items.length} result{items.length === 1 ? "" : "s"}</span>
         </div>
       </div>
     </div>

@@ -1035,20 +1035,22 @@ export async function recordAnalyticsEvent(input: {
   return { ok: true };
 }
 
-export async function getAnalyticsSummary() {
+export async function getAnalyticsSummary(days?: number) {
   await ensureSchema();
+  const dateClause = days ? `and created_at > now() - interval '${Number(days)} days'` : "";
+  const adDateClause = days ? `where occurred_at > now() - interval '${Number(days)} days'` : "";
   const [eventsByType, popularPaths, searches, adEvents, totals] = await Promise.all([
     getPool().query<{ event_type: string; count: string }>(
-      "select event_type, count(*)::text as count from site_analytics group by event_type order by count(*) desc",
+      `select event_type, count(*)::text as count from site_analytics where true ${dateClause} group by event_type order by count(*) desc`,
     ),
     getPool().query<{ path: string; count: string }>(
-      "select path, count(*)::text as count from site_analytics where path is not null group by path order by count(*) desc limit 10",
+      `select path, count(*)::text as count from site_analytics where path is not null ${dateClause} group by path order by count(*) desc limit 10`,
     ),
     getPool().query<{ label: string; count: string }>(
-      "select label, count(*)::text as count from site_analytics where event_type = 'search' and label is not null group by label order by count(*) desc limit 10",
+      `select label, count(*)::text as count from site_analytics where event_type = 'search' and label is not null ${dateClause} group by label order by count(*) desc limit 10`,
     ),
     getPool().query<{ event_type: string; count: string }>(
-      "select event_type, count(*)::text as count from ad_events group by event_type",
+      `select event_type, count(*)::text as count from ad_events ${adDateClause} group by event_type`,
     ),
     getPool().query<{
       users: string;

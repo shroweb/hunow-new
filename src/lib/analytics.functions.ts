@@ -14,9 +14,11 @@ export const trackAnalyticsEvent = createServerFn({ method: "POST" })
     return recordAnalyticsEvent(data);
   });
 
-export const getAdminAnalytics = createServerFn({ method: "GET" }).handler(async () => {
-  const { requireAdmin } = await import("./auth.server");
-  const { getAnalyticsSummary } = await import("./db.server");
-  await requireAdmin();
-  return getAnalyticsSummary();
-});
+export const getAdminAnalytics = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ days: z.number().optional() }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { getAnalyticsSummary } = await import("./db.server");
+    await requireAdmin();
+    return getAnalyticsSummary(data.days);
+  });

@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
-import { findSection, findSub, type NavSub } from "@/lib/nav";
+import { findSection, findSub, type NavSection, type NavSub } from "@/lib/nav";
 import { AdSlot } from "@/components/AdSlot";
 
 export const Route = createFileRoute("/c/$section/$sub")({
@@ -72,7 +72,7 @@ function SubPage() {
           {sub.label}
         </h1>
         <p className="text-lg text-muted-foreground">
-          Posts and events in {sub.label.toLowerCase()} from across Hull.
+          {section.blurb}
         </p>
       </section>
 
@@ -104,18 +104,7 @@ function SubPage() {
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         {!hasContent ? (
-          <div className="text-center py-20">
-            <p className="text-2xl font-display uppercase mb-2">No content yet</p>
-            <p className="text-sm text-muted-foreground mb-6">
-              Check back soon — or submit one yourself.
-            </p>
-            <Link
-              to="/submit"
-              className="inline-block px-6 py-3 bg-foreground text-background text-xs font-bold uppercase tracking-widest"
-            >
-              Submit a post
-            </Link>
-          </div>
+          <EmptySection section={section} sub={sub} />
         ) : (
           <div className="space-y-16">
             {events.length > 0 && (
@@ -142,5 +131,51 @@ function SubPage() {
         )}
       </section>
     </PublicLayout>
+  );
+}
+
+function EmptySection({ section, sub }: { section: NavSection; sub: NavSub }) {
+  const allArticles = useStore((s) => s.articles).filter(
+    (a) => a.status === "published" && a.section === section.slug,
+  );
+  const allEvents = useStore((s) => s.events).filter(
+    (e) => e.status === "published" && e.category.toLowerCase().includes(section.slug),
+  );
+  const fallbackArticles = allArticles.slice(0, 3);
+  const fallbackEvents = allEvents.slice(0, 3);
+  const hasFallback = fallbackArticles.length > 0 || fallbackEvents.length > 0;
+
+  return (
+    <div className="space-y-12">
+      <div className="border-2 border-dashed border-foreground/20 p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div>
+          <p className="font-display text-2xl uppercase mb-1">Nothing here for {sub.label} yet</p>
+          <p className="text-sm text-muted-foreground">Got a tip or story? Let us know.</p>
+        </div>
+        <Link
+          to="/contact"
+          className="shrink-0 px-6 py-3 bg-foreground text-background text-xs font-bold uppercase tracking-widest hover:bg-accent transition-colors"
+        >
+          Submit a post →
+        </Link>
+      </div>
+      {hasFallback && (
+        <div className="space-y-8">
+          <p className="text-[10px] font-mono uppercase text-muted-foreground">
+            Meanwhile, from {section.label}:
+          </p>
+          {fallbackEvents.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {fallbackEvents.map((e) => <EventCard key={e.id} event={e} />)}
+            </div>
+          )}
+          {fallbackArticles.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16">
+              {fallbackArticles.map((a) => <ArticleCard key={a.id} article={a} />)}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
