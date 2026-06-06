@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { CommandPalette } from "@/components/CommandPalette";
 import { AdSlot } from "@/components/AdSlot";
+import { PollWidget } from "@/components/PollWidget";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard, ListingCard, OfferCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
@@ -241,6 +242,7 @@ function Index() {
         </div>
 
         <aside className="lg:col-span-4 space-y-12">
+          <PollWidget />
           <AdSlot placement="Sidebar Ad" />
           <div className="space-y-4">
             <h2 className="text-3xl font-display tracking-wide">Reader Offers</h2>

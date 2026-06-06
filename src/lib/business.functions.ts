@@ -68,3 +68,53 @@ export const updateBusinessListing = createServerFn({ method: "POST" })
       email: data.email || undefined,
     });
   });
+
+export const getListingUpdatesForOwner = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ listingId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { currentUser } = await import("./auth.server");
+    const { getOwnedListings, getListingUpdates } = await import("./db.server");
+    const user = await currentUser();
+    if (!user) throw new Error("Sign in to view updates.");
+    const owned = await getOwnedListings(user.id);
+    if (!owned.find((l) => l.id === data.listingId)) throw new Error("Listing not found.");
+    return getListingUpdates(data.listingId);
+  });
+
+export const postListingUpdateFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ listingId: z.string().min(1), body: z.string().min(1).max(500) }))
+  .handler(async ({ data }) => {
+    const { currentUser } = await import("./auth.server");
+    const { getOwnedListings, postListingUpdate } = await import("./db.server");
+    const user = await currentUser();
+    if (!user) throw new Error("Sign in to post an update.");
+    const owned = await getOwnedListings(user.id);
+    if (!owned.find((l) => l.id === data.listingId)) throw new Error("Listing not found.");
+    const id = crypto.randomUUID();
+    await postListingUpdate(id, data.listingId, user.id, data.body);
+    return { ok: true, id };
+  });
+
+export const deleteListingUpdateFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ updateId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { currentUser } = await import("./auth.server");
+    const { deleteListingUpdate } = await import("./db.server");
+    const user = await currentUser();
+    if (!user) throw new Error("Sign in to delete an update.");
+    await deleteListingUpdate(data.updateId, user.id);
+    return { ok: true };
+  });
+
+export const getListingReviewsForOwner = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ listingId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { currentUser } = await import("./auth.server");
+    const { getOwnedListings } = await import("./db.server");
+    const { getListingReviewsAdmin } = await import("./db.server.review");
+    const user = await currentUser();
+    if (!user) throw new Error("Sign in to view reviews.");
+    const owned = await getOwnedListings(user.id);
+    if (!owned.find((l) => l.id === data.listingId)) throw new Error("Listing not found.");
+    return getListingReviewsAdmin(data.listingId);
+  });

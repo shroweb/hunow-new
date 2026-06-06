@@ -1,26 +1,24 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ListingCard, EventCard, ArticleCard } from "@/components/cards";
-import { useStore } from "@/lib/store";
-import { getState } from "@/lib/store";
-
-function slugToArea(slug: string, areas: string[]) {
-  return areas.find((a) => a.toLowerCase().replace(/\s+/g, "-") === slug);
-}
+import { getAreaPageData } from "@/lib/area-guides.functions";
 
 export const Route = createFileRoute("/areas/$area")({
-  loader: ({ params }) => {
-    const areas = Array.from(new Set(getState().listings.map((l) => l.area)));
-    const area = slugToArea(params.area, areas);
-    if (!area) throw notFound();
-    return { area };
+  loader: async ({ params }) => {
+    const data = await getAreaPageData({ data: { areaSlug: params.area } });
+    if (!data) throw notFound();
+    return data;
   },
   head: ({ loaderData }) => {
     const area = loaderData?.area ?? "";
+    const intro = loaderData?.guide?.intro ?? "";
     return {
       meta: [
         { title: `${area} — Hull Area Guide — HU NOW` },
-        { name: "description", content: `Places, events and stories from ${area} in Hull.` },
+        {
+          name: "description",
+          content: intro || `Places, events and stories from ${area} in Hull.`,
+        },
       ],
     };
   },
@@ -38,37 +36,51 @@ export const Route = createFileRoute("/areas/$area")({
 });
 
 function AreaPage() {
-  const { area } = Route.useLoaderData();
-  const listings = useStore((s) => s.listings).filter((l) => l.area === area);
-  const events = useStore((s) => s.events).filter(
-    (e) =>
-      e.status === "published" &&
-      (e.locationName.toLowerCase().includes(area.toLowerCase()) ||
-        e.address.toLowerCase().includes(area.toLowerCase())),
-  );
-  const articles = useStore((s) => s.articles)
-    .filter(
-      (a) =>
-        a.status === "published" &&
-        (a.tags.some((t) => t.toLowerCase().includes(area.toLowerCase())) ||
-          a.title.toLowerCase().includes(area.toLowerCase()) ||
-          a.content.toLowerCase().includes(area.toLowerCase())),
-    )
-    .slice(0, 3);
-
+  const { area, guide, listings, events, articles } = Route.useLoaderData();
   const featured = listings.filter((l) => l.isFeatured || l.isHiddenGem).slice(0, 3);
   const rest = listings.filter((l) => !featured.find((f) => f.id === l.id));
 
   return (
     <PublicLayout>
-      <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Area Guide</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">{area}</h1>
-        <div className="flex flex-wrap gap-6 text-[10px] font-mono uppercase text-muted-foreground">
-          <span>{listings.length} listings</span>
-          {events.length > 0 && <span>{events.length} upcoming events</span>}
-          {articles.length > 0 && <span>{articles.length} stories</span>}
-        </div>
+      {/* Hero */}
+      <section className="relative border-b-2 border-foreground overflow-hidden">
+        {guide.featuredImage ? (
+          <>
+            <img
+              src={guide.featuredImage}
+              alt={area}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-foreground/65" />
+            <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 text-background">
+              <div className="text-[10px] font-mono uppercase mb-4 text-accent">Area Guide</div>
+              <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
+                {area}
+              </h1>
+              {guide.intro && (
+                <p className="text-lg max-w-2xl text-background/80 mb-4">{guide.intro}</p>
+              )}
+              <div className="flex flex-wrap gap-6 text-[10px] font-mono uppercase text-background/60">
+                <span>{listings.length} listings</span>
+                {events.length > 0 && <span>{events.length} upcoming events</span>}
+                {articles.length > 0 && <span>{articles.length} stories</span>}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 py-12 md:py-20">
+            <div className="text-[10px] font-mono uppercase mb-4 text-accent">Area Guide</div>
+            <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">{area}</h1>
+            {guide.intro && (
+              <p className="text-lg max-w-2xl text-muted-foreground mb-4">{guide.intro}</p>
+            )}
+            <div className="flex flex-wrap gap-6 text-[10px] font-mono uppercase text-muted-foreground">
+              <span>{listings.length} listings</span>
+              {events.length > 0 && <span>{events.length} upcoming events</span>}
+              {articles.length > 0 && <span>{articles.length} stories</span>}
+            </div>
+          </div>
+        )}
       </section>
 
       {featured.length > 0 && (
@@ -86,7 +98,7 @@ function AreaPage() {
         <section className="max-w-7xl mx-auto px-4 py-12 border-b border-border">
           <h2 className="text-4xl font-display uppercase mb-8">Events in {area}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {events.slice(0, 3).map((e) => (
+            {events.map((e) => (
               <EventCard key={e.id} event={e} />
             ))}
           </div>

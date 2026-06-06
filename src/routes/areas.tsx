@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { useStore } from "@/lib/store";
+import { getAreasIndexData } from "@/lib/area-guides.functions";
 
 export const Route = createFileRoute("/areas")({
+  loader: async () => ({ areas: await getAreasIndexData() }),
   head: () => ({
     meta: [
       { title: "Hull Areas — HU NOW" },
@@ -13,8 +14,7 @@ export const Route = createFileRoute("/areas")({
 });
 
 function AreasIndex() {
-  const listings = useStore((s) => s.listings);
-  const areas = Array.from(new Set(listings.map((l) => l.area))).sort();
+  const { areas } = Route.useLoaderData();
 
   return (
     <PublicLayout>
@@ -28,23 +28,40 @@ function AreasIndex() {
         </p>
       </section>
       <section className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {areas.map((area) => {
-            const count = listings.filter((l) => l.area === area).length;
-            return (
-              <Link
-                key={area}
-                to="/areas/$area"
-                params={{ area: area.toLowerCase().replace(/\s+/g, "-") }}
-                className="group border-2 border-foreground p-6 hover:bg-foreground hover:text-background transition-colors"
-              >
-                <div className="font-display text-3xl uppercase leading-none mb-2">{area}</div>
-                <div className="text-[10px] font-mono uppercase text-muted-foreground group-hover:text-background/60">
-                  {count} {count === 1 ? "listing" : "listings"}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {areas.map(({ area, slug, listingCount, intro, featuredImage }) => (
+            <Link
+              key={slug}
+              to="/areas/$area"
+              params={{ area: slug }}
+              className="group border-2 border-foreground bg-white overflow-hidden hover:border-accent transition-colors"
+            >
+              {featuredImage ? (
+                <div className="h-36 overflow-hidden">
+                  <img
+                    src={featuredImage}
+                    alt={area}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
-              </Link>
-            );
-          })}
+              ) : (
+                <div className="h-36 bg-foreground/5 flex items-center justify-center">
+                  <span className="font-display text-5xl uppercase text-foreground/15">
+                    {area[0]}
+                  </span>
+                </div>
+              )}
+              <div className="p-5">
+                <div className="font-display text-3xl uppercase leading-none mb-2">{area}</div>
+                {intro && (
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{intro}</p>
+                )}
+                <div className="text-[10px] font-mono uppercase text-muted-foreground group-hover:text-accent transition-colors">
+                  {listingCount} {listingCount === 1 ? "listing" : "listings"} →
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
     </PublicLayout>

@@ -276,6 +276,154 @@ export async function updateUserRoleForAdmin(input: { userId: string; role: Auth
   };
 }
 
+// ---- Profile updates ----
+
+export async function updateProfile(
+  userId: string,
+  data: { name?: string; avatarUrl?: string | null; bio?: string },
+) {
+  await ensureAuthSchema();
+  const sets: string[] = [];
+  const values: unknown[] = [];
+  let i = 1;
+  if (data.name !== undefined) { sets.push(`name = $${i++}`); values.push(data.name.trim()); }
+  if (data.avatarUrl !== undefined) { sets.push(`avatar_url = $${i++}`); values.push(data.avatarUrl || null); }
+  if (data.bio !== undefined) { sets.push(`bio = $${i++}`); values.push(data.bio); }
+  if (sets.length === 0) return;
+  sets.push("updated_at = now()");
+  values.push(userId);
+  await getPool().query(`update users set ${sets.join(", ")} where id = $${i}`, values);
+}
+
+export async function updatePassword(userId: string, currentPassword: string, newPassword: string) {
+  await ensureAuthSchema();
+  const result = await getPool().query<{ password_hash: string }>(
+    "select password_hash from users where id = $1",
+    [userId],
+  );
+  const row = result.rows[0];
+  if (!row) throw new Error("User not found.");
+  if (!(await verifyPassword(currentPassword, row.password_hash))) {
+    throw new Error("Current password is incorrect.");
+  }
+  const hash = await hashPassword(newPassword);
+  await getPool().query(
+    "update users set password_hash = $1, updated_at = now() where id = $2",
+    [hash, userId],
+  );
+  // Invalidate all other sessions (keep current)
+  const sessionId = getCookie(SESSION_COOKIE);
+  await getPool().query(
+    "delete from sessions where user_id = $1 and id != $2",
+    [userId, sessionId ?? ""],
+  );
+}
+
+export async function deleteAccount(userId: string, password: string) {
+  await ensureAuthSchema();
+  const result = await getPool().query<{ password_hash: string; email: string }>(
+    "select password_hash, email from users where id = $1",
+    [userId],
+  );
+  const row = result.rows[0];
+  if (!row) throw new Error("User not found.");
+  if (!(await verifyPassword(password, row.password_hash))) {
+    throw new Error("Password is incorrect.");
+  }
+  // Anonymise article comments before deletion (no FK constraint)
+  await getPool().query(
+    "update article_comments set author_name = 'Deleted User', author_email = 'deleted@hunow.co.uk' where author_email = $1",
+    [row.email],
+  );
+  // Remove newsletter subscription
+  await getPool().query(
+    "delete from newsletter_subscribers where email = $1",
+    [row.email],
+  );
+  // Delete user — CASCADE handles sessions, saved_items, reviews, listing_claims
+  await getPool().query("delete from users where id = $1", [userId]);
+  deleteCookie(SESSION_COOKIE, { path: "/" });
+}
+
+export interface PublicProfile {
+  id: string;
+  name: string;
+  avatarUrl: string | null;
+  bio: string;
+  memberSince: number;
+  reviews: {
+    id: string;
+    listingName: string;
+    listingSlug: string | null;
+    rating: number;
+    body: string | null;
+    createdAt: string;
+  }[];
+}
+
+export async function getPublicProfile(userId: string): Promise<PublicProfile | null> {
+  await ensureAuthSchema();
+  const userResult = await getPool().query<{
+    id: string; name: string; avatar_url: string | null; bio: string; created_at: string;
+  }>(
+    "select id, name, avatar_url, bio, created_at from users where id = $1",
+    [userId],
+  );
+  const user = userResult.rows[0];
+  if (!user) return null;
+
+  const reviewResult = await getPool().query<{
+    id: string; rating: number; body: string | null; created_at: string;
+    listing_name: string | null; listing_slug: string | null;
+  }>(
+    `select r.id, r.rating, r.body, r.created_at,
+            l.data->>'name' as listing_name,
+            l.data->>'slug' as listing_slug
+     from reviews r
+     left join listings l on l.id = r.listing_id
+     where r.user_id = $1 and coalesce(r.status, 'approved') = 'approved'
+     order by r.created_at desc limit 10`,
+    [userId],
+  );
+
+  return {
+    id: user.id,
+    name: user.name,
+    avatarUrl: user.avatar_url,
+    bio: user.bio,
+    memberSince: new Date(user.created_at).getFullYear(),
+    reviews: reviewResult.rows.map((r) => ({
+      id: r.id,
+      listingName: r.listing_name ?? "Unknown place",
+      listingSlug: r.listing_slug,
+      rating: r.rating,
+      body: r.body,
+      createdAt: new Date(r.created_at).toISOString(),
+    })),
+  };
+}
+
+export async function getUserNewsletterPrefs(email: string) {
+  await ensureAuthSchema();
+  const result = await getPool().query<{ segments: string[] }>(
+    "select segments from newsletter_subscribers where email = $1",
+    [normaliseEmail(email)],
+  );
+  return {
+    subscribed: Boolean(result.rows[0]),
+    segments: (result.rows[0]?.segments as string[]) ?? [],
+  };
+}
+
+export async function updateUserNewsletterPrefs(email: string, segments: string[]) {
+  await ensureAuthSchema();
+  const unique = ["all", ...Array.from(new Set(segments.filter((s) => s !== "all")))];
+  await getPool().query(
+    "update newsletter_subscribers set segments = $2::jsonb where email = $1",
+    [normaliseEmail(email), JSON.stringify(unique)],
+  );
+}
+
 function normaliseEmail(email: string) {
   return email.trim().toLowerCase();
 }

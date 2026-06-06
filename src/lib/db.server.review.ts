@@ -12,6 +12,33 @@ export function getPool() {
   return pool;
 }
 
+export async function getListingReviewsAdmin(listingId: string) {
+  await ensureSchemaOnce();
+  const result = await getPool().query<{
+    id: string;
+    listing_id: string;
+    user_id: string;
+    user_name: string;
+    rating: number;
+    body: string | null;
+    status: string;
+    created_at: Date;
+  }>(
+    "select id, listing_id, user_id, user_name, rating, body, status, created_at from reviews where listing_id = $1 order by created_at desc",
+    [listingId],
+  );
+  return result.rows.map((r) => ({
+    id: r.id,
+    listingId: r.listing_id,
+    userId: r.user_id,
+    userName: r.user_name,
+    rating: r.rating,
+    body: r.body,
+    status: r.status as "pending" | "approved" | "rejected",
+    createdAt: r.created_at.toISOString(),
+  }));
+}
+
 export async function ensureSchemaOnce() {
   if (!ready) {
     ready = getPool()

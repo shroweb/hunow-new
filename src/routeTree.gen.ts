@@ -38,6 +38,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
 import { Route as SeriesSeriesRouteImport } from './routes/series.$series'
+import { Route as ProfileUserIdRouteImport } from './routes/profile.$userId'
 import { Route as PlacesSlugRouteImport } from './routes/places.$slug'
 import { Route as FeedEventsDotrssRouteImport } from './routes/feed.events[.]rss'
 import { Route as FeedArticlesDotrssRouteImport } from './routes/feed.articles[.]rss'
@@ -53,6 +54,7 @@ import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminRedirectsRouteImport } from './routes/admin.redirects'
+import { Route as AdminPollsRouteImport } from './routes/admin.polls'
 import { Route as AdminOffersRouteImport } from './routes/admin.offers'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
@@ -62,6 +64,7 @@ import { Route as AdminEditorialPicksRouteImport } from './routes/admin.editoria
 import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
+import { Route as AdminAreasRouteImport } from './routes/admin.areas'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminAdsRouteImport } from './routes/admin.ads'
 import { Route as TaxonomySlugRouteImport } from './routes/$taxonomy.$slug'
@@ -212,6 +215,11 @@ const SeriesSeriesRoute = SeriesSeriesRouteImport.update({
   path: '/$series',
   getParentRoute: () => SeriesRoute,
 } as any)
+const ProfileUserIdRoute = ProfileUserIdRouteImport.update({
+  id: '/profile/$userId',
+  path: '/profile/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlacesSlugRoute = PlacesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -287,6 +295,11 @@ const AdminRedirectsRoute = AdminRedirectsRouteImport.update({
   path: '/redirects',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPollsRoute = AdminPollsRouteImport.update({
+  id: '/polls',
+  path: '/polls',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminOffersRoute = AdminOffersRouteImport.update({
   id: '/offers',
   path: '/offers',
@@ -330,6 +343,11 @@ const AdminClaimsRoute = AdminClaimsRouteImport.update({
 const AdminArticlesRoute = AdminArticlesRouteImport.update({
   id: '/articles',
   path: '/articles',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAreasRoute = AdminAreasRouteImport.update({
+  id: '/areas',
+  path: '/areas',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
@@ -382,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
@@ -391,6 +410,7 @@ export interface FileRoutesByFullPath {
   '/admin/media': typeof AdminMediaRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/polls': typeof AdminPollsRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -406,6 +426,7 @@ export interface FileRoutesByFullPath {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -440,6 +461,7 @@ export interface FileRoutesByTo {
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
@@ -449,6 +471,7 @@ export interface FileRoutesByTo {
   '/admin/media': typeof AdminMediaRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/polls': typeof AdminPollsRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -464,6 +487,7 @@ export interface FileRoutesByTo {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -500,6 +524,7 @@ export interface FileRoutesById {
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
@@ -509,6 +534,7 @@ export interface FileRoutesById {
   '/admin/media': typeof AdminMediaRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/offers': typeof AdminOffersRoute
+  '/admin/polls': typeof AdminPollsRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -524,6 +550,7 @@ export interface FileRoutesById {
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
   '/places/$slug': typeof PlacesSlugRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
   '/series/$series': typeof SeriesSeriesRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -561,6 +588,7 @@ export interface FileRouteTypes {
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
+    | '/admin/areas'
     | '/admin/articles'
     | '/admin/claims'
     | '/admin/comments'
@@ -570,6 +598,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/newsletter'
     | '/admin/offers'
+    | '/admin/polls'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -585,6 +614,7 @@ export interface FileRouteTypes {
     | '/feed/articles.rss'
     | '/feed/events.rss'
     | '/places/$slug'
+    | '/profile/$userId'
     | '/series/$series'
     | '/stories/$slug'
     | '/tag/$tag'
@@ -619,6 +649,7 @@ export interface FileRouteTypes {
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
+    | '/admin/areas'
     | '/admin/articles'
     | '/admin/claims'
     | '/admin/comments'
@@ -628,6 +659,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/newsletter'
     | '/admin/offers'
+    | '/admin/polls'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -643,6 +675,7 @@ export interface FileRouteTypes {
     | '/feed/articles.rss'
     | '/feed/events.rss'
     | '/places/$slug'
+    | '/profile/$userId'
     | '/series/$series'
     | '/stories/$slug'
     | '/tag/$tag'
@@ -678,6 +711,7 @@ export interface FileRouteTypes {
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
+    | '/admin/areas'
     | '/admin/articles'
     | '/admin/claims'
     | '/admin/comments'
@@ -687,6 +721,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/newsletter'
     | '/admin/offers'
+    | '/admin/polls'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -702,6 +737,7 @@ export interface FileRouteTypes {
     | '/feed/articles.rss'
     | '/feed/events.rss'
     | '/places/$slug'
+    | '/profile/$userId'
     | '/series/$series'
     | '/stories/$slug'
     | '/tag/$tag'
@@ -741,6 +777,7 @@ export interface RootRouteChildren {
   EventsSlugRoute: typeof EventsSlugRoute
   FeedArticlesDotrssRoute: typeof FeedArticlesDotrssRoute
   FeedEventsDotrssRoute: typeof FeedEventsDotrssRoute
+  ProfileUserIdRoute: typeof ProfileUserIdRoute
   TagTagRoute: typeof TagTagRoute
 }
 
@@ -949,6 +986,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SeriesSeriesRouteImport
       parentRoute: typeof SeriesRoute
     }
+    '/profile/$userId': {
+      id: '/profile/$userId'
+      path: '/profile/$userId'
+      fullPath: '/profile/$userId'
+      preLoaderRoute: typeof ProfileUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/places/$slug': {
       id: '/places/$slug'
       path: '/$slug'
@@ -1054,6 +1098,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRedirectsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/polls': {
+      id: '/admin/polls'
+      path: '/polls'
+      fullPath: '/admin/polls'
+      preLoaderRoute: typeof AdminPollsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/offers': {
       id: '/admin/offers'
       path: '/offers'
@@ -1117,6 +1168,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminArticlesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/areas': {
+      id: '/admin/areas'
+      path: '/areas'
+      fullPath: '/admin/areas'
+      preLoaderRoute: typeof AdminAreasRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/analytics': {
       id: '/admin/analytics'
       path: '/analytics'
@@ -1163,6 +1221,7 @@ const TaxonomyRouteWithChildren = TaxonomyRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminAdsRoute: typeof AdminAdsRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminAreasRoute: typeof AdminAreasRoute
   AdminArticlesRoute: typeof AdminArticlesRoute
   AdminClaimsRoute: typeof AdminClaimsRoute
   AdminCommentsRoute: typeof AdminCommentsRoute
@@ -1172,6 +1231,7 @@ interface AdminRouteChildren {
   AdminMediaRoute: typeof AdminMediaRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminOffersRoute: typeof AdminOffersRoute
+  AdminPollsRoute: typeof AdminPollsRoute
   AdminRedirectsRoute: typeof AdminRedirectsRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -1185,6 +1245,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdsRoute: AdminAdsRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminAreasRoute: AdminAreasRoute,
   AdminArticlesRoute: AdminArticlesRoute,
   AdminClaimsRoute: AdminClaimsRoute,
   AdminCommentsRoute: AdminCommentsRoute,
@@ -1194,6 +1255,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminMediaRoute: AdminMediaRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
   AdminOffersRoute: AdminOffersRoute,
+  AdminPollsRoute: AdminPollsRoute,
   AdminRedirectsRoute: AdminRedirectsRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
@@ -1293,6 +1355,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsSlugRoute: EventsSlugRoute,
   FeedArticlesDotrssRoute: FeedArticlesDotrssRoute,
   FeedEventsDotrssRoute: FeedEventsDotrssRoute,
+  ProfileUserIdRoute: ProfileUserIdRoute,
   TagTagRoute: TagTagRoute,
 }
 export const routeTree = rootRouteImport

@@ -27,11 +27,13 @@ export const Route = createFileRoute("/places/$slug")({
   loader: async ({ params }) => {
     const listing = await fetchListingBySlug({ data: { slug: params.slug } });
     if (!listing) throw notFound();
-    const [reviews, user] = await Promise.all([
+    const { getListingUpdates } = await import("@/lib/db.server");
+    const [reviews, user, updates] = await Promise.all([
       getListingReviews({ data: { listingId: listing.id } }).catch(() => [] as Review[]),
       getCurrentUser().catch(() => null),
+      getListingUpdates(listing.id).catch(() => []),
     ]);
-    return { listing, reviews, user };
+    return { listing, reviews, user, updates };
   },
   head: ({ loaderData, params }) => {
     const l = loaderData?.listing;
@@ -98,7 +100,7 @@ export const Route = createFileRoute("/places/$slug")({
 
 function PlaceDetail() {
   const { slug } = Route.useParams();
-  const { listing: loadedListing, reviews: initialReviews, user } = Route.useLoaderData();
+  const { listing: loadedListing, reviews: initialReviews, user, updates } = Route.useLoaderData();
   const listings = useStore((s) => s.listings);
   const articles = useStore((s) => s.articles);
   const offers = useStore((s) => s.offers);
@@ -406,6 +408,24 @@ function PlaceDetail() {
               <Stat label="Hidden Gem" value={listing.isHiddenGem ? "Yes" : "No"} />
             </div>
           </div>
+
+          {updates && updates.length > 0 && (
+            <div className="mt-8 pt-8 border-t border-border space-y-3">
+              <h2 className="text-2xl font-display uppercase">From the owner</h2>
+              {updates.map((u) => (
+                <div key={u.id} className="border-l-2 border-accent pl-4 py-1">
+                  <p className="text-sm">{u.body}</p>
+                  <p className="font-mono text-[10px] text-muted-foreground mt-1">
+                    {new Date(u.createdAt).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
 
           <ReviewsSection
             listingId={listing.id}

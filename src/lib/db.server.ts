@@ -304,6 +304,34 @@ create index if not exists site_analytics_created_at_idx on site_analytics (crea
 create table if not exists db_initialized (
   initialized_at timestamptz not null default now()
 );
+
+create table if not exists polls (
+  id text primary key,
+  question text not null,
+  options jsonb not null default '[]',
+  status text not null default 'active' check (status in ('active', 'closed')),
+  created_at timestamptz not null default now()
+);
+create index if not exists polls_status_idx on polls (status);
+
+create table if not exists area_guides (
+  area_key text primary key,
+  intro text not null default '',
+  featured_image text not null default '',
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists listing_updates (
+  id text primary key,
+  listing_id text not null,
+  user_id text not null,
+  body text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists listing_updates_listing_id_idx on listing_updates (listing_id);
+
+alter table users add column if not exists avatar_url text;
+alter table users add column if not exists bio text not null default '';
 `;
 
 async function ensureSchema() {
@@ -1246,4 +1274,145 @@ export async function unsubscribeNewsletterToken(token: string) {
     ]);
   }
   return result.rows[0]?.email;
+}
+
+// ---- Polls ----
+
+export interface PollOption {
+  id: string;
+  text: string;
+  votes: number;
+}
+
+export interface PollRow {
+  id: string;
+  question: string;
+  options: PollOption[];
+  status: "active" | "closed";
+  createdAt: string;
+}
+
+function mapPollRow(row: { id: string; question: string; options: PollOption[]; status: string; created_at: string }): PollRow {
+  return { id: row.id, question: row.question, options: row.options, status: row.status as PollRow["status"], createdAt: new Date(row.created_at).toISOString() };
+}
+
+export async function getActivePolls(): Promise<PollRow[]> {
+  await ensureSchema();
+  const r = await getPool().query<{ id: string; question: string; options: PollOption[]; status: string; created_at: string }>(
+    "select id, question, options, status, created_at from polls where status = 'active' order by created_at desc",
+  );
+  return r.rows.map(mapPollRow);
+}
+
+export async function getAllPolls(): Promise<PollRow[]> {
+  await ensureSchema();
+  const r = await getPool().query<{ id: string; question: string; options: PollOption[]; status: string; created_at: string }>(
+    "select id, question, options, status, created_at from polls order by created_at desc",
+  );
+  return r.rows.map(mapPollRow);
+}
+
+export async function createPoll(id: string, question: string, optionTexts: string[]): Promise<void> {
+  await ensureSchema();
+  const options: PollOption[] = optionTexts.map((text, i) => ({ id: String(i + 1), text, votes: 0 }));
+  await getPool().query("insert into polls (id, question, options) values ($1, $2, $3)", [id, question, JSON.stringify(options)]);
+}
+
+export async function voteOnPoll(pollId: string, optionId: string): Promise<PollRow | undefined> {
+  await ensureSchema();
+  const r = await getPool().query<{ id: string; question: string; options: PollOption[]; status: string; created_at: string }>(
+    `update polls
+     set options = (
+       select jsonb_agg(
+         case when opt->>'id' = $2
+         then jsonb_set(opt, '{votes}', to_jsonb((opt->>'votes')::int + 1))
+         else opt end
+       )
+       from jsonb_array_elements(options) opt
+     )
+     where id = $1 and status = 'active'
+     returning id, question, options, status, created_at`,
+    [pollId, optionId],
+  );
+  return r.rows[0] ? mapPollRow(r.rows[0]) : undefined;
+}
+
+export async function setPollStatus(pollId: string, status: "active" | "closed"): Promise<void> {
+  await ensureSchema();
+  await getPool().query("update polls set status = $2 where id = $1", [pollId, status]);
+}
+
+export async function deletePoll(pollId: string): Promise<void> {
+  await ensureSchema();
+  await getPool().query("delete from polls where id = $1", [pollId]);
+}
+
+// ---- Area Guides ----
+
+export interface AreaGuideRow {
+  areaKey: string;
+  intro: string;
+  featuredImage: string;
+  updatedAt: string;
+}
+
+export async function getAreaGuide(areaKey: string): Promise<AreaGuideRow | undefined> {
+  await ensureSchema();
+  const r = await getPool().query<{ area_key: string; intro: string; featured_image: string; updated_at: string }>(
+    "select area_key, intro, featured_image, updated_at from area_guides where area_key = $1",
+    [areaKey],
+  );
+  const row = r.rows[0];
+  if (!row) return undefined;
+  return { areaKey: row.area_key, intro: row.intro, featuredImage: row.featured_image, updatedAt: row.updated_at };
+}
+
+export async function getAllAreaGuides(): Promise<AreaGuideRow[]> {
+  await ensureSchema();
+  const r = await getPool().query<{ area_key: string; intro: string; featured_image: string; updated_at: string }>(
+    "select area_key, intro, featured_image, updated_at from area_guides order by area_key",
+  );
+  return r.rows.map((row) => ({ areaKey: row.area_key, intro: row.intro, featuredImage: row.featured_image, updatedAt: row.updated_at }));
+}
+
+export async function upsertAreaGuide(areaKey: string, intro: string, featuredImage: string): Promise<void> {
+  await ensureSchema();
+  await getPool().query(
+    `insert into area_guides (area_key, intro, featured_image)
+     values ($1, $2, $3)
+     on conflict (area_key) do update set intro = $2, featured_image = $3, updated_at = now()`,
+    [areaKey, intro, featuredImage],
+  );
+}
+
+// ---- Listing Updates ----
+
+export interface ListingUpdateRow {
+  id: string;
+  listingId: string;
+  userId: string;
+  body: string;
+  createdAt: string;
+}
+
+export async function getListingUpdates(listingId: string): Promise<ListingUpdateRow[]> {
+  await ensureSchema();
+  const r = await getPool().query<{ id: string; listing_id: string; user_id: string; body: string; created_at: string }>(
+    "select id, listing_id, user_id, body, created_at from listing_updates where listing_id = $1 order by created_at desc",
+    [listingId],
+  );
+  return r.rows.map((row) => ({ id: row.id, listingId: row.listing_id, userId: row.user_id, body: row.body, createdAt: new Date(row.created_at).toISOString() }));
+}
+
+export async function postListingUpdate(id: string, listingId: string, userId: string, body: string): Promise<void> {
+  await ensureSchema();
+  await getPool().query(
+    "insert into listing_updates (id, listing_id, user_id, body) values ($1, $2, $3, $4)",
+    [id, listingId, userId, body],
+  );
+}
+
+export async function deleteListingUpdate(id: string, userId: string): Promise<void> {
+  await ensureSchema();
+  await getPool().query("delete from listing_updates where id = $1 and user_id = $2", [id, userId]);
 }

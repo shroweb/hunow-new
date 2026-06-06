@@ -19,6 +19,8 @@ import {
   BadgeCheck,
   Mail,
   Sparkles,
+  BarChart2,
+  Map,
   type LucideIcon,
 } from "lucide-react";
 import { getCurrentUser, signOutUser } from "@/lib/auth.functions";
@@ -40,6 +42,7 @@ const navSections: { title: string; items: { to: string; label: string; icon: Lu
       { to: "/admin/media", label: "Media", icon: Image },
       { to: "/admin/editorial-picks", label: "Picks", icon: Sparkles },
       { to: "/admin/comments", label: "Comments", icon: MessageSquare },
+      { to: "/admin/polls", label: "Polls", icon: BarChart2 },
     ],
   },
   {
@@ -69,6 +72,7 @@ const navSections: { title: string; items: { to: string; label: string; icon: Lu
   {
     title: "System",
     items: [
+      { to: "/admin/areas", label: "Area Guides", icon: Map },
       { to: "/admin/redirects", label: "Redirects", icon: ArrowLeftRight },
       { to: "/admin/taxonomy", label: "Taxonomy", icon: Layers },
       { to: "/admin/settings", label: "Settings", icon: Settings },
