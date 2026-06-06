@@ -149,3 +149,21 @@ export interface MediaAsset {
   focalPoint?: string;
   createdAt: string;
 }
+
+export type CollectionItemKind = "article" | "event" | "listing" | "offer";
+
+export interface EditorialCollectionItem {
+  kind: CollectionItemKind;
+  id: string;
+}
+
+export interface EditorialCollection {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  status: "draft" | "published";
+  featuredImage?: string;
+  items: EditorialCollectionItem[];
+  updatedAt: string;
+}

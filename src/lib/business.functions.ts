@@ -6,6 +6,7 @@ export const claimListing = createServerFn({ method: "POST" })
     z.object({
       listingId: z.string().min(1),
       message: z.string().max(1000).optional(),
+      proofUrl: z.string().max(500).optional(),
     }),
   )
   .handler(async ({ data }) => {
@@ -17,11 +18,12 @@ export const claimListing = createServerFn({ method: "POST" })
       listingId: data.listingId,
       userId: user.id,
       message: data.message ?? "",
+      proofUrl: data.proofUrl ?? "",
     });
     void import("./email.server").then(({ sendAdminAlert }) =>
       sendAdminAlert(
         "New listing claim",
-        `User: ${user.name} (${user.email})\nListing ID: ${data.listingId}\nMessage: ${data.message ?? "(none)"}`,
+        `User: ${user.name} (${user.email})\nListing ID: ${data.listingId}\nProof: ${data.proofUrl || "(none)"}\nMessage: ${data.message ?? "(none)"}`,
       ),
     );
     return result;
@@ -31,16 +33,22 @@ export const getAdminListingClaims = createServerFn({ method: "GET" }).handler(a
   const { requireAdmin } = await import("./auth.server");
   const { getListingClaims } = await import("./db.server");
   await requireAdmin();
-  return getListingClaims("pending");
+  return getListingClaims("all");
 });
 
 export const moderateAdminListingClaim = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ claimId: z.string().min(1), action: z.enum(["approve", "reject"]) }))
+  .inputValidator(
+    z.object({
+      claimId: z.string().min(1),
+      action: z.enum(["approve", "reject"]),
+      adminNote: z.string().max(1000).optional(),
+    }),
+  )
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { moderateListingClaim } = await import("./db.server");
     await requireAdmin();
-    return moderateListingClaim(data.claimId, data.action);
+    return moderateListingClaim(data.claimId, data.action, data.adminNote ?? "");
   });
 
 export const getBusinessListings = createServerFn({ method: "GET" }).handler(async () => {

@@ -27,6 +27,7 @@ const tables = {
   submissions: "submissions",
   ads: "ads",
   media: "media",
+  collections: "collections",
 } as const satisfies Record<CollectionName, string>;
 
 const collections = Object.keys(tables) as CollectionName[];
@@ -39,6 +40,7 @@ const fallbackStore: AppStore = {
   submissions: seedSubmissions,
   ads: seedAds,
   media: seedMedia,
+  collections: [],
   newsletter: [],
 };
 
@@ -126,6 +128,14 @@ create table if not exists media (
   id text primary key,
   data jsonb not null,
   url text generated always as (data->>'url') stored,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create table if not exists collections (
+  id text primary key,
+  data jsonb not null,
+  slug text generated always as (data->>'slug') stored,
+  status text generated always as (data->>'status') stored,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -227,6 +237,8 @@ create index if not exists ad_events_ad_id_idx on ad_events (ad_id);
 create index if not exists app_records_collection_idx on app_records (collection);
 create index if not exists saved_items_user_id_idx on saved_items (user_id);
 create index if not exists password_reset_tokens_user_id_idx on password_reset_tokens (user_id);
+create index if not exists collections_slug_idx on collections (slug);
+create index if not exists collections_status_idx on collections (status);
 drop trigger if exists articles_set_updated_at on articles;
 create trigger articles_set_updated_at before update on articles for each row execute function set_updated_at();
 drop trigger if exists events_set_updated_at on events;
@@ -241,6 +253,8 @@ drop trigger if exists ads_set_updated_at on ads;
 create trigger ads_set_updated_at before update on ads for each row execute function set_updated_at();
 drop trigger if exists media_set_updated_at on media;
 create trigger media_set_updated_at before update on media for each row execute function set_updated_at();
+drop trigger if exists collections_set_updated_at on collections;
+create trigger collections_set_updated_at before update on collections for each row execute function set_updated_at();
 drop trigger if exists users_set_updated_at on users;
 create trigger users_set_updated_at before update on users for each row execute function set_updated_at();
 drop trigger if exists app_records_set_updated_at on app_records;
@@ -284,10 +298,16 @@ create table if not exists listing_claims (
   listing_id text not null,
   user_id text not null references users(id) on delete cascade,
   message text,
+  proof_url text,
+  admin_note text,
+  decided_at timestamptz,
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+alter table listing_claims add column if not exists proof_url text;
+alter table listing_claims add column if not exists admin_note text;
+alter table listing_claims add column if not exists decided_at timestamptz;
 create index if not exists listing_claims_status_idx on listing_claims (status);
 create index if not exists listing_claims_listing_id_idx on listing_claims (listing_id);
 
@@ -340,6 +360,41 @@ create table if not exists rate_limits (
   primary key (key, window_start)
 );
 create index if not exists rate_limits_window_start_idx on rate_limits (window_start);
+
+alter table users add column if not exists app_role text not null default 'customer' check (app_role in ('customer', 'business'));
+
+create table if not exists loyalty_cards (
+  id text primary key,
+  user_id text not null unique references users(id) on delete cascade,
+  qr_token text not null unique,
+  created_at timestamptz not null default now()
+);
+create index if not exists loyalty_cards_user_id_idx on loyalty_cards (user_id);
+create index if not exists loyalty_cards_qr_token_idx on loyalty_cards (qr_token);
+
+create table if not exists loyalty_points (
+  id text primary key,
+  user_id text not null references users(id) on delete cascade,
+  offer_id text,
+  listing_id text,
+  points integer not null,
+  note text,
+  created_at timestamptz not null default now()
+);
+create index if not exists loyalty_points_user_id_idx on loyalty_points (user_id);
+create index if not exists loyalty_points_created_at_idx on loyalty_points (created_at desc);
+
+create table if not exists app_redemptions (
+  id text primary key,
+  card_id text not null references loyalty_cards(id) on delete cascade,
+  offer_id text not null,
+  listing_id text,
+  redeemed_by text not null references users(id),
+  redeemed_at timestamptz not null default now()
+);
+create index if not exists app_redemptions_card_id_idx on app_redemptions (card_id);
+create index if not exists app_redemptions_offer_id_idx on app_redemptions (offer_id);
+create index if not exists app_redemptions_redeemed_at_idx on app_redemptions (redeemed_at desc);
 `;
 
 export async function ensureSchema() {
@@ -370,6 +425,7 @@ function emptyStore(): AppStore {
     submissions: [],
     ads: [],
     media: [],
+    collections: [],
     newsletter: [],
   };
 }
@@ -961,14 +1017,19 @@ export interface ListingClaimRow {
   userName: string;
   userEmail: string;
   message: string;
+  proofUrl: string;
+  adminNote: string;
   status: "pending" | "approved" | "rejected";
   createdAt: string;
+  updatedAt: string;
+  decidedAt: string | null;
 }
 
 export async function createListingClaim(input: {
   listingId: string;
   userId: string;
   message: string;
+  proofUrl?: string;
 }) {
   await ensureSchema();
   const existing = await getPool().query<{ id: string }>(
@@ -978,8 +1039,8 @@ export async function createListingClaim(input: {
   if (existing.rows[0]) return { ok: true, id: existing.rows[0].id };
   const id = crypto.randomUUID();
   await getPool().query(
-    "insert into listing_claims (id, listing_id, user_id, message) values ($1, $2, $3, $4)",
-    [id, input.listingId, input.userId, input.message],
+    "insert into listing_claims (id, listing_id, user_id, message, proof_url) values ($1, $2, $3, $4, $5)",
+    [id, input.listingId, input.userId, input.message, input.proofUrl ?? ""],
   );
   return { ok: true, id };
 }
@@ -994,8 +1055,12 @@ export async function getListingClaims(status = "pending"): Promise<ListingClaim
     user_name: string;
     user_email: string;
     message: string | null;
+    proof_url: string | null;
+    admin_note: string | null;
     status: ListingClaimRow["status"];
     created_at: Date;
+    updated_at: Date;
+    decided_at: Date | null;
   }>(
     `
     select
@@ -1006,8 +1071,12 @@ export async function getListingClaims(status = "pending"): Promise<ListingClaim
       users.name as user_name,
       users.email as user_email,
       listing_claims.message,
+      listing_claims.proof_url,
+      listing_claims.admin_note,
       listing_claims.status,
-      listing_claims.created_at
+      listing_claims.created_at,
+      listing_claims.updated_at,
+      listing_claims.decided_at
     from listing_claims
     join users on users.id = listing_claims.user_id
     left join listings on listings.id = listing_claims.listing_id
@@ -1024,12 +1093,20 @@ export async function getListingClaims(status = "pending"): Promise<ListingClaim
     userName: row.user_name,
     userEmail: row.user_email,
     message: row.message ?? "",
+    proofUrl: row.proof_url ?? "",
+    adminNote: row.admin_note ?? "",
     status: row.status,
     createdAt: row.created_at.toISOString(),
+    updatedAt: row.updated_at.toISOString(),
+    decidedAt: row.decided_at?.toISOString() ?? null,
   }));
 }
 
-export async function moderateListingClaim(claimId: string, action: "approve" | "reject") {
+export async function moderateListingClaim(
+  claimId: string,
+  action: "approve" | "reject",
+  adminNote = "",
+) {
   await ensureSchema();
   const claim = await getPool().query<{ listing_id: string; user_id: string }>(
     "select listing_id, user_id from listing_claims where id = $1",
@@ -1038,10 +1115,10 @@ export async function moderateListingClaim(claimId: string, action: "approve" | 
   const row = claim.rows[0];
   if (!row) throw new Error("Claim not found.");
   const status = action === "approve" ? "approved" : "rejected";
-  await getPool().query("update listing_claims set status = $2, updated_at = now() where id = $1", [
-    claimId,
-    status,
-  ]);
+  await getPool().query(
+    "update listing_claims set status = $2, admin_note = $3, decided_at = now(), updated_at = now() where id = $1",
+    [claimId, status, adminNote],
+  );
   if (action === "approve") {
     await getPool().query(
       `
@@ -1407,10 +1484,13 @@ export async function getAllPolls(): Promise<PollRow[]> {
 
 export async function getPollById(id: string): Promise<PollRow | undefined> {
   await ensureSchema();
-  const r = await getPool().query<{ id: string; question: string; options: PollOption[]; status: string; created_at: string }>(
-    "select id, question, options, status, created_at from polls where id = $1 limit 1",
-    [id],
-  );
+  const r = await getPool().query<{
+    id: string;
+    question: string;
+    options: PollOption[];
+    status: string;
+    created_at: string;
+  }>("select id, question, options, status, created_at from polls where id = $1 limit 1", [id]);
   return r.rows[0] ? mapPollRow(r.rows[0]) : undefined;
 }
 

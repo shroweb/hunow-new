@@ -17,6 +17,7 @@ import { findTaxonomy, articlePath } from "@/lib/taxonomy";
 import { img } from "@/data/seed";
 import { subscribeNewsletter } from "@/lib/public.functions";
 import { PollWidget } from "@/components/PollWidget";
+import { relatedForArticle } from "@/lib/related-content";
 
 export const Route = createFileRoute("/$taxonomy/$slug")({
   component: ArticleDetail,
@@ -115,26 +116,16 @@ function ArticleDetail() {
   const seriesArticles = article.series
     ? articles.filter((a) => a.series === article.series && a.status === "published")
     : [];
-  const related = articles
-    .filter(
-      (a) => a.id !== article.id && a.category === article.category && a.series !== article.series,
-    )
-    .slice(0, 3);
-  const tagSet = new Set(article.tags.map((t: string) => t.toLowerCase()));
-  const relatedEvents = events
-    .filter(
-      (e) =>
-        tagSet.has(e.category.toLowerCase()) ||
-        e.category.toLowerCase() === article.category.toLowerCase(),
-    )
-    .slice(0, 2);
-  const relatedPlaces = listings
-    .filter(
-      (l) =>
-        tagSet.has(l.category.toLowerCase()) ||
-        l.category.toLowerCase() === article.category.toLowerCase(),
-    )
-    .slice(0, 2);
+  const {
+    articles: related,
+    events: relatedEvents,
+    listings: relatedPlaces,
+  } = relatedForArticle({
+    article,
+    articles,
+    events,
+    listings,
+  });
 
   const entities = [
     ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
@@ -251,7 +242,9 @@ function ArticleDetail() {
           )}
           {article.pollId && (
             <div className="my-10">
-              <div className="font-mono text-[10px] uppercase tracking-widest text-accent mb-3">Reader poll</div>
+              <div className="font-mono text-[10px] uppercase tracking-widest text-accent mb-3">
+                Reader poll
+              </div>
               <PollWidget pollId={article.pollId} />
             </div>
           )}

@@ -43,6 +43,7 @@ import { Route as PlacesSlugRouteImport } from './routes/places.$slug'
 import { Route as FeedEventsDotrssRouteImport } from './routes/feed.events[.]rss'
 import { Route as FeedArticlesDotrssRouteImport } from './routes/feed.articles[.]rss'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
+import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as CSectionRouteImport } from './routes/c.$section'
 import { Route as BusinessListingsRouteImport } from './routes/business.listings'
 import { Route as AuthorsAuthorRouteImport } from './routes/authors.$author'
@@ -242,6 +243,11 @@ const EventsSlugRoute = EventsSlugRouteImport.update({
   path: '/events/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
+  id: '/collections/$slug',
+  path: '/collections/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CSectionRoute = CSectionRouteImport.update({
   id: '/c/$section',
   path: '/c/$section',
@@ -435,6 +441,7 @@ export interface FileRoutesByFullPath {
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
   '/c/$section': typeof CSectionRouteWithChildren
+  '/collections/$slug': typeof CollectionsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
@@ -498,6 +505,7 @@ export interface FileRoutesByTo {
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
   '/c/$section': typeof CSectionRouteWithChildren
+  '/collections/$slug': typeof CollectionsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
@@ -563,6 +571,7 @@ export interface FileRoutesById {
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
   '/c/$section': typeof CSectionRouteWithChildren
+  '/collections/$slug': typeof CollectionsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/feed/articles.rss': typeof FeedArticlesDotrssRoute
   '/feed/events.rss': typeof FeedEventsDotrssRoute
@@ -629,6 +638,7 @@ export interface FileRouteTypes {
     | '/authors/$author'
     | '/business/listings'
     | '/c/$section'
+    | '/collections/$slug'
     | '/events/$slug'
     | '/feed/articles.rss'
     | '/feed/events.rss'
@@ -692,6 +702,7 @@ export interface FileRouteTypes {
     | '/authors/$author'
     | '/business/listings'
     | '/c/$section'
+    | '/collections/$slug'
     | '/events/$slug'
     | '/feed/articles.rss'
     | '/feed/events.rss'
@@ -756,6 +767,7 @@ export interface FileRouteTypes {
     | '/authors/$author'
     | '/business/listings'
     | '/c/$section'
+    | '/collections/$slug'
     | '/events/$slug'
     | '/feed/articles.rss'
     | '/feed/events.rss'
@@ -798,6 +810,7 @@ export interface RootRouteChildren {
   AuthorsAuthorRoute: typeof AuthorsAuthorRoute
   BusinessListingsRoute: typeof BusinessListingsRoute
   CSectionRoute: typeof CSectionRouteWithChildren
+  CollectionsSlugRoute: typeof CollectionsSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
   FeedArticlesDotrssRoute: typeof FeedArticlesDotrssRoute
   FeedEventsDotrssRoute: typeof FeedEventsDotrssRoute
@@ -1044,6 +1057,13 @@ declare module '@tanstack/react-router' {
       path: '/events/$slug'
       fullPath: '/events/$slug'
       preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections/$slug': {
+      id: '/collections/$slug'
+      path: '/collections/$slug'
+      fullPath: '/collections/$slug'
+      preLoaderRoute: typeof CollectionsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/c/$section': {
@@ -1393,6 +1413,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthorsAuthorRoute: AuthorsAuthorRoute,
   BusinessListingsRoute: BusinessListingsRoute,
   CSectionRoute: CSectionRouteWithChildren,
+  CollectionsSlugRoute: CollectionsSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
   FeedArticlesDotrssRoute: FeedArticlesDotrssRoute,
   FeedEventsDotrssRoute: FeedEventsDotrssRoute,

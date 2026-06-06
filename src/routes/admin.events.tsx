@@ -66,12 +66,14 @@ function AdminEvents() {
   const toggleStatus = async (id: string) => {
     const event = events.find((e) => e.id === id);
     if (!event) return;
-    const updated = { ...event, status: event.status === "published" ? ("draft" as const) : ("published" as const) };
+    const updated = {
+      ...event,
+      status: event.status === "published" ? ("draft" as const) : ("published" as const),
+    };
     await upsertEventFn({ data: updated });
-    setState(
-      (s) => ({ ...s, events: s.events.map((e) => (e.id === id ? updated : e)) }),
-      { persist: false },
-    );
+    setState((s) => ({ ...s, events: s.events.map((e) => (e.id === id ? updated : e)) }), {
+      persist: false,
+    });
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {

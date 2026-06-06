@@ -165,7 +165,9 @@ function AdminListings() {
     }
     if (!confirm("Delete this listing?")) return;
     await deleteListingFn({ data: { id } });
-    setState((s) => ({ ...s, listings: s.listings.filter((l) => l.id !== id) }), { persist: false });
+    setState((s) => ({ ...s, listings: s.listings.filter((l) => l.id !== id) }), {
+      persist: false,
+    });
   };
 
   return (

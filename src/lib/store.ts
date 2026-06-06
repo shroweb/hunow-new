@@ -4,6 +4,7 @@ import type {
   AdPlacement,
   Article,
   EventItem,
+  EditorialCollection,
   Listing,
   MediaAsset,
   Offer,
@@ -21,6 +22,7 @@ interface Store {
   submissions: Submission[];
   ads: AdPlacement[];
   media: MediaAsset[];
+  collections: EditorialCollection[];
   newsletter: string[];
 }
 
@@ -36,6 +38,7 @@ const initial: Store = {
   submissions: [],
   ads: [],
   media: seedMedia,
+  collections: [],
   newsletter: [],
 };
 

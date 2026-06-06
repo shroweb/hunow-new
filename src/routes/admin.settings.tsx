@@ -168,6 +168,7 @@ function AdminSettings() {
         submissions: [],
         ads: [],
         media: [],
+        collections: [],
         newsletter: [],
       }));
       window.location.reload();

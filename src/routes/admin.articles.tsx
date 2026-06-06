@@ -156,7 +156,9 @@ function AdminArticles() {
   const remove = async (id: string) => {
     if (!confirm("Delete this post?")) return;
     await deleteArticleFn({ data: { id } });
-    setState((s) => ({ ...s, articles: s.articles.filter((a) => a.id !== id) }), { persist: false });
+    setState((s) => ({ ...s, articles: s.articles.filter((a) => a.id !== id) }), {
+      persist: false,
+    });
   };
 
   const toggle = async (id: string, key: "isFeatured" | "isSponsored") => {
@@ -164,21 +166,22 @@ function AdminArticles() {
     if (!article) return;
     const updated = { ...article, [key]: !article[key] };
     await upsertArticleFn({ data: updated });
-    setState(
-      (s) => ({ ...s, articles: s.articles.map((a) => (a.id === id ? updated : a)) }),
-      { persist: false },
-    );
+    setState((s) => ({ ...s, articles: s.articles.map((a) => (a.id === id ? updated : a)) }), {
+      persist: false,
+    });
   };
 
   const toggleStatus = async (id: string) => {
     const article = articles.find((a) => a.id === id);
     if (!article) return;
-    const updated = { ...article, status: article.status === "published" ? ("draft" as const) : ("published" as const) };
+    const updated = {
+      ...article,
+      status: article.status === "published" ? ("draft" as const) : ("published" as const),
+    };
     await upsertArticleFn({ data: updated });
-    setState(
-      (s) => ({ ...s, articles: s.articles.map((a) => (a.id === id ? updated : a)) }),
-      { persist: false },
-    );
+    setState((s) => ({ ...s, articles: s.articles.map((a) => (a.id === id ? updated : a)) }), {
+      persist: false,
+    });
   };
 
   return (
@@ -388,12 +391,20 @@ function AdminArticles() {
               </div>
               {polls.length > 0 && (
                 <AdminFormPanel title="Poll">
-                  <AdminField label="Attach a reader poll" hint="One poll per post. The poll appears after the article body.">
-                    <select name="pollId" defaultValue={editing?.pollId ?? ""} className={adminInput}>
+                  <AdminField
+                    label="Attach a reader poll"
+                    hint="One poll per post. The poll appears after the article body."
+                  >
+                    <select
+                      name="pollId"
+                      defaultValue={editing?.pollId ?? ""}
+                      className={adminInput}
+                    >
                       <option value="">— No poll —</option>
                       {polls.map((p) => (
                         <option key={p.id} value={p.id} disabled={p.status === "closed"}>
-                          {p.question}{p.status === "closed" ? " (closed)" : ""}
+                          {p.question}
+                          {p.status === "closed" ? " (closed)" : ""}
                         </option>
                       ))}
                     </select>

@@ -69,6 +69,14 @@ create table if not exists media (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+create table if not exists collections (
+  id text primary key,
+  data jsonb not null,
+  slug text generated always as (data->>'slug') stored,
+  status text generated always as (data->>'status') stored,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
 
 create table if not exists newsletter_subscribers (
   email text primary key,
@@ -162,6 +170,8 @@ create index if not exists offers_status_idx on offers (status);
 create index if not exists submissions_status_idx on submissions (status);
 create index if not exists ads_status_idx on ads (status);
 create index if not exists media_url_idx on media (url);
+create index if not exists collections_slug_idx on collections (slug);
+create index if not exists collections_status_idx on collections (status);
 create index if not exists users_email_idx on users (email);
 create index if not exists sessions_user_id_idx on sessions (user_id);
 create index if not exists sessions_expires_at_idx on sessions (expires_at);
@@ -236,10 +246,16 @@ create table if not exists listing_claims (
   listing_id text not null,
   user_id text not null references users(id) on delete cascade,
   message text,
+  proof_url text,
+  admin_note text,
+  decided_at timestamptz,
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+alter table listing_claims add column if not exists proof_url text;
+alter table listing_claims add column if not exists admin_note text;
+alter table listing_claims add column if not exists decided_at timestamptz;
 create index if not exists listing_claims_status_idx on listing_claims (status);
 create index if not exists listing_claims_listing_id_idx on listing_claims (listing_id);
 
@@ -252,3 +268,40 @@ create table if not exists site_analytics (
 );
 create index if not exists site_analytics_event_type_idx on site_analytics (event_type);
 create index if not exists site_analytics_created_at_idx on site_analytics (created_at);
+
+-- ── App / loyalty ──────────────────────────────────────────────────────────
+
+alter table users add column if not exists app_role text not null default 'customer' check (app_role in ('customer', 'business'));
+
+create table if not exists loyalty_cards (
+  id text primary key,
+  user_id text not null unique references users(id) on delete cascade,
+  qr_token text not null unique,
+  created_at timestamptz not null default now()
+);
+create index if not exists loyalty_cards_user_id_idx on loyalty_cards (user_id);
+create index if not exists loyalty_cards_qr_token_idx on loyalty_cards (qr_token);
+
+create table if not exists loyalty_points (
+  id text primary key,
+  user_id text not null references users(id) on delete cascade,
+  offer_id text,
+  listing_id text,
+  points integer not null,
+  note text,
+  created_at timestamptz not null default now()
+);
+create index if not exists loyalty_points_user_id_idx on loyalty_points (user_id);
+create index if not exists loyalty_points_created_at_idx on loyalty_points (created_at desc);
+
+create table if not exists app_redemptions (
+  id text primary key,
+  card_id text not null references loyalty_cards(id) on delete cascade,
+  offer_id text not null,
+  listing_id text,
+  redeemed_by text not null references users(id),
+  redeemed_at timestamptz not null default now()
+);
+create index if not exists app_redemptions_card_id_idx on app_redemptions (card_id);
+create index if not exists app_redemptions_offer_id_idx on app_redemptions (offer_id);
+create index if not exists app_redemptions_redeemed_at_idx on app_redemptions (redeemed_at desc);

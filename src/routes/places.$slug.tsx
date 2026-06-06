@@ -21,6 +21,7 @@ import { getCurrentUser } from "@/lib/auth.functions";
 import { claimListing } from "@/lib/business.functions";
 import { img } from "@/data/seed";
 import type { Listing } from "@/types";
+import { relatedForListing } from "@/lib/related-content";
 
 export const Route = createFileRoute("/places/$slug")({
   component: PlaceDetail,
@@ -126,26 +127,16 @@ function PlaceDetail() {
           o.id === listing.activeOfferId && o.listingId === listing.id && o.status === "active",
       )
     : undefined;
-  const similar = listings
-    .filter(
-      (l) => l.id !== listing.id && (l.category === listing.category || l.area === listing.area),
-    )
-    .slice(0, 3);
-  const relatedArticles = articles
-    .filter((a) => {
-      if (a.status !== "published") return false;
-      const text = `${a.title} ${a.excerpt} ${a.content}`.toLowerCase();
-      return text.includes(listing.name.toLowerCase()) || text.includes(listing.area.toLowerCase());
-    })
-    .slice(0, 3);
-
-  const nearbyEvents = events
-    .filter(
-      (e) =>
-        e.locationName.toLowerCase().includes(listing.area.toLowerCase()) ||
-        e.address.toLowerCase().includes(listing.area.toLowerCase()),
-    )
-    .slice(0, 3);
+  const {
+    articles: relatedArticles,
+    events: nearbyEvents,
+    listings: similar,
+  } = relatedForListing({
+    listing,
+    articles,
+    events,
+    listings,
+  });
   const nearbyOffers = offers
     .filter((o) => o.listingId !== listing.id && o.status === "active")
     .slice(0, 2);
@@ -487,6 +478,7 @@ function ClaimListingPanel({
   owned: boolean;
 }) {
   const [message, setMessage] = useState("");
+  const [proofUrl, setProofUrl] = useState("");
   const [status, setStatus] = useState("");
 
   if (owned) {
@@ -522,7 +514,7 @@ function ClaimListingPanel({
       onSubmit={(event) => {
         event.preventDefault();
         setStatus("Sending...");
-        void claimListing({ data: { listingId, message } })
+        void claimListing({ data: { listingId, message, proofUrl } })
           .then(() => setStatus("Claim sent for review"))
           .catch((error) => setStatus(error instanceof Error ? error.message : "Unable to claim."));
       }}
@@ -542,6 +534,13 @@ function ClaimListingPanel({
         rows={3}
         maxLength={1000}
         placeholder="Tell us your role at the business"
+        className="w-full border border-foreground/30 bg-background p-3 text-xs font-mono"
+      />
+      <input
+        value={proofUrl}
+        onChange={(event) => setProofUrl(event.target.value)}
+        maxLength={500}
+        placeholder="Optional proof link, e.g. website admin page or Companies House"
         className="w-full border border-foreground/30 bg-background p-3 text-xs font-mono"
       />
       <button

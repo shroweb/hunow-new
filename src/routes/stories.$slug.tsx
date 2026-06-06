@@ -11,6 +11,7 @@ import { useStore } from "@/lib/store";
 import { ArticleContent, TableOfContents } from "@/components/ArticleContent";
 import { ArticleComments } from "@/components/ArticleComments";
 import { img } from "@/data/seed";
+import { relatedForArticle } from "@/lib/related-content";
 
 export const Route = createFileRoute("/stories/$slug")({
   component: StoryDetail,
@@ -68,24 +69,16 @@ function StoryDetail() {
   const listings = useStore((s) => s.listings);
   const article = articles.find((a) => a.slug === slug) ?? loadedArticle;
   if (!article) throw notFound();
-  const related = articles
-    .filter((a) => a.id !== article.id && a.category === article.category)
-    .slice(0, 3);
-  const tagSet = new Set(article.tags.map((t: string) => t.toLowerCase()));
-  const relatedEvents = events
-    .filter(
-      (e) =>
-        tagSet.has(e.category.toLowerCase()) ||
-        e.category.toLowerCase() === article.category.toLowerCase(),
-    )
-    .slice(0, 2);
-  const relatedPlaces = listings
-    .filter(
-      (l) =>
-        tagSet.has(l.category.toLowerCase()) ||
-        l.category.toLowerCase() === article.category.toLowerCase(),
-    )
-    .slice(0, 2);
+  const {
+    articles: related,
+    events: relatedEvents,
+    listings: relatedPlaces,
+  } = relatedForArticle({
+    article,
+    articles,
+    events,
+    listings,
+  });
 
   const entities = [
     ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),

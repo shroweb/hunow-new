@@ -12,7 +12,9 @@ export function PollWidget({ pollId }: { pollId?: string } = {}) {
   useEffect(() => {
     if (pollId) {
       getPollByIdFn({ data: { pollId } })
-        .then((p) => { if (p) setPolls([p as PollWithVote]); })
+        .then((p) => {
+          if (p) setPolls([p as PollWithVote]);
+        })
         .catch(() => {});
     } else {
       getPolls()

@@ -12,6 +12,7 @@ import { getEventRsvp, toggleRsvp } from "@/lib/rsvp.functions";
 import { addToHistory } from "@/lib/reading-history";
 import { autoLink } from "@/lib/autolink";
 import { img } from "@/data/seed";
+import { relatedForEvent } from "@/lib/related-content";
 
 export const Route = createFileRoute("/events/$slug")({
   component: EventDetail,
@@ -99,10 +100,12 @@ function EventDetail() {
   }, [event.id]);
 
   const articles = useStore((s) => s.articles);
-  const related = events
-    .filter((e) => e.id !== event.id && e.category === event.category)
-    .slice(0, 3);
   const venue = listings.find((l) => l.name.toLowerCase() === event.locationName.toLowerCase());
+  const { events: related, listings: relatedVenues } = relatedForEvent({
+    event,
+    events,
+    listings,
+  });
 
   const linkedContent = event.content
     ? autoLink(event.content, [
@@ -362,11 +365,13 @@ function EventDetail() {
         </section>
       )}
 
-      {venue && (
+      {(venue || relatedVenues.length > 0) && (
         <section className="max-w-7xl mx-auto px-4 py-16 border-t border-border">
           <h2 className="text-4xl font-display uppercase mb-8">The Venue</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <ListingCard listing={venue} />
+            {(venue ? [venue] : relatedVenues).map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
           </div>
         </section>
       )}
