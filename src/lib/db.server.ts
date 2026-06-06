@@ -1405,6 +1405,15 @@ export async function getAllPolls(): Promise<PollRow[]> {
   return r.rows.map(mapPollRow);
 }
 
+export async function getPollById(id: string): Promise<PollRow | undefined> {
+  await ensureSchema();
+  const r = await getPool().query<{ id: string; question: string; options: PollOption[]; status: string; created_at: string }>(
+    "select id, question, options, status, created_at from polls where id = $1 limit 1",
+    [id],
+  );
+  return r.rows[0] ? mapPollRow(r.rows[0]) : undefined;
+}
+
 export async function createPoll(
   id: string,
   question: string,

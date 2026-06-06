@@ -16,6 +16,7 @@ import { fetchArticleBySlug } from "@/lib/store.functions";
 import { findTaxonomy, articlePath } from "@/lib/taxonomy";
 import { img } from "@/data/seed";
 import { subscribeNewsletter } from "@/lib/public.functions";
+import { PollWidget } from "@/components/PollWidget";
 
 export const Route = createFileRoute("/$taxonomy/$slug")({
   component: ArticleDetail,
@@ -246,6 +247,12 @@ function ArticleDetail() {
           {article.isSponsored && (
             <div className="mt-12 p-6 border-2 border-accent bg-accent/5 font-mono text-xs uppercase">
               Sponsored by {article.sponsorName}
+            </div>
+          )}
+          {article.pollId && (
+            <div className="my-10">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-accent mb-3">Reader poll</div>
+              <PollWidget pollId={article.pollId} />
             </div>
           )}
           <NewsletterStrip />

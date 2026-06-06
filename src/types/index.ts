@@ -29,6 +29,7 @@ export interface Article {
   subcategory?: string;
   series?: string;
   seriesOrder?: number;
+  pollId?: string;
   seo?: SeoMeta;
 }
 

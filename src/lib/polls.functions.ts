@@ -2,6 +2,15 @@ import { createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import { z } from "zod";
 
+export const getPollByIdFn = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ pollId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { getPollById } = await import("./db.server");
+    const poll = await getPollById(data.pollId);
+    if (!poll) return null;
+    return { ...poll, votedOptionId: getCookie(`poll_${poll.id}`) ?? null };
+  });
+
 export const getPolls = createServerFn({ method: "GET" }).handler(async () => {
   const { getActivePolls } = await import("./db.server");
   const polls = await getActivePolls();

@@ -22,9 +22,14 @@ import { TiptapEditor } from "@/components/admin/TiptapEditor";
 import { NAV_SECTIONS, findSection } from "@/lib/nav";
 import { setState, slugify, uid, useStore } from "@/lib/store";
 import { upsertArticleFn, deleteArticleFn } from "@/lib/content.functions";
+import { getAdminPolls } from "@/lib/polls.functions";
 import type { Article } from "@/types";
+import type { PollRow } from "@/lib/db.server";
 
-export const Route = createFileRoute("/admin/articles")({ component: AdminArticles });
+export const Route = createFileRoute("/admin/articles")({
+  loader: async () => ({ polls: await getAdminPolls() }),
+  component: AdminArticles,
+});
 
 const ARTICLE_CATEGORIES = [
   "Culture",
@@ -40,6 +45,7 @@ const ARTICLE_CATEGORIES = [
 ];
 
 function AdminArticles() {
+  const { polls } = Route.useLoaderData() as { polls: PollRow[] };
   const articles = useStore((s) => s.articles);
   const [editing, setEditing] = useState<Article | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -124,6 +130,7 @@ function AdminArticles() {
       subcategory: String(fd.get("subcategory") || "") || undefined,
       series: String(fd.get("series") || "") || undefined,
       seriesOrder: Number(fd.get("seriesOrder") || 0) || undefined,
+      pollId: String(fd.get("pollId") || "") || undefined,
       seo: readSeo(fd),
     };
     setSaving(true);
@@ -379,6 +386,20 @@ function AdminArticles() {
                   </div>
                 </div>
               </div>
+              {polls.length > 0 && (
+                <AdminFormPanel title="Poll">
+                  <AdminField label="Attach a reader poll" hint="One poll per post. The poll appears after the article body.">
+                    <select name="pollId" defaultValue={editing?.pollId ?? ""} className={adminInput}>
+                      <option value="">— No poll —</option>
+                      {polls.map((p) => (
+                        <option key={p.id} value={p.id} disabled={p.status === "closed"}>
+                          {p.question}{p.status === "closed" ? " (closed)" : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </AdminField>
+                </AdminFormPanel>
+              )}
               <SeoFields
                 defaultValue={editing?.seo}
                 fallbackTitle={editing?.title}

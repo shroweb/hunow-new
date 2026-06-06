@@ -1,19 +1,25 @@
 import { useState, useEffect } from "react";
-import { getPolls, castVote } from "@/lib/polls.functions";
+import { getPolls, getPollByIdFn, castVote } from "@/lib/polls.functions";
 import type { PollRow } from "@/lib/db.server";
 
 type PollWithVote = PollRow & { votedOptionId: string | null };
 
-export function PollWidget() {
+export function PollWidget({ pollId }: { pollId?: string } = {}) {
   const [polls, setPolls] = useState<PollWithVote[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [voting, setVoting] = useState(false);
 
   useEffect(() => {
-    getPolls()
-      .then(setPolls)
-      .catch(() => {});
-  }, []);
+    if (pollId) {
+      getPollByIdFn({ data: { pollId } })
+        .then((p) => { if (p) setPolls([p as PollWithVote]); })
+        .catch(() => {});
+    } else {
+      getPolls()
+        .then(setPolls)
+        .catch(() => {});
+    }
+  }, [pollId]);
 
   const poll = polls[activeIndex];
   if (!poll) return null;
