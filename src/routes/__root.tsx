@@ -108,8 +108,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ],
       links: [
         { rel: "stylesheet", href: appCss },
-        { rel: "alternate", type: "application/rss+xml", title: `${siteName} — Articles`, href: "/feed.articles.rss" },
-        { rel: "alternate", type: "application/rss+xml", title: `${siteName} — Events`, href: "/feed.events.rss" },
+        {
+          rel: "alternate",
+          type: "application/rss+xml",
+          title: `${siteName} — Articles`,
+          href: "/feed.articles.rss",
+        },
+        {
+          rel: "alternate",
+          type: "application/rss+xml",
+          title: `${siteName} — Events`,
+          href: "/feed.events.rss",
+        },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
         {

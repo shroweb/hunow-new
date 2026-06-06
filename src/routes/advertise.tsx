@@ -116,7 +116,9 @@ function Advertise() {
         {status === "done" ? (
           <div className="border-2 border-accent bg-accent/5 p-8">
             <p className="font-bold text-lg mb-1">Thanks — we'll be in touch within 24 hours.</p>
-            <p className="text-sm text-muted-foreground">We've received your enquiry and will respond shortly.</p>
+            <p className="text-sm text-muted-foreground">
+              We've received your enquiry and will respond shortly.
+            </p>
           </div>
         ) : (
           <form className="space-y-4" onSubmit={onSubmit}>
@@ -152,7 +154,9 @@ function Advertise() {
               minLength={10}
             />
             {status === "error" && (
-              <p className="text-sm text-red-600 font-bold">Something went wrong — please try again or email us directly.</p>
+              <p className="text-sm text-red-600 font-bold">
+                Something went wrong — please try again or email us directly.
+              </p>
             )}
             <button
               disabled={status === "sending"}
@@ -167,4 +171,5 @@ function Advertise() {
   );
 }
 
-const fieldCls = "w-full bg-white border-2 border-foreground px-6 py-4 font-mono text-sm focus:outline-none";
+const fieldCls =
+  "w-full bg-white border-2 border-foreground px-6 py-4 font-mono text-sm focus:outline-none";

@@ -115,7 +115,10 @@ export default function TiptapEditorInner({ defaultValue, onUpdate }: Props) {
           type="button"
           title="Upload image"
           disabled={uploading}
-          onMouseDown={(e) => { e.preventDefault(); fileRef.current?.click(); }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            fileRef.current?.click();
+          }}
           className={`${baseClass}${uploading ? " opacity-40" : ""}`}
         >
           {uploading ? "…" : "🖼"}

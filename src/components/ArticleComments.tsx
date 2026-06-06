@@ -80,7 +80,9 @@ export function ArticleComments({ articleId }: { articleId: string }) {
           <form onSubmit={onSubmit} className="space-y-4 max-w-xl">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-mono text-[10px] uppercase mb-2 tracking-widest">Name</label>
+                <label className="block font-mono text-[10px] uppercase mb-2 tracking-widest">
+                  Name
+                </label>
                 <input name="authorName" required placeholder="Your name" className={fieldCls} />
               </div>
               <div>
@@ -97,7 +99,9 @@ export function ArticleComments({ articleId }: { articleId: string }) {
               </div>
             </div>
             <div>
-              <label className="block font-mono text-[10px] uppercase mb-2 tracking-widest">Comment</label>
+              <label className="block font-mono text-[10px] uppercase mb-2 tracking-widest">
+                Comment
+              </label>
               <textarea
                 name="body"
                 required

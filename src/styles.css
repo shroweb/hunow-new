@@ -104,19 +104,19 @@
 
 .dark {
   /* HU NOW dark mode — deep navy background, cream text, gold accent preserved */
-  --background: oklch(0.14 0.05 270);        /* deep navy */
-  --foreground: oklch(0.95 0.012 85);        /* cream */
-  --card: oklch(0.19 0.055 270);             /* slightly lighter navy */
+  --background: oklch(0.14 0.05 270); /* deep navy */
+  --foreground: oklch(0.95 0.012 85); /* cream */
+  --card: oklch(0.19 0.055 270); /* slightly lighter navy */
   --card-foreground: oklch(0.95 0.012 85);
   --popover: oklch(0.19 0.055 270);
   --popover-foreground: oklch(0.95 0.012 85);
-  --primary: oklch(0.95 0.012 85);           /* cream (inverted) */
+  --primary: oklch(0.95 0.012 85); /* cream (inverted) */
   --primary-foreground: oklch(0.14 0.05 270);
   --secondary: oklch(0.24 0.06 270);
   --secondary-foreground: oklch(0.95 0.012 85);
   --muted: oklch(0.24 0.06 270);
   --muted-foreground: oklch(0.65 0.04 270);
-  --accent: oklch(0.78 0.14 82);             /* gold — unchanged */
+  --accent: oklch(0.78 0.14 82); /* gold — unchanged */
   --accent-foreground: oklch(0.14 0.05 270);
   --destructive: oklch(0.65 0.22 25);
   --destructive-foreground: oklch(0.95 0.012 85);
@@ -126,8 +126,8 @@
   --chart-1: oklch(0.78 0.14 82);
   --chart-2: oklch(0.65 0.15 160);
   --chart-3: oklch(0.55 0.18 230);
-  --chart-4: oklch(0.60 0.20 290);
-  --chart-5: oklch(0.70 0.18 40);
+  --chart-4: oklch(0.6 0.2 290);
+  --chart-5: oklch(0.7 0.18 40);
   --sidebar: oklch(0.12 0.05 270);
   --sidebar-foreground: oklch(0.95 0.012 85);
   --sidebar-primary: oklch(0.78 0.14 82);
@@ -175,18 +175,40 @@
 }
 
 /* Rich text article styles */
-.prose-hunow h2 { @apply text-3xl font-bold mt-12 mb-4 leading-tight; }
-.prose-hunow h3 { @apply text-xl font-bold mt-8 mb-3 leading-tight; }
-.prose-hunow p { @apply mb-6 text-lg leading-relaxed; }
-.prose-hunow blockquote { @apply my-8 pl-6 border-l-4 border-accent text-xl italic text-muted-foreground; }
-.prose-hunow a { @apply underline hover:text-accent; }
-.prose-hunow img { @apply w-full my-8; }
-.prose-hunow hr { @apply my-10 border-foreground/20; }
-.prose-hunow strong { @apply font-bold; }
-.prose-hunow em { @apply italic; }
+.prose-hunow h2 {
+  @apply text-3xl font-bold mt-12 mb-4 leading-tight;
+}
+.prose-hunow h3 {
+  @apply text-xl font-bold mt-8 mb-3 leading-tight;
+}
+.prose-hunow p {
+  @apply mb-6 text-lg leading-relaxed;
+}
+.prose-hunow blockquote {
+  @apply my-8 pl-6 border-l-4 border-accent text-xl italic text-muted-foreground;
+}
+.prose-hunow a {
+  @apply underline hover:text-accent;
+}
+.prose-hunow img {
+  @apply w-full my-8;
+}
+.prose-hunow hr {
+  @apply my-10 border-foreground/20;
+}
+.prose-hunow strong {
+  @apply font-bold;
+}
+.prose-hunow em {
+  @apply italic;
+}
 
 /* Tiptap editor wrapper */
-.tiptap { outline: none; min-height: 320px; padding: 0.75rem 1rem; }
+.tiptap {
+  outline: none;
+  min-height: 320px;
+  padding: 0.75rem 1rem;
+}
 
 @keyframes reveal {
   from {

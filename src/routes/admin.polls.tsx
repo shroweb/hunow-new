@@ -76,7 +76,9 @@ function AdminPolls() {
           >
             <h3 className="font-display text-2xl uppercase">New Poll</h3>
             <label className="block space-y-1">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Question</span>
+              <span className="font-mono text-[10px] uppercase text-muted-foreground">
+                Question
+              </span>
               <input
                 className={adminInput}
                 value={question}
@@ -138,7 +140,8 @@ function AdminPolls() {
                     <div className="flex justify-between mb-0.5">
                       <span>{opt.text}</span>
                       <span className="font-mono text-muted-foreground">
-                        {opt.votes} ({totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0}%)
+                        {opt.votes} (
+                        {totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0}%)
                       </span>
                     </div>
                     <div className="h-1 bg-foreground/10 rounded-full overflow-hidden">
@@ -162,10 +165,7 @@ function AdminPolls() {
               </span>,
               <div className="flex gap-2">
                 {poll.status === "active" && (
-                  <button
-                    className={adminBtnOutline}
-                    onClick={() => handleClose(poll.id)}
-                  >
+                  <button className={adminBtnOutline} onClick={() => handleClose(poll.id)}>
                     Close
                   </button>
                 )}

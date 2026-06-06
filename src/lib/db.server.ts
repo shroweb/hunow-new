@@ -1302,13 +1302,31 @@ export interface PollRow {
   createdAt: string;
 }
 
-function mapPollRow(row: { id: string; question: string; options: PollOption[]; status: string; created_at: string }): PollRow {
-  return { id: row.id, question: row.question, options: row.options, status: row.status as PollRow["status"], createdAt: new Date(row.created_at).toISOString() };
+function mapPollRow(row: {
+  id: string;
+  question: string;
+  options: PollOption[];
+  status: string;
+  created_at: string;
+}): PollRow {
+  return {
+    id: row.id,
+    question: row.question,
+    options: row.options,
+    status: row.status as PollRow["status"],
+    createdAt: new Date(row.created_at).toISOString(),
+  };
 }
 
 export async function getActivePolls(): Promise<PollRow[]> {
   await ensureSchema();
-  const r = await getPool().query<{ id: string; question: string; options: PollOption[]; status: string; created_at: string }>(
+  const r = await getPool().query<{
+    id: string;
+    question: string;
+    options: PollOption[];
+    status: string;
+    created_at: string;
+  }>(
     "select id, question, options, status, created_at from polls where status = 'active' order by created_at desc",
   );
   return r.rows.map(mapPollRow);
@@ -1316,21 +1334,43 @@ export async function getActivePolls(): Promise<PollRow[]> {
 
 export async function getAllPolls(): Promise<PollRow[]> {
   await ensureSchema();
-  const r = await getPool().query<{ id: string; question: string; options: PollOption[]; status: string; created_at: string }>(
-    "select id, question, options, status, created_at from polls order by created_at desc",
-  );
+  const r = await getPool().query<{
+    id: string;
+    question: string;
+    options: PollOption[];
+    status: string;
+    created_at: string;
+  }>("select id, question, options, status, created_at from polls order by created_at desc");
   return r.rows.map(mapPollRow);
 }
 
-export async function createPoll(id: string, question: string, optionTexts: string[]): Promise<void> {
+export async function createPoll(
+  id: string,
+  question: string,
+  optionTexts: string[],
+): Promise<void> {
   await ensureSchema();
-  const options: PollOption[] = optionTexts.map((text, i) => ({ id: String(i + 1), text, votes: 0 }));
-  await getPool().query("insert into polls (id, question, options) values ($1, $2, $3)", [id, question, JSON.stringify(options)]);
+  const options: PollOption[] = optionTexts.map((text, i) => ({
+    id: String(i + 1),
+    text,
+    votes: 0,
+  }));
+  await getPool().query("insert into polls (id, question, options) values ($1, $2, $3)", [
+    id,
+    question,
+    JSON.stringify(options),
+  ]);
 }
 
 export async function voteOnPoll(pollId: string, optionId: string): Promise<PollRow | undefined> {
   await ensureSchema();
-  const r = await getPool().query<{ id: string; question: string; options: PollOption[]; status: string; created_at: string }>(
+  const r = await getPool().query<{
+    id: string;
+    question: string;
+    options: PollOption[];
+    status: string;
+    created_at: string;
+  }>(
     `update polls
      set options = (
        select jsonb_agg(
@@ -1368,24 +1408,45 @@ export interface AreaGuideRow {
 
 export async function getAreaGuide(areaKey: string): Promise<AreaGuideRow | undefined> {
   await ensureSchema();
-  const r = await getPool().query<{ area_key: string; intro: string; featured_image: string; updated_at: string }>(
-    "select area_key, intro, featured_image, updated_at from area_guides where area_key = $1",
-    [areaKey],
-  );
+  const r = await getPool().query<{
+    area_key: string;
+    intro: string;
+    featured_image: string;
+    updated_at: string;
+  }>("select area_key, intro, featured_image, updated_at from area_guides where area_key = $1", [
+    areaKey,
+  ]);
   const row = r.rows[0];
   if (!row) return undefined;
-  return { areaKey: row.area_key, intro: row.intro, featuredImage: row.featured_image, updatedAt: row.updated_at };
+  return {
+    areaKey: row.area_key,
+    intro: row.intro,
+    featuredImage: row.featured_image,
+    updatedAt: row.updated_at,
+  };
 }
 
 export async function getAllAreaGuides(): Promise<AreaGuideRow[]> {
   await ensureSchema();
-  const r = await getPool().query<{ area_key: string; intro: string; featured_image: string; updated_at: string }>(
-    "select area_key, intro, featured_image, updated_at from area_guides order by area_key",
-  );
-  return r.rows.map((row) => ({ areaKey: row.area_key, intro: row.intro, featuredImage: row.featured_image, updatedAt: row.updated_at }));
+  const r = await getPool().query<{
+    area_key: string;
+    intro: string;
+    featured_image: string;
+    updated_at: string;
+  }>("select area_key, intro, featured_image, updated_at from area_guides order by area_key");
+  return r.rows.map((row) => ({
+    areaKey: row.area_key,
+    intro: row.intro,
+    featuredImage: row.featured_image,
+    updatedAt: row.updated_at,
+  }));
 }
 
-export async function upsertAreaGuide(areaKey: string, intro: string, featuredImage: string): Promise<void> {
+export async function upsertAreaGuide(
+  areaKey: string,
+  intro: string,
+  featuredImage: string,
+): Promise<void> {
   await ensureSchema();
   await getPool().query(
     `insert into area_guides (area_key, intro, featured_image)
@@ -1407,14 +1468,31 @@ export interface ListingUpdateRow {
 
 export async function getListingUpdates(listingId: string): Promise<ListingUpdateRow[]> {
   await ensureSchema();
-  const r = await getPool().query<{ id: string; listing_id: string; user_id: string; body: string; created_at: string }>(
+  const r = await getPool().query<{
+    id: string;
+    listing_id: string;
+    user_id: string;
+    body: string;
+    created_at: string;
+  }>(
     "select id, listing_id, user_id, body, created_at from listing_updates where listing_id = $1 order by created_at desc",
     [listingId],
   );
-  return r.rows.map((row) => ({ id: row.id, listingId: row.listing_id, userId: row.user_id, body: row.body, createdAt: new Date(row.created_at).toISOString() }));
+  return r.rows.map((row) => ({
+    id: row.id,
+    listingId: row.listing_id,
+    userId: row.user_id,
+    body: row.body,
+    createdAt: new Date(row.created_at).toISOString(),
+  }));
 }
 
-export async function postListingUpdate(id: string, listingId: string, userId: string, body: string): Promise<void> {
+export async function postListingUpdate(
+  id: string,
+  listingId: string,
+  userId: string,
+  body: string,
+): Promise<void> {
   await ensureSchema();
   await getPool().query(
     "insert into listing_updates (id, listing_id, user_id, body) values ($1, $2, $3, $4)",

@@ -295,7 +295,11 @@ function NewsletterStrip() {
   if (!visible) return null;
 
   function dismiss() {
-    try { localStorage.setItem(KEY, "1"); } catch { /* quota */ }
+    try {
+      localStorage.setItem(KEY, "1");
+    } catch {
+      /* quota */
+    }
     setVisible(false);
   }
 
@@ -304,7 +308,9 @@ function NewsletterStrip() {
     if (!email) return;
     try {
       await subscribeNewsletter({ data: { email, segments: [] } });
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     setDone(true);
     dismiss();
   }
@@ -313,11 +319,26 @@ function NewsletterStrip() {
     <div className="my-12 -mx-4 sm:mx-0 bg-foreground text-background px-8 py-10">
       <div className="flex items-start justify-between gap-4 mb-6">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-accent mb-2">Newsletter</div>
-          <p className="font-display text-3xl uppercase leading-tight">The best of Hull,<br />every Thursday.</p>
-          <p className="text-sm text-background/70 mt-2">Events, food guides and hidden gems — straight to your inbox.</p>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-accent mb-2">
+            Newsletter
+          </div>
+          <p className="font-display text-3xl uppercase leading-tight">
+            The best of Hull,
+            <br />
+            every Thursday.
+          </p>
+          <p className="text-sm text-background/70 mt-2">
+            Events, food guides and hidden gems — straight to your inbox.
+          </p>
         </div>
-        <button type="button" onClick={dismiss} className="text-background/40 hover:text-background text-2xl leading-none shrink-0 mt-1" aria-label="Dismiss">×</button>
+        <button
+          type="button"
+          onClick={dismiss}
+          className="text-background/40 hover:text-background text-2xl leading-none shrink-0 mt-1"
+          aria-label="Dismiss"
+        >
+          ×
+        </button>
       </div>
       {done ? (
         <p className="font-bold text-accent text-lg">You're in. See you Thursday.</p>
@@ -331,7 +352,10 @@ function NewsletterStrip() {
             placeholder="your@email.com"
             className="flex-1 bg-white/10 border-2 border-white/20 px-4 py-3 font-mono text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-white/50"
           />
-          <button type="submit" className="bg-accent text-foreground px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-white transition-colors whitespace-nowrap">
+          <button
+            type="submit"
+            className="bg-accent text-foreground px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-white transition-colors whitespace-nowrap"
+          >
             Subscribe
           </button>
         </form>

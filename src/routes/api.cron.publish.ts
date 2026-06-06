@@ -70,10 +70,12 @@ export const Route = createFileRoute("/api/cron/publish")({
           if (publishedEvents > 0) results.push(`Published ${publishedEvents} event(s)`);
 
           // 3. Archive past events (startDate + any endDate in the past)
-          const pastEvents = await pool.query<{ id: string; data: { startDate: string; endDate?: string } }>(
-            "select id, data from events where status = 'published' and data->>'startDate' < $1",
-            [todayIso],
-          );
+          const pastEvents = await pool.query<{
+            id: string;
+            data: { startDate: string; endDate?: string };
+          }>("select id, data from events where status = 'published' and data->>'startDate' < $1", [
+            todayIso,
+          ]);
           let archived = 0;
           for (const row of pastEvents.rows) {
             const endDate = row.data.endDate ?? row.data.startDate;
@@ -89,33 +91,45 @@ export const Route = createFileRoute("/api/cron/publish")({
           if (archived > 0) results.push(`Archived ${archived} past event(s)`);
 
           // 4. Send scheduled newsletter campaigns
-          const campaigns = await pool.query<{
-            id: string;
-            subject: string;
-            intro: string;
-            segment: string;
-            selected: unknown;
-            html: string;
-            plain_text: string;
-            scheduled_for: string;
-          }>(
-            "select id, subject, intro, segment, selected, html, plain_text, scheduled_for from newsletter_campaigns where status = 'scheduled' and scheduled_for <= now()",
-          );
-          for (const campaign of campaigns.rows) {
-            try {
-              const { getNewsletterRecipients, saveNewsletterCampaign } = await import("@/lib/db.server");
-              const recipients = await getNewsletterRecipients(campaign.segment as "all" | "events" | "offers" | "businesses");
-              const siteUrl = (process.env.SITE_URL ?? "https://hunow.co.uk").replace(/\/$/, "");
-              let sent = 0;
-              for (const recipient of recipients) {
-                const unsubUrl = `${siteUrl}/unsubscribe?token=${recipient.unsubscribeToken}`;
-                const html = campaign.html.replaceAll("{{unsubscribeUrl}}", unsubUrl);
-                const text = campaign.plain_text.replaceAll("{{unsubscribeUrl}}", unsubUrl);
+          const client = await pool.connect();
+          try {
+            await client.query("begin");
+            const campaigns = await client.query<{
+              id: string;
+              subject: string;
+              segment: "all" | "events" | "offers" | "businesses";
+              html: string;
+              plain_text: string;
+            }>(
+              `select id, subject, segment, html, plain_text
+               from newsletter_campaigns
+               where status = 'scheduled' and scheduled_for <= now()
+               order by scheduled_for asc
+               for update skip locked`,
+            );
+
+            for (const campaign of campaigns.rows) {
+              try {
                 const apiKey = process.env.RESEND_API_KEY;
-                if (apiKey) {
-                  await fetch("https://api.resend.com/emails", {
+                if (!apiKey) {
+                  throw new Error("RESEND_API_KEY is not configured.");
+                }
+
+                const { getNewsletterRecipients } = await import("@/lib/db.server");
+                const recipients = await getNewsletterRecipients(campaign.segment);
+                const siteUrl = (process.env.SITE_URL ?? "https://hunow.co.uk").replace(/\/$/, "");
+                let sent = 0;
+
+                for (const recipient of recipients) {
+                  const unsubUrl = `${siteUrl}/unsubscribe?token=${recipient.unsubscribeToken}`;
+                  const html = campaign.html.replaceAll("{{unsubscribeUrl}}", unsubUrl);
+                  const text = campaign.plain_text.replaceAll("{{unsubscribeUrl}}", unsubUrl);
+                  const response = await fetch("https://api.resend.com/emails", {
                     method: "POST",
-                    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+                    headers: {
+                      Authorization: `Bearer ${apiKey}`,
+                      "Content-Type": "application/json",
+                    },
                     body: JSON.stringify({
                       from: process.env.NEWSLETTER_FROM ?? "HU NOW <newsletter@hunow.co.uk>",
                       to: recipient.email,
@@ -124,39 +138,43 @@ export const Route = createFileRoute("/api/cron/publish")({
                       text,
                     }),
                   });
+
+                  if (!response.ok) {
+                    const body = await response.text();
+                    throw new Error(`Resend failed: ${response.status} ${body}`);
+                  }
                   sent++;
                 }
+
+                await client.query(
+                  `update newsletter_campaigns
+                   set status = 'sent', recipient_count = $2, sent_at = now(), updated_at = now()
+                   where id = $1`,
+                  [campaign.id, sent],
+                );
+                results.push(
+                  `Sent newsletter campaign "${campaign.subject}" to ${sent} recipients`,
+                );
+              } catch (err) {
+                await client.query(
+                  "update newsletter_campaigns set status = 'failed', updated_at = now() where id = $1",
+                  [campaign.id],
+                );
+                results.push(`Failed campaign ${campaign.id}: ${String(err)}`);
               }
-              await saveNewsletterCampaign(
-                {
-                  subject: campaign.subject,
-                  intro: campaign.intro,
-                  segment: campaign.segment as "all",
-                  selected: campaign.selected as { articles: string[]; events: string[]; offers: string[]; listings: string[] },
-                  html: campaign.html,
-                  text: campaign.plain_text,
-                  status: "sent",
-                  scheduledFor: campaign.scheduled_for,
-                  recipientCount: sent,
-                  sentAt: new Date().toISOString(),
-                },
-                campaign.id as string & `${string}-${string}-${string}-${string}-${string}`,
-              );
-              results.push(`Sent newsletter campaign "${campaign.subject}" to ${sent} recipients`);
-            } catch (err) {
-              await pool.query(
-                "update newsletter_campaigns set status = 'failed' where id = $1",
-                [campaign.id],
-              );
-              results.push(`Failed campaign ${campaign.id}: ${String(err)}`);
             }
+            await client.query("commit");
+          } catch (err) {
+            await client.query("rollback");
+            throw err;
+          } finally {
+            client.release();
           }
 
           // 5. Clean up old rate limit entries (keep last 24h)
-          await pool.query(
-            "delete from rate_limits where window_start < now() - interval '24 hours'",
-          ).catch(() => {});
-
+          await pool
+            .query("delete from rate_limits where window_start < now() - interval '24 hours'")
+            .catch(() => {});
         } catch (err) {
           return Response.json({ ok: false, error: String(err) }, { status: 500 });
         }

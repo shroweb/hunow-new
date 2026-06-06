@@ -71,9 +71,7 @@ function SubPage() {
         <h1 className="text-5xl md:text-7xl font-display uppercase leading-none mb-4">
           {sub.label}
         </h1>
-        <p className="text-lg text-muted-foreground">
-          {section.blurb}
-        </p>
+        <p className="text-lg text-muted-foreground">{section.blurb}</p>
       </section>
 
       <section className="max-w-7xl mx-auto px-4 py-6 border-b border-border">
@@ -166,12 +164,16 @@ function EmptySection({ section, sub }: { section: NavSection; sub: NavSub }) {
           </p>
           {fallbackEvents.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {fallbackEvents.map((e) => <EventCard key={e.id} event={e} />)}
+              {fallbackEvents.map((e) => (
+                <EventCard key={e.id} event={e} />
+              ))}
             </div>
           )}
           {fallbackArticles.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16">
-              {fallbackArticles.map((a) => <ArticleCard key={a.id} article={a} />)}
+              {fallbackArticles.map((a) => (
+                <ArticleCard key={a.id} article={a} />
+              ))}
             </div>
           )}
         </div>

@@ -1,15 +1,12 @@
 {
-  "crons": [
-    { "path": "/api/cron/publish", "schedule": "*/15 * * * *" }
-  ],
+  "crons": [{ "path": "/api/cron/publish", "schedule": "*/15 * * * *" }],
   "redirects": [
-    { "source": "/eat/:slug", "destination": "/places/:slug", "permanent": true },
-    { "source": "/activities/:slug", "destination": "/places/:slug", "permanent": true },
-    { "source": "/eat", "destination": "/places", "permanent": true },
-    { "source": "/activities", "destination": "/places", "permanent": true },
-    { "source": "/events/hull-fair-2025", "destination": "/events/hull-fair-2026", "permanent": true },
+    {
+      "source": "/events/hull-fair-2025",
+      "destination": "/events/hull-fair-2026",
+      "permanent": true
+    },
     { "source": "/events/humber-street-sesh-2025", "destination": "/whats-on", "permanent": true },
-    { "source": "/events", "destination": "/whats-on", "permanent": true },
     { "source": "/news", "destination": "/stories", "permanent": true },
     { "source": "/news/:path*", "destination": "/stories", "permanent": true },
     { "source": "/cuisine/:path*", "destination": "/", "permanent": true },
@@ -17,6 +14,10 @@
     { "source": "/about", "destination": "/", "permanent": true },
     { "source": "/ads", "destination": "/", "permanent": true },
     { "source": "/pdfviewer", "destination": "/", "permanent": true },
-    { "source": "/major-improvements-coming-to-hull-docks", "destination": "/stories", "permanent": true }
+    {
+      "source": "/major-improvements-coming-to-hull-docks",
+      "destination": "/stories",
+      "permanent": true
+    }
   ]
 }

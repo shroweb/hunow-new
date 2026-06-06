@@ -3,7 +3,10 @@ import { z } from "zod";
 import crypto from "node:crypto";
 
 function slugify(s: string) {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 async function uniqueSlug(base: string, table: "events" | "listings") {
@@ -11,10 +14,9 @@ async function uniqueSlug(base: string, table: "events" | "listings") {
   const slug = slugify(base);
   for (let i = 0; i < 10; i++) {
     const candidate = i === 0 ? slug : `${slug}-${i}`;
-    const existing = await getPool().query(
-      `select 1 from ${table} where slug = $1 limit 1`,
-      [candidate],
-    );
+    const existing = await getPool().query(`select 1 from ${table} where slug = $1 limit 1`, [
+      candidate,
+    ]);
     if (existing.rowCount === 0) return candidate;
   }
   return `${slug}-${Date.now()}`;
@@ -86,7 +88,8 @@ export const approveAdminSubmission = createServerFn({ method: "POST" })
         id,
         name,
         slug,
-        description: d.description || "Submitted listing — add editorial details before publishing.",
+        description:
+          d.description || "Submitted listing — add editorial details before publishing.",
         category: d.category || "Things To Do",
         area: d.area || "Hull",
         address: d.address || "Address to confirm",

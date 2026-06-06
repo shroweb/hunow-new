@@ -28,9 +28,7 @@ export function PollWidget() {
       const result = await castVote({ data: { pollId: poll.id, optionId } });
       if (result.ok && result.poll) {
         setPolls((prev) =>
-          prev.map((p) =>
-            p.id === poll.id ? { ...result.poll!, votedOptionId: optionId } : p,
-          ),
+          prev.map((p) => (p.id === poll.id ? { ...result.poll!, votedOptionId: optionId } : p)),
         );
       } else {
         // Already voted in another tab — show results anyway
@@ -87,7 +85,9 @@ export function PollWidget() {
       </div>
 
       <div className="flex items-center justify-between text-[10px] font-mono uppercase text-muted-foreground">
-        <span>{totalVotes} vote{totalVotes !== 1 ? "s" : ""}</span>
+        <span>
+          {totalVotes} vote{totalVotes !== 1 ? "s" : ""}
+        </span>
         {polls.length > 1 && (
           <div className="flex gap-1">
             {polls.map((_, i) => (

@@ -39,7 +39,9 @@ export const Route = createFileRoute("/series/$series")({
     <PublicLayout>
       <div className="max-w-3xl mx-auto px-4 py-32 text-center">
         <h1 className="font-display text-6xl mb-4">SERIES NOT FOUND</h1>
-        <Link to="/" className="underline">Back to home</Link>
+        <Link to="/" className="underline">
+          Back to home
+        </Link>
       </div>
     </PublicLayout>
   ),
@@ -76,7 +78,9 @@ function SeriesPage() {
             <div className="absolute inset-0 bg-foreground/70" />
           </>
         )}
-        <div className={`relative max-w-7xl mx-auto px-4 py-16 md:py-24 ${coverImage ? "text-background" : ""}`}>
+        <div
+          className={`relative max-w-7xl mx-auto px-4 py-16 md:py-24 ${coverImage ? "text-background" : ""}`}
+        >
           <div className="flex items-center gap-3 mb-4">
             <span className="text-[10px] font-mono uppercase text-accent">Series</span>
             <a
@@ -86,12 +90,16 @@ function SeriesPage() {
               ← All series
             </a>
           </div>
-          <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">{series}</h1>
+          <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">
+            {series}
+          </h1>
 
           {/* Progress */}
           {readCount > 0 && (
             <div className="mb-6">
-              <div className={`text-sm font-mono mb-2 ${coverImage ? "text-background/70" : "text-muted-foreground"}`}>
+              <div
+                className={`text-sm font-mono mb-2 ${coverImage ? "text-background/70" : "text-muted-foreground"}`}
+              >
                 {readCount} of {articles.length} part{articles.length !== 1 ? "s" : ""} read
               </div>
               <div className="w-48 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
@@ -105,7 +113,8 @@ function SeriesPage() {
 
           <div className="flex flex-wrap items-center gap-4">
             <p className={`text-lg ${coverImage ? "text-background/80" : "text-muted-foreground"}`}>
-              {articles.length} {articles.length === 1 ? "part" : "parts"} · {totalMinutes} min total
+              {articles.length} {articles.length === 1 ? "part" : "parts"} · {totalMinutes} min
+              total
             </p>
             {/* Smart CTA: continue if in progress, start from 1 otherwise */}
             {lastRead && nextUp ? (
@@ -123,7 +132,9 @@ function SeriesPage() {
                 Start from Part 1 →
               </a>
             ) : readCount === articles.length ? (
-              <span className={`text-[10px] font-mono uppercase px-3 py-1.5 border ${coverImage ? "border-background/40 text-background/70" : "border-foreground/30 text-muted-foreground"}`}>
+              <span
+                className={`text-[10px] font-mono uppercase px-3 py-1.5 border ${coverImage ? "border-background/40 text-background/70" : "border-foreground/30 text-muted-foreground"}`}
+              >
                 ✓ Completed
               </span>
             ) : null}

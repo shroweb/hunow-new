@@ -48,7 +48,9 @@ export function SaveButton({
                 description: "Sign in to sync your saves across devices.",
                 action: {
                   label: "Sign in",
-                  onClick: () => { window.location.href = "/sign-in?redirect=/saved"; },
+                  onClick: () => {
+                    window.location.href = "/sign-in?redirect=/saved";
+                  },
                 },
                 duration: 5000,
               });

@@ -45,7 +45,9 @@ function SavedPage() {
       .then((user) => {
         if (!user) return;
         getServerSavedItems()
-          .then((serverItems) => { if (serverItems.length > 0) syncWithServer(serverItems); })
+          .then((serverItems) => {
+            if (serverItems.length > 0) syncWithServer(serverItems);
+          })
           .catch(() => {});
       })
       .catch(() => {});
@@ -95,7 +97,9 @@ function SavedPage() {
             >
               {t.label}
               {counts[t.id] > 0 && (
-                <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-sm ${tab === t.id ? "bg-accent/20 text-accent" : "bg-foreground/10"}`}>
+                <span
+                  className={`text-[10px] font-mono px-1.5 py-0.5 rounded-sm ${tab === t.id ? "bg-accent/20 text-accent" : "bg-foreground/10"}`}
+                >
                   {counts[t.id]}
                 </span>
               )}
@@ -131,7 +135,10 @@ function SavedList({ items, tab }: { items: SavedItem[]; tab: Tab }) {
     return (
       <div className="border-2 border-dashed border-foreground/20 p-12 text-center space-y-4">
         <p className="text-muted-foreground text-sm">Nothing saved here yet.</p>
-        <Link to={hint.to} className="inline-block font-bold uppercase text-xs tracking-widest underline">
+        <Link
+          to={hint.to}
+          className="inline-block font-bold uppercase text-xs tracking-widest underline"
+        >
           {hint.label} →
         </Link>
       </div>

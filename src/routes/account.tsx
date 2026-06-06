@@ -28,7 +28,9 @@ export const Route = createFileRoute("/account")({
 });
 
 function Account() {
-  const [user, setUser] = useState<(AuthUser & { avatarUrl?: string | null; bio?: string }) | null | undefined>(undefined);
+  const [user, setUser] = useState<
+    (AuthUser & { avatarUrl?: string | null; bio?: string }) | null | undefined
+  >(undefined);
   const [tab, setTab] = useState<Tab>("profile");
 
   useEffect(() => {
@@ -54,8 +56,12 @@ function Account() {
           <h1 className="font-display text-6xl uppercase mb-4">Account</h1>
           <p className="text-muted-foreground mb-8">Sign in to access your account.</p>
           <div className="flex justify-center gap-3">
-            <Link to="/sign-in" search={{ redirect: "/account" }} className={btn}>Sign in</Link>
-            <Link to="/sign-up" search={{ redirect: "/account" }} className={btnOutline}>Create account</Link>
+            <Link to="/sign-in" search={{ redirect: "/account" }} className={btn}>
+              Sign in
+            </Link>
+            <Link to="/sign-up" search={{ redirect: "/account" }} className={btnOutline}>
+              Create account
+            </Link>
           </div>
         </section>
       </PublicLayout>
@@ -76,10 +82,15 @@ function Account() {
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-6 mb-10 border-b-2 border-foreground pb-8">
           <div className="flex items-center gap-5">
-            <Avatar user={user} onUpdate={(url) => setUser((u) => u ? { ...u, avatarUrl: url } : u)} />
+            <Avatar
+              user={user}
+              onUpdate={(url) => setUser((u) => (u ? { ...u, avatarUrl: url } : u))}
+            />
             <div>
               <div className="font-mono text-[10px] uppercase text-accent mb-1">Your account</div>
-              <h1 className="font-display text-4xl md:text-5xl uppercase leading-none">{user.name}</h1>
+              <h1 className="font-display text-4xl md:text-5xl uppercase leading-none">
+                {user.name}
+              </h1>
               <p className="text-sm text-muted-foreground mt-1">{user.email}</p>
             </div>
           </div>
@@ -88,11 +99,17 @@ function Account() {
               View profile
             </Link>
             {user.role === "admin" && (
-              <Link to="/admin" className={btn}>Admin</Link>
+              <Link to="/admin" className={btn}>
+                Admin
+              </Link>
             )}
             <button
               type="button"
-              onClick={() => void signOutUser().then(() => { window.location.href = "/"; })}
+              onClick={() =>
+                void signOutUser().then(() => {
+                  window.location.href = "/";
+                })
+              }
               className={btnOutline}
             >
               Sign out
@@ -118,7 +135,12 @@ function Account() {
           ))}
         </div>
 
-        {tab === "profile" && <ProfileTab user={user} onUpdate={(patch) => setUser((u) => u ? { ...u, ...patch } : u)} />}
+        {tab === "profile" && (
+          <ProfileTab
+            user={user}
+            onUpdate={(patch) => setUser((u) => (u ? { ...u, ...patch } : u))}
+          />
+        )}
         {tab === "security" && <SecurityTab />}
         {tab === "newsletter" && <NewsletterTab userEmail={user.email} />}
         {tab === "activity" && <ActivityTab />}
@@ -140,7 +162,12 @@ function Avatar({
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
-  const initials = user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+  const initials = user.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   async function onFile(file: File | null) {
     if (!file) return;
@@ -213,7 +240,13 @@ function ProfileTab({
   return (
     <form onSubmit={onSubmit} className="max-w-lg space-y-5">
       <Field label="Display name">
-        <input className={input} value={name} onChange={(e) => setName(e.target.value)} required minLength={2} />
+        <input
+          className={input}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          minLength={2}
+        />
       </Field>
       <Field label="Bio" hint="Max 300 characters. Shown on your public profile.">
         <textarea
@@ -227,7 +260,9 @@ function ProfileTab({
         <span className="text-[10px] font-mono text-muted-foreground">{bio.length}/300</span>
       </Field>
       <div className="flex items-center gap-4">
-        <button type="submit" className={btn}>Save changes</button>
+        <button type="submit" className={btn}>
+          Save changes
+        </button>
         {status && <span className="text-sm font-bold">{status}</span>}
       </div>
     </form>
@@ -244,12 +279,17 @@ function SecurityTab() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (next !== confirm) { setStatus("New passwords don't match."); return; }
+    if (next !== confirm) {
+      setStatus("New passwords don't match.");
+      return;
+    }
     setStatus("Saving…");
     try {
       await updatePasswordFn({ data: { currentPassword: current, newPassword: next } });
       setStatus("Password updated. Other sessions have been signed out.");
-      setCurrent(""); setNext(""); setConfirm("");
+      setCurrent("");
+      setNext("");
+      setConfirm("");
     } catch (err) {
       setStatus(err instanceof Error ? err.message : "Error.");
     }
@@ -259,16 +299,37 @@ function SecurityTab() {
     <form onSubmit={onSubmit} className="max-w-lg space-y-5">
       <h2 className="font-display text-3xl uppercase">Change Password</h2>
       <Field label="Current password">
-        <input type="password" className={input} value={current} onChange={(e) => setCurrent(e.target.value)} required />
+        <input
+          type="password"
+          className={input}
+          value={current}
+          onChange={(e) => setCurrent(e.target.value)}
+          required
+        />
       </Field>
       <Field label="New password" hint="Minimum 8 characters.">
-        <input type="password" className={input} value={next} onChange={(e) => setNext(e.target.value)} required minLength={8} />
+        <input
+          type="password"
+          className={input}
+          value={next}
+          onChange={(e) => setNext(e.target.value)}
+          required
+          minLength={8}
+        />
       </Field>
       <Field label="Confirm new password">
-        <input type="password" className={input} value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
+        <input
+          type="password"
+          className={input}
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          required
+        />
       </Field>
       <div className="flex items-center gap-4">
-        <button type="submit" className={btn}>Update password</button>
+        <button type="submit" className={btn}>
+          Update password
+        </button>
         {status && <span className="text-sm font-bold">{status}</span>}
       </div>
     </form>
@@ -283,20 +344,28 @@ const SEGMENTS = [
   { id: "businesses", label: "Business", desc: "New openings, business news" },
 ] as const;
 
+type NewsletterSegment = (typeof SEGMENTS)[number]["id"];
+
+function isNewsletterSegment(segment: string): segment is NewsletterSegment {
+  return SEGMENTS.some(({ id }) => id === segment);
+}
+
 function NewsletterTab({ userEmail }: { userEmail: string }) {
   const [subscribed, setSubscribed] = useState<boolean | null>(null);
-  const [segments, setSegments] = useState<string[]>([]);
+  const [segments, setSegments] = useState<NewsletterSegment[]>([]);
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    getNewsletterPrefsFn().then((prefs) => {
-      setSubscribed(prefs.subscribed);
-      setSegments(prefs.segments.filter((s) => s !== "all"));
-    }).catch(() => {});
+    getNewsletterPrefsFn()
+      .then((prefs) => {
+        setSubscribed(prefs.subscribed);
+        setSegments(prefs.segments.filter(isNewsletterSegment));
+      })
+      .catch(() => {});
   }, []);
 
-  function toggle(id: string) {
-    setSegments((prev) => prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]);
+  function toggle(id: NewsletterSegment) {
+    setSegments((prev) => (prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]));
   }
 
   async function onSave(e: FormEvent) {
@@ -317,7 +386,9 @@ function NewsletterTab({ userEmail }: { userEmail: string }) {
       <div className="max-w-lg space-y-4">
         <h2 className="font-display text-3xl uppercase">Newsletter</h2>
         <p className="text-sm text-muted-foreground">You're not currently subscribed.</p>
-        <Link to="/newsletter" className={btn}>Subscribe →</Link>
+        <Link to="/newsletter" className={btn}>
+          Subscribe →
+        </Link>
       </div>
     );
   }
@@ -333,7 +404,10 @@ function NewsletterTab({ userEmail }: { userEmail: string }) {
       <fieldset className="space-y-3">
         <legend className="sr-only">Newsletter segments</legend>
         {SEGMENTS.map(({ id, label, desc }) => (
-          <label key={id} className={`flex items-start gap-4 border-2 p-4 cursor-pointer transition-colors ${segments.includes(id) ? "border-accent bg-accent/5" : "border-foreground/20 hover:border-foreground"}`}>
+          <label
+            key={id}
+            className={`flex items-start gap-4 border-2 p-4 cursor-pointer transition-colors ${segments.includes(id) ? "border-accent bg-accent/5" : "border-foreground/20 hover:border-foreground"}`}
+          >
             <input
               type="checkbox"
               className="mt-0.5 shrink-0"
@@ -348,12 +422,17 @@ function NewsletterTab({ userEmail }: { userEmail: string }) {
         ))}
       </fieldset>
       <div className="flex items-center gap-4">
-        <button type="submit" className={btn}>Save preferences</button>
+        <button type="submit" className={btn}>
+          Save preferences
+        </button>
         {status && <span className="text-sm font-bold">{status}</span>}
       </div>
       <p className="text-xs text-muted-foreground">
         To unsubscribe completely,{" "}
-        <Link to="/newsletter" className="underline">visit the newsletter page</Link>.
+        <Link to="/newsletter" className="underline">
+          visit the newsletter page
+        </Link>
+        .
       </p>
     </form>
   );
@@ -361,7 +440,14 @@ function NewsletterTab({ userEmail }: { userEmail: string }) {
 
 // ---- Activity tab ----
 
-type FeedItem = { type: "review" | "saved"; id: string; date: string; label: string; href: string; meta: string };
+type FeedItem = {
+  type: "review" | "saved";
+  id: string;
+  date: string;
+  label: string;
+  href: string;
+  meta: string;
+};
 
 function ActivityTab() {
   const [feed, setFeed] = useState<FeedItem[]>([]);
@@ -380,7 +466,9 @@ function ActivityTab() {
     return (
       <div className="space-y-3">
         <h2 className="font-display text-3xl uppercase">Activity</h2>
-        <p className="text-sm text-muted-foreground">No activity yet. Save some places or leave a review to get started.</p>
+        <p className="text-sm text-muted-foreground">
+          No activity yet. Save some places or leave a review to get started.
+        </p>
       </div>
     );
   }
@@ -390,21 +478,34 @@ function ActivityTab() {
       <h2 className="font-display text-3xl uppercase">Activity</h2>
       <ul className="space-y-0">
         {feed.map((item) => (
-          <li key={`${item.type}-${item.id}`} className="flex items-start gap-4 py-4 border-b border-foreground/10">
-            <div className={`mt-0.5 w-2 h-2 rounded-full shrink-0 ${item.type === "review" ? "bg-accent" : "bg-foreground/40"}`} />
+          <li
+            key={`${item.type}-${item.id}`}
+            className="flex items-start gap-4 py-4 border-b border-foreground/10"
+          >
+            <div
+              className={`mt-0.5 w-2 h-2 rounded-full shrink-0 ${item.type === "review" ? "bg-accent" : "bg-foreground/40"}`}
+            />
             <div className="flex-1 min-w-0">
               <div className="text-sm">
                 {item.type === "review" ? "Reviewed " : "Saved "}
-                <a href={item.href} className="font-bold hover:underline">{item.label}</a>
+                <a href={item.href} className="font-bold hover:underline">
+                  {item.label}
+                </a>
                 {item.type === "review" && (
                   <span className="ml-2 text-accent text-xs">{item.meta}</span>
                 )}
                 {item.type === "saved" && (
-                  <span className="ml-2 font-mono text-[10px] uppercase text-muted-foreground">{item.meta}</span>
+                  <span className="ml-2 font-mono text-[10px] uppercase text-muted-foreground">
+                    {item.meta}
+                  </span>
                 )}
               </div>
               <div className="font-mono text-[10px] text-muted-foreground mt-0.5">
-                {new Date(item.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                {new Date(item.date).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
               </div>
             </div>
           </li>
@@ -424,7 +525,10 @@ function DangerTab({ userName }: { userName: string }) {
 
   async function onDelete(e: FormEvent) {
     e.preventDefault();
-    if (confirm !== userName) { setStatus(`Type your name exactly: "${userName}"`); return; }
+    if (confirm !== userName) {
+      setStatus(`Type your name exactly: "${userName}"`);
+      return;
+    }
     setStatus("Deleting…");
     try {
       await deleteAccountFn({ data: { password } });
@@ -438,9 +542,7 @@ function DangerTab({ userName }: { userName: string }) {
     <div className="max-w-lg space-y-6">
       <div>
         <h2 className="font-display text-3xl uppercase text-red-600 mb-1">Danger Zone</h2>
-        <p className="text-sm text-muted-foreground">
-          Permanent actions that cannot be undone.
-        </p>
+        <p className="text-sm text-muted-foreground">Permanent actions that cannot be undone.</p>
       </div>
 
       <div className="border-2 border-red-300 p-5 space-y-4">
@@ -453,19 +555,38 @@ function DangerTab({ userName }: { userName: string }) {
         </div>
 
         {!open ? (
-          <button type="button" onClick={() => setOpen(true)} className="border-2 border-red-500 text-red-600 px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-red-50 transition-colors">
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="border-2 border-red-500 text-red-600 px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-red-50 transition-colors"
+          >
             Delete my account
           </button>
         ) : (
           <form onSubmit={onDelete} className="space-y-4 border-t border-red-200 pt-4">
             <Field label={`Type your name to confirm: "${userName}"`}>
-              <input className={`${input} border-red-400 focus:border-red-600`} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder={userName} required />
+              <input
+                className={`${input} border-red-400 focus:border-red-600`}
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                placeholder={userName}
+                required
+              />
             </Field>
             <Field label="Enter your password">
-              <input type="password" className={`${input} border-red-400`} value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <input
+                type="password"
+                className={`${input} border-red-400`}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </Field>
             <div className="flex gap-3 items-center flex-wrap">
-              <button type="submit" className="bg-red-600 text-white px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-red-700 transition-colors">
+              <button
+                type="submit"
+                className="bg-red-600 text-white px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-red-700 transition-colors"
+              >
                 Permanently delete
               </button>
               <button type="button" onClick={() => setOpen(false)} className={btnOutline}>
@@ -482,10 +603,20 @@ function DangerTab({ userName }: { userName: string }) {
 
 // ---- Shared helpers ----
 
-function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block space-y-1">
-      <span className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</span>
+      <span className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
       {children}
       {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
     </label>
@@ -501,6 +632,9 @@ function readDataUrl(file: File): Promise<string> {
   });
 }
 
-const btn = "inline-flex items-center bg-foreground text-background px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-accent transition-colors";
-const btnOutline = "inline-flex items-center border-2 border-foreground px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground hover:text-background transition-colors";
-const input = "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";
+const btn =
+  "inline-flex items-center bg-foreground text-background px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-accent transition-colors";
+const btnOutline =
+  "inline-flex items-center border-2 border-foreground px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground hover:text-background transition-colors";
+const input =
+  "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";

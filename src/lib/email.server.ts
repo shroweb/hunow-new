@@ -84,5 +84,7 @@ export async function sendAdminAlert(subject: string, body: string) {
   const text = `${subject}\n\n${body}\n\nAdmin: ${SITE_URL}/admin`;
 
   // Send to each admin; ignore individual failures
-  await Promise.allSettled(adminEmails.map((email) => send(email, `[${SITE_NAME}] ${subject}`, html, text)));
+  await Promise.allSettled(
+    adminEmails.map((email) => send(email, `[${SITE_NAME}] ${subject}`, html, text)),
+  );
 }

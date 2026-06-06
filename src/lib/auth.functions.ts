@@ -83,7 +83,9 @@ export const updateProfileFn = createServerFn({ method: "POST" })
   });
 
 export const uploadAvatarFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ fileName: z.string().min(1), dataUrl: z.string().startsWith("data:image/") }))
+  .inputValidator(
+    z.object({ fileName: z.string().min(1), dataUrl: z.string().startsWith("data:image/") }),
+  )
   .handler(async ({ data }) => {
     const { currentUser, updateProfile } = await import("./auth.server");
     const user = await currentUser();
@@ -103,7 +105,11 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
     let url: string;
     if (process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN) {
       const { put } = await import("@vercel/blob");
-      const blob = await put(id, buffer, { access: "public", contentType: mime, addRandomSuffix: false });
+      const blob = await put(id, buffer, {
+        access: "public",
+        contentType: mime,
+        addRandomSuffix: false,
+      });
       url = blob.url;
     } else if (process.env.VERCEL) {
       throw new Error("Image uploads are not configured. Connect a Blob store.");
@@ -160,7 +166,11 @@ export const getNewsletterPrefsFn = createServerFn({ method: "GET" }).handler(as
 });
 
 export const updateNewsletterPrefsFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ segments: z.array(z.string()) }))
+  .inputValidator(
+    z.object({
+      segments: z.array(z.enum(["events", "offers", "businesses"])),
+    }),
+  )
   .handler(async ({ data }) => {
     const { currentUser, updateUserNewsletterPrefs } = await import("./auth.server");
     const user = await currentUser();
@@ -177,7 +187,13 @@ export const getActivityFeedFn = createServerFn({ method: "GET" }).handler(async
 
   const pool = getPool();
   const [reviewRows, savedRows] = await Promise.all([
-    pool.query<{ id: string; date: string; label: string | null; slug: string | null; rating: number }>(
+    pool.query<{
+      id: string;
+      date: string;
+      label: string | null;
+      slug: string | null;
+      rating: number;
+    }>(
       `select r.id, r.created_at::text as date,
               l.data->>'name' as label,
               l.data->>'slug' as slug,
@@ -188,7 +204,14 @@ export const getActivityFeedFn = createServerFn({ method: "GET" }).handler(async
        order by r.created_at desc limit 15`,
       [user.id],
     ),
-    pool.query<{ id: string; date: string; label: string; slug: string; kind: string; subcategory: string | null }>(
+    pool.query<{
+      id: string;
+      date: string;
+      label: string;
+      slug: string;
+      kind: string;
+      subcategory: string | null;
+    }>(
       `select id, saved_at::text as date, title as label, slug, kind, subcategory
        from saved_items where user_id = $1
        order by saved_at desc limit 15`,

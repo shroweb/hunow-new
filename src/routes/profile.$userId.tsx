@@ -23,7 +23,9 @@ export const Route = createFileRoute("/profile/$userId")({
     <PublicLayout>
       <div className="max-w-3xl mx-auto px-4 py-32 text-center">
         <h1 className="font-display text-6xl mb-4">Profile Not Found</h1>
-        <Link to="/" className="underline">Go home</Link>
+        <Link to="/" className="underline">
+          Go home
+        </Link>
       </div>
     </PublicLayout>
   ),
@@ -32,7 +34,12 @@ export const Route = createFileRoute("/profile/$userId")({
 
 function ProfilePage() {
   const { profile } = Route.useLoaderData();
-  const initials = profile.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+  const initials = profile.name
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <PublicLayout>
@@ -42,18 +49,27 @@ function ProfilePage() {
           {/* Avatar */}
           <div className="w-20 h-20 rounded-full border-2 border-foreground overflow-hidden bg-foreground/10 flex items-center justify-center shrink-0">
             {profile.avatarUrl ? (
-              <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
+              <img
+                src={profile.avatarUrl}
+                alt={profile.name}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <span className="font-display text-2xl">{initials}</span>
             )}
           </div>
           <div>
             <div className="font-mono text-[10px] uppercase text-accent mb-1">HU NOW member</div>
-            <h1 className="font-display text-5xl md:text-7xl uppercase leading-none">{profile.name}</h1>
+            <h1 className="font-display text-5xl md:text-7xl uppercase leading-none">
+              {profile.name}
+            </h1>
             <p className="text-sm text-muted-foreground mt-2">
               Member since {profile.memberSince}
               {profile.reviews.length > 0 && (
-                <span> · {profile.reviews.length} review{profile.reviews.length !== 1 ? "s" : ""}</span>
+                <span>
+                  {" "}
+                  · {profile.reviews.length} review{profile.reviews.length !== 1 ? "s" : ""}
+                </span>
               )}
             </p>
           </div>
@@ -83,11 +99,16 @@ function ProfilePage() {
                     ) : (
                       <span className="font-bold text-lg">{r.listingName}</span>
                     )}
-                    <div className="text-accent text-sm mt-0.5">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</div>
+                    <div className="text-accent text-sm mt-0.5">
+                      {"★".repeat(r.rating)}
+                      {"☆".repeat(5 - r.rating)}
+                    </div>
                   </div>
                   <span className="font-mono text-[10px] text-muted-foreground shrink-0">
                     {new Date(r.createdAt).toLocaleDateString("en-GB", {
-                      day: "numeric", month: "short", year: "numeric",
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
                     })}
                   </span>
                 </div>

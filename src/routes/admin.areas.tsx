@@ -1,10 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import {
-  AdminHeader,
-  adminBtn,
-  adminInput,
-} from "@/components/admin/AdminLayout";
+import { AdminHeader, adminBtn, adminInput } from "@/components/admin/AdminLayout";
 import { getAllAreaGuidesAdmin, upsertAreaGuideAdmin } from "@/lib/area-guides.functions";
 import type { AreaGuideRow } from "@/lib/db.server";
 
@@ -86,7 +82,10 @@ function AdminAreas() {
         </aside>
 
         {selected ? (
-          <form onSubmit={handleSave} className="border-2 border-foreground bg-white p-6 space-y-5 max-w-2xl">
+          <form
+            onSubmit={handleSave}
+            className="border-2 border-foreground bg-white p-6 space-y-5 max-w-2xl"
+          >
             <h2 className="font-display text-4xl uppercase">{selected.area}</h2>
 
             <label className="block space-y-1">

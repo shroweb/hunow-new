@@ -70,7 +70,9 @@ function AreaPage() {
         ) : (
           <div className="max-w-7xl mx-auto px-4 py-12 md:py-20">
             <div className="text-[10px] font-mono uppercase mb-4 text-accent">Area Guide</div>
-            <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">{area}</h1>
+            <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
+              {area}
+            </h1>
             {guide.intro && (
               <p className="text-lg max-w-2xl text-muted-foreground mb-4">{guide.intro}</p>
             )}

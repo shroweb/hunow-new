@@ -35,7 +35,10 @@ const importEvents = createServerFn({ method: "POST" })
 
     for (const e of data.events) {
       try {
-        const base = e.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        const base = e.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
         // Find unique slug
         let slug = base;
         for (let i = 1; i < 10; i++) {
@@ -63,10 +66,10 @@ const importEvents = createServerFn({ method: "POST" })
           isFeatured: false,
           isSponsored: false,
         };
-        await pool.query("insert into events (id, data) values ($1, $2) on conflict (id) do nothing", [
-          id,
-          JSON.stringify(event),
-        ]);
+        await pool.query(
+          "insert into events (id, data) values ($1, $2) on conflict (id) do nothing",
+          [id, JSON.stringify(event)],
+        );
         created++;
       } catch (err) {
         errors.push(`${e.title}: ${String(err)}`);
@@ -84,7 +87,20 @@ const fetchSkiddle = createServerFn({ method: "POST" })
     const url = `https://www.skiddle.com/api/v1/events/?api_key=${data.apiKey}&latitude=53.7457&longitude=-0.3367&radius=10&limit=50&order=date`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Skiddle API error: ${res.status}`);
-    const json = await res.json() as { results?: { id: string; eventname: string; description: string; date: string; openingtimes?: { doorsopen?: string; doorsclose?: string }; venue?: { name?: string; address?: string }; MinPrice?: string; link?: string; imageurl?: string; genres?: Array<{ name: string }> }[] };
+    const json = (await res.json()) as {
+      results?: {
+        id: string;
+        eventname: string;
+        description: string;
+        date: string;
+        openingtimes?: { doorsopen?: string; doorsclose?: string };
+        venue?: { name?: string; address?: string };
+        MinPrice?: string;
+        link?: string;
+        imageurl?: string;
+        genres?: Array<{ name: string }>;
+      }[];
+    };
     const events = (json.results ?? []).map((e) => ({
       title: e.eventname,
       description: e.description || "",
@@ -147,7 +163,9 @@ function AdminImport() {
     setStatus("");
     try {
       const result = await importEvents({ data: { events: preview } });
-      setStatus(`✓ Created ${result.created} draft event(s) — edit and publish them in Events.${result.errors.length > 0 ? ` ${result.errors.length} error(s): ${result.errors.join("; ")}` : ""}`);
+      setStatus(
+        `✓ Created ${result.created} draft event(s) — edit and publish them in Events.${result.errors.length > 0 ? ` ${result.errors.length} error(s): ${result.errors.join("; ")}` : ""}`,
+      );
       setPreview([]);
       setJson("");
     } catch (err) {
@@ -187,14 +205,20 @@ function AdminImport() {
         {tab === "json" && (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Paste a JSON array of events. Required fields: <code className="font-mono text-xs bg-foreground/5 px-1">title</code>, <code className="font-mono text-xs bg-foreground/5 px-1">startDate</code> (YYYY-MM-DD). Optional: description, startTime, endTime, locationName, address, category, price, ticketUrl, featuredImage.
+              Paste a JSON array of events. Required fields:{" "}
+              <code className="font-mono text-xs bg-foreground/5 px-1">title</code>,{" "}
+              <code className="font-mono text-xs bg-foreground/5 px-1">startDate</code>{" "}
+              (YYYY-MM-DD). Optional: description, startTime, endTime, locationName, address,
+              category, price, ticketUrl, featuredImage.
             </p>
             <textarea
               className={adminInput}
               rows={10}
               value={json}
               onChange={(e) => setJson(e.target.value)}
-              placeholder={'[{"title":"Hull Jazz Fest","startDate":"2026-07-12","locationName":"Hull Marina","category":"Music"}]'}
+              placeholder={
+                '[{"title":"Hull Jazz Fest","startDate":"2026-07-12","locationName":"Hull Marina","category":"Music"}]'
+              }
             />
             {parseError && <p className="text-sm text-red-600 font-mono">{parseError}</p>}
             <button type="button" className={adminBtnOutline} onClick={parseJson}>
@@ -207,7 +231,12 @@ function AdminImport() {
           <form onSubmit={fetchFromSkiddle} className="space-y-4">
             <p className="text-sm text-muted-foreground">
               Fetch upcoming events within 10 km of Hull from the{" "}
-              <a href="https://www.skiddle.com/api/" target="_blank" rel="noreferrer" className="underline">
+              <a
+                href="https://www.skiddle.com/api/"
+                target="_blank"
+                rel="noreferrer"
+                className="underline"
+              >
                 Skiddle API
               </a>
               . You need a free API key.
@@ -225,7 +254,11 @@ function AdminImport() {
               />
             </label>
             {parseError && <p className="text-sm text-red-600 font-mono">{parseError}</p>}
-            <button type="submit" disabled={busy} className={`${adminBtnOutline} disabled:opacity-40`}>
+            <button
+              type="submit"
+              disabled={busy}
+              className={`${adminBtnOutline} disabled:opacity-40`}
+            >
               {busy ? "Fetching…" : "Fetch events"}
             </button>
           </form>
@@ -247,11 +280,7 @@ function AdminImport() {
                 >
                   {busy ? "Importing…" : `Import ${preview.length} as drafts`}
                 </button>
-                <button
-                  type="button"
-                  className={adminBtnOutline}
-                  onClick={() => setPreview([])}
-                >
+                <button type="button" className={adminBtnOutline} onClick={() => setPreview([])}>
                   Clear
                 </button>
               </div>
@@ -261,7 +290,8 @@ function AdminImport() {
                 <div key={i} className="px-4 py-3">
                   <div className="font-bold text-sm">{e.title}</div>
                   <div className="font-mono text-[10px] text-muted-foreground">
-                    {e.startDate} {e.startTime ?? ""} · {e.locationName ?? ""} · {e.category ?? ""} · {e.price ?? "Free"}
+                    {e.startDate} {e.startTime ?? ""} · {e.locationName ?? ""} · {e.category ?? ""}{" "}
+                    · {e.price ?? "Free"}
                   </div>
                 </div>
               ))}

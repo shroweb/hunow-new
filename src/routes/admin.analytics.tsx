@@ -64,7 +64,9 @@ function AdminAnalytics() {
           </div>
         }
       />
-      <div className={`p-6 md:p-10 space-y-8 transition-opacity ${loading ? "opacity-40 pointer-events-none" : ""}`}>
+      <div
+        className={`p-6 md:p-10 space-y-8 transition-opacity ${loading ? "opacity-40 pointer-events-none" : ""}`}
+      >
         <section className="grid sm:grid-cols-2 xl:grid-cols-5 gap-4">
           <StatCard label="Pageviews" value={pageviews} />
           <StatCard label="Searches" value={searches} />

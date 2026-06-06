@@ -28,10 +28,10 @@ function AdminSubmissions() {
         prev.map((s) => (s.id === submission.id ? { ...s, status: "approved" } : s)),
       );
       if (result.created) {
-        const path = result.created.type === "event"
-          ? `/admin/events`
-          : `/admin/listings`;
-        setMessage(`✓ Created draft ${result.created.type}. Edit it in ${result.created.type === "event" ? "Events" : "Listings"}.`);
+        const path = result.created.type === "event" ? `/admin/events` : `/admin/listings`;
+        setMessage(
+          `✓ Created draft ${result.created.type}. Edit it in ${result.created.type === "event" ? "Events" : "Listings"}.`,
+        );
         // Link to the admin edit page
         void path;
       }
@@ -66,7 +66,13 @@ function AdminSubmissions() {
         {message && (
           <div className="border-2 border-accent bg-accent/5 px-5 py-3 text-sm font-bold flex items-center justify-between gap-4">
             {message}
-            <button type="button" onClick={() => setMessage("")} className="text-muted-foreground hover:text-foreground">×</button>
+            <button
+              type="button"
+              onClick={() => setMessage("")}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              ×
+            </button>
           </div>
         )}
         {submissions.map((s) => (
