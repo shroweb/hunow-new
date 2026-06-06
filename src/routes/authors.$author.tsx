@@ -1,15 +1,18 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard } from "@/components/cards";
-import { useStore } from "@/lib/store";
+import { useStore, getState } from "@/lib/store";
 import { getAuthor, authorSlug, AUTHORS } from "@/lib/authors";
 
 export const Route = createFileRoute("/authors/$author")({
   loader: ({ params }) => {
-    // Find the author name that matches the slug
     const name = Object.keys(AUTHORS).find((n) => authorSlug(n) === params.author);
     if (!name) throw notFound();
-    return { author: getAuthor(name) };
+    const author = getAuthor(name);
+    const articles = getState()
+      .articles.filter((a) => a.author === author.name && a.status === "published")
+      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    return { author, articles };
   },
   head: ({ loaderData }) => {
     const a = loaderData?.author;
@@ -35,10 +38,12 @@ export const Route = createFileRoute("/authors/$author")({
 });
 
 function AuthorPage() {
-  const { author } = Route.useLoaderData();
-  const articles = useStore((s) => s.articles).filter(
+  const { author, articles: loaderArticles } = Route.useLoaderData();
+  // useStore keeps the list reactive if articles are added during the session
+  const storeArticles = useStore((s) => s.articles).filter(
     (a) => a.author === author.name && a.status === "published",
   );
+  const articles = storeArticles.length > 0 ? storeArticles : loaderArticles;
 
   return (
     <PublicLayout>

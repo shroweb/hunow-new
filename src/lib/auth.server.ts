@@ -175,7 +175,9 @@ export async function requestPasswordReset(email: string) {
   );
 
   const resetUrl = `${(process.env.SITE_URL ?? "http://localhost:8080").replace(/\/$/, "")}/reset-password?token=${token}`;
-  console.info(`[Password Reset] ${normalised} → ${resetUrl}`);
+  if (process.env.NODE_ENV !== "production") {
+    console.info(`[Password Reset] ${normalised} → ${resetUrl}`);
+  }
   return { ok: true, _devResetUrl: process.env.NODE_ENV !== "production" ? resetUrl : undefined };
 }
 

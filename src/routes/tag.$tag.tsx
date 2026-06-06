@@ -9,14 +9,15 @@ export const Route = createFileRoute("/tag/$tag")({
   validateSearch: z.object({ also: z.string().optional() }),
   loader: ({ params }) => {
     const tag = decodeURIComponent(params.tag).toLowerCase();
-    const articles = getState().articles.filter(
+    const state = getState();
+    const articles = state.articles.filter(
       (a) => a.status === "published" && a.tags.some((t) => t.toLowerCase() === tag),
     );
-    const events = getState().events.filter(
+    const events = state.events.filter(
       (e) => e.status === "published" && e.category.toLowerCase() === tag,
     );
     if (articles.length === 0 && events.length === 0) throw notFound();
-    return { tag };
+    return { tag, articles, events };
   },
   head: ({ loaderData }) => {
     const tag = loaderData?.tag ?? "";
@@ -41,12 +42,15 @@ export const Route = createFileRoute("/tag/$tag")({
 });
 
 function TagPage() {
-  const { tag } = Route.useLoaderData();
+  const { tag, articles: loaderArticles, events: loaderEvents } = Route.useLoaderData();
   const { also } = Route.useSearch();
   const navigate = useNavigate({ from: "/tag/$tag" });
 
-  const allArticles = useStore((s) => s.articles);
-  const allEvents = useStore((s) => s.events);
+  // useStore provides reactivity; fall back to loader data on initial render
+  const storeArticles = useStore((s) => s.articles);
+  const storeEvents = useStore((s) => s.events);
+  const allArticles = storeArticles.length > 0 ? storeArticles : loaderArticles;
+  const allEvents = storeEvents.length > 0 ? storeEvents : loaderEvents;
 
   const matchTag = (tags: string[]) => tags.some((t) => t.toLowerCase() === tag);
   const matchAlso = (tags: string[]) =>

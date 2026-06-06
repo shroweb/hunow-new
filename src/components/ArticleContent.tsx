@@ -1,5 +1,4 @@
-import { type ReactNode, useState } from "react";
-import { subscribeNewsletter } from "@/lib/public.functions";
+import { type ReactNode } from "react";
 import { autoLink, autoLinkMarkdown, type Entity } from "@/lib/autolink";
 
 interface Block {
@@ -114,84 +113,6 @@ export function TableOfContents({ content }: { content: string }) {
   );
 }
 
-function InlineNewsletter() {
-  const [email, setEmail] = useState("");
-  const [segments, setSegments] = useState<("events" | "offers" | "businesses")[]>([
-    "events",
-    "offers",
-  ]);
-  const [done, setDone] = useState(false);
-  if (done) {
-    return (
-      <div className="my-10 border-2 border-accent bg-accent/5 px-6 py-5 text-center">
-        <p className="font-bold text-sm">Thanks — see you Thursday.</p>
-      </div>
-    );
-  }
-  return (
-    <aside className="my-10 border-2 border-foreground bg-foreground text-background px-6 py-8">
-      <div className="text-[10px] font-mono uppercase tracking-widest text-accent mb-2">
-        HU NOW Newsletter
-      </div>
-      <p className="font-display text-2xl uppercase leading-tight mb-1">Get Hull in your inbox</p>
-      <p className="text-sm text-background/70 mb-4">
-        The best events, food guides and hidden gems every Thursday.
-      </p>
-      <form
-        className="space-y-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (email) {
-            void subscribeNewsletter({ data: { email, segments } }).catch(() => {});
-            setDone(true);
-          }
-        }}
-      >
-        <div className="flex gap-0">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            className="flex-1 bg-background text-foreground border-2 border-background px-4 py-3 font-mono text-sm focus:outline-none"
-          />
-          <button className="bg-accent text-foreground px-5 py-3 font-bold uppercase tracking-widest text-xs hover:bg-background transition-colors">
-            Join
-          </button>
-        </div>
-        <fieldset className="flex flex-wrap gap-2">
-          <legend className="sr-only">Newsletter preferences</legend>
-          {[
-            ["events", "What's On"],
-            ["offers", "Offers"],
-            ["businesses", "Business"],
-          ].map(([value, label]) => (
-            <label
-              key={value}
-              className="flex items-center gap-2 border border-background/25 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-background/70"
-            >
-              <input
-                type="checkbox"
-                checked={segments.includes(value as "events" | "offers" | "businesses")}
-                onChange={(event) => {
-                  const segment = value as "events" | "offers" | "businesses";
-                  setSegments((current) =>
-                    event.target.checked
-                      ? [...current, segment]
-                      : current.filter((item) => item !== segment),
-                  );
-                }}
-              />
-              {label}
-            </label>
-          ))}
-        </fieldset>
-      </form>
-    </aside>
-  );
-}
-
 /** Renders HTML content from the Tiptap editor */
 export function ArticleHtml({ content, entities }: { content: string; entities?: Entity[] }) {
   const html = entities?.length ? autoLink(content, entities) : content;
@@ -268,14 +189,6 @@ function ArticleContentLegacy({ content, entities }: { content: string; entities
             {applyInline(text)}
           </p>
         );
-        if (pCount === 3) {
-          return (
-            <div key={i}>
-              {node}
-              <InlineNewsletter />
-            </div>
-          );
-        }
         return node;
       })}
     </div>
