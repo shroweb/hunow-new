@@ -300,6 +300,10 @@ create table if not exists site_analytics (
 );
 create index if not exists site_analytics_event_type_idx on site_analytics (event_type);
 create index if not exists site_analytics_created_at_idx on site_analytics (created_at);
+
+create table if not exists db_initialized (
+  initialized_at timestamptz not null default now()
+);
 `;
 
 async function ensureSchema() {
@@ -367,24 +371,11 @@ async function legacyStore(): Promise<AppStore | undefined> {
 }
 
 async function seedIfEmpty() {
-  const count = await typedRecordCount();
-  if (count === 0) {
-    // First run — full seed (including legacy migration)
-    await saveDatabaseStore((await legacyStore()) ?? fallbackStore);
-    return;
-  }
-  // DB already has data — insert any seed records that don't exist yet (new additions).
-  // DO NOTHING on conflict so admin edits to existing records are never overwritten.
-  const editorialCollections = ["articles", "events", "listings", "media"] as const;
-  for (const collection of editorialCollections) {
-    const records = fallbackStore[collection] as StoredRecord[];
-    for (const record of records) {
-      await getPool().query(
-        `insert into ${tables[collection]} (id, data) values ($1, $2) on conflict (id) do nothing`,
-        [record.id, JSON.stringify(record)],
-      );
-    }
-  }
+  const marker = await getPool().query("select 1 from db_initialized limit 1");
+  if (marker.rowCount && marker.rowCount > 0) return;
+
+  await saveDatabaseStore((await legacyStore()) ?? fallbackStore);
+  await getPool().query("insert into db_initialized default values");
 }
 
 export async function getDatabaseStore(): Promise<AppStore> {
@@ -491,6 +482,7 @@ export async function resetDatabaseToEmpty() {
   } finally {
     client.release();
   }
+  seedReady = undefined;
 }
 
 export async function getArticleBySlug(slug: string) {
