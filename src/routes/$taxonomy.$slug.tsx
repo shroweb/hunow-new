@@ -316,32 +316,30 @@ function NewsletterStrip() {
   }
 
   return (
-    <div className="my-12 -mx-4 sm:mx-0 bg-foreground text-background px-8 py-10">
-      <div className="flex items-start justify-between gap-4 mb-6">
+    <div className="my-10 bg-white px-8 py-8 border-2 border-foreground/10">
+      <div className="flex items-start justify-between gap-4 mb-5">
         <div>
           <div className="font-mono text-[10px] uppercase tracking-widest text-accent mb-2">
             Newsletter
           </div>
-          <p className="font-display text-3xl uppercase leading-tight">
-            The best of Hull,
-            <br />
-            every Thursday.
+          <p className="font-display text-2xl uppercase leading-tight">
+            The best of Hull, every Thursday.
           </p>
-          <p className="text-sm text-background/70 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             Events, food guides and hidden gems — straight to your inbox.
           </p>
         </div>
         <button
           type="button"
           onClick={dismiss}
-          className="text-background/40 hover:text-background text-2xl leading-none shrink-0 mt-1"
+          className="text-foreground/30 hover:text-foreground text-2xl leading-none shrink-0 mt-1"
           aria-label="Dismiss"
         >
           ×
         </button>
       </div>
       {done ? (
-        <p className="font-bold text-accent text-lg">You're in. See you Thursday.</p>
+        <p className="font-bold text-accent">You're in. See you Thursday.</p>
       ) : (
         <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md">
           <input
@@ -350,11 +348,11 @@ function NewsletterStrip() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
-            className="flex-1 bg-white/10 border-2 border-white/20 px-4 py-3 font-mono text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-white/50"
+            className="flex-1 bg-background border-2 border-foreground/20 px-4 py-3 font-mono text-sm focus:outline-none focus:border-foreground"
           />
           <button
             type="submit"
-            className="bg-accent text-foreground px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-white transition-colors whitespace-nowrap"
+            className="bg-foreground text-background px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent hover:text-foreground transition-colors whitespace-nowrap"
           >
             Subscribe
           </button>
