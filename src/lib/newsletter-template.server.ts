@@ -70,36 +70,99 @@ function goldButton(label: string, href: string) {
   );
 }
 
-function articleCard(article: Article, featured = false) {
+function articleCard(article: Article) {
   const href = articlePath(article);
-  if (featured) {
-    return `
-      <tr>
-        <td style="padding:0 36px 32px;">
-          <a href="${escapeHtml(absoluteUrl(href))}">
-            <img src="${escapeHtml(imageUrl(article.featuredImage, 1200, 720))}" alt="${escapeHtml(article.title)}" style="display:block;width:100%;max-width:100%;border:3px solid #080d2d;margin-bottom:20px;" />
-          </a>
-          <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">${escapeHtml(article.category)}</div>
-          <h2 style="margin:0 0 12px;font-family:Impact,'Arial Black',sans-serif;font-size:36px;line-height:.93;text-transform:uppercase;color:#080d2d;">${escapeHtml(article.title)}</h2>
-          <p style="color:#343a56;font-size:16px;line-height:1.6;margin:0 0 20px;">${escapeHtml(article.excerpt)}</p>
-          ${button("Read story", href)}
-        </td>
-      </tr>
-    `;
-  }
   return `
     <tr>
-      <td style="padding:22px 36px;border-top:1px solid #d8d1c5;">
+      <td style="padding:0 36px 32px;">
         <a href="${escapeHtml(absoluteUrl(href))}">
-          <img src="${escapeHtml(imageUrl(article.featuredImage, 1120, 560))}" alt="${escapeHtml(article.title)}" style="display:block;width:100%;max-width:100%;border:3px solid #080d2d;margin-bottom:16px;" />
+          <img src="${escapeHtml(imageUrl(article.featuredImage, 1200, 720))}" alt="${escapeHtml(article.title)}" style="display:block;width:100%;max-width:100%;border:3px solid #080d2d;margin-bottom:20px;" />
         </a>
         <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">${escapeHtml(article.category)}</div>
-        <h3 style="margin:0 0 10px;font-family:Impact,'Arial Black',sans-serif;font-size:28px;line-height:.93;text-transform:uppercase;color:#080d2d;">${escapeHtml(article.title)}</h3>
-        <p style="color:#343a56;font-size:16px;line-height:1.6;margin:0 0 18px;">${escapeHtml(article.excerpt)}</p>
+        <h2 style="margin:0 0 12px;font-family:Impact,'Arial Black',sans-serif;font-size:36px;line-height:.93;text-transform:uppercase;color:#080d2d;">${escapeHtml(article.title)}</h2>
+        <p style="color:#343a56;font-size:16px;line-height:1.6;margin:0 0 20px;">${escapeHtml(article.excerpt)}</p>
         ${button("Read story", href)}
       </td>
     </tr>
   `;
+}
+
+function articleGridCell(article: Article, side: "left" | "right") {
+  const href = articlePath(article);
+  const pad = side === "left" ? "padding-right:10px;" : "padding-left:10px;";
+  return `
+    <td class="grid-col" style="width:50%;${pad}vertical-align:top;">
+      <a href="${escapeHtml(absoluteUrl(href))}">
+        <img src="${escapeHtml(imageUrl(article.featuredImage, 560, 380))}" alt="${escapeHtml(article.title)}" style="display:block;width:100%;max-width:100%;border:3px solid #080d2d;margin-bottom:12px;" />
+      </a>
+      <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">${escapeHtml(article.category)}</div>
+      <h3 style="margin:0 0 8px;font-family:Impact,'Arial Black',sans-serif;font-size:22px;line-height:.93;text-transform:uppercase;color:#080d2d;">${escapeHtml(article.title)}</h3>
+      <p style="color:#343a56;font-size:14px;line-height:1.5;margin:0 0 14px;">${escapeHtml(article.excerpt)}</p>
+      ${button("Read story", href)}
+    </td>
+  `;
+}
+
+function articleGrid(articles: Article[]) {
+  const rows: string[] = [];
+  for (let i = 0; i < articles.length; i += 2) {
+    const bt = i === 0 ? "" : "border-top:1px solid #d8d1c5;";
+    const a = articles[i];
+    const b = articles[i + 1];
+    rows.push(`
+      <tr>
+        <td style="padding:22px 36px;${bt}">
+          <table width="100%" role="presentation" style="border-collapse:collapse;">
+            <tr>
+              ${articleGridCell(a, "left")}
+              ${b ? articleGridCell(b, "right") : `<td class="grid-col" style="width:50%;"></td>`}
+            </tr>
+          </table>
+        </td>
+      </tr>
+    `);
+  }
+  return rows;
+}
+
+function offerGridCell(offer: Offer, side: "left" | "right") {
+  const pad = side === "left" ? "padding-right:7px;" : "padding-left:7px;";
+  return `
+    <td class="grid-col" style="width:50%;${pad}vertical-align:top;">
+      <table width="100%" role="presentation" style="border-collapse:collapse;background:#080d2d;">
+        <tr>
+          <td style="padding:18px 20px 22px;">
+            <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Offer · ${escapeHtml(offer.businessName)}</div>
+            <h3 style="margin:0 0 10px;font-family:Impact,'Arial Black',sans-serif;font-size:20px;line-height:.93;text-transform:uppercase;color:#fffaf1;">${escapeHtml(offer.title)}</h3>
+            <p style="color:#b8bdd0;font-size:13px;line-height:1.5;margin:0 0 16px;">${escapeHtml(offer.description)}</p>
+            ${goldButton("Get offer", "/offers")}
+          </td>
+        </tr>
+      </table>
+    </td>
+  `;
+}
+
+function offerGrid(offers: Offer[]) {
+  const rows: string[] = [];
+  for (let i = 0; i < offers.length; i += 2) {
+    const pt = i === 0 ? "4px" : "0";
+    const a = offers[i];
+    const b = offers[i + 1];
+    rows.push(`
+      <tr>
+        <td style="padding:${pt} 36px 14px;">
+          <table width="100%" role="presentation" style="border-collapse:collapse;">
+            <tr>
+              ${offerGridCell(a, "left")}
+              ${b ? offerGridCell(b, "right") : `<td class="grid-col" style="width:50%;padding-left:7px;"></td>`}
+            </tr>
+          </table>
+        </td>
+      </tr>
+    `);
+  }
+  return rows;
 }
 
 function eventRow(event: EventItem, first = false) {
@@ -136,25 +199,6 @@ function listingRow(listing: Listing, first = false) {
   `;
 }
 
-function offerRow(offer: Offer, first = false) {
-  const paddingTop = first ? "4px" : "0";
-  return `
-    <tr>
-      <td style="padding:${paddingTop} 36px 14px;">
-        <table width="100%" role="presentation" style="border-collapse:collapse;background:#080d2d;">
-          <tr>
-            <td style="padding:22px 26px 26px;">
-              <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Offer · ${escapeHtml(offer.businessName)}</div>
-              <h3 style="margin:0 0 10px;font-family:Impact,'Arial Black',sans-serif;font-size:26px;line-height:.93;text-transform:uppercase;color:#fffaf1;">${escapeHtml(offer.title)}</h3>
-              <p style="color:#b8bdd0;font-size:15px;line-height:1.55;margin:0 0 20px;">${escapeHtml(offer.description)}</p>
-              ${goldButton("Get offer", "/offers")}
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  `;
-}
 
 function sectionHeader(title: string) {
   return `<tr><td style="padding:22px 36px 14px;color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;border-top:3px solid #080d2d;">${escapeHtml(title)}</td></tr>`;
@@ -188,10 +232,10 @@ const templateConfigs: Record<
     ctaStyle: "",
     sections: (issue, lead, rest = []) =>
       [
-        lead ? `${sectionHeader("Lead story")}${articleCard(lead, true)}` : "",
-        section("More stories", rest.map(articleCard)),
+        lead ? `${sectionHeader("Lead story")}${articleCard(lead)}` : "",
+        rest.length ? `${sectionHeader("More stories")}${articleGrid(rest).join("")}` : "",
         section("What's on", issue.events.map((e, i) => eventRow(e, i === 0))),
-        section("Offers", issue.offers.map((o, i) => offerRow(o, i === 0))),
+        issue.offers.length ? `${sectionHeader("Offers")}${offerGrid(issue.offers).join("")}` : "",
         section("Places to know", issue.listings.map((l, i) => listingRow(l, i === 0))),
       ].join(""),
   },
@@ -203,16 +247,15 @@ const templateConfigs: Record<
     cta: "See all events",
     ctaHref: "/events",
     ctaStyle: "background:#dcae3a;color:#080d2d;border-color:#dcae3a;",
-    sections: (issue, lead, rest = []) =>
-      [
+    sections: (issue, lead, rest = []) => {
+      const articles = [lead, ...rest].filter(Boolean) as Article[];
+      return [
         section("This week", issue.events.map((e, i) => eventRow(e, i === 0))),
-        section(
-          "Event reads",
-          [lead, ...rest].filter(Boolean).map((a) => articleCard(a as Article)),
-        ),
+        articles.length ? `${sectionHeader("Event reads")}${articleGrid(articles).join("")}` : "",
         section("Places nearby", issue.listings.map((l, i) => listingRow(l, i === 0))),
-        section("Good deals", issue.offers.map((o, i) => offerRow(o, i === 0))),
-      ].join(""),
+        issue.offers.length ? `${sectionHeader("Good deals")}${offerGrid(issue.offers).join("")}` : "",
+      ].join("");
+    },
   },
   offers: {
     kicker: "Deals worth leaving the house for",
@@ -222,16 +265,15 @@ const templateConfigs: Record<
     cta: "Browse offers",
     ctaHref: "/offers",
     ctaStyle: "background:#080d2d;color:#fffaf1;border-color:#080d2d;",
-    sections: (issue, lead, rest = []) =>
-      [
-        section("Active offers", issue.offers.map((o, i) => offerRow(o, i === 0))),
+    sections: (issue, lead, rest = []) => {
+      const articles = [lead, ...rest].filter(Boolean) as Article[];
+      return [
+        issue.offers.length ? `${sectionHeader("Active offers")}${offerGrid(issue.offers).join("")}` : "",
         section("Places with perks", issue.listings.map((l, i) => listingRow(l, i === 0))),
-        section(
-          "Food & drink reads",
-          [lead, ...rest].filter(Boolean).map((a) => articleCard(a as Article)),
-        ),
+        articles.length ? `${sectionHeader("Food & drink reads")}${articleGrid(articles).join("")}` : "",
         section("Also happening", issue.events.map((e, i) => eventRow(e, i === 0))),
-      ].join(""),
+      ].join("");
+    },
   },
   business: {
     kicker: "For Hull independents",
@@ -241,16 +283,15 @@ const templateConfigs: Record<
     cta: "View business tools",
     ctaHref: "/business/listings",
     ctaStyle: "background:#4a8f51;border-color:#4a8f51;",
-    sections: (issue, lead, rest = []) =>
-      [
+    sections: (issue, lead, rest = []) => {
+      const articles = [lead, ...rest].filter(Boolean) as Article[];
+      return [
         section("Featured places", issue.listings.map((l, i) => listingRow(l, i === 0))),
-        section(
-          "Business stories",
-          [lead, ...rest].filter(Boolean).map((a) => articleCard(a as Article)),
-        ),
-        section("Current offers", issue.offers.map((o, i) => offerRow(o, i === 0))),
+        articles.length ? `${sectionHeader("Business stories")}${articleGrid(articles).join("")}` : "",
+        issue.offers.length ? `${sectionHeader("Current offers")}${offerGrid(issue.offers).join("")}` : "",
         section("Networking & events", issue.events.map((e, i) => eventRow(e, i === 0))),
-      ].join(""),
+      ].join("");
+    },
   },
 };
 
@@ -283,6 +324,8 @@ export function renderNewsletterTemplate({
         .split-img-td { padding: 20px 24px 0 !important; }
         .split-copy-td { padding: 14px 24px 22px !important; }
         .pad { padding-left: 24px !important; padding-right: 24px !important; }
+        .grid-col { display: block !important; width: 100% !important; padding-left: 0 !important; padding-right: 0 !important; box-sizing: border-box; }
+        .grid-col + .grid-col { padding-top: 20px !important; }
       }
     </style>
   </head>
