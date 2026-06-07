@@ -29,7 +29,12 @@ function absoluteUrl(path: string) {
 
 function imageUrl(image: string, width = 1200, height = 760) {
   const source = img(image, width, height);
-  return absoluteUrl(source);
+  const resolved = absoluteUrl(source);
+  // Proxy external images so all URLs in the email come from the sending domain
+  if (resolved.startsWith("http") && !resolved.startsWith(SITE_URL)) {
+    return `${SITE_URL}/api/image-proxy?url=${encodeURIComponent(resolved)}`;
+  }
+  return resolved;
 }
 
 function escapeHtml(value: string | number | undefined | null) {
