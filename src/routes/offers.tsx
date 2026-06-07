@@ -94,23 +94,13 @@ function Offers() {
             <div className="text-[10px] font-mono uppercase text-muted-foreground mb-3">
               Ends {new Date(o.endDate).toLocaleDateString("en-GB")}
             </div>
-            {user && (
-              <button
-                type="button"
-                onClick={() => {
-                  void redeemOffer({ data: { offerId: o.id } }).catch(() => {});
-                  void trackAnalyticsEvent({
-                    data: { eventType: "offer_claim", path: "/offers", label: o.title },
-                  }).catch(() => {});
-                  alert(o.code ? `Use code: ${o.code}` : "Offer claimed. Show this page in-store.");
-                }}
-                className="mb-3 bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors"
-              >
-                Claim Offer
-              </button>
-            )}
             {(() => {
-              const listing = listings.find((l) => l.id === o.listingId);
+              // Match listing by id first, fall back to matching by business name
+              const listing =
+                listings.find((l) => l.id === o.listingId) ??
+                listings.find(
+                  (l) => l.name.toLowerCase() === o.businessName.toLowerCase(),
+                );
               const upcomingEvents = listing
                 ? events
                     .filter(
@@ -121,31 +111,64 @@ function Offers() {
                     .slice(0, 2)
                 : [];
               return (
-                <div className="mt-auto pt-3 border-t border-foreground/10 space-y-2">
-                  {listing && (
+                <>
+                  {listing ? (
                     <Link
                       to="/places/$slug"
                       params={{ slug: listing.slug }}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase hover:text-accent transition-colors"
+                      onClick={() => {
+                        void redeemOffer({ data: { offerId: o.id } }).catch(() => {});
+                        void trackAnalyticsEvent({
+                          data: { eventType: "offer_claim", path: "/offers", label: o.title },
+                        }).catch(() => {});
+                      }}
+                      className="mb-3 block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
                     >
-                      <span className="text-foreground/40">📍</span> {listing.name}
+                      {o.code ? `Use code: ${o.code}` : "Claim Offer"}
                     </Link>
+                  ) : (
+                    user && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void redeemOffer({ data: { offerId: o.id } }).catch(() => {});
+                          void trackAnalyticsEvent({
+                            data: { eventType: "offer_claim", path: "/offers", label: o.title },
+                          }).catch(() => {});
+                          alert(o.code ? `Use code: ${o.code}` : "Offer claimed. Show this page in-store.");
+                        }}
+                        className="mb-3 bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors w-full"
+                      >
+                        Claim Offer
+                      </button>
+                    )
                   )}
-                  {upcomingEvents.map((e) => (
-                    <Link
-                      key={e.id}
-                      to="/events/$slug"
-                      params={{ slug: e.slug }}
-                      className="block text-[10px] font-mono text-muted-foreground hover:text-accent transition-colors truncate"
-                    >
-                      {new Date(`${e.startDate}T12:00`).toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short",
-                      })}{" "}
-                      · {e.title}
-                    </Link>
-                  ))}
-                </div>
+                  <div className="mt-auto pt-3 border-t border-foreground/10 space-y-2">
+                    {listing && (
+                      <Link
+                        to="/places/$slug"
+                        params={{ slug: listing.slug }}
+                        className="flex items-center gap-2 text-[10px] font-bold uppercase hover:text-accent transition-colors"
+                      >
+                        <span className="text-foreground/40">📍</span> {listing.name}
+                      </Link>
+                    )}
+                    {upcomingEvents.map((e) => (
+                      <Link
+                        key={e.id}
+                        to="/events/$slug"
+                        params={{ slug: e.slug }}
+                        className="block text-[10px] font-mono text-muted-foreground hover:text-accent transition-colors truncate"
+                      >
+                        {new Date(`${e.startDate}T12:00`).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                        })}{" "}
+                        · {e.title}
+                      </Link>
+                    ))}
+                  </div>
+                </>
               );
             })()}
           </div>
