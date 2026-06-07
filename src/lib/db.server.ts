@@ -583,21 +583,12 @@ export async function saveDatabaseStore(store: AppStore) {
       }
     }
 
-    if (store.newsletter.length > 0) {
-      await client.query("delete from newsletter_subscribers where not (email = any($1::text[]))", [
-        store.newsletter,
-      ]);
-    } else {
-      await client.query("delete from newsletter_subscribers");
-    }
-    for (const email of store.newsletter) {
-      await client.query(
-        "insert into newsletter_subscribers (email) values ($1) on conflict do nothing",
-        [email],
-      );
-    }
+    // newsletter_subscribers is managed exclusively by addNewsletterSubscriber /
+    // removeNewsletterSubscriber. Never touch it from a full-store save — the
+    // in-memory store snapshot can be stale relative to direct DB writes and
+    // would silently delete subscribers that signed up since the last hydration.
 
-    await client.query("delete from app_records");
+    await client.query("delete from app_records where collection != 'newsletter'");
     for (const collection of collections) {
       for (const record of store[collection] as StoredRecord[]) {
         await client.query("insert into app_records (collection, id, data) values ($1, $2, $3)", [
@@ -606,12 +597,6 @@ export async function saveDatabaseStore(store: AppStore) {
           JSON.stringify(record),
         ]);
       }
-    }
-    for (const email of store.newsletter) {
-      await client.query(
-        "insert into app_records (collection, id, data) values ($1, $2, $3) on conflict do nothing",
-        ["newsletter", email, JSON.stringify({ email })],
-      );
     }
 
     await client.query("commit");
