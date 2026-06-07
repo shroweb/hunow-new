@@ -13,7 +13,7 @@ export type NewsletterTemplateKind = "weekly" | "events" | "offers" | "business"
 
 export interface NewsletterTemplateInput {
   subject: string;
-  intro: string;
+  intro?: string;
   issue: NewsletterIssue;
   unsubscribeUrl?: string;
   template?: NewsletterTemplateKind;
@@ -125,17 +125,24 @@ function articleGrid(articles: Article[]) {
   return rows;
 }
 
-function offerGridCell(offer: Offer, side: "left" | "right") {
+function offerGridCell(offer: Offer, side: "left" | "right", gold = false) {
   const pad = side === "left" ? "padding-right:7px;" : "padding-left:7px;";
+  const bg = gold ? "#dcae3a" : "#080d2d";
+  const titleColor = gold ? "#080d2d" : "#fffaf1";
+  const metaColor = gold ? "#2a2410" : "#b8bdd0";
+  const paraColor = gold ? "#2a2410" : "#b8bdd0";
+  const cta = gold
+    ? button("Get offer", "/offers", "background:#080d2d;color:#fffaf1;border-color:#080d2d;")
+    : goldButton("Get offer", "/offers");
   return `
     <td class="grid-col" style="width:50%;${pad}vertical-align:top;">
-      <table width="100%" role="presentation" style="border-collapse:collapse;background:#080d2d;">
+      <table width="100%" role="presentation" style="border-collapse:collapse;background:${bg};">
         <tr>
           <td style="padding:18px 20px 22px;">
-            <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Offer · ${escapeHtml(offer.businessName)}</div>
-            <h3 style="margin:0 0 10px;font-family:Impact,'Arial Black',sans-serif;font-size:20px;line-height:.93;text-transform:uppercase;color:#fffaf1;">${escapeHtml(offer.title)}</h3>
-            <p style="color:#b8bdd0;font-size:13px;line-height:1.5;margin:0 0 16px;">${escapeHtml(offer.description)}</p>
-            ${goldButton("Get offer", "/offers")}
+            <div style="color:${metaColor};font-family:'Courier New',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Offer · ${escapeHtml(offer.businessName)}</div>
+            <h3 style="margin:0 0 10px;font-family:Impact,'Arial Black',sans-serif;font-size:20px;line-height:.93;text-transform:uppercase;color:${titleColor};">${escapeHtml(offer.title)}</h3>
+            <p style="color:${paraColor};font-size:13px;line-height:1.5;margin:0 0 16px;">${escapeHtml(offer.description)}</p>
+            ${cta}
           </td>
         </tr>
       </table>
@@ -143,7 +150,7 @@ function offerGridCell(offer: Offer, side: "left" | "right") {
   `;
 }
 
-function offerGrid(offers: Offer[]) {
+function offerGrid(offers: Offer[], gold = false) {
   const rows: string[] = [];
   for (let i = 0; i < offers.length; i += 2) {
     const pt = i === 0 ? "4px" : "0";
@@ -154,8 +161,8 @@ function offerGrid(offers: Offer[]) {
         <td style="padding:${pt} 36px 14px;">
           <table width="100%" role="presentation" style="border-collapse:collapse;">
             <tr>
-              ${offerGridCell(a, "left")}
-              ${b ? offerGridCell(b, "right") : `<td class="grid-col" style="width:50%;padding-left:7px;"></td>`}
+              ${offerGridCell(a, "left", gold)}
+              ${b ? offerGridCell(b, "right", gold) : `<td class="grid-col" style="width:50%;padding-left:7px;"></td>`}
             </tr>
           </table>
         </td>
@@ -221,10 +228,25 @@ function section(title: string, rows: string[]) {
   return sectionHeader(title) + rows.join("");
 }
 
+function eventDateRange(events: EventItem[]): string {
+  if (!events.length) return "";
+  const dates = events
+    .map((e) => new Date(e.startDate))
+    .filter((d) => !Number.isNaN(d.getTime()))
+    .sort((a, b) => a.getTime() - b.getTime());
+  if (!dates.length) return "";
+  const fmt = (d: Date) =>
+    new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short" }).format(d);
+  return dates.length === 1 || fmt(dates[0]) === fmt(dates[dates.length - 1])
+    ? fmt(dates[0])
+    : `${fmt(dates[0])} – ${fmt(dates[dates.length - 1])}`;
+}
+
 const templateConfigs: Record<
   NewsletterTemplateKind,
   {
-    kicker: string;
+    kicker: (issue: NewsletterIssue) => string;
+    defaultIntro: (issue: NewsletterIssue) => string;
     heroBg: string;
     heroColor: string;
     heroParaColor: string;
@@ -235,7 +257,9 @@ const templateConfigs: Record<
   }
 > = {
   weekly: {
-    kicker: "This week in Hull",
+    kicker: () => "This week in Hull",
+    defaultIntro: (issue) =>
+      `${issue.articles.length} stories, ${issue.events.length} events and the best of Hull this week.`,
     heroBg: "#fffaf1",
     heroColor: "#080d2d",
     heroParaColor: "#343a56",
@@ -252,7 +276,12 @@ const templateConfigs: Record<
       ].join(""),
   },
   events: {
-    kicker: "What's on in Hull",
+    kicker: (issue) => {
+      const range = eventDateRange(issue.events);
+      return range ? `What's on · ${range}` : "What's on in Hull";
+    },
+    defaultIntro: (issue) =>
+      `${issue.events.length} things to do in Hull${issue.events.length ? " — handpicked for you" : ""}.`,
     heroBg: "#080d2d",
     heroColor: "#fffaf1",
     heroParaColor: "#c8ccd8",
@@ -270,7 +299,12 @@ const templateConfigs: Record<
     },
   },
   offers: {
-    kicker: "Deals worth leaving the house for",
+    kicker: (issue) =>
+      issue.offers.length
+        ? `${issue.offers.length} deal${issue.offers.length !== 1 ? "s" : ""} worth leaving the house for`
+        : "Deals worth leaving the house for",
+    defaultIntro: (issue) =>
+      `Exclusive offers from Hull's independents${issue.offers.length ? ` — ${issue.offers.length} active right now` : ""}.`,
     heroBg: "#dcae3a",
     heroColor: "#080d2d",
     heroParaColor: "#2a2410",
@@ -280,7 +314,7 @@ const templateConfigs: Record<
     sections: (issue, lead, rest = []) => {
       const articles = [lead, ...rest].filter(Boolean) as Article[];
       return [
-        issue.offers.length ? `${sectionHeader("Active offers")}${offerGrid(issue.offers).join("")}` : "",
+        issue.offers.length ? `${sectionHeader("Active offers")}${offerGrid(issue.offers, true).join("")}` : "",
         section("Places with perks", issue.listings.map((l, i) => listingRow(l, i === 0))),
         articles.length ? `${sectionHeader("Food & drink reads")}${articleGrid(articles).join("")}` : "",
         section("Also happening", issue.events.map((e, i) => eventRow(e, i === 0))),
@@ -288,22 +322,21 @@ const templateConfigs: Record<
     },
   },
   business: {
-    kicker: "For Hull independents",
+    kicker: () => "For Hull independents",
+    defaultIntro: (issue) =>
+      `${issue.listings.length} places, ${issue.offers.length} offers and ${issue.events.length} events for Hull business owners this week.`,
     heroBg: "#f4f7f2",
     heroColor: "#080d2d",
     heroParaColor: "#343a56",
     cta: "View business tools",
     ctaHref: "/business/listings",
     ctaStyle: "background:#4a8f51;border-color:#4a8f51;",
-    sections: (issue, lead, rest = []) => {
-      const articles = [lead, ...rest].filter(Boolean) as Article[];
-      return [
+    sections: (issue) =>
+      [
         section("Featured places", issue.listings.map((l, i) => listingRow(l, i === 0))),
-        articles.length ? `${sectionHeader("Business stories")}${articleGrid(articles).join("")}` : "",
         issue.offers.length ? `${sectionHeader("Current offers")}${offerGrid(issue.offers).join("")}` : "",
         section("Networking & events", issue.events.map((e, i) => eventRow(e, i === 0))),
-      ].join("");
-    },
+      ].join(""),
   },
 };
 
@@ -317,6 +350,8 @@ export function renderNewsletterTemplate({
   const config = templateConfigs[template];
   const lead = issue.articles[0];
   const rest = issue.articles.slice(1);
+  const kicker = config.kicker(issue);
+  const resolvedIntro = intro || config.defaultIntro(issue);
 
   const html = `<!doctype html>
 <html lang="en">
@@ -355,9 +390,9 @@ export function renderNewsletterTemplate({
         <!-- Hero -->
         <tr>
           <td class="pad" style="padding:36px 36px 32px;border-bottom:3px solid #080d2d;background:${escapeHtml(config.heroBg)};">
-            <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:14px;">${escapeHtml(config.kicker)}</div>
+            <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:14px;">${escapeHtml(kicker)}</div>
             <h1 class="hero-h1" style="margin:0 0 22px;font-family:Impact,'Arial Black',sans-serif;font-size:62px;line-height:.88;text-transform:uppercase;letter-spacing:0;color:${escapeHtml(config.heroColor)};">${escapeHtml(subject)}</h1>
-            <p style="color:${escapeHtml(config.heroParaColor)};font-size:17px;line-height:1.6;margin:0 0 26px;">${escapeHtml(intro)}</p>
+            <p style="color:${escapeHtml(config.heroParaColor)};font-size:17px;line-height:1.6;margin:0 0 26px;">${escapeHtml(resolvedIntro)}</p>
             ${button(config.cta, config.ctaHref, config.ctaStyle)}
           </td>
         </tr>
