@@ -267,14 +267,14 @@ function EventDetail() {
               aria-hidden="true"
             />
           </div>
-          {/* Primary CTA */}
-          <div className="flex flex-wrap gap-3 mb-4">
+          {/* Primary CTAs */}
+          <div className="flex flex-wrap gap-3 mb-6">
             {event.ticketUrl && (
               <a
                 href={event.ticketUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-block bg-foreground text-background px-8 py-4 font-bold uppercase tracking-widest text-xs hover:bg-accent"
+                className="inline-block bg-accent text-background px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-foreground transition-colors"
               >
                 Get Tickets →
               </a>
@@ -282,73 +282,39 @@ function EventDetail() {
             <RsvpButton eventId={event.id} />
           </div>
 
-          {/* Add to calendar */}
-          <div className="border-2 border-foreground p-4 mb-4">
-            <div className="font-mono text-[10px] uppercase text-muted-foreground mb-3">
-              Add to calendar
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <a
-                href={googleCalUrl(event)}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2.5 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
-              >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                Google Calendar
-              </a>
-              <button
-                onClick={() => downloadICS(event)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
-              >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                Apple / Outlook (.ics)
-              </button>
-            </div>
-          </div>
-
-          {/* Save & share */}
-          <div className="flex flex-wrap gap-3">
+          {/* Secondary actions */}
+          <div className="border-t border-foreground/20 pt-5 flex flex-wrap gap-2">
+            <a
+              href={googleCalUrl(event)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              Google Calendar
+            </a>
+            <button
+              onClick={() => downloadICS(event)}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              Apple / Outlook
+            </button>
             <SaveButton
               kind="event"
               id={event.id}
               slug={event.slug}
               title={event.title}
-              className="px-5 py-3 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
             />
             <ShareMenu
               title={event.title}
               text={event.description}
-              className="px-5 py-3 border-2 border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
             />
           </div>
         </div>
