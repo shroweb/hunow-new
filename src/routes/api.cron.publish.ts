@@ -169,18 +169,7 @@ export const Route = createFileRoute("/api/cron/publish")({
             client.release();
           }
 
-          // 5. Sync Eventbrite events (only if token is configured)
-          if (process.env.EVENTBRITE_PRIVATE_TOKEN) {
-            try {
-              const { syncEventbriteEvents } = await import("@/lib/eventbrite.server");
-              const { synced, skipped } = await syncEventbriteEvents();
-              if (synced > 0) results.push(`Eventbrite: ${synced} new event(s) imported, ${skipped} updated`);
-            } catch (err) {
-              results.push(`Eventbrite sync failed: ${String(err)}`);
-            }
-          }
-
-          // 6. Clean up old rate limit entries (keep last 24h)
+          // 5. Clean up old rate limit entries (keep last 24h)
           await pool
             .query("delete from rate_limits where window_start < now() - interval '24 hours'")
             .catch(() => {});

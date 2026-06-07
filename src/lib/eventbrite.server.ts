@@ -8,8 +8,19 @@ function token() {
   return t;
 }
 
-function headers() {
+function authHeaders() {
   return { Authorization: `Bearer ${token()}`, "Content-Type": "application/json" };
+}
+
+export function extractEventbriteId(input: string): string | null {
+  // Handles URLs like:
+  //   https://www.eventbrite.com/e/event-name-tickets-123456789
+  //   https://www.eventbrite.co.uk/e/event-name-tickets-123456789
+  //   123456789 (bare ID)
+  const fromUrl = input.match(/[/-](\d{8,})\/?(?:\?|$)/);
+  if (fromUrl) return fromUrl[1];
+  if (/^\d{8,}$/.test(input.trim())) return input.trim();
+  return null;
 }
 
 function slugify(text: string, id: string) {
@@ -34,8 +45,6 @@ function mapCategory(name: string | undefined): string {
   if (n.includes("family") || n.includes("kid") || n.includes("child")) return "Family";
   if (n.includes("theatre") || n.includes("theater")) return "Theatre";
   if (n.includes("night") || n.includes("club") || n.includes("dance")) return "Nightlife";
-  if (n.includes("sport") || n.includes("fitness")) return "Sport";
-  if (n.includes("business") || n.includes("network")) return "Business";
   return "Events";
 }
 
@@ -51,16 +60,9 @@ function formatTime(iso: string): string {
   }
 }
 
-function formatPrice(eb: EbEvent): { price: string; isFree: boolean } {
-  if (eb.is_free) return { price: "Free", isFree: true };
-  const ticket = eb.ticket_availability;
-  if (ticket?.minimum_ticket_price) {
-    const amt = Number(ticket.minimum_ticket_price.major_value ?? 0);
-    const max = Number(ticket.maximum_ticket_price?.major_value ?? 0);
-    if (max && max !== amt) return { price: `£${amt}–£${max}`, isFree: false };
-    return { price: `From £${amt}`, isFree: false };
-  }
-  return { price: "See ticket page", isFree: false };
+interface EbTicketClass {
+  free: boolean;
+  cost?: { major_value?: string };
 }
 
 interface EbEvent {
@@ -77,60 +79,21 @@ interface EbEvent {
     name?: string;
     address?: { localized_address_display?: string };
   };
-  ticket_availability?: {
-    minimum_ticket_price?: { major_value?: string };
-    maximum_ticket_price?: { major_value?: string };
-  };
+  ticket_classes?: EbTicketClass[];
 }
 
-interface EbPage {
-  events: EbEvent[];
-  pagination: { has_more_items: boolean; continuation?: string };
-}
-
-async function fetchPage(url: string): Promise<EbPage> {
-  const res = await fetch(url, { headers: headers() });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Eventbrite API error ${res.status}: ${body}`);
+function formatPrice(eb: EbEvent): { price: string; isFree: boolean } {
+  if (eb.is_free) return { price: "Free", isFree: true };
+  const paid = eb.ticket_classes?.filter((t) => !t.free) ?? [];
+  const prices = paid
+    .map((t) => Number(t.cost?.major_value ?? 0))
+    .filter((p) => p > 0)
+    .sort((a, b) => a - b);
+  if (prices.length === 0) return { price: "See ticket page", isFree: false };
+  if (prices.length === 1 || prices[0] === prices[prices.length - 1]) {
+    return { price: `From £${prices[0]}`, isFree: false };
   }
-  return res.json() as Promise<EbPage>;
-}
-
-async function fetchAllEvents(locationQuery: string): Promise<EbEvent[]> {
-  const events: EbEvent[] = [];
-  let url =
-    `${BASE}/events/search/?` +
-    new URLSearchParams({
-      "location.address": locationQuery,
-      "location.within": "15km",
-      "start_date.range_start": new Date().toISOString().slice(0, 19) + "Z",
-      status: "live",
-      expand: "venue,category,ticket_availability",
-      page_size: "50",
-    });
-
-  let hasMore = true;
-  while (hasMore) {
-    const page = await fetchPage(url);
-    events.push(...page.events);
-    hasMore = page.pagination.has_more_items;
-    if (hasMore && page.pagination.continuation) {
-      url =
-        `${BASE}/events/search/?` +
-        new URLSearchParams({
-          "location.address": locationQuery,
-          "location.within": "15km",
-          status: "live",
-          expand: "venue,category,ticket_availability",
-          page_size: "50",
-          continuation: page.pagination.continuation,
-        });
-    } else {
-      hasMore = false;
-    }
-  }
-  return events;
+  return { price: `£${prices[0]}–£${prices[prices.length - 1]}`, isFree: false };
 }
 
 export function mapEventbriteEvent(eb: EbEvent): EventItem {
@@ -160,34 +123,25 @@ export function mapEventbriteEvent(eb: EbEvent): EventItem {
   };
 }
 
-export async function syncEventbriteEvents(locationQuery = "Hull, UK"): Promise<{
-  synced: number;
-  skipped: number;
-}> {
-  const { upsertEvent, getPool, ensureSchema } = await import("@/lib/db.server");
-  await ensureSchema();
+export async function importEventbriteUrl(urlOrId: string): Promise<EventItem> {
+  const id = extractEventbriteId(urlOrId);
+  if (!id) throw new Error("Could not extract an Eventbrite event ID from that URL");
 
-  const ebEvents = await fetchAllEvents(locationQuery);
-
-  // Load existing Eventbrite IDs so we can skip unchanged events
-  const existing = await getPool().query<{ id: string }>(
-    "select id from events where id like 'eventbrite-%'",
+  const res = await fetch(
+    `${BASE}/events/${id}/?expand=venue,category,ticket_classes`,
+    { headers: authHeaders() },
   );
-  const existingIds = new Set(existing.rows.map((r) => r.id));
 
-  let synced = 0;
-  let skipped = 0;
-
-  for (const eb of ebEvents) {
-    const mapped = mapEventbriteEvent(eb);
-    // Always upsert — title/price/venue can change on Eventbrite
-    await upsertEvent(mapped);
-    if (existingIds.has(mapped.id)) {
-      skipped++;
-    } else {
-      synced++;
-    }
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Eventbrite API error ${res.status}: ${body}`);
   }
 
-  return { synced, skipped };
+  const eb = (await res.json()) as EbEvent;
+  const event = mapEventbriteEvent(eb);
+
+  const { upsertEvent } = await import("@/lib/db.server");
+  await upsertEvent(event);
+
+  return event;
 }

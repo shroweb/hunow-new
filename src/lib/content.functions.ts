@@ -188,11 +188,13 @@ export const searchContentFn = createServerFn({ method: "GET" })
     return searchContent(data.query);
   });
 
-// ---- Eventbrite sync ----
+// ---- Eventbrite import ----
 
-export const syncEventbriteFn = createServerFn({ method: "POST" }).handler(async () => {
-  const { requireAdmin } = await import("./auth.server");
-  await requireAdmin();
-  const { syncEventbriteEvents } = await import("./eventbrite.server");
-  return syncEventbriteEvents();
-});
+export const importEventbriteUrlFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ urlOrId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    await requireAdmin();
+    const { importEventbriteUrl } = await import("./eventbrite.server");
+    return importEventbriteUrl(data.urlOrId);
+  });

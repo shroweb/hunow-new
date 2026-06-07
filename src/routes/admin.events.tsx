@@ -20,7 +20,7 @@ import { ValidationErrors } from "@/components/admin/ValidationErrors";
 import { validateUniqueSlug, validateUrl } from "@/components/admin/validation-utils";
 import { readSeo } from "@/components/admin/seo-utils";
 import { setState, slugify, uid, useStore } from "@/lib/store";
-import { upsertEventFn, deleteEventFn, bulkArchiveEventsFn, syncEventbriteFn } from "@/lib/content.functions";
+import { upsertEventFn, deleteEventFn, bulkArchiveEventsFn, importEventbriteUrlFn } from "@/lib/content.functions";
 import type { EventItem } from "@/types";
 
 export const Route = createFileRoute("/admin/events")({ component: AdminEvents });
@@ -43,8 +43,9 @@ function AdminEvents() {
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [syncing, setSyncing] = useState(false);
-  const [syncStatus, setSyncStatus] = useState("");
+  const [ebUrl, setEbUrl] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [importStatus, setImportStatus] = useState("");
   const [slugDraft, setSlugDraft] = useState("");
   const [slugManual, setSlugManual] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
@@ -171,24 +172,6 @@ function AdminEvents() {
           <div className="flex gap-2">
             <button
               onClick={async () => {
-                setSyncing(true);
-                setSyncStatus("");
-                try {
-                  const result = await syncEventbriteFn();
-                  setSyncStatus(`✓ ${result.synced} new, ${result.skipped} updated`);
-                } catch (err) {
-                  setSyncStatus(`Error: ${String(err)}`);
-                } finally {
-                  setSyncing(false);
-                }
-              }}
-              disabled={syncing}
-              className={adminBtnOutline}
-            >
-              {syncing ? "Syncing…" : "Sync Eventbrite"}
-            </button>
-            <button
-              onClick={async () => {
                 const today = new Date().toISOString().slice(0, 10);
                 const count = events.filter(
                   (e) => e.status === "published" && e.startDate < today,
@@ -228,11 +211,41 @@ function AdminEvents() {
           </div>
         }
       />
-      {syncStatus && (
-        <div className="px-6 md:px-10 py-2 text-sm font-mono border-b border-border bg-background text-muted-foreground">
-          Eventbrite sync: {syncStatus}
-        </div>
-      )}
+      <div className="px-6 md:px-10 py-3 border-b border-border bg-white flex flex-wrap items-center gap-2">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
+          Import from Eventbrite
+        </span>
+        <input
+          type="url"
+          placeholder="https://www.eventbrite.co.uk/e/event-name-tickets-123456789"
+          value={ebUrl}
+          onChange={(e) => setEbUrl(e.target.value)}
+          className={`${adminInput} flex-1 min-w-0`}
+        />
+        <button
+          type="button"
+          disabled={importing || !ebUrl.trim()}
+          onClick={async () => {
+            setImporting(true);
+            setImportStatus("");
+            try {
+              const event = await importEventbriteUrlFn({ data: { urlOrId: ebUrl.trim() } });
+              setImportStatus(`✓ Imported: ${event.title}`);
+              setEbUrl("");
+            } catch (err) {
+              setImportStatus(`Error: ${String(err)}`);
+            } finally {
+              setImporting(false);
+            }
+          }}
+          className={adminBtn}
+        >
+          {importing ? "Importing…" : "Import"}
+        </button>
+        {importStatus && (
+          <span className="text-xs font-mono text-muted-foreground w-full">{importStatus}</span>
+        )}
+      </div>
       <div className="p-6 md:p-10">
         {showForm && (
           <AdminFormPanel title={editing ? "Edit Event" : "New Event"}>
