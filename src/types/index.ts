@@ -103,8 +103,10 @@ export interface Offer {
   endDate: string;
   redemptionCount: number;
   category: string;
-  status: "active" | "expired";
+  status: "pending" | "active" | "expired" | "rejected";
   isFeatured?: boolean;
+  submittedByUserId?: string;
+  adminNote?: string;
   seo?: SeoMeta;
 }
 

@@ -3,7 +3,23 @@ import { useState } from "react";
 import { AdminHeader, AdminTable } from "@/components/admin/AdminLayout";
 import { articlePath } from "@/lib/taxonomy";
 import { setState, slugify, uid, useStore } from "@/lib/store";
-import type { CollectionItemKind, EditorialCollectionItem } from "@/types";
+import {
+  deleteCollectionFn,
+  upsertArticleFn,
+  upsertCollectionFn,
+  upsertEventFn,
+  upsertListingFn,
+  upsertOfferFn,
+} from "@/lib/content.functions";
+import type {
+  Article,
+  CollectionItemKind,
+  EditorialCollection,
+  EditorialCollectionItem,
+  EventItem,
+  Listing,
+  Offer,
+} from "@/types";
 
 export const Route = createFileRoute("/admin/editorial-picks")({
   component: AdminEditorialPicks,
@@ -30,29 +46,96 @@ function AdminEditorialPicks() {
     );
   }
 
-  function saveCollection() {
+  async function saveCollection() {
     const trimmedTitle = title.trim();
     if (!trimmedTitle || selected.length === 0) return;
     const now = new Date().toISOString();
-    setState((s) => ({
-      ...s,
-      collections: [
-        {
-          id: uid(),
-          title: trimmedTitle,
-          slug: slugify(trimmedTitle),
-          description: description.trim(),
-          status,
-          items: selected,
-          updatedAt: now,
-        },
-        ...s.collections,
-      ],
-    }));
+    const collection: EditorialCollection = {
+      id: uid(),
+      title: trimmedTitle,
+      slug: slugify(trimmedTitle),
+      description: description.trim(),
+      status,
+      items: selected,
+      updatedAt: now,
+    };
+    await upsertCollectionFn({ data: collection });
+    setState((s) => ({ ...s, collections: [collection, ...s.collections] }), { persist: false });
     setTitle("");
     setDescription("");
     setStatus("draft");
     setSelected([]);
+  }
+
+  async function toggleCollectionStatus(collection: EditorialCollection) {
+    const updated = {
+      ...collection,
+      status: collection.status === "published" ? ("draft" as const) : ("published" as const),
+      updatedAt: new Date().toISOString(),
+    };
+    await upsertCollectionFn({ data: updated });
+    setState(
+      (s) => ({
+        ...s,
+        collections: s.collections.map((item) => (item.id === updated.id ? updated : item)),
+      }),
+      { persist: false },
+    );
+  }
+
+  async function removeCollection(id: string) {
+    await deleteCollectionFn({ data: { id } });
+    setState((s) => ({ ...s, collections: s.collections.filter((item) => item.id !== id) }), {
+      persist: false,
+    });
+  }
+
+  async function toggleArticlePick(item: Article) {
+    const updated = { ...item, isFeatured: !item.isFeatured };
+    await upsertArticleFn({ data: updated });
+    setState(
+      (s) => ({
+        ...s,
+        articles: s.articles.map((article) => (article.id === item.id ? updated : article)),
+      }),
+      { persist: false },
+    );
+  }
+
+  async function toggleEventPick(item: EventItem) {
+    const updated = { ...item, isFeatured: !item.isFeatured };
+    await upsertEventFn({ data: updated });
+    setState(
+      (s) => ({
+        ...s,
+        events: s.events.map((event) => (event.id === item.id ? updated : event)),
+      }),
+      { persist: false },
+    );
+  }
+
+  async function toggleListingPick(item: Listing) {
+    const updated = { ...item, isFeatured: !item.isFeatured };
+    await upsertListingFn({ data: updated });
+    setState(
+      (s) => ({
+        ...s,
+        listings: s.listings.map((listing) => (listing.id === item.id ? updated : listing)),
+      }),
+      { persist: false },
+    );
+  }
+
+  async function toggleOfferPick(item: Offer) {
+    const updated = { ...item, isFeatured: !item.isFeatured };
+    await upsertOfferFn({ data: updated });
+    setState(
+      (s) => ({
+        ...s,
+        offers: s.offers.map((offer) => (offer.id === item.id ? updated : offer)),
+      }),
+      { persist: false },
+    );
   }
 
   return (
@@ -124,7 +207,7 @@ function AdminEditorialPicks() {
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={saveCollection}
+              onClick={() => void saveCollection()}
               className="bg-foreground text-background px-4 py-2 text-[10px] font-bold uppercase tracking-widest"
             >
               Create Collection
@@ -153,32 +236,14 @@ function AdminEditorialPicks() {
                   )}
                   <button
                     type="button"
-                    onClick={() =>
-                      setState((s) => ({
-                        ...s,
-                        collections: s.collections.map((item) =>
-                          item.id === collection.id
-                            ? {
-                                ...item,
-                                status: item.status === "published" ? "draft" : "published",
-                                updatedAt: new Date().toISOString(),
-                              }
-                            : item,
-                        ),
-                      }))
-                    }
+                    onClick={() => void toggleCollectionStatus(collection)}
                     className="text-[10px] font-bold uppercase underline"
                   >
                     {collection.status === "published" ? "Unpublish" : "Publish"}
                   </button>
                   <button
                     type="button"
-                    onClick={() =>
-                      setState((s) => ({
-                        ...s,
-                        collections: s.collections.filter((item) => item.id !== collection.id),
-                      }))
-                    }
+                    onClick={() => void removeCollection(collection.id)}
                     className="text-[10px] font-bold uppercase underline"
                   >
                     Delete
@@ -194,19 +259,7 @@ function AdminEditorialPicks() {
           rows={articles.map((item) => [
             item.title,
             item.status,
-            <PickToggle
-              checked={item.isFeatured}
-              onClick={() =>
-                setState((s) => ({
-                  ...s,
-                  articles: s.articles.map((article) =>
-                    article.id === item.id
-                      ? { ...article, isFeatured: !article.isFeatured }
-                      : article,
-                  ),
-                }))
-              }
-            />,
+            <PickToggle checked={item.isFeatured} onClick={() => void toggleArticlePick(item)} />,
             <a href={articlePath(item)} className="text-[10px] font-bold uppercase underline">
               View
             </a>,
@@ -218,17 +271,7 @@ function AdminEditorialPicks() {
           rows={events.map((item) => [
             item.title,
             item.startDate,
-            <PickToggle
-              checked={item.isFeatured}
-              onClick={() =>
-                setState((s) => ({
-                  ...s,
-                  events: s.events.map((event) =>
-                    event.id === item.id ? { ...event, isFeatured: !event.isFeatured } : event,
-                  ),
-                }))
-              }
-            />,
+            <PickToggle checked={item.isFeatured} onClick={() => void toggleEventPick(item)} />,
             <Link
               to="/events/$slug"
               params={{ slug: item.slug }}
@@ -244,19 +287,7 @@ function AdminEditorialPicks() {
           rows={listings.map((item) => [
             item.name,
             item.area,
-            <PickToggle
-              checked={item.isFeatured}
-              onClick={() =>
-                setState((s) => ({
-                  ...s,
-                  listings: s.listings.map((listing) =>
-                    listing.id === item.id
-                      ? { ...listing, isFeatured: !listing.isFeatured }
-                      : listing,
-                  ),
-                }))
-              }
-            />,
+            <PickToggle checked={item.isFeatured} onClick={() => void toggleListingPick(item)} />,
             <Link
               to="/places/$slug"
               params={{ slug: item.slug }}
@@ -272,17 +303,7 @@ function AdminEditorialPicks() {
           rows={offers.map((item) => [
             item.title,
             item.businessName,
-            <PickToggle
-              checked={!!item.isFeatured}
-              onClick={() =>
-                setState((s) => ({
-                  ...s,
-                  offers: s.offers.map((offer) =>
-                    offer.id === item.id ? { ...offer, isFeatured: !offer.isFeatured } : offer,
-                  ),
-                }))
-              }
-            />,
+            <PickToggle checked={!!item.isFeatured} onClick={() => void toggleOfferPick(item)} />,
             item.status,
           ])}
         />

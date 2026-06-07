@@ -51,10 +51,8 @@ async function renderIssue(data: z.infer<typeof issueSchema>, unsubscribeUrl?: s
 }
 
 async function sendResendEmail(input: { to: string; subject: string; html: string; text: string }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not set. Add it in Vercel/env before sending.");
-  }
+  const { getNewsletterSendConfig } = await import("./newsletter-config.server");
+  const { apiKey, from } = getNewsletterSendConfig();
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -63,7 +61,7 @@ async function sendResendEmail(input: { to: string; subject: string; html: strin
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: process.env.NEWSLETTER_FROM || "HU NOW <hello@hunow.co.uk>",
+      from,
       to: input.to,
       subject: input.subject,
       html: input.html,

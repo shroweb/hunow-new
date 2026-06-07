@@ -59,6 +59,14 @@ export const getBusinessListings = createServerFn({ method: "GET" }).handler(asy
   return getOwnedListings(user.id);
 });
 
+export const getBusinessOffers = createServerFn({ method: "GET" }).handler(async () => {
+  const { currentUser } = await import("./auth.server");
+  const { getOwnedOffers } = await import("./db.server");
+  const user = await currentUser();
+  if (!user) return [];
+  return getOwnedOffers(user.id);
+});
+
 export const updateBusinessListing = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
@@ -82,6 +90,68 @@ export const updateBusinessListing = createServerFn({ method: "POST" })
       phone: data.phone || undefined,
       email: data.email || undefined,
     });
+  });
+
+export const upsertBusinessOffer = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      id: z.string().optional(),
+      listingId: z.string().min(1),
+      title: z.string().min(1).max(120),
+      description: z.string().min(1).max(700),
+      terms: z.string().max(1000).optional(),
+      code: z.string().max(80).optional(),
+      startDate: z.string().min(1),
+      endDate: z.string().min(1),
+      category: z.string().min(1).max(80),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { currentUser } = await import("./auth.server");
+    const { getOwnedListings, getOwnedOffers, upsertOffer } = await import("./db.server");
+    const user = await currentUser();
+    if (!user) throw new Error("Sign in to manage offers.");
+
+    const ownedListings = await getOwnedListings(user.id);
+    const listing = ownedListings.find((item) => item.id === data.listingId);
+    if (!listing) throw new Error("Listing not found or not owned by this account.");
+
+    if (data.endDate < data.startDate) {
+      throw new Error("Offer end date must be after start date.");
+    }
+
+    const existing = data.id
+      ? (await getOwnedOffers(user.id)).find((offer) => offer.id === data.id)
+      : undefined;
+    if (data.id && !existing) throw new Error("Offer not found or not owned by this account.");
+
+    const offer = {
+      id: existing?.id ?? crypto.randomUUID(),
+      title: data.title.trim(),
+      listingId: listing.id,
+      businessName: listing.name,
+      description: data.description.trim(),
+      terms: data.terms?.trim() ?? "",
+      code: data.code?.trim() || undefined,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      redemptionCount: existing?.redemptionCount ?? 0,
+      category: data.category.trim(),
+      status: "pending" as const,
+      isFeatured: existing?.isFeatured ?? false,
+      submittedByUserId: user.id,
+      adminNote: "",
+      seo: existing?.seo,
+    };
+
+    await upsertOffer(offer);
+    void import("./email.server").then(({ sendAdminAlert }) =>
+      sendAdminAlert(
+        "Business offer pending review",
+        `User: ${user.name} (${user.email})\nBusiness: ${listing.name}\nOffer: ${offer.title}\nDates: ${offer.startDate} to ${offer.endDate}`,
+      ),
+    );
+    return offer;
   });
 
 export const getListingUpdatesForOwner = createServerFn({ method: "GET" })

@@ -17,9 +17,13 @@ export const Route = createFileRoute("/api/v1/auth/login")({
           await ensureSchema();
           const pool = getPool();
 
-          const { checkRateLimit } = await import("@/lib/rate-limit.server");
+          const { checkRateLimitSet, getClientIp } = await import("@/lib/rate-limit.server");
           const email = body.email.trim().toLowerCase();
-          const allowed = await checkRateLimit(`app-login:${email}`, 10, 15 * 60);
+          const ip = getClientIp(request);
+          const allowed = await checkRateLimitSet([
+            { key: `app-login:${email}`, max: 10, windowSec: 15 * 60 },
+            { key: `app-login-ip:${ip}`, max: 30, windowSec: 15 * 60 },
+          ]);
           if (!allowed) {
             return Response.json(
               { error: "Too many attempts. Wait 15 minutes and try again." },

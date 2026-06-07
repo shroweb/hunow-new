@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { img } from "@/data/seed";
-import { trackAdEvent } from "@/lib/store.functions";
+import { trackAdEvent } from "@/lib/ad.functions";
 import { useStore } from "@/lib/store";
 
 export function AdSlot({ placement }: { placement: string }) {

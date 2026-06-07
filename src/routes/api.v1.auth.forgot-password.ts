@@ -9,6 +9,16 @@ export const Route = createFileRoute("/api/v1/auth/forgot-password")({
           return Response.json({ error: "email is required" }, { status: 400 });
         }
         try {
+          const { checkRateLimit, getClientIp } = await import("@/lib/rate-limit.server");
+          const ipAllowed = await checkRateLimit(
+            `app-pwreset-ip:${getClientIp(request)}`,
+            10,
+            60 * 60,
+          );
+          if (!ipAllowed) {
+            return Response.json({ ok: true });
+          }
+
           const { requestPasswordReset } = await import("@/lib/auth.server");
           await requestPasswordReset(body.email.trim().toLowerCase());
         } catch {

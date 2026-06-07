@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { useStore } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
 import { trackAnalyticsEvent } from "@/lib/analytics.functions";
+import { searchContentFn } from "@/lib/content.functions";
+import type { Article, EventItem, Listing as ListingItem, Offer } from "@/types";
 
 export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -18,10 +19,8 @@ export const Route = createFileRoute("/search")({
 function SearchPage() {
   const { q } = Route.useSearch();
   const [type, setType] = useState("all");
-  const articles = useStore((s) => s.articles);
-  const events = useStore((s) => s.events);
-  const listings = useStore((s) => s.listings);
-  const offers = useStore((s) => s.offers);
+  const [results, setResults] = useState<SearchResults>(emptyResults);
+  const [isSearching, setIsSearching] = useState(false);
 
   const term = q.toLowerCase().trim();
 
@@ -35,30 +34,33 @@ function SearchPage() {
     return () => window.clearTimeout(id);
   }, [term]);
 
-  const results = useMemo(() => {
-    if (!term) return { articles: [], events: [], listings: [], offers: [] };
-    const matchA = articles.filter(
-      (a) =>
-        a.status === "published" &&
-        `${a.title} ${a.excerpt} ${a.tags.join(" ")} ${a.category}`.toLowerCase().includes(term),
-    );
-    const matchE = events.filter(
-      (e) =>
-        e.status === "published" &&
-        `${e.title} ${e.description} ${e.locationName}`.toLowerCase().includes(term),
-    );
-    const matchL = listings.filter((l) =>
-      `${l.name} ${l.description} ${l.category} ${l.area} ${l.tags?.join(" ") ?? ""}`
-        .toLowerCase()
-        .includes(term),
-    );
-    const matchO = offers.filter(
-      (o) =>
-        o.status === "active" &&
-        `${o.title} ${o.businessName} ${o.description} ${o.category}`.toLowerCase().includes(term),
-    );
-    return { articles: matchA, events: matchE, listings: matchL, offers: matchO };
-  }, [term, articles, events, listings, offers]);
+  useEffect(() => {
+    let cancelled = false;
+    if (term.length < 2) {
+      setResults(emptyResults);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const id = window.setTimeout(() => {
+      void searchContentFn({ data: { query: term } })
+        .then((nextResults) => {
+          if (!cancelled) setResults(nextResults);
+        })
+        .catch(() => {
+          if (!cancelled) setResults(emptyResults);
+        })
+        .finally(() => {
+          if (!cancelled) setIsSearching(false);
+        });
+    }, 180);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(id);
+    };
+  }, [term]);
 
   const total =
     results.articles.length +
@@ -93,7 +95,7 @@ function SearchPage() {
         </form>
         {term && (
           <p className="mt-4 text-[10px] font-mono uppercase text-muted-foreground">
-            {total} result{total !== 1 ? "s" : ""} for &ldquo;{q}&rdquo;
+            {isSearching ? "Searching..." : `${total} result${total !== 1 ? "s" : ""} for "${q}"`}
           </p>
         )}
         {term && total > 0 && (
@@ -126,7 +128,7 @@ function SearchPage() {
         </div>
       )}
 
-      {term && total === 0 && (
+      {term && !isSearching && total === 0 && (
         <div className="max-w-7xl mx-auto px-4 py-24 text-center">
           <p className="font-display text-4xl uppercase mb-4">No results</p>
           <p className="text-muted-foreground">Try a different search term.</p>
@@ -253,3 +255,17 @@ function SearchPage() {
     </PublicLayout>
   );
 }
+
+type SearchResults = {
+  articles: Article[];
+  events: EventItem[];
+  listings: ListingItem[];
+  offers: Offer[];
+};
+
+const emptyResults: SearchResults = {
+  articles: [],
+  events: [],
+  listings: [],
+  offers: [],
+};

@@ -29,6 +29,44 @@ function Dashboard() {
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
     .slice(0, 5);
   const pendingSubmissions = submissions.filter((s) => s.status === "pending").slice(0, 4);
+  const today = new Date().toISOString().slice(0, 10);
+  const demoNameMatches = ["dope burger", "two gingers", "humber street gallery", "spray-k"];
+  const demoRecords =
+    articles.filter((a) =>
+      demoNameMatches.some((term) => `${a.title} ${a.excerpt}`.toLowerCase().includes(term)),
+    ).length +
+    events.filter((e) =>
+      demoNameMatches.some((term) => `${e.title} ${e.locationName}`.toLowerCase().includes(term)),
+    ).length +
+    listings.filter((l) =>
+      demoNameMatches.some((term) => `${l.name} ${l.description}`.toLowerCase().includes(term)),
+    ).length +
+    offers.filter((o) =>
+      demoNameMatches.some((term) => `${o.title} ${o.businessName}`.toLowerCase().includes(term)),
+    ).length;
+  const contentQa = [
+    {
+      label: "Demo/seed references",
+      value: demoRecords,
+      href: "/admin/listings",
+    },
+    {
+      label: "Articles missing images",
+      value: articles.filter((a) => !a.featuredImage).length,
+      href: "/admin/articles",
+    },
+    {
+      label: "Listings missing images",
+      value: listings.filter((l) => !l.featuredImage).length,
+      href: "/admin/listings",
+    },
+    {
+      label: "Expired active offers",
+      value: offers.filter((o) => o.status === "active" && o.endDate && o.endDate < today).length,
+      href: "/admin/offers",
+    },
+  ];
+  const qaIssueCount = contentQa.reduce((total, item) => total + item.value, 0);
 
   return (
     <div>
@@ -90,6 +128,32 @@ function Dashboard() {
             <Link to="/admin/submissions" className={adminBtn}>
               Review Submissions
             </Link>
+          </div>
+        </section>
+
+        <section className="border-2 border-foreground bg-white p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+            <div>
+              <h2 className="font-display text-3xl uppercase leading-none">Content QA</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Launch checks for placeholder content, missing imagery and expired offer state.
+              </p>
+            </div>
+            <div className="font-display text-4xl leading-none">{qaIssueCount}</div>
+          </div>
+          <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-3">
+            {contentQa.map((item) => (
+              <Link
+                key={item.label}
+                to={item.href}
+                className="border border-border p-4 hover:border-foreground transition-colors"
+              >
+                <div className="font-mono text-[10px] uppercase text-muted-foreground">
+                  {item.label}
+                </div>
+                <div className="font-display text-3xl leading-none mt-2">{item.value}</div>
+              </Link>
+            ))}
           </div>
         </section>
 

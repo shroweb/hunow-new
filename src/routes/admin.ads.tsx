@@ -15,6 +15,7 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { ValidationErrors } from "@/components/admin/ValidationErrors";
 import { validateUrl } from "@/components/admin/validation-utils";
 import { setState, uid, useStore } from "@/lib/store";
+import { deleteAdFn, upsertAdFn } from "@/lib/content.functions";
 import type { AdPlacement } from "@/types";
 
 export const Route = createFileRoute("/admin/ads")({ component: AdminAds });
@@ -75,7 +76,7 @@ function AdminAds() {
     setShowForm(true);
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const url = String(fd.get("url"));
@@ -104,25 +105,37 @@ function AdminAds() {
       status: fd.get("status") as AdPlacement["status"],
     };
 
-    setState((s) => ({
-      ...s,
-      ads: editing ? s.ads.map((x) => (x.id === ad.id ? ad : x)) : [ad, ...s.ads],
-    }));
+    await upsertAdFn({ data: ad });
+    setState(
+      (s) => ({
+        ...s,
+        ads: editing ? s.ads.map((x) => (x.id === ad.id ? ad : x)) : [ad, ...s.ads],
+      }),
+      { persist: false },
+    );
     setEditing(null);
     setErrors([]);
     setShowForm(false);
   };
 
-  const setStatus = (id: string, status: AdPlacement["status"]) => {
-    setState((s) => ({
-      ...s,
-      ads: s.ads.map((ad) => (ad.id === id ? { ...ad, status } : ad)),
-    }));
+  const setStatus = async (id: string, status: AdPlacement["status"]) => {
+    const ad = ads.find((item) => item.id === id);
+    if (!ad) return;
+    const updated = { ...ad, status };
+    await upsertAdFn({ data: updated });
+    setState(
+      (s) => ({
+        ...s,
+        ads: s.ads.map((ad) => (ad.id === id ? updated : ad)),
+      }),
+      { persist: false },
+    );
   };
 
-  const remove = (id: string) => {
+  const remove = async (id: string) => {
     if (!confirm("Delete this ad placement?")) return;
-    setState((s) => ({ ...s, ads: s.ads.filter((ad) => ad.id !== id) }));
+    await deleteAdFn({ data: { id } });
+    setState((s) => ({ ...s, ads: s.ads.filter((ad) => ad.id !== id) }), { persist: false });
   };
 
   return (

@@ -44,9 +44,27 @@ const fallbackStore: AppStore = {
   newsletter: [],
 };
 
+const emptyFallbackStore: AppStore = {
+  articles: [],
+  events: [],
+  listings: [],
+  offers: [],
+  submissions: [],
+  ads: [],
+  media: [],
+  collections: [],
+  newsletter: [],
+};
+
 let pool: pg.Pool | undefined;
 let schemaReady: Promise<void> | undefined;
 let seedReady: Promise<void> | undefined;
+
+function shouldSeedDemoContent() {
+  if (process.env.HUNOW_ENABLE_DEMO_SEED === "true") return true;
+  if (process.env.HUNOW_ENABLE_DEMO_SEED === "false") return false;
+  return process.env.NODE_ENV !== "production" && process.env.VERCEL_ENV !== "production";
+}
 
 function getDatabaseUrl() {
   const databaseUrl = process.env.DATABASE_URL;
@@ -222,11 +240,46 @@ create table if not exists saved_items (
 );
 create index if not exists articles_slug_idx on articles (slug);
 create index if not exists articles_status_idx on articles (status);
+create index if not exists articles_search_idx on articles using gin (
+  to_tsvector('english',
+    coalesce(data->>'title', '') || ' ' ||
+    coalesce(data->>'excerpt', '') || ' ' ||
+    coalesce(data->>'category', '') || ' ' ||
+    coalesce(data->>'subcategory', '') || ' ' ||
+    coalesce(data->>'tags', '')
+  )
+);
 create index if not exists events_slug_idx on events (slug);
 create index if not exists events_status_idx on events (status);
+create index if not exists events_search_idx on events using gin (
+  to_tsvector('english',
+    coalesce(data->>'title', '') || ' ' ||
+    coalesce(data->>'description', '') || ' ' ||
+    coalesce(data->>'category', '') || ' ' ||
+    coalesce(data->>'locationName', '') || ' ' ||
+    coalesce(data->>'address', '')
+  )
+);
 create index if not exists listings_slug_idx on listings (slug);
+create index if not exists listings_search_idx on listings using gin (
+  to_tsvector('english',
+    coalesce(data->>'name', '') || ' ' ||
+    coalesce(data->>'description', '') || ' ' ||
+    coalesce(data->>'category', '') || ' ' ||
+    coalesce(data->>'area', '') || ' ' ||
+    coalesce(data->>'tags', '')
+  )
+);
 create index if not exists offers_listing_id_idx on offers (listing_id);
 create index if not exists offers_status_idx on offers (status);
+create index if not exists offers_search_idx on offers using gin (
+  to_tsvector('english',
+    coalesce(data->>'title', '') || ' ' ||
+    coalesce(data->>'businessName', '') || ' ' ||
+    coalesce(data->>'description', '') || ' ' ||
+    coalesce(data->>'category', '')
+  )
+);
 create index if not exists submissions_status_idx on submissions (status);
 create index if not exists ads_status_idx on ads (status);
 create index if not exists media_url_idx on media (url);
@@ -477,7 +530,9 @@ async function seedIfEmpty() {
   const marker = await getPool().query("select 1 from db_initialized limit 1");
   if (marker.rowCount && marker.rowCount > 0) return;
 
-  await saveDatabaseStore((await legacyStore()) ?? fallbackStore);
+  await saveDatabaseStore(
+    (await legacyStore()) ?? (shouldSeedDemoContent() ? fallbackStore : emptyFallbackStore),
+  );
   await getPool().query("insert into db_initialized default values");
 }
 
@@ -570,7 +625,7 @@ export async function saveDatabaseStore(store: AppStore) {
 
 // ---- Targeted single-record writes (avoids full-store replace) ----
 
-type UpsertTable = "articles" | "events" | "listings" | "offers" | "ads" | "media";
+type UpsertTable = "articles" | "events" | "listings" | "offers" | "ads" | "media" | "collections";
 
 async function upsertRecord(table: UpsertTable, id: string, data: unknown) {
   await ensureSchema();
@@ -627,6 +682,121 @@ export async function upsertOffer(offer: import("@/types").Offer) {
 }
 export async function deleteOffer(id: string) {
   await deleteRecord("offers", id);
+}
+
+export async function searchContent(term: string) {
+  await ensureSeeded();
+  const query = term.trim();
+  if (query.length < 2) {
+    return { articles: [], events: [], listings: [], offers: [] };
+  }
+  const pool = getPool();
+  const [articles, events, listings, offers] = await Promise.all([
+    pool.query<{ data: import("@/types").Article }>(
+      `
+      select data
+      from articles, websearch_to_tsquery('english', $1) q
+      where status = 'published'
+        and to_tsvector('english',
+          coalesce(data->>'title', '') || ' ' ||
+          coalesce(data->>'excerpt', '') || ' ' ||
+          coalesce(data->>'category', '') || ' ' ||
+          coalesce(data->>'subcategory', '') || ' ' ||
+          coalesce(data->>'tags', '')
+        ) @@ q
+      order by ts_rank_cd(
+        to_tsvector('english',
+          coalesce(data->>'title', '') || ' ' ||
+          coalesce(data->>'excerpt', '') || ' ' ||
+          coalesce(data->>'category', '') || ' ' ||
+          coalesce(data->>'subcategory', '') || ' ' ||
+          coalesce(data->>'tags', '')
+        ),
+        q
+      ) desc, data->>'publishedAt' desc
+      limit 20
+      `,
+      [query],
+    ),
+    pool.query<{ data: import("@/types").EventItem }>(
+      `
+      select data
+      from events, websearch_to_tsquery('english', $1) q
+      where status = 'published'
+        and to_tsvector('english',
+          coalesce(data->>'title', '') || ' ' ||
+          coalesce(data->>'description', '') || ' ' ||
+          coalesce(data->>'category', '') || ' ' ||
+          coalesce(data->>'locationName', '') || ' ' ||
+          coalesce(data->>'address', '')
+        ) @@ q
+      order by data->>'startDate' asc
+      limit 20
+      `,
+      [query],
+    ),
+    pool.query<{ data: import("@/types").Listing }>(
+      `
+      select data
+      from listings, websearch_to_tsquery('english', $1) q
+      where to_tsvector('english',
+          coalesce(data->>'name', '') || ' ' ||
+          coalesce(data->>'description', '') || ' ' ||
+          coalesce(data->>'category', '') || ' ' ||
+          coalesce(data->>'area', '') || ' ' ||
+          coalesce(data->>'tags', '')
+        ) @@ q
+      order by (data->>'isFeatured')::boolean desc, data->>'name' asc
+      limit 20
+      `,
+      [query],
+    ),
+    pool.query<{ data: import("@/types").Offer }>(
+      `
+      select data
+      from offers, websearch_to_tsquery('english', $1) q
+      where status = 'active'
+        and coalesce(nullif(data->>'startDate', '')::date, date '0001-01-01') <= current_date
+        and coalesce(nullif(data->>'endDate', '')::date, date '9999-12-31') >= current_date
+        and to_tsvector('english',
+          coalesce(data->>'title', '') || ' ' ||
+          coalesce(data->>'businessName', '') || ' ' ||
+          coalesce(data->>'description', '') || ' ' ||
+          coalesce(data->>'category', '')
+        ) @@ q
+      order by (data->>'isFeatured')::boolean desc, data->>'endDate' asc
+      limit 20
+      `,
+      [query],
+    ),
+  ]);
+  return {
+    articles: articles.rows.map((row) => row.data),
+    events: events.rows.map((row) => row.data),
+    listings: listings.rows.map((row) => row.data),
+    offers: offers.rows.map((row) => row.data),
+  };
+}
+
+export async function upsertAd(ad: import("@/types").AdPlacement) {
+  await upsertRecord("ads", ad.id, ad);
+}
+export async function deleteAd(id: string) {
+  await deleteRecord("ads", id);
+}
+
+export async function upsertMedia(asset: import("@/types").MediaAsset) {
+  await upsertRecord("media", asset.id, asset);
+}
+export async function deleteMedia(id: string) {
+  await deleteRecord("media", id);
+}
+
+export async function upsertCollection(collection: import("@/types").EditorialCollection) {
+  await upsertRecord("collections", collection.id, collection);
+}
+export async function deleteCollection(id: string) {
+  await deleteRecord("collections", id);
 }
 
 export async function resetDatabaseToEmpty() {
@@ -1154,6 +1324,21 @@ export async function getOwnedListings(userId: string) {
     [userId],
   );
   return result.rows.map((row) => row.data) as import("@/types").Listing[];
+}
+
+export async function getOwnedOffers(userId: string) {
+  await ensureSeeded();
+  const result = await getPool().query<{ data: unknown }>(
+    `
+    select offers.data
+    from offers
+    join listings on listings.id = offers.listing_id
+    where listings.data->>'ownerUserId' = $1
+    order by offers.updated_at desc
+    `,
+    [userId],
+  );
+  return result.rows.map((row) => row.data) as import("@/types").Offer[];
 }
 
 export async function updateOwnedListing(

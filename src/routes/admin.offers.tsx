@@ -15,6 +15,7 @@ import { SeoFields } from "@/components/admin/SeoFields";
 import { ValidationErrors } from "@/components/admin/ValidationErrors";
 import { readSeo } from "@/components/admin/seo-utils";
 import { setState, uid, useStore } from "@/lib/store";
+import { upsertListingFn, upsertOfferFn, deleteOfferFn } from "@/lib/content.functions";
 import type { Offer } from "@/types";
 
 export const Route = createFileRoute("/admin/offers")({ component: AdminOffers });
@@ -26,7 +27,7 @@ function AdminOffers() {
   const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const listingId = String(fd.get("listingId"));
@@ -53,41 +54,70 @@ function AdminOffers() {
       code: String(fd.get("code") || "") || undefined,
       startDate,
       endDate,
-      redemptionCount: 0,
+      redemptionCount: editing?.redemptionCount ?? 0,
       category: String(fd.get("category") || "Other"),
       status: fd.get("status") as Offer["status"],
       seo: readSeo(fd),
     };
-    setState((s) => ({
-      ...s,
-      offers: editing ? s.offers.map((x) => (x.id === v.id ? v : x)) : [v, ...s.offers],
-      listings: s.listings.map((listing) => {
-        if (listing.id === listingId && v.status === "active") {
-          return { ...listing, activeOfferId: v.id };
-        }
-        if (editing && listing.activeOfferId === editing.id && listing.id !== listingId) {
-          return { ...listing, activeOfferId: undefined };
-        }
-        if (listing.activeOfferId === v.id && v.status !== "active") {
-          return { ...listing, activeOfferId: undefined };
-        }
-        return listing;
+    const nextListings = listings.map((listing) => {
+      if (listing.id === listingId && v.status === "active") {
+        return { ...listing, activeOfferId: v.id };
+      }
+      if (editing && listing.activeOfferId === editing.id && listing.id !== listingId) {
+        return { ...listing, activeOfferId: undefined };
+      }
+      if (listing.activeOfferId === v.id && v.status !== "active") {
+        return { ...listing, activeOfferId: undefined };
+      }
+      return listing;
+    });
+    await upsertOfferFn({ data: v });
+    await Promise.all(
+      nextListings
+        .filter(
+          (listing) =>
+            listings.find((current) => current.id === listing.id)?.activeOfferId !==
+            listing.activeOfferId,
+        )
+        .map((listing) => upsertListingFn({ data: listing })),
+    );
+    setState(
+      (s) => ({
+        ...s,
+        offers: editing ? s.offers.map((x) => (x.id === v.id ? v : x)) : [v, ...s.offers],
+        listings: nextListings,
       }),
-    }));
+      { persist: false },
+    );
     setEditing(null);
     setErrors([]);
     setShowForm(false);
   };
 
-  const remove = (id: string) => {
-    if (confirm("Delete?"))
-      setState((s) => ({
-        ...s,
-        offers: s.offers.filter((o) => o.id !== id),
-        listings: s.listings.map((l) =>
-          l.activeOfferId === id ? { ...l, activeOfferId: undefined } : l,
-        ),
-      }));
+  const remove = async (id: string) => {
+    if (confirm("Delete?")) {
+      const nextListings = listings.map((l) =>
+        l.activeOfferId === id ? { ...l, activeOfferId: undefined } : l,
+      );
+      await deleteOfferFn({ data: { id } });
+      await Promise.all(
+        nextListings
+          .filter(
+            (listing) =>
+              listings.find((current) => current.id === listing.id)?.activeOfferId !==
+              listing.activeOfferId,
+          )
+          .map((listing) => upsertListingFn({ data: listing })),
+      );
+      setState(
+        (s) => ({
+          ...s,
+          offers: s.offers.filter((o) => o.id !== id),
+          listings: nextListings,
+        }),
+        { persist: false },
+      );
+    }
   };
   return (
     <div>
@@ -175,8 +205,10 @@ function AdminOffers() {
                       defaultValue={editing?.status ?? "active"}
                       className={adminInput}
                     >
+                      <option value="pending">Pending review</option>
                       <option value="active">Active</option>
                       <option value="expired">Expired</option>
+                      <option value="rejected">Rejected</option>
                     </select>
                   </AdminField>
                   <div className="grid grid-cols-2 gap-3">
@@ -225,8 +257,15 @@ function AdminOffers() {
         )}
         <AdminTable
           headers={["Offer", "Business", "Ends", "Status", "Actions"]}
-          rows={offers.map((o) => [
-            <span className="font-bold">{o.title}</span>,
+          rows={[...offers].sort(sortOffersForAdmin).map((o) => [
+            <div>
+              <span className="font-bold">{o.title}</span>
+              {o.submittedByUserId && (
+                <span className="mt-1 block font-mono text-[10px] uppercase text-muted-foreground">
+                  Owner submitted
+                </span>
+              )}
+            </div>,
             o.businessName,
             <span className="font-mono text-xs">{o.endDate}</span>,
             <AdminStatus status={o.status} />,
@@ -252,4 +291,12 @@ function AdminOffers() {
       </div>
     </div>
   );
+}
+
+function sortOffersForAdmin(a: Offer, b: Offer) {
+  const rank = { pending: 0, active: 1, expired: 2, rejected: 3 } satisfies Record<
+    Offer["status"],
+    number
+  >;
+  return rank[a.status] - rank[b.status] || b.endDate.localeCompare(a.endDate);
 }

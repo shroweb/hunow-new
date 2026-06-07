@@ -110,10 +110,8 @@ export const Route = createFileRoute("/api/cron/publish")({
 
             for (const campaign of campaigns.rows) {
               try {
-                const apiKey = process.env.RESEND_API_KEY;
-                if (!apiKey) {
-                  throw new Error("RESEND_API_KEY is not configured.");
-                }
+                const { getNewsletterSendConfig } = await import("@/lib/newsletter-config.server");
+                const { apiKey, from } = getNewsletterSendConfig();
 
                 const { getNewsletterRecipients } = await import("@/lib/db.server");
                 const recipients = await getNewsletterRecipients(campaign.segment);
@@ -131,7 +129,7 @@ export const Route = createFileRoute("/api/cron/publish")({
                       "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                      from: process.env.NEWSLETTER_FROM ?? "HU NOW <newsletter@hunow.co.uk>",
+                      from,
                       to: recipient.email,
                       subject: campaign.subject,
                       html,

@@ -1,5 +1,4 @@
 import { useSyncExternalStore } from "react";
-import { seedArticles, seedEvents, seedListings, seedMedia } from "@/data/seed";
 import type {
   AdPlacement,
   Article,
@@ -31,13 +30,13 @@ export type AppStore = Store;
 const STORAGE_KEY = "hunow:store:v3";
 
 const initial: Store = {
-  articles: seedArticles,
-  events: seedEvents,
-  listings: seedListings,
+  articles: [],
+  events: [],
+  listings: [],
   offers: [],
   submissions: [],
   ads: [],
-  media: seedMedia,
+  media: [],
   collections: [],
   newsletter: [],
 };
@@ -78,7 +77,7 @@ async function hydrateFromDatabase() {
     hydratePromise = import("./store.functions")
       .then(({ getStoreFromDatabase }) => getStoreFromDatabase())
       .then((remoteState) => {
-        // If DB returned empty collections, seed it and fall back to initial data
+        // Empty production databases stay empty until real content is added.
         const hasContent =
           remoteState.articles.length > 0 ||
           remoteState.events.length > 0 ||
@@ -94,12 +93,6 @@ async function hydrateFromDatabase() {
         // If there were pre-hydration state changes (e.g. an image upload that
         // completed before the DB fetch), save the merged result to the DB now.
         if (hadPending) persistToDatabase();
-        // If DB was empty, trigger a background seed
-        if (!hasContent) {
-          void import("./store.functions")
-            .then(({ saveStoreToDatabase }) => saveStoreToDatabase({ data: initial }))
-            .catch(() => {});
-        }
       })
       .catch((error) => {
         console.error("Unable to load database-backed store", error);

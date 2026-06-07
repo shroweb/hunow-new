@@ -162,11 +162,46 @@ create table if not exists app_records (
 
 create index if not exists articles_slug_idx on articles (slug);
 create index if not exists articles_status_idx on articles (status);
+create index if not exists articles_search_idx on articles using gin (
+  to_tsvector('english',
+    coalesce(data->>'title', '') || ' ' ||
+    coalesce(data->>'excerpt', '') || ' ' ||
+    coalesce(data->>'category', '') || ' ' ||
+    coalesce(data->>'subcategory', '') || ' ' ||
+    coalesce(data->>'tags', '')
+  )
+);
 create index if not exists events_slug_idx on events (slug);
 create index if not exists events_status_idx on events (status);
+create index if not exists events_search_idx on events using gin (
+  to_tsvector('english',
+    coalesce(data->>'title', '') || ' ' ||
+    coalesce(data->>'description', '') || ' ' ||
+    coalesce(data->>'category', '') || ' ' ||
+    coalesce(data->>'locationName', '') || ' ' ||
+    coalesce(data->>'address', '')
+  )
+);
 create index if not exists listings_slug_idx on listings (slug);
+create index if not exists listings_search_idx on listings using gin (
+  to_tsvector('english',
+    coalesce(data->>'name', '') || ' ' ||
+    coalesce(data->>'description', '') || ' ' ||
+    coalesce(data->>'category', '') || ' ' ||
+    coalesce(data->>'area', '') || ' ' ||
+    coalesce(data->>'tags', '')
+  )
+);
 create index if not exists offers_listing_id_idx on offers (listing_id);
 create index if not exists offers_status_idx on offers (status);
+create index if not exists offers_search_idx on offers using gin (
+  to_tsvector('english',
+    coalesce(data->>'title', '') || ' ' ||
+    coalesce(data->>'businessName', '') || ' ' ||
+    coalesce(data->>'description', '') || ' ' ||
+    coalesce(data->>'category', '')
+  )
+);
 create index if not exists submissions_status_idx on submissions (status);
 create index if not exists ads_status_idx on ads (status);
 create index if not exists media_url_idx on media (url);

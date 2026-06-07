@@ -31,3 +31,28 @@ export async function checkRateLimit(
     return true;
   }
 }
+
+export function getClientIp(request: Request): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  const forwarded = request.headers.get("forwarded");
+  const realIp = request.headers.get("x-real-ip");
+
+  if (forwardedFor) return forwardedFor.split(",")[0]?.trim() || "unknown";
+  if (realIp) return realIp.trim();
+  if (forwarded) {
+    const match = forwarded.match(/for="?([^;,"]+)/i);
+    if (match?.[1]) return match[1].trim();
+  }
+
+  return "unknown";
+}
+
+export async function checkRateLimitSet(
+  checks: Array<{ key: string; max: number; windowSec: number }>,
+): Promise<boolean> {
+  for (const check of checks) {
+    const allowed = await checkRateLimit(check.key, check.max, check.windowSec);
+    if (!allowed) return false;
+  }
+  return true;
+}

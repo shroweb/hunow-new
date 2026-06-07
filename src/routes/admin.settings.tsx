@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { AdminField, AdminHeader, adminBtn, adminInput } from "@/components/admin/AdminLayout";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
-import { resetStoreToEmpty } from "@/lib/store.functions";
+import { resetStoreToEmpty } from "@/lib/admin-maintenance.functions";
 import { setState } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/settings")({

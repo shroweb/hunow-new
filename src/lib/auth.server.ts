@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import process from "node:process";
 import pg from "pg";
 import { deleteCookie, getCookie, setCookie } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/start-server-core";
 
 export type AuthRole = "user" | "admin";
 
@@ -76,6 +77,14 @@ async function ensureAuthSchema() {
 export async function createAccount(input: { name: string; email: string; password: string }) {
   await ensureAuthSchema();
   const email = normaliseEmail(input.email);
+  const { checkRateLimitSet, getClientIp } = await import("./rate-limit.server");
+  const request = currentRequestForRateLimit();
+  const ip = request ? getClientIp(request) : "unknown";
+  const allowed = await checkRateLimitSet([
+    { key: `signup:${email}`, max: 3, windowSec: 60 * 60 },
+    { key: `signup-ip:${ip}`, max: 12, windowSec: 60 * 60 },
+  ]);
+  if (!allowed) throw new Error("Too many sign-up attempts. Please wait an hour and try again.");
 
   // Optionally lock down self-registration to admin emails only
   if (process.env.DISABLE_SELF_REGISTRATION === "true" && !isConfiguredAdmin(email)) {
@@ -115,8 +124,13 @@ export async function createAccount(input: { name: string; email: string; passwo
 
 export async function signIn(input: { email: string; password: string }) {
   await ensureAuthSchema();
-  const { checkRateLimit } = await import("./rate-limit.server");
-  const allowed = await checkRateLimit(`signin:${normaliseEmail(input.email)}`, 5, 15 * 60);
+  const { checkRateLimitSet, getClientIp } = await import("./rate-limit.server");
+  const request = currentRequestForRateLimit();
+  const ip = request ? getClientIp(request) : "unknown";
+  const allowed = await checkRateLimitSet([
+    { key: `signin:${normaliseEmail(input.email)}`, max: 5, windowSec: 15 * 60 },
+    { key: `signin-ip:${ip}`, max: 30, windowSec: 15 * 60 },
+  ]);
   if (!allowed) throw new Error("Too many sign-in attempts. Please wait 15 minutes and try again.");
   const result = await getPool().query<{
     id: string;
@@ -175,8 +189,13 @@ export async function requireAdmin() {
 export async function requestPasswordReset(email: string) {
   await ensureAuthSchema();
   const normalised = normaliseEmail(email);
-  const { checkRateLimit } = await import("./rate-limit.server");
-  const allowed = await checkRateLimit(`pwreset:${normalised}`, 3, 60 * 60);
+  const { checkRateLimitSet, getClientIp } = await import("./rate-limit.server");
+  const request = currentRequestForRateLimit();
+  const ip = request ? getClientIp(request) : "unknown";
+  const allowed = await checkRateLimitSet([
+    { key: `pwreset:${normalised}`, max: 3, windowSec: 60 * 60 },
+    { key: `pwreset-ip:${ip}`, max: 10, windowSec: 60 * 60 },
+  ]);
   if (!allowed) throw new Error("Too many reset attempts. Please wait an hour and try again.");
   const userResult = await getPool().query<{ id: string }>(
     "select id from users where email = $1",
@@ -468,6 +487,14 @@ function isConfiguredAdmin(email: string) {
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean);
   return admins.includes(email);
+}
+
+function currentRequestForRateLimit() {
+  try {
+    return getRequest();
+  } catch {
+    return undefined;
+  }
 }
 
 async function createSession(userId: string) {

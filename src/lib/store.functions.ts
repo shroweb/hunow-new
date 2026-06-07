@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import process from "node:process";
 import { z } from "zod";
 
 import type { AppStore } from "./store";
@@ -14,6 +15,7 @@ const storeSchema = z.custom<AppStore>((value) => {
     Array.isArray(store.submissions) &&
     Array.isArray(store.ads) &&
     Array.isArray(store.media) &&
+    Array.isArray(store.collections) &&
     Array.isArray(store.newsletter) &&
     store.newsletter.every((email) => typeof email === "string")
   );
@@ -30,48 +32,14 @@ export const saveStoreToDatabase = createServerFn({ method: "POST" })
     const { requireAdmin } = await import("./auth.server");
     const { saveDatabaseStore } = await import("./db.server");
     await requireAdmin();
+    if (
+      process.env.NODE_ENV === "production" &&
+      process.env.HUNOW_ALLOW_FULL_STORE_SAVE !== "true"
+    ) {
+      throw new Error(
+        "Full-store saves are disabled in production. Use targeted admin writes instead.",
+      );
+    }
     await saveDatabaseStore(data);
     return { ok: true };
-  });
-
-export const resetStoreToEmpty = createServerFn({ method: "POST" }).handler(async () => {
-  const { requireAdmin } = await import("./auth.server");
-  const { resetDatabaseToEmpty } = await import("./db.server");
-  await requireAdmin();
-  await resetDatabaseToEmpty();
-  return { ok: true };
-});
-
-export const fetchArticleBySlug = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ slug: z.string() }))
-  .handler(async ({ data }) => {
-    const { getArticleBySlug } = await import("./db.server");
-    return getArticleBySlug(data.slug);
-  });
-
-export const fetchEventBySlug = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ slug: z.string() }))
-  .handler(async ({ data }) => {
-    const { getEventBySlug } = await import("./db.server");
-    return getEventBySlug(data.slug);
-  });
-
-export const fetchListingBySlug = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ slug: z.string() }))
-  .handler(async ({ data }) => {
-    const { getListingBySlug } = await import("./db.server");
-    return getListingBySlug(data.slug);
-  });
-
-export const trackAdEvent = createServerFn({ method: "POST" })
-  .inputValidator(
-    z.object({
-      adId: z.string().min(1),
-      eventType: z.enum(["impression", "click"]),
-    }),
-  )
-  .handler(async ({ data }) => {
-    const { recordAdEvent } = await import("./db.server");
-    const ad = await recordAdEvent(data.adId, data.eventType);
-    return { ok: true, ad };
   });

@@ -7,7 +7,7 @@ import { SaveButton } from "@/components/SaveButton";
 import { ShareMenu } from "@/components/ShareMenu";
 import { downloadICS, googleCalUrl } from "@/lib/ics";
 import { useStore } from "@/lib/store";
-import { fetchEventBySlug } from "@/lib/store.functions";
+import { fetchEventBySlug } from "@/lib/content-read.functions";
 import { getEventRsvp, toggleRsvp } from "@/lib/rsvp.functions";
 import { addToHistory } from "@/lib/reading-history";
 import { autoLink } from "@/lib/autolink";

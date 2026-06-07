@@ -12,7 +12,7 @@ import { SeriesNav } from "@/components/SeriesNav";
 import { useStore } from "@/lib/store";
 import { addToHistory } from "@/lib/reading-history";
 import { authorSlug } from "@/lib/authors";
-import { fetchArticleBySlug } from "@/lib/store.functions";
+import { fetchArticleBySlug } from "@/lib/content-read.functions";
 import { findTaxonomy, articlePath } from "@/lib/taxonomy";
 import { img } from "@/data/seed";
 import { subscribeNewsletter } from "@/lib/public.functions";

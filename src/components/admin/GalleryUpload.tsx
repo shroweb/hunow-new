@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { img } from "@/data/seed";
+import { upsertMediaFn } from "@/lib/content.functions";
 import { uploadImage } from "@/lib/media.functions";
 import { setState, uid, useStore } from "@/lib/store";
 
@@ -32,20 +33,16 @@ export function GalleryUpload({ name, defaultValue = [], label = "Gallery images
       const dataUrl = await readFileAsDataUrl(file);
       const result = await uploadImage({ data: { fileName: file.name, dataUrl } });
       addImage(result.url);
-      setState((s) => ({
-        ...s,
-        media: [
-          {
-            id: uid(),
-            url: result.url,
-            fileName: file.name,
-            alt: label,
-            focalPoint: "center",
-            createdAt: new Date().toISOString().slice(0, 10),
-          },
-          ...s.media,
-        ],
-      }));
+      const asset = {
+        id: uid(),
+        url: result.url,
+        fileName: file.name,
+        alt: label,
+        focalPoint: "center" as const,
+        createdAt: new Date().toISOString().slice(0, 10),
+      };
+      await upsertMediaFn({ data: asset });
+      setState((s) => ({ ...s, media: [asset, ...s.media] }), { persist: false });
     } catch (uploadError) {
       console.error(uploadError);
       const msg = uploadError instanceof Error ? uploadError.message : String(uploadError);

@@ -9,7 +9,7 @@ import { Gallery } from "@/components/Lightbox";
 import { openStatus, formatWeek } from "@/lib/hours";
 import { addToHistory } from "@/lib/reading-history";
 import { useStore } from "@/lib/store";
-import { fetchListingBySlug } from "@/lib/store.functions";
+import { fetchListingBySlug } from "@/lib/content-read.functions";
 import { autoLink } from "@/lib/autolink";
 import {
   getListingReviews,

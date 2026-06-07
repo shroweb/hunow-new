@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
-import { fetchArticleBySlug } from "@/lib/store.functions";
+import { fetchArticleBySlug } from "@/lib/content-read.functions";
 import { articlePath } from "@/lib/taxonomy";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard, ListingCard } from "@/components/cards";

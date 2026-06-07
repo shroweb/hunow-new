@@ -8,12 +8,14 @@ import {
   postListingUpdateFn,
   deleteListingUpdateFn,
   getListingReviewsForOwner,
+  getBusinessOffers,
+  upsertBusinessOffer,
 } from "@/lib/business.functions";
-import type { Listing } from "@/types";
+import type { Listing, Offer } from "@/types";
 import type { ListingUpdateRow } from "@/lib/db.server";
 import type { Review } from "@/lib/reviews.functions";
 
-type Tab = "details" | "updates" | "reviews";
+type Tab = "details" | "offers" | "updates" | "reviews";
 
 export const Route = createFileRoute("/business/listings")({
   loader: async () => ({ listings: await getBusinessListings() }),
@@ -27,17 +29,21 @@ function BusinessListings() {
   const [tab, setTab] = useState<Tab>("details");
   const [detailStatus, setDetailStatus] = useState("");
   const [updates, setUpdates] = useState<ListingUpdateRow[]>([]);
+  const [offers, setOffers] = useState<Offer[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingTab, setLoadingTab] = useState(false);
   const [newUpdate, setNewUpdate] = useState("");
   const [postingUpdate, setPostingUpdate] = useState(false);
+  const [offerStatus, setOfferStatus] = useState("");
 
   async function selectListing(listing: Listing) {
     setSelected(listing);
     setTab("details");
     setDetailStatus("");
     setUpdates([]);
+    setOffers([]);
     setReviews([]);
+    setOfferStatus("");
   }
 
   async function switchTab(next: Tab) {
@@ -47,6 +53,14 @@ function BusinessListings() {
       setLoadingTab(true);
       try {
         setUpdates(await getListingUpdatesForOwner({ data: { listingId: selected.id } }));
+      } finally {
+        setLoadingTab(false);
+      }
+    }
+    if (next === "offers" && offers.length === 0) {
+      setLoadingTab(true);
+      try {
+        setOffers(await getBusinessOffers());
       } finally {
         setLoadingTab(false);
       }
@@ -96,6 +110,32 @@ function BusinessListings() {
       setNewUpdate("");
     } finally {
       setPostingUpdate(false);
+    }
+  }
+
+  async function onSubmitOffer(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!selected) return;
+    const fd = new FormData(e.currentTarget);
+    setOfferStatus("Submitting for review...");
+    try {
+      const offer = await upsertBusinessOffer({
+        data: {
+          listingId: selected.id,
+          title: String(fd.get("title") || ""),
+          description: String(fd.get("description") || ""),
+          terms: String(fd.get("terms") || ""),
+          code: String(fd.get("code") || ""),
+          startDate: String(fd.get("startDate") || ""),
+          endDate: String(fd.get("endDate") || ""),
+          category: String(fd.get("category") || selected.category),
+        },
+      });
+      setOffers((current) => [offer, ...current.filter((item) => item.id !== offer.id)]);
+      e.currentTarget.reset();
+      setOfferStatus("Submitted. HU NOW will review it before it appears publicly.");
+    } catch (err) {
+      setOfferStatus(err instanceof Error ? err.message : "Unable to submit offer.");
     }
   }
 
@@ -155,7 +195,7 @@ function BusinessListings() {
           <div className="space-y-0">
             {/* Tabs */}
             <div className="flex border-b-2 border-foreground mb-0">
-              {(["details", "updates", "reviews"] as Tab[]).map((t) => (
+              {(["details", "offers", "updates", "reviews"] as Tab[]).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -211,6 +251,123 @@ function BusinessListings() {
                   {detailStatus && <span className="text-sm font-bold">{detailStatus}</span>}
                 </div>
               </form>
+            )}
+
+            {/* Offers tab */}
+            {tab === "offers" && (
+              <div className="border-2 border-t-0 border-foreground bg-white p-6 space-y-6">
+                <div>
+                  <h2 className="font-display text-3xl uppercase mb-1">{selected.name}</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Submit offers for HU NOW review. Approved offers appear on your listing and the
+                    offers page.
+                  </p>
+                </div>
+                <form
+                  onSubmit={onSubmitOffer}
+                  className="space-y-4 border border-foreground/15 p-4"
+                >
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <Field label="Offer title">
+                      <input
+                        name="title"
+                        required
+                        maxLength={120}
+                        placeholder="20% off weekday lunch"
+                        className={fieldClass}
+                      />
+                    </Field>
+                    <Field label="Category">
+                      <input
+                        name="category"
+                        defaultValue={selected.category}
+                        required
+                        maxLength={80}
+                        className={fieldClass}
+                      />
+                    </Field>
+                  </div>
+                  <Field label="Description">
+                    <textarea
+                      name="description"
+                      required
+                      rows={3}
+                      maxLength={700}
+                      placeholder="Short, clear copy for customers."
+                      className={fieldClass}
+                    />
+                  </Field>
+                  <Field label="Terms">
+                    <textarea
+                      name="terms"
+                      rows={2}
+                      maxLength={1000}
+                      placeholder="Optional terms, dates, exclusions or booking notes."
+                      className={fieldClass}
+                    />
+                  </Field>
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <Field label="Code">
+                      <input
+                        name="code"
+                        maxLength={80}
+                        placeholder="Optional"
+                        className={fieldClass}
+                      />
+                    </Field>
+                    <Field label="Start date">
+                      <input name="startDate" type="date" required className={fieldClass} />
+                    </Field>
+                    <Field label="End date">
+                      <input name="endDate" type="date" required className={fieldClass} />
+                    </Field>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-4">
+                    <button className="bg-foreground text-background px-6 py-3 font-bold uppercase tracking-widest text-xs">
+                      Submit Offer
+                    </button>
+                    {offerStatus && <span className="text-sm font-bold">{offerStatus}</span>}
+                  </div>
+                </form>
+
+                {loadingTab ? (
+                  <p className="text-sm text-muted-foreground">Loading…</p>
+                ) : offers.filter((offer) => offer.listingId === selected.id).length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No offers submitted yet.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {offers
+                      .filter((offer) => offer.listingId === selected.id)
+                      .map((offer) => (
+                        <div
+                          key={offer.id}
+                          className="border border-foreground/15 p-4 flex gap-4 justify-between"
+                        >
+                          <div>
+                            <div className="font-bold">{offer.title}</div>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {offer.description}
+                            </p>
+                            <p className="font-mono text-[10px] uppercase text-muted-foreground mt-2">
+                              {offer.startDate} to {offer.endDate}
+                            </p>
+                          </div>
+                          <span
+                            className={`h-fit font-mono text-[10px] uppercase px-2 py-1 ${
+                              offer.status === "active"
+                                ? "bg-foreground text-background"
+                                : offer.status === "rejected"
+                                  ? "border border-red-500 text-red-600"
+                                  : "border border-foreground/30"
+                            }`}
+                          >
+                            {offer.status}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Updates tab */}

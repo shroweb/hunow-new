@@ -11,6 +11,7 @@ import {
 } from "@/components/admin/AdminLayout";
 import { img } from "@/data/seed";
 import { setState, useStore } from "@/lib/store";
+import { deleteMediaFn, upsertMediaFn } from "@/lib/content.functions";
 import type { MediaAsset } from "@/types";
 
 export const Route = createFileRoute("/admin/media")({ component: AdminMedia });
@@ -19,7 +20,7 @@ function AdminMedia() {
   const media = useStore((s) => s.media);
   const [editing, setEditing] = useState<MediaAsset | null>(null);
 
-  const save = (e: FormEvent<HTMLFormElement>) => {
+  const save = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editing) return;
     const fd = new FormData(e.currentTarget);
@@ -31,14 +32,18 @@ function AdminMedia() {
       credit: String(fd.get("credit") || "") || undefined,
       focalPoint: String(fd.get("focalPoint") || "") || undefined,
     };
-    setState((s) => ({
-      ...s,
-      media: s.media.map((item) => (item.id === asset.id ? asset : item)),
-    }));
+    await upsertMediaFn({ data: asset });
+    setState(
+      (s) => ({
+        ...s,
+        media: s.media.map((item) => (item.id === asset.id ? asset : item)),
+      }),
+      { persist: false },
+    );
     setEditing(null);
   };
 
-  const remove = (asset: MediaAsset) => {
+  const remove = async (asset: MediaAsset) => {
     if (
       !confirm(
         `Delete ${asset.fileName} from the media library? Existing content fields are not changed.`,
@@ -46,7 +51,10 @@ function AdminMedia() {
     ) {
       return;
     }
-    setState((s) => ({ ...s, media: s.media.filter((item) => item.id !== asset.id) }));
+    await deleteMediaFn({ data: { id: asset.id } });
+    setState((s) => ({ ...s, media: s.media.filter((item) => item.id !== asset.id) }), {
+      persist: false,
+    });
   };
 
   return (

@@ -23,6 +23,19 @@ export const Route = createFileRoute("/api/v1/auth/register")({
           const pool = getPool();
 
           const email = body.email.trim().toLowerCase();
+          const { checkRateLimitSet, getClientIp } = await import("@/lib/rate-limit.server");
+          const ip = getClientIp(request);
+          const allowed = await checkRateLimitSet([
+            { key: `app-register:${email}`, max: 3, windowSec: 60 * 60 },
+            { key: `app-register-ip:${ip}`, max: 12, windowSec: 60 * 60 },
+          ]);
+          if (!allowed) {
+            return Response.json(
+              { error: "Too many sign-up attempts. Wait an hour and try again." },
+              { status: 429 },
+            );
+          }
+
           const existing = await pool.query("select id from users where email = $1", [email]);
           if (existing.rowCount && existing.rowCount > 0) {
             return Response.json(

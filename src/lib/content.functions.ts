@@ -5,7 +5,15 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import type { Article, EventItem, Listing, Offer } from "@/types";
+import type {
+  AdPlacement,
+  Article,
+  EditorialCollection,
+  EventItem,
+  Listing,
+  MediaAsset,
+  Offer,
+} from "@/types";
 
 // ---- Articles ----
 
@@ -103,4 +111,79 @@ export const deleteOfferFn = createServerFn({ method: "POST" })
     await requireAdmin();
     await deleteOffer(data.id);
     return { ok: true };
+  });
+
+// ---- Ads ----
+
+export const upsertAdFn = createServerFn({ method: "POST" })
+  .inputValidator(z.custom<AdPlacement>())
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { upsertAd } = await import("./db.server");
+    await requireAdmin();
+    await upsertAd(data);
+    return { ok: true };
+  });
+
+export const deleteAdFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { deleteAd } = await import("./db.server");
+    await requireAdmin();
+    await deleteAd(data.id);
+    return { ok: true };
+  });
+
+// ---- Media ----
+
+export const upsertMediaFn = createServerFn({ method: "POST" })
+  .inputValidator(z.custom<MediaAsset>())
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { upsertMedia } = await import("./db.server");
+    await requireAdmin();
+    await upsertMedia(data);
+    return { ok: true };
+  });
+
+export const deleteMediaFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { deleteMedia } = await import("./db.server");
+    await requireAdmin();
+    await deleteMedia(data.id);
+    return { ok: true };
+  });
+
+// ---- Collections ----
+
+export const upsertCollectionFn = createServerFn({ method: "POST" })
+  .inputValidator(z.custom<EditorialCollection>())
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { upsertCollection } = await import("./db.server");
+    await requireAdmin();
+    await upsertCollection(data);
+    return { ok: true };
+  });
+
+export const deleteCollectionFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { deleteCollection } = await import("./db.server");
+    await requireAdmin();
+    await deleteCollection(data.id);
+    return { ok: true };
+  });
+
+// ---- Search ----
+
+export const searchContentFn = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ query: z.string().max(100) }))
+  .handler(async ({ data }) => {
+    const { searchContent } = await import("./db.server");
+    return searchContent(data.query);
   });
