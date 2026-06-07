@@ -379,29 +379,72 @@ function Picker({
   value: string[];
   onChange: (ids: string[]) => void;
 }) {
+  const [query, setQuery] = useState("");
+
+  const filtered = query
+    ? items.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
+    : items;
+
+  // Selected items first, then unselected
+  const sorted = [
+    ...filtered.filter((item) => value.includes(item.id)),
+    ...filtered.filter((item) => !value.includes(item.id)),
+  ];
+
   return (
     <section className="border-2 border-foreground bg-white p-6">
-      <h3 className="font-display text-2xl uppercase mb-4">{title}</h3>
-      <div className="grid md:grid-cols-2 gap-2">
-        {items.map((item) => (
-          <label key={item.id} className="flex gap-3 border border-border p-3 text-sm">
-            <input
-              type="checkbox"
-              checked={value.includes(item.id)}
-              onChange={(event) =>
-                onChange(
-                  event.target.checked ? [...value, item.id] : value.filter((id) => id !== item.id),
-                )
-              }
-            />
-            <span>
-              <span className="block font-bold">{item.title}</span>
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">
-                {item.meta}
-              </span>
-            </span>
-          </label>
-        ))}
+      <div className="flex items-baseline justify-between mb-4">
+        <h3 className="font-display text-2xl uppercase">{title}</h3>
+        {value.length > 0 && (
+          <span className="font-mono text-[10px] uppercase tracking-widest bg-foreground text-background px-2 py-0.5">
+            {value.length} selected
+          </span>
+        )}
+      </div>
+      <input
+        type="search"
+        placeholder={`Filter ${title.toLowerCase()}…`}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="w-full border border-border px-3 py-2 text-sm mb-3 bg-background focus:outline-none focus:border-foreground"
+      />
+      <div className="grid md:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+        {sorted.length === 0 ? (
+          <p className="text-sm text-muted-foreground col-span-2 py-2">No results.</p>
+        ) : (
+          sorted.map((item) => {
+            const checked = value.includes(item.id);
+            return (
+              <label
+                key={item.id}
+                className={`flex gap-3 border p-3 text-sm cursor-pointer transition-colors ${
+                  checked
+                    ? "border-foreground bg-foreground/5"
+                    : "border-border bg-background hover:border-foreground/50"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={(event) =>
+                    onChange(
+                      event.target.checked
+                        ? [...value, item.id]
+                        : value.filter((id) => id !== item.id),
+                    )
+                  }
+                  className="mt-0.5 shrink-0"
+                />
+                <span>
+                  <span className="block font-bold leading-snug">{item.title}</span>
+                  <span className="font-mono text-[10px] uppercase text-muted-foreground">
+                    {item.meta}
+                  </span>
+                </span>
+              </label>
+            );
+          })
+        )}
       </div>
     </section>
   );
