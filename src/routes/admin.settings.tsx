@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { AdminField, AdminHeader, adminBtn, adminInput } from "@/components/admin/AdminLayout";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
-import { resetStoreToEmpty } from "@/lib/admin-maintenance.functions";
+import { resetStoreToEmpty, exportAllDataFn } from "@/lib/admin-maintenance.functions";
 import { setState } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/settings")({
@@ -124,6 +124,24 @@ function AdminSettings() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [resetConfirm, setResetConfirm] = useState("");
+  const [exporting, setExporting] = useState(false);
+
+  const onExport = async () => {
+    setExporting(true);
+    try {
+      const data = await exportAllDataFn();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `hunow-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -143,12 +161,7 @@ function AdminSettings() {
   };
 
   const onReset = async () => {
-    const first = confirm(
-      "This will permanently delete ALL articles, events, places, media and other content. The site will be completely empty. Are you sure?",
-    );
-    if (!first) return;
-    const second = confirm("Last chance — this cannot be undone. Reset everything?");
-    if (!second) return;
+    if (resetConfirm !== "RESET") return;
     setResetting(true);
     try {
       // Wipe everything on the server
@@ -229,8 +242,25 @@ function AdminSettings() {
           </div>
         </form>
 
+        {/* Backup */}
+        <div className="mt-12 border border-border p-6">
+          <div className="font-bold text-sm uppercase tracking-wide mb-1">Data backup</div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Download a full JSON backup of all content and subscribers. Store it somewhere safe
+            before making large changes.
+          </p>
+          <button
+            type="button"
+            onClick={onExport}
+            disabled={exporting}
+            className={`${adminBtn} disabled:opacity-50`}
+          >
+            {exporting ? "Exporting…" : "Export JSON backup"}
+          </button>
+        </div>
+
         {/* Danger zone */}
-        <div className="mt-12 border-2 border-red-600 p-6">
+        <div className="mt-6 border-2 border-red-600 p-6">
           <div className="font-bold text-sm uppercase tracking-wide text-red-600 mb-1">
             Danger zone
           </div>
@@ -238,11 +268,23 @@ function AdminSettings() {
             Permanently deletes all articles, events, places, media and other content. The site will
             be completely empty. This cannot be undone.
           </p>
+          <div className="mb-3">
+            <label className="block text-xs font-mono uppercase tracking-wide text-muted-foreground mb-1.5">
+              Type RESET to confirm
+            </label>
+            <input
+              type="text"
+              value={resetConfirm}
+              onChange={(e) => setResetConfirm(e.target.value)}
+              placeholder="RESET"
+              className={`${adminInput} w-48`}
+            />
+          </div>
           <button
             type="button"
             onClick={onReset}
-            disabled={resetting}
-            className="bg-red-600 text-white px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-red-700 transition-colors disabled:opacity-50"
+            disabled={resetting || resetConfirm !== "RESET"}
+            className="bg-red-600 text-white px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {resetting ? "Resetting…" : "Reset all content"}
           </button>

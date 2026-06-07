@@ -7,3 +7,16 @@ export const resetStoreToEmpty = createServerFn({ method: "POST" }).handler(asyn
   await resetDatabaseToEmpty();
   return { ok: true };
 });
+
+export const exportAllDataFn = createServerFn({ method: "GET" }).handler(async () => {
+  const { requireAdmin } = await import("./auth.server");
+  const { getDatabaseStore } = await import("./db.server");
+  const { getNewsletterSubscribers } = await import("./newsletter.functions");
+  await requireAdmin();
+  const [store, subscriberData] = await Promise.all([getDatabaseStore(), getNewsletterSubscribers()]);
+  return {
+    exportedAt: new Date().toISOString(),
+    store,
+    subscribers: subscriberData.subscribers,
+  };
+});

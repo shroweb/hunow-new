@@ -530,6 +530,16 @@ async function seedIfEmpty() {
   const marker = await getPool().query("select 1 from db_initialized limit 1");
   if (marker.rowCount && marker.rowCount > 0) return;
 
+  // Second guard: if the marker was accidentally removed but real content exists,
+  // just restore the marker — never overwrite live data with seed data.
+  const hasContent = await getPool().query(
+    "select 1 from articles limit 1",
+  );
+  if (hasContent.rowCount && hasContent.rowCount > 0) {
+    await getPool().query("insert into db_initialized default values");
+    return;
+  }
+
   await saveDatabaseStore(
     (await legacyStore()) ?? (shouldSeedDemoContent() ? fallbackStore : emptyFallbackStore),
   );
