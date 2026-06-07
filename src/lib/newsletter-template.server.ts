@@ -169,14 +169,20 @@ function eventRow(event: EventItem, first = false) {
   const borderTop = first ? "" : "border-top:1px solid #d8d1c5;";
   return `
     <tr>
-      <td style="width:42%;padding:22px 0 22px 36px;vertical-align:top;${borderTop}">
-        <img src="${escapeHtml(imageUrl(event.featuredImage, 720, 520))}" alt="${escapeHtml(event.title)}" style="display:block;width:100%;max-width:100%;border:3px solid #080d2d;" />
-      </td>
-      <td style="padding:22px 36px 22px 18px;vertical-align:top;${borderTop}">
-        <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">${escapeHtml(event.category)} · ${escapeHtml(textDate(event.startDate))}</div>
-        <h3 style="margin:0 0 8px;font-family:Impact,'Arial Black',sans-serif;font-size:26px;line-height:.93;text-transform:uppercase;color:#080d2d;">${escapeHtml(event.title)}</h3>
-        <p style="color:#343a56;font-size:15px;line-height:1.5;margin:0 0 16px;">${escapeHtml(event.locationName)} · ${escapeHtml(event.price)}</p>
-        ${button("View event", `/events/${event.slug}`)}
+      <td style="padding:0 36px;${borderTop}">
+        <table width="100%" role="presentation" style="border-collapse:collapse;">
+          <tr>
+            <td style="width:38%;padding:20px 16px 20px 0;vertical-align:top;">
+              <img src="${escapeHtml(imageUrl(event.featuredImage, 560, 420))}" alt="${escapeHtml(event.title)}" style="display:block;width:100%;max-width:100%;border:3px solid #080d2d;" />
+            </td>
+            <td style="padding:20px 0 20px 0;vertical-align:top;">
+              <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">${escapeHtml(event.category)} · ${escapeHtml(textDate(event.startDate))}</div>
+              <h3 style="margin:0 0 8px;font-family:Impact,'Arial Black',sans-serif;font-size:22px;line-height:.93;text-transform:uppercase;color:#080d2d;">${escapeHtml(event.title)}</h3>
+              <p style="color:#343a56;font-size:14px;line-height:1.5;margin:0 0 14px;">${escapeHtml(event.locationName)} · ${escapeHtml(event.price)}</p>
+              ${button("View event", `/events/${event.slug}`)}
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
   `;
@@ -186,14 +192,20 @@ function listingRow(listing: Listing, first = false) {
   const borderTop = first ? "" : "border-top:1px solid #d8d1c5;";
   return `
     <tr>
-      <td style="width:42%;padding:22px 0 22px 36px;vertical-align:top;${borderTop}">
-        <img src="${escapeHtml(imageUrl(listing.featuredImage, 720, 520))}" alt="${escapeHtml(listing.name)}" style="display:block;width:100%;max-width:100%;border:3px solid #080d2d;" />
-      </td>
-      <td style="padding:22px 36px 22px 18px;vertical-align:top;${borderTop}">
-        <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">${escapeHtml(listing.category)} · ${escapeHtml(listing.area)}</div>
-        <h3 style="margin:0 0 8px;font-family:Impact,'Arial Black',sans-serif;font-size:26px;line-height:.93;text-transform:uppercase;color:#080d2d;">${escapeHtml(listing.name)}</h3>
-        <p style="color:#343a56;font-size:15px;line-height:1.5;margin:0 0 16px;">${escapeHtml(listing.description)}</p>
-        ${button("View place", `/places/${listing.slug}`)}
+      <td style="padding:0 36px;${borderTop}">
+        <table width="100%" role="presentation" style="border-collapse:collapse;">
+          <tr>
+            <td style="width:38%;padding:20px 16px 20px 0;vertical-align:top;">
+              <img src="${escapeHtml(imageUrl(listing.featuredImage, 560, 420))}" alt="${escapeHtml(listing.name)}" style="display:block;width:100%;max-width:100%;border:3px solid #080d2d;" />
+            </td>
+            <td style="padding:20px 0 20px 0;vertical-align:top;">
+              <div style="color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">${escapeHtml(listing.category)} · ${escapeHtml(listing.area)}</div>
+              <h3 style="margin:0 0 8px;font-family:Impact,'Arial Black',sans-serif;font-size:22px;line-height:.93;text-transform:uppercase;color:#080d2d;">${escapeHtml(listing.name)}</h3>
+              <p style="color:#343a56;font-size:14px;line-height:1.5;margin:0 0 14px;">${escapeHtml(listing.description)}</p>
+              ${button("View place", `/places/${listing.slug}`)}
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
   `;
