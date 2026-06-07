@@ -187,3 +187,12 @@ export const searchContentFn = createServerFn({ method: "GET" })
     const { searchContent } = await import("./db.server");
     return searchContent(data.query);
   });
+
+// ---- Eventbrite sync ----
+
+export const syncEventbriteFn = createServerFn({ method: "POST" }).handler(async () => {
+  const { requireAdmin } = await import("./auth.server");
+  await requireAdmin();
+  const { syncEventbriteEvents } = await import("./eventbrite.server");
+  return syncEventbriteEvents();
+});
