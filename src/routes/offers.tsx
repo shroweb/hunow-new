@@ -98,9 +98,7 @@ function Offers() {
               // Match listing by id first, fall back to matching by business name
               const listing =
                 listings.find((l) => l.id === o.listingId) ??
-                listings.find(
-                  (l) => l.name.toLowerCase() === o.businessName.toLowerCase(),
-                );
+                listings.find((l) => l.name.toLowerCase() === o.businessName.toLowerCase());
               const upcomingEvents = listing
                 ? events
                     .filter(
@@ -135,7 +133,11 @@ function Offers() {
                           void trackAnalyticsEvent({
                             data: { eventType: "offer_claim", path: "/offers", label: o.title },
                           }).catch(() => {});
-                          alert(o.code ? `Use code: ${o.code}` : "Offer claimed. Show this page in-store.");
+                          alert(
+                            o.code
+                              ? `Use code: ${o.code}`
+                              : "Offer claimed. Show this page in-store.",
+                          );
                         }}
                         className="mb-3 bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors w-full"
                       >

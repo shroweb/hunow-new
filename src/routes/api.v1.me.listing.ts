@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type { Listing, Offer } from "@/types";
+import { ACTIVE_OFFER_SQL } from "@/lib/api-offers";
 
 export const Route = createFileRoute("/api/v1/me/listing")({
   server: {
@@ -28,7 +29,9 @@ export const Route = createFileRoute("/api/v1/me/listing")({
           }
 
           const offersResult = await pool.query<{ data: Offer }>(
-            "select data from offers where listing_id = $1 and status = 'active' order by created_at desc",
+            `select data from offers o
+             where listing_id = $1 and ${ACTIVE_OFFER_SQL}
+             order by created_at desc`,
             [listing.id],
           );
           const offers = offersResult.rows.map((row) => ({

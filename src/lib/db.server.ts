@@ -395,6 +395,17 @@ create table if not exists app_redemptions (
 create index if not exists app_redemptions_card_id_idx on app_redemptions (card_id);
 create index if not exists app_redemptions_offer_id_idx on app_redemptions (offer_id);
 create index if not exists app_redemptions_redeemed_at_idx on app_redemptions (redeemed_at desc);
+
+create table if not exists app_push_subscriptions (
+  id text primary key,
+  user_id text not null references users(id) on delete cascade,
+  token text not null unique,
+  platform text,
+  permission_status text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists app_push_subscriptions_user_id_idx on app_push_subscriptions (user_id);
 `;
 
 export async function ensureSchema() {

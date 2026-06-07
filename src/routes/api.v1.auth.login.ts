@@ -4,7 +4,7 @@ export const Route = createFileRoute("/api/v1/auth/login")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const body = await request.json().catch(() => null) as {
+        const body = (await request.json().catch(() => null)) as {
           email?: string;
           password?: string;
         } | null;
@@ -34,18 +34,16 @@ export const Route = createFileRoute("/api/v1/auth/login")({
             role: string;
             app_role: string;
             password_hash: string;
-          }>(
-            "select id, email, name, role, app_role, password_hash from users where email = $1",
-            [email],
-          );
+          }>("select id, email, name, role, app_role, password_hash from users where email = $1", [
+            email,
+          ]);
           const user = result.rows[0];
           if (!user) {
             return Response.json({ error: "Invalid email or password" }, { status: 401 });
           }
 
-          const { verifyAppPassword, issueAppToken, getUserLoyaltyData } = await import(
-            "@/lib/app-auth.server"
-          );
+          const { verifyAppPassword, issueAppToken, getUserLoyaltyData } =
+            await import("@/lib/app-auth.server");
           const valid = await verifyAppPassword(body.password, user.password_hash);
           if (!valid) {
             return Response.json({ error: "Invalid email or password" }, { status: 401 });

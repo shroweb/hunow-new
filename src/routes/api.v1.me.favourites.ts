@@ -63,7 +63,7 @@ export const Route = createFileRoute("/api/v1/me/favourites")({
       },
 
       POST: async ({ request }) => {
-        const body = await request.json().catch(() => null) as {
+        const body = (await request.json().catch(() => null)) as {
           offer_id?: string;
           action?: "save" | "unsave";
         } | null;

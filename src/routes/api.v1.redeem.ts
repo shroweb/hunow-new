@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import crypto from "node:crypto";
 import type { Offer } from "@/types";
+import { ACTIVE_OFFER_SQL } from "@/lib/api-offers";
 
 const POINTS_PER_REDEMPTION = 35;
 
@@ -8,7 +9,7 @@ export const Route = createFileRoute("/api/v1/redeem")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const body = await request.json().catch(() => null) as {
+        const body = (await request.json().catch(() => null)) as {
           qr_token?: string;
           offer_id?: string;
         } | null;
@@ -25,16 +26,20 @@ export const Route = createFileRoute("/api/v1/redeem")({
           const businessUser = await getAppUser(request);
           if (!businessUser) return Response.json({ error: "Unauthorized" }, { status: 401 });
           if (businessUser.app_role !== "business") {
-            return Response.json({ error: "Only business accounts can redeem offers" }, { status: 403 });
+            return Response.json(
+              { error: "Only business accounts can redeem offers" },
+              { status: 403 },
+            );
           }
 
           // Look up the offer
           const offerResult = await pool.query<{ data: Offer }>(
-            "select data from offers where id = $1 and status = 'active' limit 1",
+            `select data from offers o where id = $1 and ${ACTIVE_OFFER_SQL} limit 1`,
             [body.offer_id],
           );
           const offer = offerResult.rows[0]?.data;
-          if (!offer) return Response.json({ error: "Offer not found or inactive" }, { status: 404 });
+          if (!offer)
+            return Response.json({ error: "Offer not found or inactive" }, { status: 404 });
 
           // Verify business user owns the listing this offer belongs to
           if (offer.listingId) {
@@ -81,7 +86,13 @@ export const Route = createFileRoute("/api/v1/redeem")({
 
             await client.query(
               "insert into app_redemptions (id, card_id, offer_id, listing_id, redeemed_by) values ($1, $2, $3, $4, $5)",
-              [crypto.randomUUID(), card.id, body.offer_id, offer.listingId ?? null, businessUser.id],
+              [
+                crypto.randomUUID(),
+                card.id,
+                body.offer_id,
+                offer.listingId ?? null,
+                businessUser.id,
+              ],
             );
 
             await client.query(
@@ -94,6 +105,29 @@ export const Route = createFileRoute("/api/v1/redeem")({
                 POINTS_PER_REDEMPTION,
                 `Redeemed: ${offer.title}`,
               ],
+            );
+
+            await client.query(
+              `update offers
+               set data = jsonb_set(
+                 data,
+                 '{redemptionCount}',
+                 to_jsonb(coalesce((data->>'redemptionCount')::int, 0) + 1),
+                 true
+               )
+               where id = $1`,
+              [body.offer_id],
+            );
+            await client.query(
+              `update app_records
+               set data = jsonb_set(
+                 data,
+                 '{redemptionCount}',
+                 to_jsonb(coalesce((data->>'redemptionCount')::int, 0) + 1),
+                 true
+               )
+               where collection = 'offers' and id = $1`,
+              [body.offer_id],
             );
 
             await client.query("commit");

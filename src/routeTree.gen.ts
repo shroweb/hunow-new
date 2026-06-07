@@ -71,7 +71,20 @@ import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminAdsRouteImport } from './routes/admin.ads'
 import { Route as TaxonomySlugRouteImport } from './routes/$taxonomy.$slug'
 import { Route as CSectionSubRouteImport } from './routes/c.$section.$sub'
+import { Route as ApiV1RedeemRouteImport } from './routes/api.v1.redeem'
+import { Route as ApiV1OffersRouteImport } from './routes/api.v1.offers'
+import { Route as ApiV1MeRouteImport } from './routes/api.v1.me'
+import { Route as ApiV1ListingsRouteImport } from './routes/api.v1.listings'
 import { Route as ApiCronPublishRouteImport } from './routes/api.cron.publish'
+import { Route as ApiV1OffersIdRouteImport } from './routes/api.v1.offers.$id'
+import { Route as ApiV1MeRedemptionsRouteImport } from './routes/api.v1.me.redemptions'
+import { Route as ApiV1MePushRouteImport } from './routes/api.v1.me.push'
+import { Route as ApiV1MeListingRouteImport } from './routes/api.v1.me.listing'
+import { Route as ApiV1MeFavouritesRouteImport } from './routes/api.v1.me.favourites'
+import { Route as ApiV1ListingsIdRouteImport } from './routes/api.v1.listings.$id'
+import { Route as ApiV1AuthRegisterRouteImport } from './routes/api.v1.auth.register'
+import { Route as ApiV1AuthLoginRouteImport } from './routes/api.v1.auth.login'
+import { Route as ApiV1AuthForgotPasswordRouteImport } from './routes/api.v1.auth.forgot-password'
 
 const WhatsOnRoute = WhatsOnRouteImport.update({
   id: '/whats-on',
@@ -383,9 +396,74 @@ const CSectionSubRoute = CSectionSubRouteImport.update({
   path: '/$sub',
   getParentRoute: () => CSectionRoute,
 } as any)
+const ApiV1RedeemRoute = ApiV1RedeemRouteImport.update({
+  id: '/api/v1/redeem',
+  path: '/api/v1/redeem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1OffersRoute = ApiV1OffersRouteImport.update({
+  id: '/api/v1/offers',
+  path: '/api/v1/offers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1MeRoute = ApiV1MeRouteImport.update({
+  id: '/api/v1/me',
+  path: '/api/v1/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1ListingsRoute = ApiV1ListingsRouteImport.update({
+  id: '/api/v1/listings',
+  path: '/api/v1/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCronPublishRoute = ApiCronPublishRouteImport.update({
   id: '/api/cron/publish',
   path: '/api/cron/publish',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1OffersIdRoute = ApiV1OffersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiV1OffersRoute,
+} as any)
+const ApiV1MeRedemptionsRoute = ApiV1MeRedemptionsRouteImport.update({
+  id: '/redemptions',
+  path: '/redemptions',
+  getParentRoute: () => ApiV1MeRoute,
+} as any)
+const ApiV1MePushRoute = ApiV1MePushRouteImport.update({
+  id: '/push',
+  path: '/push',
+  getParentRoute: () => ApiV1MeRoute,
+} as any)
+const ApiV1MeListingRoute = ApiV1MeListingRouteImport.update({
+  id: '/listing',
+  path: '/listing',
+  getParentRoute: () => ApiV1MeRoute,
+} as any)
+const ApiV1MeFavouritesRoute = ApiV1MeFavouritesRouteImport.update({
+  id: '/favourites',
+  path: '/favourites',
+  getParentRoute: () => ApiV1MeRoute,
+} as any)
+const ApiV1ListingsIdRoute = ApiV1ListingsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiV1ListingsRoute,
+} as any)
+const ApiV1AuthRegisterRoute = ApiV1AuthRegisterRouteImport.update({
+  id: '/api/v1/auth/register',
+  path: '/api/v1/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1AuthLoginRoute = ApiV1AuthLoginRouteImport.update({
+  id: '/api/v1/auth/login',
+  path: '/api/v1/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1AuthForgotPasswordRoute = ApiV1AuthForgotPasswordRouteImport.update({
+  id: '/api/v1/auth/forgot-password',
+  path: '/api/v1/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -452,7 +530,20 @@ export interface FileRoutesByFullPath {
   '/tag/$tag': typeof TagTagRoute
   '/admin/': typeof AdminIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
+  '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
+  '/api/v1/me': typeof ApiV1MeRouteWithChildren
+  '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
+  '/api/v1/redeem': typeof ApiV1RedeemRoute
   '/c/$section/$sub': typeof CSectionSubRoute
+  '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
+  '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
+  '/api/v1/auth/register': typeof ApiV1AuthRegisterRoute
+  '/api/v1/listings/$id': typeof ApiV1ListingsIdRoute
+  '/api/v1/me/favourites': typeof ApiV1MeFavouritesRoute
+  '/api/v1/me/listing': typeof ApiV1MeListingRoute
+  '/api/v1/me/push': typeof ApiV1MePushRoute
+  '/api/v1/me/redemptions': typeof ApiV1MeRedemptionsRoute
+  '/api/v1/offers/$id': typeof ApiV1OffersIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -516,7 +607,20 @@ export interface FileRoutesByTo {
   '/tag/$tag': typeof TagTagRoute
   '/admin': typeof AdminIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
+  '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
+  '/api/v1/me': typeof ApiV1MeRouteWithChildren
+  '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
+  '/api/v1/redeem': typeof ApiV1RedeemRoute
   '/c/$section/$sub': typeof CSectionSubRoute
+  '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
+  '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
+  '/api/v1/auth/register': typeof ApiV1AuthRegisterRoute
+  '/api/v1/listings/$id': typeof ApiV1ListingsIdRoute
+  '/api/v1/me/favourites': typeof ApiV1MeFavouritesRoute
+  '/api/v1/me/listing': typeof ApiV1MeListingRoute
+  '/api/v1/me/push': typeof ApiV1MePushRoute
+  '/api/v1/me/redemptions': typeof ApiV1MeRedemptionsRoute
+  '/api/v1/offers/$id': typeof ApiV1OffersIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -582,7 +686,20 @@ export interface FileRoutesById {
   '/tag/$tag': typeof TagTagRoute
   '/admin/': typeof AdminIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
+  '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
+  '/api/v1/me': typeof ApiV1MeRouteWithChildren
+  '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
+  '/api/v1/redeem': typeof ApiV1RedeemRoute
   '/c/$section/$sub': typeof CSectionSubRoute
+  '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
+  '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
+  '/api/v1/auth/register': typeof ApiV1AuthRegisterRoute
+  '/api/v1/listings/$id': typeof ApiV1ListingsIdRoute
+  '/api/v1/me/favourites': typeof ApiV1MeFavouritesRoute
+  '/api/v1/me/listing': typeof ApiV1MeListingRoute
+  '/api/v1/me/push': typeof ApiV1MePushRoute
+  '/api/v1/me/redemptions': typeof ApiV1MeRedemptionsRoute
+  '/api/v1/offers/$id': typeof ApiV1OffersIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -649,7 +766,20 @@ export interface FileRouteTypes {
     | '/tag/$tag'
     | '/admin/'
     | '/api/cron/publish'
+    | '/api/v1/listings'
+    | '/api/v1/me'
+    | '/api/v1/offers'
+    | '/api/v1/redeem'
     | '/c/$section/$sub'
+    | '/api/v1/auth/forgot-password'
+    | '/api/v1/auth/login'
+    | '/api/v1/auth/register'
+    | '/api/v1/listings/$id'
+    | '/api/v1/me/favourites'
+    | '/api/v1/me/listing'
+    | '/api/v1/me/push'
+    | '/api/v1/me/redemptions'
+    | '/api/v1/offers/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -713,7 +843,20 @@ export interface FileRouteTypes {
     | '/tag/$tag'
     | '/admin'
     | '/api/cron/publish'
+    | '/api/v1/listings'
+    | '/api/v1/me'
+    | '/api/v1/offers'
+    | '/api/v1/redeem'
     | '/c/$section/$sub'
+    | '/api/v1/auth/forgot-password'
+    | '/api/v1/auth/login'
+    | '/api/v1/auth/register'
+    | '/api/v1/listings/$id'
+    | '/api/v1/me/favourites'
+    | '/api/v1/me/listing'
+    | '/api/v1/me/push'
+    | '/api/v1/me/redemptions'
+    | '/api/v1/offers/$id'
   id:
     | '__root__'
     | '/'
@@ -778,7 +921,20 @@ export interface FileRouteTypes {
     | '/tag/$tag'
     | '/admin/'
     | '/api/cron/publish'
+    | '/api/v1/listings'
+    | '/api/v1/me'
+    | '/api/v1/offers'
+    | '/api/v1/redeem'
     | '/c/$section/$sub'
+    | '/api/v1/auth/forgot-password'
+    | '/api/v1/auth/login'
+    | '/api/v1/auth/register'
+    | '/api/v1/listings/$id'
+    | '/api/v1/me/favourites'
+    | '/api/v1/me/listing'
+    | '/api/v1/me/push'
+    | '/api/v1/me/redemptions'
+    | '/api/v1/offers/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -817,6 +973,13 @@ export interface RootRouteChildren {
   ProfileUserIdRoute: typeof ProfileUserIdRoute
   TagTagRoute: typeof TagTagRoute
   ApiCronPublishRoute: typeof ApiCronPublishRoute
+  ApiV1ListingsRoute: typeof ApiV1ListingsRouteWithChildren
+  ApiV1MeRoute: typeof ApiV1MeRouteWithChildren
+  ApiV1OffersRoute: typeof ApiV1OffersRouteWithChildren
+  ApiV1RedeemRoute: typeof ApiV1RedeemRoute
+  ApiV1AuthForgotPasswordRoute: typeof ApiV1AuthForgotPasswordRoute
+  ApiV1AuthLoginRoute: typeof ApiV1AuthLoginRoute
+  ApiV1AuthRegisterRoute: typeof ApiV1AuthRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1255,11 +1418,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSectionSubRouteImport
       parentRoute: typeof CSectionRoute
     }
+    '/api/v1/redeem': {
+      id: '/api/v1/redeem'
+      path: '/api/v1/redeem'
+      fullPath: '/api/v1/redeem'
+      preLoaderRoute: typeof ApiV1RedeemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/offers': {
+      id: '/api/v1/offers'
+      path: '/api/v1/offers'
+      fullPath: '/api/v1/offers'
+      preLoaderRoute: typeof ApiV1OffersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/me': {
+      id: '/api/v1/me'
+      path: '/api/v1/me'
+      fullPath: '/api/v1/me'
+      preLoaderRoute: typeof ApiV1MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/listings': {
+      id: '/api/v1/listings'
+      path: '/api/v1/listings'
+      fullPath: '/api/v1/listings'
+      preLoaderRoute: typeof ApiV1ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/cron/publish': {
       id: '/api/cron/publish'
       path: '/api/cron/publish'
       fullPath: '/api/cron/publish'
       preLoaderRoute: typeof ApiCronPublishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/offers/$id': {
+      id: '/api/v1/offers/$id'
+      path: '/$id'
+      fullPath: '/api/v1/offers/$id'
+      preLoaderRoute: typeof ApiV1OffersIdRouteImport
+      parentRoute: typeof ApiV1OffersRoute
+    }
+    '/api/v1/me/redemptions': {
+      id: '/api/v1/me/redemptions'
+      path: '/redemptions'
+      fullPath: '/api/v1/me/redemptions'
+      preLoaderRoute: typeof ApiV1MeRedemptionsRouteImport
+      parentRoute: typeof ApiV1MeRoute
+    }
+    '/api/v1/me/push': {
+      id: '/api/v1/me/push'
+      path: '/push'
+      fullPath: '/api/v1/me/push'
+      preLoaderRoute: typeof ApiV1MePushRouteImport
+      parentRoute: typeof ApiV1MeRoute
+    }
+    '/api/v1/me/listing': {
+      id: '/api/v1/me/listing'
+      path: '/listing'
+      fullPath: '/api/v1/me/listing'
+      preLoaderRoute: typeof ApiV1MeListingRouteImport
+      parentRoute: typeof ApiV1MeRoute
+    }
+    '/api/v1/me/favourites': {
+      id: '/api/v1/me/favourites'
+      path: '/favourites'
+      fullPath: '/api/v1/me/favourites'
+      preLoaderRoute: typeof ApiV1MeFavouritesRouteImport
+      parentRoute: typeof ApiV1MeRoute
+    }
+    '/api/v1/listings/$id': {
+      id: '/api/v1/listings/$id'
+      path: '/$id'
+      fullPath: '/api/v1/listings/$id'
+      preLoaderRoute: typeof ApiV1ListingsIdRouteImport
+      parentRoute: typeof ApiV1ListingsRoute
+    }
+    '/api/v1/auth/register': {
+      id: '/api/v1/auth/register'
+      path: '/api/v1/auth/register'
+      fullPath: '/api/v1/auth/register'
+      preLoaderRoute: typeof ApiV1AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/auth/login': {
+      id: '/api/v1/auth/login'
+      path: '/api/v1/auth/login'
+      fullPath: '/api/v1/auth/login'
+      preLoaderRoute: typeof ApiV1AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/auth/forgot-password': {
+      id: '/api/v1/auth/forgot-password'
+      path: '/api/v1/auth/forgot-password'
+      fullPath: '/api/v1/auth/forgot-password'
+      preLoaderRoute: typeof ApiV1AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -1384,6 +1638,47 @@ const CSectionRouteWithChildren = CSectionRoute._addFileChildren(
   CSectionRouteChildren,
 )
 
+interface ApiV1ListingsRouteChildren {
+  ApiV1ListingsIdRoute: typeof ApiV1ListingsIdRoute
+}
+
+const ApiV1ListingsRouteChildren: ApiV1ListingsRouteChildren = {
+  ApiV1ListingsIdRoute: ApiV1ListingsIdRoute,
+}
+
+const ApiV1ListingsRouteWithChildren = ApiV1ListingsRoute._addFileChildren(
+  ApiV1ListingsRouteChildren,
+)
+
+interface ApiV1MeRouteChildren {
+  ApiV1MeFavouritesRoute: typeof ApiV1MeFavouritesRoute
+  ApiV1MeListingRoute: typeof ApiV1MeListingRoute
+  ApiV1MePushRoute: typeof ApiV1MePushRoute
+  ApiV1MeRedemptionsRoute: typeof ApiV1MeRedemptionsRoute
+}
+
+const ApiV1MeRouteChildren: ApiV1MeRouteChildren = {
+  ApiV1MeFavouritesRoute: ApiV1MeFavouritesRoute,
+  ApiV1MeListingRoute: ApiV1MeListingRoute,
+  ApiV1MePushRoute: ApiV1MePushRoute,
+  ApiV1MeRedemptionsRoute: ApiV1MeRedemptionsRoute,
+}
+
+const ApiV1MeRouteWithChildren =
+  ApiV1MeRoute._addFileChildren(ApiV1MeRouteChildren)
+
+interface ApiV1OffersRouteChildren {
+  ApiV1OffersIdRoute: typeof ApiV1OffersIdRoute
+}
+
+const ApiV1OffersRouteChildren: ApiV1OffersRouteChildren = {
+  ApiV1OffersIdRoute: ApiV1OffersIdRoute,
+}
+
+const ApiV1OffersRouteWithChildren = ApiV1OffersRoute._addFileChildren(
+  ApiV1OffersRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
@@ -1420,6 +1715,13 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileUserIdRoute: ProfileUserIdRoute,
   TagTagRoute: TagTagRoute,
   ApiCronPublishRoute: ApiCronPublishRoute,
+  ApiV1ListingsRoute: ApiV1ListingsRouteWithChildren,
+  ApiV1MeRoute: ApiV1MeRouteWithChildren,
+  ApiV1OffersRoute: ApiV1OffersRouteWithChildren,
+  ApiV1RedeemRoute: ApiV1RedeemRoute,
+  ApiV1AuthForgotPasswordRoute: ApiV1AuthForgotPasswordRoute,
+  ApiV1AuthLoginRoute: ApiV1AuthLoginRoute,
+  ApiV1AuthRegisterRoute: ApiV1AuthRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

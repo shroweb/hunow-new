@@ -4,7 +4,7 @@ export const Route = createFileRoute("/api/v1/auth/forgot-password")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const body = await request.json().catch(() => null) as { email?: string } | null;
+        const body = (await request.json().catch(() => null)) as { email?: string } | null;
         if (!body?.email) {
           return Response.json({ error: "email is required" }, { status: 400 });
         }

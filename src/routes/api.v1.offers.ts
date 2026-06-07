@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type { Offer, Listing } from "@/types";
+import { ACTIVE_OFFER_SQL } from "@/lib/api-offers";
 
 export const Route = createFileRoute("/api/v1/offers")({
   server: {
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/api/v1/offers")({
                     l.data as listing_data
              from offers o
              left join listings l on l.id = o.listing_id
-             where o.status = 'active'
+             where ${ACTIVE_OFFER_SQL}
              order by (o.data->>'isFeatured')::boolean desc, o.created_at desc`,
           );
 

@@ -5,17 +5,14 @@ export const Route = createFileRoute("/api/v1/auth/register")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const body = await request.json().catch(() => null) as {
+        const body = (await request.json().catch(() => null)) as {
           name?: string;
           email?: string;
           password?: string;
           app_role?: string;
         } | null;
         if (!body?.name || !body?.email || !body?.password) {
-          return Response.json(
-            { error: "name, email and password are required" },
-            { status: 400 },
-          );
+          return Response.json({ error: "name, email and password are required" }, { status: 400 });
         }
 
         const appRole = body.app_role === "business" ? "business" : "customer";
@@ -28,7 +25,10 @@ export const Route = createFileRoute("/api/v1/auth/register")({
           const email = body.email.trim().toLowerCase();
           const existing = await pool.query("select id from users where email = $1", [email]);
           if (existing.rowCount && existing.rowCount > 0) {
-            return Response.json({ error: "An account already exists for that email" }, { status: 409 });
+            return Response.json(
+              { error: "An account already exists for that email" },
+              { status: 409 },
+            );
           }
 
           const { hashAppPassword, issueAppToken, createLoyaltyCard, getUserLoyaltyData } =
@@ -42,11 +42,21 @@ export const Route = createFileRoute("/api/v1/auth/register")({
             [userId, email, body.name.trim(), passwordHash, appRole],
           );
 
-          let loyalty = { points: 0, tier: "standard", card_token: null as string | null, card_created: null as string | null };
+          let loyalty = {
+            points: 0,
+            tier: "standard",
+            card_token: null as string | null,
+            card_created: null as string | null,
+          };
 
           if (appRole === "customer") {
             const card = await createLoyaltyCard(userId);
-            loyalty = { points: 0, tier: "standard", card_token: card.qr_token, card_created: card.created_at };
+            loyalty = {
+              points: 0,
+              tier: "standard",
+              card_token: card.qr_token,
+              card_created: card.created_at,
+            };
           } else {
             loyalty = await getUserLoyaltyData(userId);
           }

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type { Offer, Listing } from "@/types";
 import { formatOffer } from "./api.v1.offers";
+import { ACTIVE_OFFER_SQL } from "@/lib/api-offers";
 
 export const Route = createFileRoute("/api/v1/offers/$id")({
   server: {
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/api/v1/offers/$id")({
             `select o.data, l.data as listing_data
              from offers o
              left join listings l on l.id = o.listing_id
-             where o.id = $1 and o.status = 'active'
+             where o.id = $1 and ${ACTIVE_OFFER_SQL}
              limit 1`,
             [id],
           );
