@@ -23,16 +23,12 @@ export function extractEventbriteId(input: string): string | null {
   return null;
 }
 
-function slugify(text: string, id: string) {
-  return (
-    text
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-      .slice(0, 60) +
-    "-eb-" +
-    id
-  );
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 80);
 }
 
 function mapCategory(name: string | undefined): string {
@@ -105,7 +101,7 @@ export function mapEventbriteEvent(eb: EbEvent): EventItem {
   return {
     id: `eventbrite-${eb.id}`,
     title: eb.name.text,
-    slug: slugify(eb.name.text, eb.id),
+    slug: slugify(eb.name.text),
     description: eb.summary ?? eb.description?.text?.slice(0, 300) ?? "",
     category: mapCategory(eb.category?.name),
     startDate,
