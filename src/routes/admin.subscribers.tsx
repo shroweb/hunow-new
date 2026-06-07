@@ -2,6 +2,21 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AdminHeader, AdminTable, StatCard, adminBtn } from "@/components/admin/AdminLayout";
 import { getNewsletterSubscribers } from "@/lib/newsletter.functions";
 
+function downloadCsv(subscribers: { email: string; segments: string[]; createdAt: string }[]) {
+  const rows = [
+    ["email", "segments", "signed_up"],
+    ...subscribers.map((s) => [s.email, s.segments.join("|"), new Date(s.createdAt).toISOString()]),
+  ];
+  const csv = rows.map((r) => r.map((v) => `"${v.replace(/"/g, '""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `hunow-subscribers-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export const Route = createFileRoute("/admin/subscribers")({
   loader: async () => ({ data: await getNewsletterSubscribers() }),
   component: AdminSubscribers,
@@ -37,9 +52,13 @@ function AdminSubscribers() {
                 The newsletter send button uses this list, filtered by the selected segment.
               </p>
             </div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              {data.total} sendable subscribers
-            </div>
+            <button
+              type="button"
+              onClick={() => downloadCsv(data.subscribers)}
+              className={adminBtn}
+            >
+              Export CSV
+            </button>
           </div>
           <AdminTable
             headers={["Email", "Segments", "Unsubscribe", "Signed up"]}
