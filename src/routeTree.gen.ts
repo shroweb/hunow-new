@@ -48,6 +48,7 @@ import { Route as CSectionRouteImport } from './routes/c.$section'
 import { Route as BusinessListingsRouteImport } from './routes/business.listings'
 import { Route as AuthorsAuthorRouteImport } from './routes/authors.$author'
 import { Route as AreasAreaRouteImport } from './routes/areas.$area'
+import { Route as ApiImageProxyRouteImport } from './routes/api.image-proxy'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTaxonomyRouteImport } from './routes/admin.taxonomy'
 import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
@@ -280,6 +281,11 @@ const AreasAreaRoute = AreasAreaRouteImport.update({
   id: '/$area',
   path: '/$area',
   getParentRoute: () => AreasRoute,
+} as any)
+const ApiImageProxyRoute = ApiImageProxyRouteImport.update({
+  id: '/api/image-proxy',
+  path: '/api/image-proxy',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
@@ -515,6 +521,7 @@ export interface FileRoutesByFullPath {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/image-proxy': typeof ApiImageProxyRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
@@ -592,6 +599,7 @@ export interface FileRoutesByTo {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/image-proxy': typeof ApiImageProxyRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
@@ -671,6 +679,7 @@ export interface FileRoutesById {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/image-proxy': typeof ApiImageProxyRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
@@ -751,6 +760,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/taxonomy'
     | '/admin/users'
+    | '/api/image-proxy'
     | '/areas/$area'
     | '/authors/$author'
     | '/business/listings'
@@ -828,6 +838,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/taxonomy'
     | '/admin/users'
+    | '/api/image-proxy'
     | '/areas/$area'
     | '/authors/$author'
     | '/business/listings'
@@ -906,6 +917,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/taxonomy'
     | '/admin/users'
+    | '/api/image-proxy'
     | '/areas/$area'
     | '/authors/$author'
     | '/business/listings'
@@ -963,6 +975,7 @@ export interface RootRouteChildren {
   SubmitRoute: typeof SubmitRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   WhatsOnRoute: typeof WhatsOnRoute
+  ApiImageProxyRoute: typeof ApiImageProxyRoute
   AuthorsAuthorRoute: typeof AuthorsAuthorRoute
   BusinessListingsRoute: typeof BusinessListingsRoute
   CSectionRoute: typeof CSectionRouteWithChildren
@@ -1256,6 +1269,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/areas/$area'
       preLoaderRoute: typeof AreasAreaRouteImport
       parentRoute: typeof AreasRoute
+    }
+    '/api/image-proxy': {
+      id: '/api/image-proxy'
+      path: '/api/image-proxy'
+      fullPath: '/api/image-proxy'
+      preLoaderRoute: typeof ApiImageProxyRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/users': {
       id: '/admin/users'
@@ -1705,6 +1725,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubmitRoute: SubmitRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   WhatsOnRoute: WhatsOnRoute,
+  ApiImageProxyRoute: ApiImageProxyRoute,
   AuthorsAuthorRoute: AuthorsAuthorRoute,
   BusinessListingsRoute: BusinessListingsRoute,
   CSectionRoute: CSectionRouteWithChildren,

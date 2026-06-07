@@ -213,7 +213,7 @@ function listingRow(listing: Listing, first = false) {
 
 
 function sectionHeader(title: string) {
-  return `<tr><td style="padding:22px 36px 14px;color:#dcae3a;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;border-top:3px solid #080d2d;">${escapeHtml(title)}</td></tr>`;
+  return `<tr><td style="padding:22px 36px 14px;border-top:3px solid #080d2d;"><span style="font-family:Impact,'Arial Black',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:1px;color:#080d2d;">${escapeHtml(title)}</span></td></tr>`;
 }
 
 function section(title: string, rows: string[]) {
