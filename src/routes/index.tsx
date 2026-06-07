@@ -215,15 +215,12 @@ function Index() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <h2 className="text-5xl font-display uppercase tracking-tight">What's On</h2>
             <div className="flex flex-wrap gap-2">
-              {["Today", "This Weekend", "Free", "Music", "Food", "Arts"].map((f, i) => (
-                <Link
-                  key={f}
-                  to="/whats-on"
-                  className={`px-3 py-1 text-[10px] font-bold uppercase cursor-pointer ${i === 0 ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
-                >
-                  {f}
-                </Link>
-              ))}
+              <Link to="/whats-on" search={{ when: "today" }} className="px-3 py-1 text-[10px] font-bold uppercase bg-accent text-background hover:bg-foreground">Today</Link>
+              <Link to="/whats-on" search={{ when: "weekend" }} className="px-3 py-1 text-[10px] font-bold uppercase border border-foreground/20 hover:bg-foreground/5">This Weekend</Link>
+              <Link to="/whats-on" search={{ free: true }} className="px-3 py-1 text-[10px] font-bold uppercase border border-foreground/20 hover:bg-foreground/5">Free</Link>
+              <Link to="/whats-on" search={{ category: "Music" }} className="px-3 py-1 text-[10px] font-bold uppercase border border-foreground/20 hover:bg-foreground/5">Music</Link>
+              <Link to="/whats-on" search={{ category: "Food & Drink" }} className="px-3 py-1 text-[10px] font-bold uppercase border border-foreground/20 hover:bg-foreground/5">Food</Link>
+              <Link to="/whats-on" search={{ category: "Arts" }} className="px-3 py-1 text-[10px] font-bold uppercase border border-foreground/20 hover:bg-foreground/5">Arts</Link>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10">

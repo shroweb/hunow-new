@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState, useEffect } from "react";
+import { z } from "zod";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { EventCard } from "@/components/cards";
 import { PaginationControls } from "@/components/PaginationControls";
@@ -8,7 +9,14 @@ import type { EventItem } from "@/types";
 
 const PER_PAGE = 12;
 
+const searchSchema = z.object({
+  category: z.string().optional(),
+  free: z.boolean().optional(),
+  when: z.enum(["today", "weekend"]).optional(),
+});
+
 export const Route = createFileRoute("/whats-on")({
+  validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "What's On in Hull — HU NOW" },
@@ -32,29 +40,50 @@ const CATEGORIES = [
   "Nightlife",
 ];
 
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function weekendRange(): [string, string] {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun,6=Sat
+  const daysToSat = day === 6 ? 0 : 6 - day;
+  const sat = new Date(now);
+  sat.setDate(now.getDate() + daysToSat);
+  const sun = new Date(sat);
+  sun.setDate(sat.getDate() + 1);
+  return [sat.toISOString().slice(0, 10), sun.toISOString().slice(0, 10)];
+}
+
 function WhatsOn() {
+  const search = Route.useSearch();
   const events = useStore((s) => s.events).filter((e) => e.status === "published");
-  const [category, setCategory] = useState("All");
-  const [freeOnly, setFreeOnly] = useState(false);
+  const [category, setCategory] = useState(search.category ?? "All");
+  const [freeOnly, setFreeOnly] = useState(search.free ?? false);
+  const [when, setWhen] = useState<"today" | "weekend" | "all">(search.when ?? "all");
   const [query, setQuery] = useState("");
   const [view, setView] = useState<"list" | "calendar">("list");
   const [page, setPage] = useState(1);
 
-  const filtered = useMemo(
-    () =>
-      events.filter(
-        (e) =>
-          (category === "All" || e.category === category) &&
-          (!freeOnly || e.isFree) &&
-          (!query ||
-            e.title.toLowerCase().includes(query.toLowerCase()) ||
-            e.locationName.toLowerCase().includes(query.toLowerCase())),
-      ),
-    [events, category, freeOnly, query],
-  );
+  const filtered = useMemo(() => {
+    const today = todayIso();
+    const [satStr, sunStr] = weekendRange();
+    return events.filter(
+      (e) =>
+        (category === "All" || e.category === category) &&
+        (!freeOnly || e.isFree) &&
+        (when === "all" ||
+          (when === "today" && e.startDate === today) ||
+          (when === "weekend" && (e.startDate === satStr || e.startDate === sunStr))) &&
+        (!query ||
+          e.title.toLowerCase().includes(query.toLowerCase()) ||
+          e.locationName.toLowerCase().includes(query.toLowerCase())),
+    );
+  }, [events, category, freeOnly, when, query]);
+
   useEffect(() => {
     setPage(1);
-  }, [category, freeOnly, query, view]);
+  }, [category, freeOnly, when, query, view]);
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
@@ -84,10 +113,29 @@ function WhatsOn() {
 
       <section className="max-w-7xl mx-auto px-4 py-5 border-b border-border">
         <div className="flex flex-wrap gap-2 items-center">
-          {CATEGORIES.map((c) => (
+          <button
+            onClick={() => setWhen("all")}
+            className={`px-3 py-1.5 text-[10px] font-bold uppercase ${when === "all" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setWhen("today")}
+            className={`px-3 py-1.5 text-[10px] font-bold uppercase ${when === "today" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+          >
+            Today
+          </button>
+          <button
+            onClick={() => setWhen("weekend")}
+            className={`px-3 py-1.5 text-[10px] font-bold uppercase ${when === "weekend" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+          >
+            This Weekend
+          </button>
+          <div className="w-px h-4 bg-foreground/20 mx-1" />
+          {CATEGORIES.filter((c) => c !== "All").map((c) => (
             <button
               key={c}
-              onClick={() => setCategory(c)}
+              onClick={() => setCategory(category === c ? "All" : c)}
               className={`px-3 py-1.5 text-[10px] font-bold uppercase ${category === c ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               {c}
@@ -95,7 +143,7 @@ function WhatsOn() {
           ))}
           <button
             onClick={() => setFreeOnly((v) => !v)}
-            className={`px-3 py-1.5 text-[10px] font-bold uppercase ml-2 ${freeOnly ? "bg-foreground text-background" : "border border-foreground/20"}`}
+            className={`px-3 py-1.5 text-[10px] font-bold uppercase ml-1 ${freeOnly ? "bg-foreground text-background" : "border border-foreground/20"}`}
           >
             Free Only
           </button>
