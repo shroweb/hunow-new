@@ -68,6 +68,7 @@ interface EbTicketClass {
 interface EbEvent {
   id: string;
   name: { text: string };
+  summary?: string;
   description?: { text?: string; html?: string };
   start: { utc: string; local: string };
   end: { utc: string; local: string };
@@ -105,8 +106,7 @@ export function mapEventbriteEvent(eb: EbEvent): EventItem {
     id: `eventbrite-${eb.id}`,
     title: eb.name.text,
     slug: slugify(eb.name.text, eb.id),
-    description: eb.description?.text?.slice(0, 300) ?? "",
-    content: eb.description?.html ?? undefined,
+    description: eb.summary ?? eb.description?.text?.slice(0, 300) ?? "",
     category: mapCategory(eb.category?.name),
     startDate,
     endDate: endDate !== startDate ? endDate : undefined,
@@ -124,22 +124,38 @@ export function mapEventbriteEvent(eb: EbEvent): EventItem {
   };
 }
 
+async function fetchStructuredContent(id: string): Promise<string | undefined> {
+  const res = await fetch(
+    `${BASE}/events/${id}/structured_content/?purpose=listing`,
+    { headers: authHeaders() },
+  );
+  if (!res.ok) return undefined;
+  const data = (await res.json()) as {
+    modules?: Array<{ type: string; data?: { body?: { text?: string } } }>;
+  };
+  const html = (data.modules ?? [])
+    .filter((m) => m.type === "text" && m.data?.body?.text)
+    .map((m) => m.data!.body!.text!)
+    .join("\n");
+  return html || undefined;
+}
+
 export async function importEventbriteUrl(urlOrId: string): Promise<EventItem> {
   const id = extractEventbriteId(urlOrId);
   if (!id) throw new Error("Could not extract an Eventbrite event ID from that URL");
 
-  const res = await fetch(
-    `${BASE}/events/${id}/?expand=venue,category,ticket_classes`,
-    { headers: authHeaders() },
-  );
+  const [eventRes, structuredContent] = await Promise.all([
+    fetch(`${BASE}/events/${id}/?expand=venue,category,ticket_classes`, { headers: authHeaders() }),
+    fetchStructuredContent(id),
+  ]);
 
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Eventbrite API error ${res.status}: ${body}`);
+  if (!eventRes.ok) {
+    const body = await eventRes.text();
+    throw new Error(`Eventbrite API error ${eventRes.status}: ${body}`);
   }
 
-  const eb = (await res.json()) as EbEvent;
-  const event = mapEventbriteEvent(eb);
+  const eb = (await eventRes.json()) as EbEvent;
+  const event = { ...mapEventbriteEvent(eb), content: structuredContent };
 
   const { upsertEvent } = await import("@/lib/db.server");
   await upsertEvent(event);

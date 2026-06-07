@@ -185,7 +185,9 @@ function EventDetail() {
               <div className="font-bold">{event.isFree ? "FREE" : event.price}</div>
             </div>
           </div>
-          <p className="text-xl leading-relaxed mb-8">{event.description}</p>
+          {!event.content && (
+            <p className="text-xl leading-relaxed mb-8">{event.description}</p>
+          )}
           {event.gallery && event.gallery.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10">
               {event.gallery.map((src: string, i: number) => (
