@@ -68,7 +68,7 @@ interface EbTicketClass {
 interface EbEvent {
   id: string;
   name: { text: string };
-  description?: { text?: string };
+  description?: { text?: string; html?: string };
   start: { utc: string; local: string };
   end: { utc: string; local: string };
   url: string;
@@ -105,7 +105,8 @@ export function mapEventbriteEvent(eb: EbEvent): EventItem {
     id: `eventbrite-${eb.id}`,
     title: eb.name.text,
     slug: slugify(eb.name.text, eb.id),
-    description: eb.description?.text?.slice(0, 500) ?? "",
+    description: eb.description?.text?.slice(0, 300) ?? "",
+    content: eb.description?.html ?? undefined,
     category: mapCategory(eb.category?.name),
     startDate,
     endDate: endDate !== startDate ? endDate : undefined,
