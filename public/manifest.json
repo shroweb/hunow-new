@@ -1,0 +1,29 @@
+{
+  "name": "HU NOW",
+  "short_name": "HU NOW",
+  "description": "Hull's Independent City Guide — events, places, stories and offers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5efe6",
+  "theme_color": "#080d2d",
+  "orientation": "portrait-primary",
+  "categories": ["news", "lifestyle", "entertainment"],
+  "icons": [
+    {
+      "src": "/Frame 4.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/Frame 4.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "What's On", "url": "/whats-on", "description": "Events in Hull" },
+    { "name": "Places",    "url": "/places",   "description": "Places to visit" },
+    { "name": "Offers",    "url": "/offers",   "description": "Reader offers" }
+  ]
+}

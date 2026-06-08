@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import QRCode from "qrcode";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import {
   getCurrentUser,
@@ -11,10 +12,11 @@ import {
   getNewsletterPrefsFn,
   updateNewsletterPrefsFn,
   getActivityFeedFn,
+  getLoyaltyCardFn,
 } from "@/lib/auth.functions";
 import type { AuthUser } from "@/lib/auth.server";
 
-type Tab = "profile" | "security" | "newsletter" | "activity" | "danger";
+type Tab = "card" | "profile" | "security" | "newsletter" | "activity" | "danger";
 
 export const Route = createFileRoute("/account")({
   head: () => ({
@@ -31,7 +33,7 @@ function Account() {
   const [user, setUser] = useState<
     (AuthUser & { avatarUrl?: string | null; bio?: string }) | null | undefined
   >(undefined);
-  const [tab, setTab] = useState<Tab>("profile");
+  const [tab, setTab] = useState<Tab>("card");
 
   useEffect(() => {
     getCurrentUser()
@@ -69,6 +71,7 @@ function Account() {
   }
 
   const TABS: { id: Tab; label: string }[] = [
+    { id: "card", label: "HU NOW Card" },
     { id: "profile", label: "Profile" },
     { id: "security", label: "Security" },
     { id: "newsletter", label: "Newsletter" },
@@ -135,6 +138,7 @@ function Account() {
           ))}
         </div>
 
+        {tab === "card" && <CardTab userName={user.name} />}
         {tab === "profile" && (
           <ProfileTab
             user={user}
@@ -638,3 +642,73 @@ const btnOutline =
   "inline-flex items-center border-2 border-foreground px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground hover:text-background transition-colors";
 const input =
   "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";
+
+function CardTab({ userName }: { userName: string }) {
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [cardToken, setCardToken] = useState<string | null>(null);
+  const [tier, setTier] = useState("Member");
+  const [points, setPoints] = useState(0);
+
+  useEffect(() => {
+    getLoyaltyCardFn().then((data) => {
+      if (!data.card_token) return;
+      setCardToken(data.card_token);
+      setTier(data.tier ?? "Member");
+      setPoints(Number(data.points ?? 0));
+      QRCode.toDataURL(data.card_token, {
+        width: 200,
+        margin: 1,
+        color: { dark: "#080d2d", light: "#f5efe6" },
+      }).then(setQrDataUrl).catch(() => {});
+    }).catch(() => {});
+  }, []);
+
+  return (
+    <div className="max-w-sm mx-auto pt-6 pb-12 px-4">
+      {/* Card */}
+      <div className="relative bg-foreground text-background rounded-none overflow-hidden aspect-[1.586/1] flex flex-col justify-between p-6 shadow-2xl">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="font-display text-2xl uppercase leading-none tracking-wide">HU NOW</div>
+            <div className="font-mono text-[9px] uppercase tracking-widest text-accent mt-0.5">
+              {tier}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="font-mono text-[9px] uppercase text-white/50">Points</div>
+            <div className="font-bold text-lg text-accent">{points}</div>
+          </div>
+        </div>
+        {/* Name */}
+        <div>
+          <div className="font-mono text-[9px] uppercase text-white/50 mb-0.5">Member</div>
+          <div className="font-bold text-lg uppercase tracking-wide">{userName}</div>
+        </div>
+      </div>
+
+      {/* QR Code */}
+      <div className="mt-6 bg-[#f5efe6] border-2 border-foreground p-6 flex flex-col items-center gap-3">
+        <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+          Scan to redeem offers
+        </div>
+        {qrDataUrl ? (
+          <img src={qrDataUrl} alt="Your HU NOW card QR code" width={160} height={160} />
+        ) : (
+          <div className="w-40 h-40 bg-foreground/10 flex items-center justify-center">
+            <span className="font-mono text-xs text-muted-foreground">Loading…</span>
+          </div>
+        )}
+        {cardToken && (
+          <div className="font-mono text-[9px] text-muted-foreground truncate max-w-full">
+            {cardToken.slice(0, 8)}…
+          </div>
+        )}
+      </div>
+
+      <p className="mt-4 text-xs text-muted-foreground text-center font-mono">
+        Show this QR code at a participating business to redeem offers and earn points.
+      </p>
+    </div>
+  );
+}

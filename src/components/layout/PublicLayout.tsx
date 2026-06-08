@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { BottomNav } from "./BottomNav";
 import { useEffect, useState, type ReactNode } from "react";
 import { NAV_SECTIONS } from "@/lib/nav";
 import { findTaxonomy, sectionTaxonomySlug, sectionHref } from "@/lib/taxonomy";
@@ -351,10 +352,11 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           </div>
         )}
       </nav>
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="flex-1 mb-bottom-nav md:mb-0">
         {children}
       </main>
       <Footer />
+      <BottomNav />
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
     </div>
   );

@@ -257,3 +257,17 @@ export const getActivityFeedFn = createServerFn({ method: "GET" }).handler(async
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 25);
 });
+
+export const getLoyaltyCardFn = createServerFn({ method: "GET" }).handler(async () => {
+  const { currentUser } = await import("./auth.server");
+  const user = await currentUser();
+  if (!user) throw new Error("Not authenticated");
+  const { getUserLoyaltyData, createLoyaltyCard } = await import("./app-auth.server");
+  const data = await getUserLoyaltyData(user.id);
+  if (!data.card_token) {
+    await createLoyaltyCard(user.id);
+    const fresh = await getUserLoyaltyData(user.id);
+    return { ...fresh, name: user.name };
+  }
+  return { ...data, name: user.name };
+});
