@@ -272,36 +272,57 @@ function AdminOffers() {
         )}
         <AdminTable
           headers={["Offer", "Business", "Ends", "Status", "Actions"]}
-          rows={[...offers].sort(sortOffersForAdmin).map((o) => [
-            <div>
-              <span className="font-bold">{o.title}</span>
-              {o.submittedByUserId && (
-                <span className="mt-1 block font-mono text-[10px] uppercase text-muted-foreground">
-                  Owner submitted
-                </span>
-              )}
-            </div>,
-            o.businessName,
-            <span className="font-mono text-xs">{o.endDate}</span>,
-            <AdminStatus status={o.status} />,
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setEditing(o);
-                  setShowForm(true);
-                }}
-                className="text-[10px] font-bold uppercase underline"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => remove(o.id)}
-                className="text-[10px] font-bold uppercase text-red-600 underline"
-              >
-                Delete
-              </button>
-            </div>,
-          ])}
+          rows={[...offers].sort(sortOffersForAdmin).map((o) => {
+            const daysLeft = Math.ceil(
+              (new Date(o.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+            );
+            const expiringSoon = o.status === "active" && daysLeft >= 0 && daysLeft <= 7;
+            return [
+              <div>
+                <span className="font-bold">{o.title}</span>
+                {expiringSoon && (
+                  <span className="ml-2 inline-block bg-amber-100 text-amber-800 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded">
+                    Expires in {daysLeft}d
+                  </span>
+                )}
+                {o.submittedByUserId && (
+                  <span className="mt-1 block font-mono text-[10px] uppercase text-muted-foreground">
+                    Owner submitted
+                  </span>
+                )}
+              </div>,
+              o.businessName,
+              <span className={`font-mono text-xs ${expiringSoon ? "text-amber-700 font-bold" : ""}`}>{o.endDate}</span>,
+              <AdminStatus status={o.status} />,
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setEditing(o);
+                    setShowForm(true);
+                  }}
+                  className="text-[10px] font-bold uppercase underline"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => {
+                    setEditing({ ...o, id: uid(), startDate: "", endDate: "", status: "active", redemptionCount: 0 });
+                    setShowForm(true);
+                    setErrors([]);
+                  }}
+                  className="text-[10px] font-bold uppercase underline text-accent"
+                >
+                  Clone
+                </button>
+                <button
+                  onClick={() => remove(o.id)}
+                  className="text-[10px] font-bold uppercase text-red-600 underline"
+                >
+                  Delete
+                </button>
+              </div>,
+            ];
+          })}
         />
       </div>
     </div>

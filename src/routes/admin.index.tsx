@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AdminHeader, StatCard, adminBtn, adminBtnOutline } from "@/components/admin/AdminLayout";
 import { useStore } from "@/lib/store";
 import { Plus } from "lucide-react";
+import type { Listing } from "@/types";
 
 export const Route = createFileRoute("/admin/")({
   component: Dashboard,
@@ -20,6 +21,7 @@ function Dashboard() {
   const publishedArticles = articles.filter((a) => a.status === "published").length;
   const publishedEvents = events.filter((e) => e.status === "published").length;
   const activeListings = listings.filter((l) => !l.isHiddenGem || l.isFeatured).length;
+  const businessCount = listings.filter((l) => (l as Listing & { ownerUserId?: string }).ownerUserId).length;
   const upcomingEvents = [...events]
     .filter((e) => e.status === "published")
     .sort((a, b) => a.startDate.localeCompare(b.startDate))
@@ -86,6 +88,7 @@ function Dashboard() {
           <StatCard label="Pending Submissions" value={pending} accent />
           <StatCard label="Newsletter" value={newsletter.length} />
           <StatCard label="Active Ads" value={ads.filter((a) => a.status === "active").length} />
+          <StatCard label="Businesses" value={businessCount} />
         </section>
 
         <section className="grid xl:grid-cols-[1fr_360px] gap-6">
@@ -113,6 +116,9 @@ function Dashboard() {
               </Link>
               <Link to="/admin/offers" className={adminBtn}>
                 <Plus className="w-3 h-3" /> New Offer
+              </Link>
+              <Link to="/admin/businesses" className={adminBtn}>
+                <Plus className="w-3 h-3" /> New Business
               </Link>
             </div>
           </div>

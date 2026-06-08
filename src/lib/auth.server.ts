@@ -247,6 +247,7 @@ export interface AdminUserRow {
   email: string;
   name: string;
   role: AuthRole;
+  appRole: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -258,11 +259,12 @@ export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
     email: string;
     name: string;
     role: AuthRole;
+    app_role: string;
     created_at: Date;
     updated_at: Date;
   }>(
     `
-    select id, email, name, role, created_at, updated_at
+    select id, email, name, role, app_role, created_at, updated_at
     from users
     order by created_at asc
     `,
@@ -272,6 +274,7 @@ export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
     email: row.email,
     name: row.name,
     role: row.role,
+    appRole: row.app_role,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
   }));
@@ -295,6 +298,7 @@ export async function updateUserRoleForAdmin(input: { userId: string; role: Auth
     email: string;
     name: string;
     role: AuthRole;
+    app_role: string;
     created_at: Date;
     updated_at: Date;
   }>(
@@ -302,7 +306,7 @@ export async function updateUserRoleForAdmin(input: { userId: string; role: Auth
     update users
     set role = $2, updated_at = now()
     where id = $1
-    returning id, email, name, role, created_at, updated_at
+    returning id, email, name, role, app_role, created_at, updated_at
     `,
     [input.userId, input.role],
   );
@@ -313,6 +317,7 @@ export async function updateUserRoleForAdmin(input: { userId: string; role: Auth
     email: row.email,
     name: row.name,
     role: row.role,
+    appRole: row.app_role,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
   };

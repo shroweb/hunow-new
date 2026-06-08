@@ -1332,6 +1332,11 @@ export async function moderateListingClaim(
       `,
       [row.listing_id, row.user_id],
     );
+    // Promote the user to business role so they can use the scanner
+    await getPool().query(
+      `update users set app_role = 'business', updated_at = now() where id = $1`,
+      [row.user_id],
+    );
   }
   return { ok: true };
 }
