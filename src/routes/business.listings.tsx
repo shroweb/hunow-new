@@ -556,6 +556,23 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
   >([]);
   const [historyLoaded, setHistoryLoaded] = useState(false);
 
+  // Stats derived from history
+  const stats = (() => {
+    if (!historyLoaded || history.length === 0) return null;
+    const now = Date.now();
+    const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+    const monthAgo = now - 30 * 24 * 60 * 60 * 1000;
+    const thisWeek = history.filter((r) => new Date(r.redeemed_at).getTime() > weekAgo).length;
+    const thisMonth = history.filter((r) => new Date(r.redeemed_at).getTime() > monthAgo).length;
+    const offerCounts = history.reduce<Record<string, number>>((acc, r) => {
+      const k = r.offer_title ?? "Unknown";
+      acc[k] = (acc[k] ?? 0) + 1;
+      return acc;
+    }, {});
+    const topOffer = Object.entries(offerCounts).sort((a, b) => b[1] - a[1])[0];
+    return { thisWeek, thisMonth, total: history.length, topOffer: topOffer?.[0] ?? null };
+  })();
+
   const loadHistory = () => {
     getBusinessRedemptionsFn({ data: { listingId } })
       .then(setHistory)
@@ -791,6 +808,34 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
         )}
         {status === "error" && <p className="text-sm font-bold text-red-600">{statusMsg}</p>}
       </div>
+
+      {/* Redemption stats */}
+      {stats && (
+        <div className="border-t border-foreground/10 pt-6 mb-6">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+            Redemption stats
+          </div>
+          <div className="grid grid-cols-3 gap-3 mb-3">
+            <div className="border border-foreground/10 p-3 text-center">
+              <div className="font-display text-3xl leading-none">{stats.thisWeek}</div>
+              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">This week</div>
+            </div>
+            <div className="border border-foreground/10 p-3 text-center">
+              <div className="font-display text-3xl leading-none">{stats.thisMonth}</div>
+              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">This month</div>
+            </div>
+            <div className="border border-foreground/10 p-3 text-center">
+              <div className="font-display text-3xl leading-none">{stats.total}</div>
+              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">All time</div>
+            </div>
+          </div>
+          {stats.topOffer && (
+            <div className="text-[10px] font-mono text-muted-foreground">
+              Top offer: <span className="font-bold text-foreground">{stats.topOffer}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Redemption history */}
       <div className="border-t border-foreground/10 pt-6">

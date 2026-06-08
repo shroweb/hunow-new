@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { useStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth.functions";
+import { ShareMenu } from "@/components/ShareMenu";
 
 export const Route = createFileRoute("/offers")({
   head: () => ({
@@ -115,21 +116,28 @@ function Offers() {
                 </div>
 
                 {/* CTA */}
-                {user ? (
-                  <Link
-                    to="/account"
-                    className="block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
-                  >
-                    Redeem with HU NOW card
-                  </Link>
-                ) : (
-                  <a
-                    href="/sign-in"
-                    className="block border-2 border-foreground px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors text-center"
-                  >
-                    Sign in to redeem
-                  </a>
-                )}
+                <div className="flex gap-2">
+                  {user ? (
+                    <Link
+                      to="/account"
+                      className="flex-1 block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
+                    >
+                      Redeem with HU NOW card
+                    </Link>
+                  ) : (
+                    <a
+                      href="/sign-in"
+                      className="flex-1 block border-2 border-foreground px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors text-center"
+                    >
+                      Sign in to redeem
+                    </a>
+                  )}
+                  <ShareMenu
+                    title={`${o.title} — ${o.businessName}`}
+                    text={o.description}
+                    className="shrink-0 px-3 py-3 border-2 border-foreground text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+                  />
+                </div>
               </div>
 
               {/* Venue footer */}

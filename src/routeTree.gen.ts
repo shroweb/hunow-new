@@ -66,6 +66,7 @@ import { Route as AdminImportRouteImport } from './routes/admin.import'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminEditorialPicksRouteImport } from './routes/admin.editorial-picks'
 import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
+import { Route as AdminRedemptionsRouteImport } from './routes/admin.redemptions'
 import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
@@ -385,6 +386,11 @@ const AdminArticlesRoute = AdminArticlesRouteImport.update({
   path: '/articles',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRedemptionsRoute = AdminRedemptionsRouteImport.update({
+  id: '/redemptions',
+  path: '/redemptions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
   id: '/businesses',
   path: '/businesses',
@@ -524,6 +530,7 @@ export interface FileRoutesByFullPath {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
+  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
@@ -605,6 +612,7 @@ export interface FileRoutesByTo {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
+  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
@@ -688,6 +696,7 @@ export interface FileRoutesById {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
+  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
@@ -772,6 +781,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/businesses'
     | '/admin/claims'
+    | '/admin/redemptions'
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
@@ -853,6 +863,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/businesses'
     | '/admin/claims'
+    | '/admin/redemptions'
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
@@ -935,6 +946,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/businesses'
     | '/admin/claims'
+    | '/admin/redemptions'
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
@@ -1447,6 +1459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminArticlesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/redemptions': {
+      id: '/admin/redemptions'
+      path: '/redemptions'
+      fullPath: '/admin/redemptions'
+      preLoaderRoute: typeof AdminRedemptionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/businesses': {
       id: '/admin/businesses'
       path: '/businesses'
@@ -1616,6 +1635,7 @@ interface AdminRouteChildren {
   AdminArticlesRoute: typeof AdminArticlesRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminClaimsRoute: typeof AdminClaimsRoute
+  AdminRedemptionsRoute: typeof AdminRedemptionsRoute
   AdminCommentsRoute: typeof AdminCommentsRoute
   AdminEditorialPicksRoute: typeof AdminEditorialPicksRoute
   AdminEventsRoute: typeof AdminEventsRoute
@@ -1643,6 +1663,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminArticlesRoute: AdminArticlesRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminClaimsRoute: AdminClaimsRoute,
+  AdminRedemptionsRoute: AdminRedemptionsRoute,
   AdminCommentsRoute: AdminCommentsRoute,
   AdminEditorialPicksRoute: AdminEditorialPicksRoute,
   AdminEventsRoute: AdminEventsRoute,
