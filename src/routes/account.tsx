@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, useCallback, type FormEvent } from "react";
 import QRCode from "qrcode";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import {
@@ -13,9 +13,12 @@ import {
   updateNewsletterPrefsFn,
   getActivityFeedFn,
   getLoyaltyCardFn,
+  getMyRedemptionsFn,
 } from "@/lib/auth.functions";
 import { getVapidPublicKeyFn, saveWebPushSubscriptionFn } from "@/lib/content.functions";
 import type { AuthUser } from "@/lib/auth.server";
+import { useStore } from "@/lib/store";
+import type { Offer } from "@/types";
 
 type Tab = "card" | "profile" | "security" | "newsletter" | "activity" | "danger";
 
@@ -645,10 +648,25 @@ const input =
   "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";
 
 function CardTab({ userName }: { userName: string }) {
+  const offers = useStore((s) => s.offers.filter((o) => o.status === "active"));
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [cardToken, setCardToken] = useState<string | null>(null);
   const [tier, setTier] = useState("Member");
   const [points, setPoints] = useState(0);
+
+  // One-time code state
+  const [selectedOfferId, setSelectedOfferId] = useState("");
+  const [code, setCode] = useState<string | null>(null);
+  const [codeExpiry, setCodeExpiry] = useState<Date | null>(null);
+  const [codeSecondsLeft, setCodeSecondsLeft] = useState(0);
+  const [generatingCode, setGeneratingCode] = useState(false);
+  const [codeError, setCodeError] = useState("");
+
+  // History
+  const [history, setHistory] = useState<
+    { id: string; offer_title: string | null; listing_name: string | null; redeemed_at: string; method: string }[]
+  >([]);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
 
   useEffect(() => {
     getLoyaltyCardFn().then((data) => {
@@ -662,36 +680,71 @@ function CardTab({ userName }: { userName: string }) {
         color: { dark: "#080d2d", light: "#f5efe6" },
       }).then(setQrDataUrl).catch(() => {});
     }).catch(() => {});
+    getMyRedemptionsFn().then(setHistory).catch(() => {}).finally(() => setHistoryLoaded(true));
   }, []);
 
+  // Countdown timer for active code
+  useEffect(() => {
+    if (!codeExpiry) return;
+    const tick = () => {
+      const secs = Math.max(0, Math.floor((codeExpiry.getTime() - Date.now()) / 1000));
+      setCodeSecondsLeft(secs);
+      if (secs === 0) setCode(null);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [codeExpiry]);
+
+  const generateCode = async () => {
+    if (!selectedOfferId) return;
+    setGeneratingCode(true);
+    setCodeError("");
+    try {
+      const res = await fetch("/api/v1/generate-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer_id: selectedOfferId }),
+      });
+      const data = await res.json() as { code?: string; expires_at?: string; error?: string };
+      if (!res.ok || !data.code) throw new Error(data.error ?? "Failed to generate code");
+      setCode(data.code);
+      setCodeExpiry(new Date(data.expires_at!));
+    } catch (err) {
+      setCodeError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setGeneratingCode(false);
+    }
+  };
+
+  const selectedOffer = offers.find((o) => o.id === selectedOfferId);
+  const mm = String(Math.floor(codeSecondsLeft / 60)).padStart(2, "0");
+  const ss = String(codeSecondsLeft % 60).padStart(2, "0");
+
   return (
-    <div className="max-w-sm mx-auto pt-6 pb-12 px-4">
-      {/* Card */}
+    <div className="max-w-sm mx-auto pt-6 pb-12 px-4 space-y-6">
+      {/* Membership card */}
       <div className="relative bg-foreground text-background rounded-none overflow-hidden aspect-[1.586/1] flex flex-col justify-between p-6 shadow-2xl">
-        {/* Header */}
         <div className="flex items-start justify-between">
           <div>
             <div className="font-display text-2xl uppercase leading-none tracking-wide">HU NOW</div>
-            <div className="font-mono text-[9px] uppercase tracking-widest text-accent mt-0.5">
-              {tier}
-            </div>
+            <div className="font-mono text-[9px] uppercase tracking-widest text-accent mt-0.5">{tier}</div>
           </div>
           <div className="text-right">
             <div className="font-mono text-[9px] uppercase text-white/50">Points</div>
             <div className="font-bold text-lg text-accent">{points}</div>
           </div>
         </div>
-        {/* Name */}
         <div>
           <div className="font-mono text-[9px] uppercase text-white/50 mb-0.5">Member</div>
           <div className="font-bold text-lg uppercase tracking-wide">{userName}</div>
         </div>
       </div>
 
-      {/* QR Code */}
-      <div className="mt-6 bg-[#f5efe6] border-2 border-foreground p-6 flex flex-col items-center gap-3">
+      {/* QR code (static card scan) */}
+      <div className="bg-[#f5efe6] border-2 border-foreground p-6 flex flex-col items-center gap-3">
         <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-          Scan to redeem offers
+          Scan at business to redeem
         </div>
         {qrDataUrl ? (
           <img src={qrDataUrl} alt="Your HU NOW card QR code" width={160} height={160} />
@@ -707,11 +760,82 @@ function CardTab({ userName }: { userName: string }) {
         )}
       </div>
 
-      <p className="mt-4 text-xs text-muted-foreground text-center font-mono">
-        Show this QR code at a participating business to redeem offers and earn points.
-      </p>
+      {/* One-time redemption code */}
+      {offers.length > 0 && (
+        <div className="border-2 border-foreground p-5 space-y-4">
+          <div>
+            <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
+              Generate redemption code
+            </div>
+            <select
+              value={selectedOfferId}
+              onChange={(e) => { setSelectedOfferId(e.target.value); setCode(null); setCodeError(""); }}
+              className="w-full bg-background border-2 border-foreground px-3 py-2 font-mono text-xs focus:outline-none"
+            >
+              <option value="">Select an offer…</option>
+              {offers.map((o) => (
+                <option key={o.id} value={o.id}>{o.title} — {o.businessName}</option>
+              ))}
+            </select>
+          </div>
+
+          {code && codeSecondsLeft > 0 ? (
+            <div className="text-center space-y-2">
+              <div className="font-display text-6xl tracking-[0.3em] text-foreground">{code}</div>
+              <div className="font-mono text-xs text-muted-foreground">
+                Show this to staff · expires in {mm}:{ss}
+              </div>
+              {selectedOffer && (
+                <div className="font-mono text-[10px] text-accent uppercase">{selectedOffer.title}</div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={generateCode}
+              disabled={!selectedOfferId || generatingCode}
+              className="w-full bg-foreground text-background py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors disabled:opacity-40"
+            >
+              {generatingCode ? "Generating…" : "Get Code"}
+            </button>
+          )}
+          {codeError && <p className="text-xs text-red-600 font-mono">{codeError}</p>}
+        </div>
+      )}
 
       <PushSubscribeButton />
+
+      {/* Redemption history */}
+      <div>
+        <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+          Redemption history
+        </div>
+        {!historyLoaded ? (
+          <p className="font-mono text-xs text-muted-foreground">Loading…</p>
+        ) : history.length === 0 ? (
+          <p className="font-mono text-xs text-muted-foreground">No redemptions yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {history.map((r) => (
+              <div key={r.id} className="border border-foreground/15 p-3 flex justify-between gap-3">
+                <div>
+                  <p className="text-sm font-bold">{r.offer_title ?? "Offer"}</p>
+                  {r.listing_name && (
+                    <p className="font-mono text-[10px] text-muted-foreground">{r.listing_name}</p>
+                  )}
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="font-mono text-[10px] text-muted-foreground">
+                    {new Date(r.redeemed_at).toLocaleDateString("en-GB", {
+                      day: "numeric", month: "short", year: "numeric",
+                    })}
+                  </p>
+                  <p className="font-mono text-[9px] text-accent uppercase">{r.method}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

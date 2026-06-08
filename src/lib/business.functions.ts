@@ -136,6 +136,7 @@ export const upsertBusinessOffer = createServerFn({ method: "POST" })
       startDate: data.startDate,
       endDate: data.endDate,
       redemptionCount: existing?.redemptionCount ?? 0,
+      usageLimit: existing?.usageLimit ?? 0,
       category: data.category.trim(),
       status: "pending" as const,
       isFeatured: existing?.isFeatured ?? false,
@@ -202,4 +203,37 @@ export const getListingReviewsForOwner = createServerFn({ method: "GET" })
     const owned = await getOwnedListings(user.id);
     if (!owned.find((l) => l.id === data.listingId)) throw new Error("Listing not found.");
     return getListingReviewsAdmin(data.listingId);
+  });
+
+export const getBusinessRedemptionsFn = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ listingId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { currentUser } = await import("./auth.server");
+    const { getPool, getOwnedListings } = await import("./db.server");
+    const user = await currentUser();
+    if (!user) throw new Error("Sign in to view redemptions.");
+    const owned = await getOwnedListings(user.id);
+    if (!owned.find((l) => l.id === data.listingId)) throw new Error("Listing not found.");
+    const pool = getPool();
+    const result = await pool.query<{
+      id: string;
+      offer_id: string;
+      offer_title: string | null;
+      customer_name: string | null;
+      redeemed_at: string;
+      method: string;
+    }>(
+      `select r.id, r.offer_id,
+              o.data->>'title' as offer_title,
+              r.customer_name,
+              r.redeemed_at,
+              r.method
+       from app_redemptions r
+       left join offers o on o.id = r.offer_id
+       where r.listing_id = $1
+       order by r.redeemed_at desc
+       limit 50`,
+      [data.listingId],
+    );
+    return result.rows;
   });

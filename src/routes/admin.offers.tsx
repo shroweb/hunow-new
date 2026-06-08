@@ -55,6 +55,7 @@ function AdminOffers() {
       startDate,
       endDate,
       redemptionCount: editing?.redemptionCount ?? 0,
+      usageLimit: Number(fd.get("usageLimit") ?? 0),
       category: String(fd.get("category") || "Other"),
       status: fd.get("status") as Offer["status"],
       seo: readSeo(fd),
@@ -198,6 +199,20 @@ function AdminOffers() {
                       placeholder="Category"
                       className={adminInput}
                     />
+                  </AdminField>
+                  <AdminField label="Usage limit per customer">
+                    <select
+                      name="usageLimit"
+                      defaultValue={String(editing?.usageLimit ?? 0)}
+                      className={adminInput}
+                    >
+                      <option value="0">Unlimited (once per day)</option>
+                      <option value="1">Once only</option>
+                      <option value="2">Twice</option>
+                      <option value="3">3 times</option>
+                      <option value="5">5 times</option>
+                      <option value="10">10 times</option>
+                    </select>
                   </AdminField>
                   <AdminField label="Status">
                     <select

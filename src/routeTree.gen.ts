@@ -73,6 +73,7 @@ import { Route as AdminAdsRouteImport } from './routes/admin.ads'
 import { Route as TaxonomySlugRouteImport } from './routes/$taxonomy.$slug'
 import { Route as CSectionSubRouteImport } from './routes/c.$section.$sub'
 import { Route as ApiV1RedeemRouteImport } from './routes/api.v1.redeem'
+import { Route as ApiV1GenerateCodeRouteImport } from './routes/api.v1.generate-code'
 import { Route as ApiV1OffersRouteImport } from './routes/api.v1.offers'
 import { Route as ApiV1MeRouteImport } from './routes/api.v1.me'
 import { Route as ApiV1ListingsRouteImport } from './routes/api.v1.listings'
@@ -407,6 +408,11 @@ const ApiV1RedeemRoute = ApiV1RedeemRouteImport.update({
   path: '/api/v1/redeem',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1GenerateCodeRoute = ApiV1GenerateCodeRouteImport.update({
+  id: '/api/v1/generate-code',
+  path: '/api/v1/generate-code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1OffersRoute = ApiV1OffersRouteImport.update({
   id: '/api/v1/offers',
   path: '/api/v1/offers',
@@ -541,6 +547,7 @@ export interface FileRoutesByFullPath {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
   '/api/v1/redeem': typeof ApiV1RedeemRoute
+  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/c/$section/$sub': typeof CSectionSubRoute
   '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
@@ -619,6 +626,7 @@ export interface FileRoutesByTo {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
   '/api/v1/redeem': typeof ApiV1RedeemRoute
+  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/c/$section/$sub': typeof CSectionSubRoute
   '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
@@ -699,6 +707,7 @@ export interface FileRoutesById {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
   '/api/v1/redeem': typeof ApiV1RedeemRoute
+  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/c/$section/$sub': typeof CSectionSubRoute
   '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
@@ -990,6 +999,7 @@ export interface RootRouteChildren {
   ApiV1MeRoute: typeof ApiV1MeRouteWithChildren
   ApiV1OffersRoute: typeof ApiV1OffersRouteWithChildren
   ApiV1RedeemRoute: typeof ApiV1RedeemRoute
+  ApiV1GenerateCodeRoute: typeof ApiV1GenerateCodeRoute
   ApiV1AuthForgotPasswordRoute: typeof ApiV1AuthForgotPasswordRoute
   ApiV1AuthLoginRoute: typeof ApiV1AuthLoginRoute
   ApiV1AuthRegisterRoute: typeof ApiV1AuthRegisterRoute
@@ -1445,6 +1455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1RedeemRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/generate-code': {
+      id: '/api/v1/generate-code'
+      path: '/api/v1/generate-code'
+      fullPath: '/api/v1/generate-code'
+      preLoaderRoute: typeof ApiV1GenerateCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/offers': {
       id: '/api/v1/offers'
       path: '/api/v1/offers'
@@ -1740,6 +1757,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiV1MeRoute: ApiV1MeRouteWithChildren,
   ApiV1OffersRoute: ApiV1OffersRouteWithChildren,
   ApiV1RedeemRoute: ApiV1RedeemRoute,
+  ApiV1GenerateCodeRoute: ApiV1GenerateCodeRoute,
   ApiV1AuthForgotPasswordRoute: ApiV1AuthForgotPasswordRoute,
   ApiV1AuthLoginRoute: ApiV1AuthLoginRoute,
   ApiV1AuthRegisterRoute: ApiV1AuthRegisterRoute,

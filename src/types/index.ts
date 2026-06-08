@@ -102,6 +102,7 @@ export interface Offer {
   startDate: string;
   endDate: string;
   redemptionCount: number;
+  usageLimit?: number; // 0 or undefined = unlimited, N = N times per user
   category: string;
   status: "pending" | "active" | "expired" | "rejected";
   isFeatured?: boolean;

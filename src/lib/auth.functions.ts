@@ -271,3 +271,36 @@ export const getLoyaltyCardFn = createServerFn({ method: "GET" }).handler(async 
   }
   return { ...data, name: user.name };
 });
+
+export const getMyRedemptionsFn = createServerFn({ method: "GET" }).handler(async () => {
+  const { currentUser } = await import("./auth.server");
+  const user = await currentUser();
+  if (!user) throw new Error("Not authenticated");
+  const { getPool } = await import("./db.server");
+  const pool = getPool();
+  const result = await pool.query<{
+    id: string;
+    offer_id: string;
+    offer_title: string | null;
+    listing_name: string | null;
+    redeemed_at: string;
+    method: string;
+    points: number;
+  }>(
+    `select r.id, r.offer_id,
+            o.data->>'title' as offer_title,
+            l.data->>'name'  as listing_name,
+            r.redeemed_at,
+            r.method,
+            $2::int          as points
+     from app_redemptions r
+     join loyalty_cards c on c.id = r.card_id
+     left join offers   o on o.id  = r.offer_id
+     left join listings l on l.id  = r.listing_id
+     where c.user_id = $1
+     order by r.redeemed_at desc
+     limit 30`,
+    [user.id, 35],
+  );
+  return result.rows;
+});

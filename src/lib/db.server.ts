@@ -445,9 +445,24 @@ create table if not exists app_redemptions (
   redeemed_by text not null references users(id),
   redeemed_at timestamptz not null default now()
 );
+alter table app_redemptions add column if not exists method text not null default 'qr';
+alter table app_redemptions add column if not exists customer_name text;
 create index if not exists app_redemptions_card_id_idx on app_redemptions (card_id);
 create index if not exists app_redemptions_offer_id_idx on app_redemptions (offer_id);
 create index if not exists app_redemptions_redeemed_at_idx on app_redemptions (redeemed_at desc);
+
+create table if not exists redemption_codes (
+  id text primary key,
+  code text not null,
+  card_id text not null references loyalty_cards(id) on delete cascade,
+  offer_id text not null,
+  listing_id text,
+  expires_at timestamptz not null,
+  used_at timestamptz
+);
+create unique index if not exists redemption_codes_code_idx on redemption_codes (code) where used_at is null;
+create index if not exists redemption_codes_card_id_idx on redemption_codes (card_id);
+create index if not exists redemption_codes_expires_at_idx on redemption_codes (expires_at);
 
 create table if not exists app_push_subscriptions (
   id text primary key,
