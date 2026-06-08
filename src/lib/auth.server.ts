@@ -519,7 +519,7 @@ async function createSession(userId: string) {
   });
 }
 
-async function hashPassword(password: string) {
+export async function hashPassword(password: string) {
   const salt = crypto.randomBytes(16).toString("base64url");
   const derived = await scrypt(password, salt);
   return `scrypt:${salt}:${derived.toString("base64url")}`;

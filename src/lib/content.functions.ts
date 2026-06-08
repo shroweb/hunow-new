@@ -257,6 +257,50 @@ export const assignListingOwnerFn = createServerFn({ method: "POST" })
     return { ok: true, userName: user.name };
   });
 
+export const createBusinessOwnerFn = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      listingId: z.string(),
+      email: z.string().email(),
+      name: z.string().min(1),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    await requireAdmin();
+    const { findUserByEmail, assignListingOwner, getPool, ensureSchema } = await import("./db.server");
+    await ensureSchema();
+    const pool = getPool();
+
+    let user = await findUserByEmail(data.email);
+    let created = false;
+
+    if (!user) {
+      // Create the account with a random password — they'll set their own via the reset link
+      const crypto = await import("node:crypto");
+      const userId = crypto.randomUUID();
+      const randomPassword = crypto.randomBytes(24).toString("base64url");
+      const { hashPassword, requestPasswordReset } = await import("./auth.server");
+      const hash = await hashPassword(randomPassword);
+      await pool.query(
+        "insert into users (id, email, name, password_hash, role, app_role) values ($1, $2, $3, $4, 'user', 'customer')",
+        [userId, data.email.toLowerCase().trim(), data.name.trim(), hash],
+      );
+      user = { id: userId, name: data.name.trim(), email: data.email.toLowerCase().trim() };
+      created = true;
+
+      // Send a "set your password" email — non-fatal if it fails
+      try {
+        await requestPasswordReset(data.email);
+      } catch {
+        // Admin can resend from the users page
+      }
+    }
+
+    await assignListingOwner(data.listingId, user.id);
+    return { ok: true, userName: user.name, created };
+  });
+
 export const sendPushToSegmentFn = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({

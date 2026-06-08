@@ -11,7 +11,7 @@ import { setState, slugify, uid, useStore } from "@/lib/store";
 import {
   upsertListingFn,
   upsertOfferFn,
-  assignListingOwnerFn,
+  createBusinessOwnerFn,
 } from "@/lib/content.functions";
 import type { Listing, Offer } from "@/types";
 
@@ -42,6 +42,7 @@ function AdminBusinesses() {
     const category = String(fd.get("category") || "").trim();
     const address = String(fd.get("address") || "").trim();
     const ownerEmail = String(fd.get("ownerEmail") || "").trim();
+    const ownerName = String(fd.get("ownerName") || "").trim();
     const offerTitle = String(fd.get("offerTitle") || "").trim();
     const offerDesc = String(fd.get("offerDescription") || "").trim();
     const offerEndDate = String(fd.get("offerEndDate") || "").trim();
@@ -49,6 +50,7 @@ function AdminBusinesses() {
     if (!name) { setError("Business name is required."); return; }
     if (!category) { setError("Category is required."); return; }
     if (!ownerEmail) { setError("Owner email is required."); return; }
+    if (!ownerName) { setError("Owner name is required."); return; }
 
     setSaving(true);
     try {
@@ -71,17 +73,15 @@ function AdminBusinesses() {
       await upsertListingFn({ data: listing });
       setState((s) => ({ ...s, listings: [listing, ...s.listings] }), { persist: false });
 
-      // 2. Assign owner (also promotes user to business role)
-      const assignResult = await assignListingOwnerFn({
-        data: { listingId: listing.id, email: ownerEmail },
+      // 2. Create or find the owner account, then assign (also promotes to business role)
+      const assignResult = await createBusinessOwnerFn({
+        data: { listingId: listing.id, email: ownerEmail, name: ownerName },
       });
       setState(
         (s) => ({
           ...s,
           listings: s.listings.map((l) =>
-            l.id === listing.id
-              ? { ...l, ownerUserId: ownerEmail /* placeholder until reload */ }
-              : l,
+            l.id === listing.id ? { ...l, ownerUserId: ownerEmail } : l,
           ),
         }),
         { persist: false },
@@ -110,6 +110,7 @@ function AdminBusinesses() {
 
       setSuccess(
         `✓ ${name} added and ${assignResult.userName} set as owner` +
+          (assignResult.created ? " · account created, password-set email sent" : "") +
           (offerCreated ? " · offer created" : "") +
           ". They can now log in and use /business/listings.",
       );
@@ -164,15 +165,25 @@ function AdminBusinesses() {
               </AdminField>
             </div>
 
-            <AdminField label="Owner email *" hint="Must already have a HU NOW account">
-              <input
-                name="ownerEmail"
-                type="email"
-                required
-                className={adminInput}
-                placeholder="owner@business.com"
-              />
-            </AdminField>
+            <div className="grid grid-cols-2 gap-4">
+              <AdminField label="Owner name *">
+                <input
+                  name="ownerName"
+                  required
+                  className={adminInput}
+                  placeholder="e.g. Jane Smith"
+                />
+              </AdminField>
+              <AdminField label="Owner email *" hint="Account created automatically if they don't have one">
+                <input
+                  name="ownerEmail"
+                  type="email"
+                  required
+                  className={adminInput}
+                  placeholder="owner@business.com"
+                />
+              </AdminField>
+            </div>
 
             {/* Optional offer */}
             <div className="border-t border-foreground/10 pt-4 space-y-3">
