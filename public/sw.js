@@ -9,7 +9,6 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  // Clean up old caches
   e.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))),
@@ -38,36 +37,54 @@ self.addEventListener('notificationclick', (e) => {
   e.waitUntil(clients.openWindow(url));
 });
 
+// Only cache true static assets (JS/CSS bundles, fonts, images).
+// Everything else — HTML navigation, server functions, API calls — goes
+// straight to the network so data is always fresh.
+const STATIC_EXTENSIONS = /\.(js|css|woff2?|ttf|otf|ico|svg|png|jpg|jpeg|webp|gif)(\?.*)?$/i;
+
 self.addEventListener('fetch', (e) => {
   const { request } = e;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
-  // Skip API, SSR data, and cross-origin requests
-  if (url.origin !== self.location.origin) return;
-  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/_server/')) return;
 
-  // Network-first for HTML navigation, cache-first for static assets
+  // Never intercept cross-origin requests
+  if (url.origin !== self.location.origin) return;
+
   const isNavigation = request.mode === 'navigate';
+
   if (isNavigation) {
+    // Network-first for HTML pages — always get fresh SSR content
     e.respondWith(
       fetch(request)
         .then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE).then((c) => c.put(request, clone));
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE).then((c) => c.put(request, clone));
+          }
           return res;
         })
         .catch(() => caches.match(request).then((cached) => cached ?? caches.match('/'))),
     );
-  } else {
+    return;
+  }
+
+  if (STATIC_EXTENSIONS.test(url.pathname)) {
+    // Cache-first for immutable static assets (hashed filenames)
     e.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;
         return fetch(request).then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE).then((c) => c.put(request, clone));
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE).then((c) => c.put(request, clone));
+          }
           return res;
         });
       }),
     );
+    return;
   }
+
+  // Everything else (server functions, API routes, dynamic data) — network only
+  // No interception; browser handles it directly.
 });

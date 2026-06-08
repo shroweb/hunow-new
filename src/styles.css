@@ -242,3 +242,34 @@ html, body {
 .mb-bottom-nav {
   margin-bottom: calc(4rem + env(safe-area-inset-bottom));
 }
+
+/* PWA standalone mode — strip browser-web UI, feel native */
+@media (display-mode: standalone) {
+  /* Push sticky nav below iOS status bar */
+  .pwa-nav {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Footer is redundant — bottom nav handles all navigation */
+  footer {
+    display: none !important;
+  }
+
+  /* Mobile menu button is redundant — bottom nav handles navigation */
+  .pwa-menu-btn {
+    display: none !important;
+  }
+
+  /* Solid background — no frosted glass needed without browser chrome */
+  .pwa-nav {
+    background-color: var(--background) !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Slightly thinner bottom border on mobile for cleaner native feel */
+  @media (max-width: 1023px) {
+    .pwa-nav {
+      border-bottom-width: 1px;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { BottomNav } from "./BottomNav";
+import { PullToRefresh } from "./PullToRefresh";
 import { useEffect, useState, type ReactNode } from "react";
 import { NAV_SECTIONS } from "@/lib/nav";
 import { findTaxonomy, sectionTaxonomySlug, sectionHref } from "@/lib/taxonomy";
@@ -53,7 +54,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       <nav
-        className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b-2 border-foreground"
+        className="pwa-nav sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b-2 border-foreground"
         onMouseLeave={() => setOpen(null)}
       >
         {/* Top utility row */}
@@ -147,7 +148,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
-              className="lg:hidden px-3 py-2 border-2 border-foreground text-xs font-bold uppercase"
+              className="pwa-menu-btn lg:hidden px-3 py-2 border-2 border-foreground text-xs font-bold uppercase"
               aria-label="Menu"
             >
               Menu
@@ -357,6 +358,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       </main>
       <Footer />
       <BottomNav />
+      <PullToRefresh />
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
     </div>
   );
