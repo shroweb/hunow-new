@@ -56,6 +56,7 @@ import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminRedirectsRouteImport } from './routes/admin.redirects'
+import { Route as AdminPwaRouteImport } from './routes/admin.pwa'
 import { Route as AdminPollsRouteImport } from './routes/admin.polls'
 import { Route as AdminOffersRouteImport } from './routes/admin.offers'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
@@ -323,6 +324,11 @@ const AdminRedirectsRoute = AdminRedirectsRouteImport.update({
   path: '/redirects',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPwaRoute = AdminPwaRouteImport.update({
+  id: '/pwa',
+  path: '/pwa',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPollsRoute = AdminPollsRouteImport.update({
   id: '/polls',
   path: '/polls',
@@ -520,6 +526,7 @@ export interface FileRoutesByFullPath {
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/offers': typeof AdminOffersRoute
   '/admin/polls': typeof AdminPollsRoute
+  '/admin/pwa': typeof AdminPwaRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -599,6 +606,7 @@ export interface FileRoutesByTo {
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/offers': typeof AdminOffersRoute
   '/admin/polls': typeof AdminPollsRoute
+  '/admin/pwa': typeof AdminPwaRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -680,6 +688,7 @@ export interface FileRoutesById {
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/offers': typeof AdminOffersRoute
   '/admin/polls': typeof AdminPollsRoute
+  '/admin/pwa': typeof AdminPwaRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -762,6 +771,7 @@ export interface FileRouteTypes {
     | '/admin/newsletter'
     | '/admin/offers'
     | '/admin/polls'
+    | '/admin/pwa'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -841,6 +851,7 @@ export interface FileRouteTypes {
     | '/admin/newsletter'
     | '/admin/offers'
     | '/admin/polls'
+    | '/admin/pwa'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -921,6 +932,7 @@ export interface FileRouteTypes {
     | '/admin/newsletter'
     | '/admin/offers'
     | '/admin/polls'
+    | '/admin/pwa'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -1339,6 +1351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRedirectsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/pwa': {
+      id: '/admin/pwa'
+      path: '/pwa'
+      fullPath: '/admin/pwa'
+      preLoaderRoute: typeof AdminPwaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/polls': {
       id: '/admin/polls'
       path: '/polls'
@@ -1586,6 +1605,7 @@ interface AdminRouteChildren {
   AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminOffersRoute: typeof AdminOffersRoute
   AdminPollsRoute: typeof AdminPollsRoute
+  AdminPwaRoute: typeof AdminPwaRoute
   AdminRedirectsRoute: typeof AdminRedirectsRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -1611,6 +1631,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminNewsletterRoute: AdminNewsletterRoute,
   AdminOffersRoute: AdminOffersRoute,
   AdminPollsRoute: AdminPollsRoute,
+  AdminPwaRoute: AdminPwaRoute,
   AdminRedirectsRoute: AdminRedirectsRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSettingsRoute: AdminSettingsRoute,

@@ -127,6 +127,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "icon", type: "image/png", sizes: "512x512", href: "/icon-512.png" },
         { rel: "apple-touch-icon", sizes: "192x192", href: "/icon-192.png" },
         {
+          rel: "apple-touch-startup-image",
+          href: "/splash-portrait.png",
+          media: "(orientation: portrait)",
+        },
+        {
+          rel: "apple-touch-startup-image",
+          href: "/splash-landscape.png",
+          media: "(orientation: landscape)",
+        },
+        {
           rel: "alternate",
           type: "application/rss+xml",
           title: `${siteName} — Articles`,

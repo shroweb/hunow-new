@@ -22,6 +22,7 @@ import {
   BarChart2,
   Map,
   Download,
+  Smartphone,
   type LucideIcon,
 } from "lucide-react";
 import { getCurrentUser, signOutUser } from "@/lib/auth.functions";
@@ -77,6 +78,7 @@ const navSections: { title: string; items: { to: string; label: string; icon: Lu
       { to: "/admin/areas", label: "Area Guides", icon: Map },
       { to: "/admin/redirects", label: "Redirects", icon: ArrowLeftRight },
       { to: "/admin/taxonomy", label: "Taxonomy", icon: Layers },
+      { to: "/admin/pwa", label: "PWA", icon: Smartphone },
       { to: "/admin/settings", label: "Settings", icon: Settings },
     ],
   },

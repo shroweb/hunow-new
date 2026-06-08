@@ -1,7 +1,9 @@
-const CACHE_VERSION = "hunow-v2";
+const CACHE_VERSION = "hunow-v3";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const PAGE_CACHE = `${CACHE_VERSION}-pages`;
+const IMAGE_CACHE = `${CACHE_VERSION}-images`;
 const OFFLINE_URL = "/offline.html";
+const IMAGE_MAX_ENTRIES = 80;
 
 const PRECACHE_URLS = [
   "/",
@@ -11,9 +13,12 @@ const PRECACHE_URLS = [
   "/icon-512.png",
   "/icon-maskable-192.png",
   "/icon-maskable-512.png",
+  "/splash-portrait.png",
+  "/splash-landscape.png",
 ];
 
 const STATIC_EXTENSIONS = /\.(js|css|woff2?|ttf|otf|ico|svg|png|jpg|jpeg|webp|gif)(\?.*)?$/i;
+const IMAGE_EXTENSIONS = /\.(png|jpg|jpeg|webp|gif)(\?.*)?$/i;
 const NETWORK_ONLY_PREFIXES = ["/api/", "/_serverFn/", "/admin"];
 
 self.addEventListener("install", (event) => {
@@ -28,7 +33,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => ![STATIC_CACHE, PAGE_CACHE].includes(key))
+            .filter((key) => ![STATIC_CACHE, PAGE_CACHE, IMAGE_CACHE].includes(key))
             .map((key) => caches.delete(key)),
         ),
       )
@@ -46,6 +51,11 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(networkFirstPage(request));
+    return;
+  }
+
+  if (IMAGE_EXTENSIONS.test(url.pathname)) {
+    event.respondWith(cacheFirst(request, IMAGE_CACHE, IMAGE_MAX_ENTRIES));
     return;
   }
 
@@ -68,16 +78,25 @@ async function networkFirstPage(request) {
   }
 }
 
-async function cacheFirst(request) {
+async function cacheFirst(request, cacheName = STATIC_CACHE, maxEntries) {
   const cached = await caches.match(request);
   if (cached) return cached;
 
   const response = await fetch(request);
   if (response.ok) {
-    const cache = await caches.open(STATIC_CACHE);
+    const cache = await caches.open(cacheName);
     await cache.put(request, response.clone());
+    if (maxEntries) await trimCache(cacheName, maxEntries);
   }
   return response;
+}
+
+async function trimCache(cacheName, maxEntries) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length <= maxEntries) return;
+  await cache.delete(keys[0]);
+  await trimCache(cacheName, maxEntries);
 }
 
 self.addEventListener("push", (event) => {

@@ -872,58 +872,125 @@ function CardTab({ userName }: { userName: string }) {
 
 function PushSubscribeButton() {
   const [state, setState] = useState<"idle" | "loading" | "on" | "unsupported">("idle");
+  const [segments, setSegments] = useState<string[]>(["events", "offers"]);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (!("Notification" in window) || !("serviceWorker" in navigator)) {
       setState("unsupported");
       return;
     }
-    if (Notification.permission === "granted") setState("on");
+    if (Notification.permission === "granted") {
+      navigator.serviceWorker.ready
+        .then((reg) => reg.pushManager.getSubscription())
+        .then((sub) => {
+          if (sub) setState("on");
+        })
+        .catch(() => {});
+    }
   }, []);
+
+  const toggleSegment = (segment: string) => {
+    setSegments((current) =>
+      current.includes(segment)
+        ? current.filter((value) => value !== segment)
+        : [...current, segment],
+    );
+  };
 
   const subscribe = async () => {
     setState("loading");
+    setMessage("");
     try {
+      if (segments.length === 0) {
+        setMessage("Choose at least one alert type.");
+        setState("idle");
+        return;
+      }
       const { publicKey } = await getVapidPublicKeyFn();
       const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
-      });
+      const existing = await reg.pushManager.getSubscription();
+      const sub =
+        existing ??
+        (await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKey),
+        }));
       const json = sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } };
       await saveWebPushSubscriptionFn({
-        data: { endpoint: json.endpoint, p256dh: json.keys.p256dh, auth: json.keys.auth },
+        data: {
+          endpoint: json.endpoint,
+          p256dh: json.keys.p256dh,
+          auth: json.keys.auth,
+          segments,
+        },
       });
       setState("on");
-    } catch {
+      setMessage("Notification preferences saved.");
+    } catch (err) {
+      const permissionDenied = "Notification" in window && Notification.permission === "denied";
+      setMessage(
+        permissionDenied
+          ? "Notifications are blocked in your browser settings."
+          : `Could not enable notifications: ${err instanceof Error ? err.message : String(err)}`,
+      );
       setState("idle");
     }
   };
 
-  if (state === "unsupported" || state === "on") return null;
+  if (state === "unsupported") return null;
 
   return (
-    <button
-      onClick={subscribe}
-      disabled={state === "loading"}
-      className="mt-6 w-full flex items-center justify-center gap-2 border-2 border-foreground py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors disabled:opacity-50"
-    >
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
+    <div className="mt-6 border-2 border-foreground p-4">
+      <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-3">
+        Push alerts
+      </div>
+      <div className="grid gap-2 mb-4">
+        {[
+          ["events", "What's On"],
+          ["offers", "Offers"],
+          ["businesses", "Business updates"],
+        ].map(([value, label]) => (
+          <label
+            key={value}
+            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest"
+          >
+            <input
+              type="checkbox"
+              checked={segments.includes(value)}
+              onChange={() => toggleSegment(value)}
+            />
+            {label}
+          </label>
+        ))}
+      </div>
+      <button
+        onClick={subscribe}
+        disabled={state === "loading"}
+        className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors disabled:opacity-50"
       >
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-      </svg>
-      {state === "loading" ? "Enabling…" : "Enable notifications"}
-    </button>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        {state === "loading"
+          ? "Saving…"
+          : state === "on"
+            ? "Update alert preferences"
+            : "Enable notifications"}
+      </button>
+      {message && <p className="mt-2 text-xs text-muted-foreground font-mono">{message}</p>}
+    </div>
   );
 }
 

@@ -9,6 +9,7 @@ import { subscribeNewsletter } from "@/lib/public.functions";
 import { getSettings } from "@/lib/settings.functions";
 import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 import { CommandPalette } from "@/components/CommandPalette";
+import { PwaEnhancements } from "@/components/PwaEnhancements";
 
 export function PublicLayout({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -360,6 +361,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       <BottomNav />
       <PullToRefresh />
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+      <PwaEnhancements />
     </div>
   );
 }
