@@ -22,7 +22,7 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async () => {
         const { getDatabaseStore } = await import("@/lib/db.server");
         const store = await getDatabaseStore().catch(() => null);
-        const articles = store?.articles ?? [];
+        const articles = (store?.articles ?? []).filter((a) => !a.seo?.noIndex);
         const events = store?.events ?? [];
         const listings = store?.listings ?? [];
         const entries: SitemapEntry[] = [];
@@ -106,6 +106,47 @@ export const Route = createFileRoute("/sitemap.xml")({
             changefreq: "weekly",
             priority: "0.8",
             lastmod: today(),
+          });
+        }
+
+        // Area pages
+        const areas = [...new Set(listings.map((l) => l.area).filter(Boolean))];
+        for (const area of areas) {
+          entries.push({
+            path: `/areas/${encodeURIComponent(area.toLowerCase().replace(/\s+/g, "-"))}`,
+            changefreq: "weekly",
+            priority: "0.7",
+            lastmod: today(),
+          });
+        }
+
+        // Author pages
+        const authors = [...new Set(articles.map((a) => a.author).filter(Boolean))];
+        for (const author of authors) {
+          entries.push({
+            path: `/authors/${encodeURIComponent(author.toLowerCase().replace(/\s+/g, "-"))}`,
+            changefreq: "weekly",
+            priority: "0.6",
+          });
+        }
+
+        // Tag pages
+        const tags = [...new Set(articles.flatMap((a) => a.tags ?? []).filter(Boolean))];
+        for (const tag of tags) {
+          entries.push({
+            path: `/tag/${encodeURIComponent(tag.toLowerCase().replace(/\s+/g, "-"))}`,
+            changefreq: "weekly",
+            priority: "0.5",
+          });
+        }
+
+        // Series pages
+        const seriesList = [...new Set(articles.map((a) => a.series).filter(Boolean))];
+        for (const series of seriesList) {
+          entries.push({
+            path: `/series/${encodeURIComponent(series!.toLowerCase().replace(/\s+/g, "-"))}`,
+            changefreq: "weekly",
+            priority: "0.6",
           });
         }
 

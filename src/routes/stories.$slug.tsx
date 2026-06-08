@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
 import { fetchArticleBySlug } from "@/lib/content-read.functions";
 import { articlePath } from "@/lib/taxonomy";
 import { PublicLayout } from "@/components/layout/PublicLayout";
@@ -12,6 +13,7 @@ import { ArticleContent, TableOfContents } from "@/components/ArticleContent";
 import { ArticleComments } from "@/components/ArticleComments";
 import { img } from "@/data/seed";
 import { relatedForArticle } from "@/lib/related-content";
+import { subscribeNewsletter } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/stories/$slug")({
   component: StoryDetail,
@@ -47,6 +49,27 @@ export const Route = createFileRoute("/stories/$slug")({
         { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: a.seo?.canonicalUrl ?? url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: title,
+            description,
+            image,
+            datePublished: a.publishedAt,
+            dateModified: a.publishedAt,
+            author: { "@type": "Person", name: a.author },
+            publisher: {
+              "@type": "Organization",
+              name: "HU NOW",
+              url: process.env.SITE_URL ?? "https://hunow.co.uk",
+            },
+            url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+          }),
+        },
+      ],
     };
   },
   notFoundComponent: () => (
@@ -144,6 +167,7 @@ function StoryDetail() {
           </div>
           <TableOfContents content={article.content} />
           <ArticleContent content={article.content} entities={entities} />
+          <InlineNewsletterSignup />
           <div className="mt-6 flex flex-wrap gap-3">
             <ShareMenu title={article.title} text={article.excerpt} />
             <SaveButton kind="story" id={article.id} slug={article.slug} title={article.title} />
@@ -183,5 +207,58 @@ function StoryDetail() {
         </section>
       )}
     </PublicLayout>
+  );
+}
+
+function InlineNewsletterSignup() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setStatus("loading");
+    try {
+      await subscribeNewsletter({ data: { email, segments: ["events", "offers"] } });
+      setStatus("done");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="my-12 border-2 border-foreground p-8">
+      <div className="font-mono text-[10px] uppercase tracking-widest text-accent mb-2">
+        Hull's weekly digest
+      </div>
+      <h3 className="font-display text-3xl uppercase leading-none mb-2">Stay in the loop</h3>
+      <p className="text-sm text-muted-foreground mb-5">
+        Events, offers and stories — straight to your inbox, every week.
+      </p>
+      {status === "done" ? (
+        <p className="text-sm font-bold text-accent">You're in. Check your inbox.</p>
+      ) : (
+        <form onSubmit={onSubmit} className="flex gap-2 flex-wrap">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            required
+            className="flex-1 min-w-0 bg-white border-2 border-foreground px-4 py-2.5 font-mono text-sm focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="bg-foreground text-background px-6 py-2.5 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors disabled:opacity-50"
+          >
+            {status === "loading" ? "Subscribing…" : "Subscribe"}
+          </button>
+          {status === "error" && (
+            <p className="w-full text-xs text-red-600 font-mono mt-1">Something went wrong — try again.</p>
+          )}
+        </form>
+      )}
+    </div>
   );
 }
