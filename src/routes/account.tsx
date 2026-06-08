@@ -762,43 +762,43 @@ function CardTab({ userName }: { userName: string }) {
 
       {/* One-time redemption code */}
       {offers.length > 0 && (
-        <div className="border-2 border-foreground p-5 space-y-4">
-          <div>
-            <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
-              Generate redemption code
+        <div className="border-2 border-foreground overflow-hidden">
+          <div className="px-5 pt-5 pb-4 space-y-3">
+            <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+              One-time code
             </div>
             <select
               value={selectedOfferId}
               onChange={(e) => { setSelectedOfferId(e.target.value); setCode(null); setCodeError(""); }}
-              className="w-full bg-background border-2 border-foreground px-3 py-2 font-mono text-xs focus:outline-none"
+              className="w-full bg-background border-2 border-foreground px-3 py-2.5 font-mono text-xs focus:outline-none"
             >
               <option value="">Select an offer…</option>
               {offers.map((o) => (
                 <option key={o.id} value={o.id}>{o.title} — {o.businessName}</option>
               ))}
             </select>
-          </div>
 
-          {code && codeSecondsLeft > 0 ? (
-            <div className="text-center space-y-2">
-              <div className="font-display text-6xl tracking-[0.3em] text-foreground">{code}</div>
-              <div className="font-mono text-xs text-muted-foreground">
-                Show this to staff · expires in {mm}:{ss}
+            {code && codeSecondsLeft > 0 ? (
+              <div className="text-center py-4 space-y-2">
+                <div className="font-display text-7xl tracking-[0.35em] text-foreground leading-none">{code}</div>
+                {selectedOffer && (
+                  <div className="font-mono text-[10px] text-accent uppercase">{selectedOffer.title}</div>
+                )}
+                <div className="font-mono text-xs text-muted-foreground">
+                  Show to staff · expires {mm}:{ss}
+                </div>
               </div>
-              {selectedOffer && (
-                <div className="font-mono text-[10px] text-accent uppercase">{selectedOffer.title}</div>
-              )}
-            </div>
-          ) : (
-            <button
-              onClick={generateCode}
-              disabled={!selectedOfferId || generatingCode}
-              className="w-full bg-foreground text-background py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors disabled:opacity-40"
-            >
-              {generatingCode ? "Generating…" : "Get Code"}
-            </button>
-          )}
-          {codeError && <p className="text-xs text-red-600 font-mono">{codeError}</p>}
+            ) : (
+              <button
+                onClick={generateCode}
+                disabled={!selectedOfferId || generatingCode}
+                className="w-full bg-foreground text-background py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                {generatingCode ? "Generating…" : "Get Code"}
+              </button>
+            )}
+            {codeError && <p className="text-xs text-red-600 font-mono">{codeError}</p>}
+          </div>
         </div>
       )}
 

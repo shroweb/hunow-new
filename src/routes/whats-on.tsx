@@ -111,43 +111,41 @@ function WhatsOn() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 py-5 border-b border-border">
-        <div className="flex flex-wrap gap-2 items-center">
-          <button
-            onClick={() => setWhen("all")}
-            className={`px-3 py-1.5 text-[10px] font-bold uppercase ${when === "all" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setWhen("today")}
-            className={`px-3 py-1.5 text-[10px] font-bold uppercase ${when === "today" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
-          >
-            Today
-          </button>
-          <button
-            onClick={() => setWhen("weekend")}
-            className={`px-3 py-1.5 text-[10px] font-bold uppercase ${when === "weekend" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
-          >
-            This Weekend
-          </button>
-          <div className="w-px h-4 bg-foreground/20 mx-1" />
-          {CATEGORIES.filter((c) => c !== "All").map((c) => (
+      <section className="max-w-7xl mx-auto px-4 py-3 border-b border-border">
+        <div className="flex items-center gap-2">
+          {/* Time filters — always visible, never scroll off */}
+          <div className="flex gap-1 shrink-0">
+            {(["all", "today", "weekend"] as const).map((w) => (
+              <button
+                key={w}
+                onClick={() => setWhen(w)}
+                className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap ${when === w ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              >
+                {w === "all" ? "All" : w === "today" ? "Today" : "Weekend"}
+              </button>
+            ))}
+          </div>
+          <div className="w-px h-4 bg-foreground/20 shrink-0" />
+          {/* Categories — horizontally scrollable single row */}
+          <div className="flex gap-1 overflow-x-auto scrollbar-none flex-1 min-w-0 py-0.5">
+            {CATEGORIES.filter((c) => c !== "All").map((c) => (
+              <button
+                key={c}
+                onClick={() => setCategory(category === c ? "All" : c)}
+                className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 ${category === c ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              >
+                {c}
+              </button>
+            ))}
             <button
-              key={c}
-              onClick={() => setCategory(category === c ? "All" : c)}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase ${category === c ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              onClick={() => setFreeOnly((v) => !v)}
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 ml-1 ${freeOnly ? "bg-foreground text-background" : "border border-foreground/20"}`}
             >
-              {c}
+              Free
             </button>
-          ))}
-          <button
-            onClick={() => setFreeOnly((v) => !v)}
-            className={`px-3 py-1.5 text-[10px] font-bold uppercase ml-1 ${freeOnly ? "bg-foreground text-background" : "border border-foreground/20"}`}
-          >
-            Free Only
-          </button>
-          <div className="flex gap-1 ml-auto">
+          </div>
+          {/* View toggle — fixed right */}
+          <div className="flex gap-1 shrink-0">
             <button
               onClick={() => setView("list")}
               className={`px-3 py-1.5 text-[10px] font-bold uppercase ${view === "list" ? "bg-foreground text-background" : "border border-foreground/20"}`}
@@ -158,7 +156,7 @@ function WhatsOn() {
               onClick={() => setView("calendar")}
               className={`px-3 py-1.5 text-[10px] font-bold uppercase ${view === "calendar" ? "bg-foreground text-background" : "border border-foreground/20"}`}
             >
-              Calendar
+              Cal
             </button>
           </div>
         </div>

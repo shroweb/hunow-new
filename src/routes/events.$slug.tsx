@@ -128,7 +128,7 @@ function EventDetail() {
         ]}
       />
       <article>
-        <div className="w-full aspect-[21/9] bg-stone-200 overflow-hidden">
+        <div className="w-full aspect-[4/3] sm:aspect-[21/9] bg-stone-200 overflow-hidden relative">
           <img
             src={img(event.featuredImage, 1600, 700)}
             alt={`${event.title} at ${event.locationName}`}
@@ -137,8 +137,9 @@ function EventDetail() {
             decoding="async"
             className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
         </div>
-        <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
           {event.isSponsored && (
             <div className="inline-block bg-accent text-background text-[10px] font-bold uppercase px-3 py-1 mb-4">
               Sponsored

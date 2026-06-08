@@ -172,21 +172,21 @@ export function ListingCard({ listing }: { listing: Listing }) {
           }}
         />
       </div>
-      <div className="flex items-center justify-between gap-2 mb-1">
-        <div className="text-[10px] font-mono font-bold uppercase text-accent">
-          {listing.category} · {listing.area}
+      <div className="flex items-start justify-between gap-1 mb-1">
+        <div className="text-[9px] font-mono font-bold uppercase text-accent leading-tight">
+          {listing.category}<span className="hidden sm:inline"> · {listing.area}</span>
         </div>
         {status && (
           <span
             title={status.label}
-            className={`text-[9px] font-bold uppercase px-1.5 py-0.5 shrink-0 max-w-[120px] truncate ${status.open ? "bg-[oklch(0.58_0.15_145)] text-background" : "border border-foreground/20 text-muted-foreground"}`}
+            className={`text-[8px] sm:text-[9px] font-bold uppercase px-1.5 py-0.5 shrink-0 max-w-[90px] truncate ${status.open ? "bg-[oklch(0.58_0.15_145)] text-background" : "border border-foreground/20 text-muted-foreground"}`}
           >
-            {status.label}
+            {status.open ? "Open" : "Closed"}
           </span>
         )}
       </div>
-      <h3 className="text-xl font-bold leading-tight group-hover:underline">{listing.name}</h3>
-      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{listing.description}</p>
+      <h3 className="text-base sm:text-xl font-bold leading-tight group-hover:underline">{listing.name}</h3>
+      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mt-1 hidden sm:block">{listing.description}</p>
     </Link>
   );
 }
