@@ -18,7 +18,13 @@ import { validateUniqueSlug, validateUrl } from "@/components/admin/validation-u
 import { readSeo } from "@/components/admin/seo-utils";
 import { WeekHoursPicker } from "@/components/admin/WeekHoursPicker";
 import { setState, slugify, uid, useStore } from "@/lib/store";
-import { upsertListingFn, deleteListingFn, searchGooglePlacesFn, getGooglePlaceDetailsFn, assignListingOwnerFn } from "@/lib/content.functions";
+import {
+  upsertListingFn,
+  deleteListingFn,
+  searchGooglePlacesFn,
+  getGooglePlaceDetailsFn,
+  assignListingOwnerFn,
+} from "@/lib/content.functions";
 import type { Listing, WeekHours } from "@/types";
 
 export const Route = createFileRoute("/admin/listings")({ component: AdminListings });
@@ -41,7 +47,14 @@ function AdminListings() {
   const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-  const [googleFill, setGoogleFill] = useState<{ name?: string; address?: string; phone?: string; website?: string; openingHours?: string; photo?: string } | null>(null);
+  const [googleFill, setGoogleFill] = useState<{
+    name?: string;
+    address?: string;
+    phone?: string;
+    website?: string;
+    openingHours?: string;
+    photo?: string;
+  } | null>(null);
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const verified = listings.filter((l) => l.isVerified).length;
@@ -192,7 +205,11 @@ function AdminListings() {
                 setGoogleFill(details);
               }}
             />
-            <form onSubmit={onSubmit} className="space-y-6" key={googleFill ? JSON.stringify(googleFill) : "default"}>
+            <form
+              onSubmit={onSubmit}
+              className="space-y-6"
+              key={googleFill ? JSON.stringify(googleFill) : "default"}
+            >
               <div className="grid lg:grid-cols-[1fr_340px] gap-6">
                 <div className="space-y-4">
                   <AdminField label="Name">
@@ -329,7 +346,11 @@ function AdminListings() {
                     />
                   </AdminField>
                   <AdminField label="Phone">
-                    <input name="phone" defaultValue={googleFill?.phone ?? editing?.phone} className={adminInput} />
+                    <input
+                      name="phone"
+                      defaultValue={googleFill?.phone ?? editing?.phone}
+                      className={adminInput}
+                    />
                   </AdminField>
                   <AdminField label="Email">
                     <input
@@ -511,7 +532,10 @@ function AdminListings() {
               >
                 Edit
               </button>
-              <AssignOwnerButton listingId={l.id} currentOwner={(l as { ownerUserId?: string }).ownerUserId} />
+              <AssignOwnerButton
+                listingId={l.id}
+                currentOwner={(l as { ownerUserId?: string }).ownerUserId}
+              />
               <button
                 onClick={() => remove(l.id)}
                 className="text-[10px] font-bold uppercase text-red-600 underline"
@@ -526,7 +550,13 @@ function AdminListings() {
   );
 }
 
-function AssignOwnerButton({ listingId, currentOwner }: { listingId: string; currentOwner?: string }) {
+function AssignOwnerButton({
+  listingId,
+  currentOwner,
+}: {
+  listingId: string;
+  currentOwner?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
@@ -556,10 +586,19 @@ function AssignOwnerButton({ listingId, currentOwner }: { listingId: string; cur
         {currentOwner ? "Owner ✓" : "Assign owner"}
       </button>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setOpen(false)}>
-          <div className="bg-white border-2 border-foreground p-6 w-80 space-y-3" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="bg-white border-2 border-foreground p-6 w-80 space-y-3"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="font-bold text-sm uppercase tracking-wide">Assign business owner</div>
-            <p className="text-xs text-muted-foreground">Enter the email address of the user's HU NOW account. They'll get access to this listing in their business dashboard and their role will be set to Business.</p>
+            <p className="text-xs text-muted-foreground">
+              Enter the email address of the user's HU NOW account. They'll get access to this
+              listing in their business dashboard and their role will be set to Business.
+            </p>
             <input
               type="email"
               value={email}
@@ -569,10 +608,17 @@ function AssignOwnerButton({ listingId, currentOwner }: { listingId: string; cur
               onKeyDown={(e) => e.key === "Enter" && assign()}
             />
             <div className="flex gap-2">
-              <button onClick={assign} disabled={saving || !email.trim()} className={`${adminBtn} flex-1 disabled:opacity-50`}>
+              <button
+                onClick={assign}
+                disabled={saving || !email.trim()}
+                className={`${adminBtn} flex-1 disabled:opacity-50`}
+              >
                 {saving ? "Assigning…" : "Assign"}
               </button>
-              <button onClick={() => setOpen(false)} className="border-2 border-foreground px-4 py-2 text-[10px] font-bold uppercase hover:bg-foreground/5">
+              <button
+                onClick={() => setOpen(false)}
+                className="border-2 border-foreground px-4 py-2 text-[10px] font-bold uppercase hover:bg-foreground/5"
+              >
                 Cancel
               </button>
             </div>
@@ -598,11 +644,20 @@ function validateCoordinate(value: number | undefined, label: string, min: numbe
   return undefined;
 }
 
-type PlaceFill = { name?: string; address?: string; phone?: string; website?: string; openingHours?: string; photo?: string };
+type PlaceFill = {
+  name?: string;
+  address?: string;
+  phone?: string;
+  website?: string;
+  openingHours?: string;
+  photo?: string;
+};
 
 function GooglePlacesLookup({ onFill }: { onFill: (d: PlaceFill) => void }) {
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<Array<{ placeId: string; description: string }>>([]);
+  const [suggestions, setSuggestions] = useState<Array<{ placeId: string; description: string }>>(
+    [],
+  );
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -610,14 +665,20 @@ function GooglePlacesLookup({ onFill }: { onFill: (d: PlaceFill) => void }) {
   const search = (q: string) => {
     setQuery(q);
     if (debounce.current) clearTimeout(debounce.current);
-    if (!q.trim()) { setSuggestions([]); return; }
+    if (!q.trim()) {
+      setSuggestions([]);
+      return;
+    }
     debounce.current = setTimeout(async () => {
       setLoading(true);
       try {
         const results = await searchGooglePlacesFn({ data: { query: q } });
         setSuggestions(results);
-      } catch { setSuggestions([]); }
-      finally { setLoading(false); }
+      } catch {
+        setSuggestions([]);
+      } finally {
+        setLoading(false);
+      }
     }, 400);
   };
 
@@ -628,11 +689,20 @@ function GooglePlacesLookup({ onFill }: { onFill: (d: PlaceFill) => void }) {
     setQuery("");
     try {
       const d = await getGooglePlaceDetailsFn({ data: { placeId } });
-      onFill({ name: d.name, address: d.address, phone: d.phone, website: d.website, openingHours: d.openingHours, photo: d.photo });
+      onFill({
+        name: d.name,
+        address: d.address,
+        phone: d.phone,
+        website: d.website,
+        openingHours: d.openingHours,
+        photo: d.photo,
+      });
       setStatus(`✓ Filled from Google Places: ${d.name}`);
     } catch (err) {
       setStatus(`Error: ${String(err)}`);
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -648,7 +718,9 @@ function GooglePlacesLookup({ onFill }: { onFill: (d: PlaceFill) => void }) {
           placeholder="Search for a business name in Hull…"
           className="w-full border border-border px-3 py-2 text-sm bg-white focus:outline-none"
         />
-        {loading && <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">…</span>}
+        {loading && (
+          <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">…</span>
+        )}
         {suggestions.length > 0 && (
           <div className="absolute z-20 top-full left-0 right-0 bg-white border border-border shadow-lg">
             {suggestions.map((s) => (

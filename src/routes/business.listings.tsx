@@ -545,19 +545,33 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
   const [redeemResult, setRedeemResult] = useState<RedeemResult | null>(null);
 
   // History
-  const [history, setHistory] = useState<{
-    id: string; offer_title: string | null; customer_name: string | null;
-    redeemed_at: string; method: string;
-  }[]>([]);
+  const [history, setHistory] = useState<
+    {
+      id: string;
+      offer_title: string | null;
+      customer_name: string | null;
+      redeemed_at: string;
+      method: string;
+    }[]
+  >([]);
   const [historyLoaded, setHistoryLoaded] = useState(false);
 
   const loadHistory = () => {
     getBusinessRedemptionsFn({ data: { listingId } })
-      .then(setHistory).catch(() => {}).finally(() => setHistoryLoaded(true));
+      .then(setHistory)
+      .catch(() => {})
+      .finally(() => setHistoryLoaded(true));
   };
 
-  useEffect(() => { loadHistory(); }, [listingId]);
-  useEffect(() => () => { controlsRef.current?.stop(); }, []);
+  useEffect(() => {
+    loadHistory();
+  }, [listingId]);
+  useEffect(
+    () => () => {
+      controlsRef.current?.stop();
+    },
+    [],
+  );
 
   const startScan = async () => {
     const { BrowserQRCodeReader } = await import("@zxing/browser");
@@ -568,7 +582,8 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
     setRedeemResult(null);
     try {
       const controls = await reader.decodeFromVideoDevice(
-        undefined, videoRef.current!,
+        undefined,
+        videoRef.current!,
         (result, _err, controls) => {
           if (result) {
             controls.stop();
@@ -581,11 +596,15 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
         },
       );
       controlsRef.current = controls;
-    } catch { setScanning(false); }
+    } catch {
+      setScanning(false);
+    }
   };
 
   const stopScan = () => {
-    controlsRef.current?.stop(); controlsRef.current = null; setScanning(false);
+    controlsRef.current?.stop();
+    controlsRef.current = null;
+    setScanning(false);
   };
 
   const doRedeem = async (body: Record<string, string>) => {
@@ -597,7 +616,7 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      const data = await res.json() as RedeemResult & { error?: string; success?: boolean };
+      const data = (await res.json()) as RedeemResult & { error?: string; success?: boolean };
       if (!res.ok || !data.success) throw new Error(data.error ?? "Redemption failed");
       setStatus("success");
       setStatusMsg(`Redeemed for ${data.customer_name}!`);
@@ -611,10 +630,20 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
     }
   };
 
-  const reset = () => { setStatus("idle"); setStatusMsg(""); setRedeemResult(null); setScannedToken(""); setEnteredCode(""); };
+  const reset = () => {
+    setStatus("idle");
+    setStatusMsg("");
+    setRedeemResult(null);
+    setScannedToken("");
+    setEnteredCode("");
+  };
 
   if (offers.length === 0) {
-    return <p className="text-sm text-muted-foreground font-mono">No active offers — add one in the Offers tab first.</p>;
+    return (
+      <p className="text-sm text-muted-foreground font-mono">
+        No active offers — add one in the Offers tab first.
+      </p>
+    );
   }
 
   return (
@@ -624,7 +653,10 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
         {(["qr", "code"] as const).map((m) => (
           <button
             key={m}
-            onClick={() => { setMode(m); reset(); }}
+            onClick={() => {
+              setMode(m);
+              reset();
+            }}
             className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${mode === m ? "bg-foreground text-background" : "hover:bg-foreground/5"}`}
           >
             {m === "qr" ? "Scan QR" : "Enter Code"}
@@ -636,17 +668,40 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
         {mode === "qr" && (
           <>
             <div>
-              <label className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">Select offer</label>
-              <select value={selectedOffer} onChange={(e) => setSelectedOffer(e.target.value)} className={fieldClass}>
-                {offers.map((o) => <option key={o.id} value={o.id}>{o.title}</option>)}
+              <label className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">
+                Select offer
+              </label>
+              <select
+                value={selectedOffer}
+                onChange={(e) => setSelectedOffer(e.target.value)}
+                className={fieldClass}
+              >
+                {offers.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.title}
+                  </option>
+                ))}
               </select>
             </div>
-            <div className={`relative bg-foreground/5 border-2 border-foreground overflow-hidden ${scanning ? "block" : "hidden"}`}>
-              <video ref={videoRef} className="w-full aspect-square object-cover" autoPlay muted playsInline />
+            <div
+              className={`relative bg-foreground/5 border-2 border-foreground overflow-hidden ${scanning ? "block" : "hidden"}`}
+            >
+              <video
+                ref={videoRef}
+                className="w-full aspect-square object-cover"
+                autoPlay
+                muted
+                playsInline
+              />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-48 h-48 border-2 border-accent" />
               </div>
-              <button onClick={stopScan} className="absolute top-2 right-2 bg-foreground text-background text-[10px] font-bold uppercase px-3 py-1.5">Cancel</button>
+              <button
+                onClick={stopScan}
+                className="absolute top-2 right-2 bg-foreground text-background text-[10px] font-bold uppercase px-3 py-1.5"
+              >
+                Cancel
+              </button>
             </div>
             {scannedToken ? (
               <div className="space-y-3">
@@ -658,15 +713,36 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
                 >
                   {status === "loading" ? "Redeeming…" : "Confirm Redemption"}
                 </button>
-                <button onClick={reset} className="w-full border-2 border-foreground py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground/5">Scan Again</button>
+                <button
+                  onClick={reset}
+                  className="w-full border-2 border-foreground py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground/5"
+                >
+                  Scan Again
+                </button>
               </div>
-            ) : !scanning && (
-              <button onClick={startScan} className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
-                </svg>
-                Scan Customer Card
-              </button>
+            ) : (
+              !scanning && (
+                <button
+                  onClick={startScan}
+                  className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                  Scan Customer Card
+                </button>
+              )
             )}
           </>
         )}
@@ -674,7 +750,9 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
         {mode === "code" && (
           <div className="space-y-4">
             <div>
-              <label className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">6-digit customer code</label>
+              <label className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">
+                6-digit customer code
+              </label>
               <input
                 type="text"
                 inputMode="numeric"
@@ -700,9 +778,15 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
           <div className="bg-foreground text-background p-4 space-y-1">
             <p className="font-bold text-sm">{redeemResult.customer_name}</p>
             <p className="font-mono text-[10px] text-white/70 uppercase">
-              +{redeemResult.points_awarded} pts · {redeemResult.customer_points} total · {redeemResult.customer_tier}
+              +{redeemResult.points_awarded} pts · {redeemResult.customer_points} total ·{" "}
+              {redeemResult.customer_tier}
             </p>
-            <button onClick={reset} className="mt-2 text-[10px] font-bold uppercase tracking-widest text-accent">Redeem another →</button>
+            <button
+              onClick={reset}
+              className="mt-2 text-[10px] font-bold uppercase tracking-widest text-accent"
+            >
+              Redeem another →
+            </button>
           </div>
         )}
         {status === "error" && <p className="text-sm font-bold text-red-600">{statusMsg}</p>}
@@ -710,7 +794,9 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
 
       {/* Redemption history */}
       <div className="border-t border-foreground/10 pt-6">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-3">Recent redemptions</div>
+        <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+          Recent redemptions
+        </div>
         {!historyLoaded ? (
           <p className="font-mono text-xs text-muted-foreground">Loading…</p>
         ) : history.length === 0 ? (
@@ -718,14 +804,22 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
         ) : (
           <div className="space-y-2">
             {history.map((r) => (
-              <div key={r.id} className="border border-foreground/10 p-3 flex justify-between gap-3 text-sm">
+              <div
+                key={r.id}
+                className="border border-foreground/10 p-3 flex justify-between gap-3 text-sm"
+              >
                 <div>
                   <p className="font-bold">{r.offer_title ?? "Offer"}</p>
-                  {r.customer_name && <p className="font-mono text-[10px] text-muted-foreground">{r.customer_name}</p>}
+                  {r.customer_name && (
+                    <p className="font-mono text-[10px] text-muted-foreground">{r.customer_name}</p>
+                  )}
                 </div>
                 <div className="text-right shrink-0">
                   <p className="font-mono text-[10px] text-muted-foreground">
-                    {new Date(r.redeemed_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                    {new Date(r.redeemed_at).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                    })}
                   </p>
                   <p className="font-mono text-[9px] text-accent uppercase">{r.method}</p>
                 </div>

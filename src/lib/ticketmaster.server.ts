@@ -99,11 +99,9 @@ function mapTicketmasterEvent(ev: TmEvent): EventItem {
     }
   }
 
-  const addressParts = [
-    venue?.address?.line1,
-    venue?.city?.name,
-    venue?.postalCode,
-  ].filter(Boolean);
+  const addressParts = [venue?.address?.line1, venue?.city?.name, venue?.postalCode].filter(
+    Boolean,
+  );
 
   return {
     id: `ticketmaster-${ev.id}`,

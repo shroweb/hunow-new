@@ -231,7 +231,8 @@
 }
 
 /* PWA / native app feel */
-html, body {
+html,
+body {
   overscroll-behavior: none;
 }
 

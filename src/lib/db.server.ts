@@ -558,9 +558,7 @@ async function seedIfEmpty() {
 
   // Second guard: if the marker was accidentally removed but real content exists,
   // just restore the marker — never overwrite live data with seed data.
-  const hasContent = await getPool().query(
-    "select 1 from articles limit 1",
-  );
+  const hasContent = await getPool().query("select 1 from articles limit 1");
   if (hasContent.rowCount && hasContent.rowCount > 0) {
     await getPool().query("insert into db_initialized default values");
     return;
@@ -1910,13 +1908,14 @@ export async function assignListingOwner(listingId: string, userId: string): Pro
     [listingId, userId],
   );
   // Promote user to business role
-  await pool.query(
-    `update users set app_role = 'business', updated_at = now() where id = $1`,
-    [userId],
-  );
+  await pool.query(`update users set app_role = 'business', updated_at = now() where id = $1`, [
+    userId,
+  ]);
 }
 
-export async function findUserByEmail(email: string): Promise<{ id: string; name: string; email: string } | null> {
+export async function findUserByEmail(
+  email: string,
+): Promise<{ id: string; name: string; email: string } | null> {
   await ensureSchema();
   const result = await getPool().query<{ id: string; name: string; email: string }>(
     "select id, name, email from users where lower(email) = lower($1) limit 1",

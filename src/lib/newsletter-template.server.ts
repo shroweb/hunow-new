@@ -63,11 +63,7 @@ function button(label: string, href: string, style = "") {
 }
 
 function goldButton(label: string, href: string) {
-  return button(
-    label,
-    href,
-    "background:#dcae3a;color:#080d2d;border-color:#dcae3a;",
-  );
+  return button(label, href, "background:#dcae3a;color:#080d2d;border-color:#dcae3a;");
 }
 
 function articleCard(article: Article) {
@@ -218,7 +214,6 @@ function listingRow(listing: Listing, first = false) {
   `;
 }
 
-
 function sectionHeader(title: string) {
   return `<tr><td style="padding:22px 36px 14px;border-top:3px solid #080d2d;"><span style="font-family:Impact,'Arial Black',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:1px;color:#080d2d;">${escapeHtml(title)}</span></td></tr>`;
 }
@@ -236,7 +231,9 @@ function eventDateRange(events: EventItem[]): string {
     .sort((a, b) => a.getTime() - b.getTime());
   if (!dates.length) return "";
   const fmt = (d: Date) =>
-    new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short" }).format(d);
+    new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short" }).format(
+      d,
+    );
   return dates.length === 1 || fmt(dates[0]) === fmt(dates[dates.length - 1])
     ? fmt(dates[0])
     : `${fmt(dates[0])} – ${fmt(dates[dates.length - 1])}`;
@@ -270,9 +267,15 @@ const templateConfigs: Record<
       [
         lead ? `${sectionHeader("Lead story")}${articleCard(lead)}` : "",
         rest.length ? `${sectionHeader("More stories")}${articleGrid(rest).join("")}` : "",
-        section("What's on", issue.events.map((e, i) => eventRow(e, i === 0))),
+        section(
+          "What's on",
+          issue.events.map((e, i) => eventRow(e, i === 0)),
+        ),
         issue.offers.length ? `${sectionHeader("Offers")}${offerGrid(issue.offers).join("")}` : "",
-        section("Places to know", issue.listings.map((l, i) => listingRow(l, i === 0))),
+        section(
+          "Places to know",
+          issue.listings.map((l, i) => listingRow(l, i === 0)),
+        ),
       ].join(""),
   },
   events: {
@@ -291,10 +294,18 @@ const templateConfigs: Record<
     sections: (issue, lead, rest = []) => {
       const articles = [lead, ...rest].filter(Boolean) as Article[];
       return [
-        section("This week", issue.events.map((e, i) => eventRow(e, i === 0))),
+        section(
+          "This week",
+          issue.events.map((e, i) => eventRow(e, i === 0)),
+        ),
         articles.length ? `${sectionHeader("Event reads")}${articleGrid(articles).join("")}` : "",
-        section("Places nearby", issue.listings.map((l, i) => listingRow(l, i === 0))),
-        issue.offers.length ? `${sectionHeader("Good deals")}${offerGrid(issue.offers).join("")}` : "",
+        section(
+          "Places nearby",
+          issue.listings.map((l, i) => listingRow(l, i === 0)),
+        ),
+        issue.offers.length
+          ? `${sectionHeader("Good deals")}${offerGrid(issue.offers).join("")}`
+          : "",
       ].join("");
     },
   },
@@ -314,10 +325,20 @@ const templateConfigs: Record<
     sections: (issue, lead, rest = []) => {
       const articles = [lead, ...rest].filter(Boolean) as Article[];
       return [
-        issue.offers.length ? `${sectionHeader("Active offers")}${offerGrid(issue.offers, true).join("")}` : "",
-        section("Places with perks", issue.listings.map((l, i) => listingRow(l, i === 0))),
-        articles.length ? `${sectionHeader("Food & drink reads")}${articleGrid(articles).join("")}` : "",
-        section("Also happening", issue.events.map((e, i) => eventRow(e, i === 0))),
+        issue.offers.length
+          ? `${sectionHeader("Active offers")}${offerGrid(issue.offers, true).join("")}`
+          : "",
+        section(
+          "Places with perks",
+          issue.listings.map((l, i) => listingRow(l, i === 0)),
+        ),
+        articles.length
+          ? `${sectionHeader("Food & drink reads")}${articleGrid(articles).join("")}`
+          : "",
+        section(
+          "Also happening",
+          issue.events.map((e, i) => eventRow(e, i === 0)),
+        ),
       ].join("");
     },
   },
@@ -333,9 +354,17 @@ const templateConfigs: Record<
     ctaStyle: "background:#4a8f51;border-color:#4a8f51;",
     sections: (issue) =>
       [
-        section("Featured places", issue.listings.map((l, i) => listingRow(l, i === 0))),
-        issue.offers.length ? `${sectionHeader("Current offers")}${offerGrid(issue.offers).join("")}` : "",
-        section("Networking & events", issue.events.map((e, i) => eventRow(e, i === 0))),
+        section(
+          "Featured places",
+          issue.listings.map((l, i) => listingRow(l, i === 0)),
+        ),
+        issue.offers.length
+          ? `${sectionHeader("Current offers")}${offerGrid(issue.offers).join("")}`
+          : "",
+        section(
+          "Networking & events",
+          issue.events.map((e, i) => eventRow(e, i === 0)),
+        ),
       ].join(""),
   },
 };

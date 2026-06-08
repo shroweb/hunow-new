@@ -222,10 +222,9 @@ export const Route = createFileRoute("/api/v1/redeem")({
 
             // Mark code as used if code path
             if (codeRowId) {
-              await client.query(
-                "update redemption_codes set used_at = now() where id = $1",
-                [codeRowId],
-              );
+              await client.query("update redemption_codes set used_at = now() where id = $1", [
+                codeRowId,
+              ]);
             }
 
             await client.query("commit");

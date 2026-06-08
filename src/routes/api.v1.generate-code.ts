@@ -48,9 +48,13 @@ export const Route = createFileRoute("/api/v1/generate-code")({
               "select id from redemption_codes where code = $1 and used_at is null and expires_at > now() limit 1",
               [candidate],
             );
-            if (!conflict.rows[0]) { code = candidate; break; }
+            if (!conflict.rows[0]) {
+              code = candidate;
+              break;
+            }
           }
-          if (!code) return Response.json({ error: "Could not generate code, try again" }, { status: 500 });
+          if (!code)
+            return Response.json({ error: "Could not generate code, try again" }, { status: 500 });
 
           const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 

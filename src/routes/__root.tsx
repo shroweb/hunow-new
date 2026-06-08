@@ -95,12 +95,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     return {
       meta: [
         { charSet: "utf-8" },
-        { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
+        {
+          name: "viewport",
+          content:
+            "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+        },
         { name: "theme-color", content: "#080d2d" },
+        { name: "theme-color", media: "(prefers-color-scheme: light)", content: "#080d2d" },
+        { name: "application-name", content: siteName },
         { name: "mobile-web-app-capable", content: "yes" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
         { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
         { name: "apple-mobile-web-app-title", content: siteName },
+        { name: "msapplication-TileColor", content: "#080d2d" },
+        { name: "msapplication-tap-highlight", content: "no" },
+        { name: "format-detection", content: "telephone=no" },
         { title },
         { name: "description", content: desc },
         { name: "author", content: siteName },
@@ -114,7 +123,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       links: [
         { rel: "stylesheet", href: appCss },
         { rel: "manifest", href: "/manifest.json" },
-        { rel: "apple-touch-icon", href: "/Frame 4.png" },
+        { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
+        { rel: "icon", type: "image/png", sizes: "512x512", href: "/icon-512.png" },
+        { rel: "apple-touch-icon", sizes: "192x192", href: "/icon-192.png" },
         {
           rel: "alternate",
           type: "application/rss+xml",
@@ -170,7 +181,15 @@ function RootComponent() {
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
+      const register = () => {
+        void navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+      };
+      if (document.readyState === "complete") {
+        register();
+      } else {
+        window.addEventListener("load", register, { once: true });
+        return () => window.removeEventListener("load", register);
+      }
     }
   }, []);
 

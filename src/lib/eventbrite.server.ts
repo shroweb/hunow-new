@@ -121,10 +121,9 @@ export function mapEventbriteEvent(eb: EbEvent): EventItem {
 }
 
 async function fetchStructuredContent(id: string): Promise<string | undefined> {
-  const res = await fetch(
-    `${BASE}/events/${id}/structured_content/?purpose=listing`,
-    { headers: authHeaders() },
-  );
+  const res = await fetch(`${BASE}/events/${id}/structured_content/?purpose=listing`, {
+    headers: authHeaders(),
+  });
   if (!res.ok) return undefined;
   const data = (await res.json()) as {
     modules?: Array<{ type: string; data?: { body?: { text?: string } } }>;

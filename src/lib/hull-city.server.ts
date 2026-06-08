@@ -39,9 +39,7 @@ function mapMatch(match: FdMatch): EventItem {
 
   const isHome = match.homeTeam.name.toLowerCase().includes("hull");
   const opponent = isHome ? match.awayTeam.name : match.homeTeam.name;
-  const title = isHome
-    ? `Hull City vs ${opponent}`
-    : `${opponent} vs Hull City`;
+  const title = isHome ? `Hull City vs ${opponent}` : `${opponent} vs Hull City`;
 
   const venue = match.venue ?? (isHome ? "MKM Stadium, Hull" : `${opponent} Ground`);
   const address = isHome ? "Walton Street, Hull, HU3 6HU" : "";
@@ -67,10 +65,9 @@ function mapMatch(match: FdMatch): EventItem {
 }
 
 export async function syncHullCityFixtures(): Promise<{ imported: number; skipped: number }> {
-  const res = await fetch(
-    `${BASE}/teams/${HULL_CITY_ID}/matches?status=SCHEDULED&limit=20`,
-    { headers: authHeaders() },
-  );
+  const res = await fetch(`${BASE}/teams/${HULL_CITY_ID}/matches?status=SCHEDULED&limit=20`, {
+    headers: authHeaders(),
+  });
 
   if (!res.ok) {
     const body = await res.text();

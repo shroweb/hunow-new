@@ -255,7 +255,9 @@ function InlineNewsletterSignup() {
             {status === "loading" ? "Subscribing…" : "Subscribe"}
           </button>
           {status === "error" && (
-            <p className="w-full text-xs text-red-600 font-mono mt-1">Something went wrong — try again.</p>
+            <p className="w-full text-xs text-red-600 font-mono mt-1">
+              Something went wrong — try again.
+            </p>
           )}
         </form>
       )}

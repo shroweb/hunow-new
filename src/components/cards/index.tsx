@@ -174,7 +174,8 @@ export function ListingCard({ listing }: { listing: Listing }) {
       </div>
       <div className="flex items-start justify-between gap-1 mb-1">
         <div className="text-[9px] font-mono font-bold uppercase text-accent leading-tight">
-          {listing.category}<span className="hidden sm:inline"> · {listing.area}</span>
+          {listing.category}
+          <span className="hidden sm:inline"> · {listing.area}</span>
         </div>
         {status && (
           <span
@@ -185,8 +186,12 @@ export function ListingCard({ listing }: { listing: Listing }) {
           </span>
         )}
       </div>
-      <h3 className="text-base sm:text-xl font-bold leading-tight group-hover:underline">{listing.name}</h3>
-      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mt-1 hidden sm:block">{listing.description}</p>
+      <h3 className="text-base sm:text-xl font-bold leading-tight group-hover:underline">
+        {listing.name}
+      </h3>
+      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mt-1 hidden sm:block">
+        {listing.description}
+      </p>
     </Link>
   );
 }

@@ -245,9 +245,12 @@ function AdminSettings() {
 
         {/* Web Push */}
         <div className="mt-12 border border-border p-6">
-          <div className="font-bold text-sm uppercase tracking-wide mb-1">Web Push Notifications</div>
+          <div className="font-bold text-sm uppercase tracking-wide mb-1">
+            Web Push Notifications
+          </div>
           <p className="text-sm text-muted-foreground mb-4">
-            Send a push notification to subscribed users. Requires VAPID keys in environment variables.
+            Send a push notification to subscribed users. Requires VAPID keys in environment
+            variables.
           </p>
           <PushSendForm />
         </div>
@@ -317,9 +320,15 @@ function PushSendForm() {
     setSending(true);
     setStatus("");
     try {
-      const result = await sendPushToSegmentFn({ data: { segment, title, body, url: url || undefined } });
-      setStatus(`✓ Sent to ${result.sent} subscriber${result.sent !== 1 ? "s" : ""}${result.failed ? `, ${result.failed} failed` : ""}`);
-      setTitle(""); setBody(""); setUrl("");
+      const result = await sendPushToSegmentFn({
+        data: { segment, title, body, url: url || undefined },
+      });
+      setStatus(
+        `✓ Sent to ${result.sent} subscriber${result.sent !== 1 ? "s" : ""}${result.failed ? `, ${result.failed} failed` : ""}`,
+      );
+      setTitle("");
+      setBody("");
+      setUrl("");
     } catch (err) {
       setStatus(`Error: ${String(err)}`);
     } finally {
@@ -331,20 +340,41 @@ function PushSendForm() {
     <form onSubmit={send} className="space-y-3 max-w-lg">
       <div className="flex gap-2 flex-wrap">
         {(["all", "events", "offers", "businesses"] as const).map((s) => (
-          <button key={s} type="button" onClick={() => setSegment(s)}
-            className={`px-3 py-1 text-[10px] font-bold uppercase ${segment === s ? "bg-foreground text-background" : "border border-foreground/30"}`}>
+          <button
+            key={s}
+            type="button"
+            onClick={() => setSegment(s)}
+            className={`px-3 py-1 text-[10px] font-bold uppercase ${segment === s ? "bg-foreground text-background" : "border border-foreground/30"}`}
+          >
             {s}
           </button>
         ))}
       </div>
       <AdminField label="Title">
-        <input value={title} onChange={(e) => setTitle(e.target.value)} required className={adminInput} placeholder="What's on this weekend…" />
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          className={adminInput}
+          placeholder="What's on this weekend…"
+        />
       </AdminField>
       <AdminField label="Body">
-        <input value={body} onChange={(e) => setBody(e.target.value)} required className={adminInput} placeholder="Short message text" />
+        <input
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          required
+          className={adminInput}
+          placeholder="Short message text"
+        />
       </AdminField>
       <AdminField label="Link (optional)">
-        <input value={url} onChange={(e) => setUrl(e.target.value)} className={adminInput} placeholder="/whats-on" />
+        <input
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          className={adminInput}
+          placeholder="/whats-on"
+        />
       </AdminField>
       <button type="submit" disabled={sending} className={`${adminBtn} disabled:opacity-50`}>
         {sending ? "Sending…" : "Send Push Notification"}

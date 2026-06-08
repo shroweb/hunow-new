@@ -664,23 +664,36 @@ function CardTab({ userName }: { userName: string }) {
 
   // History
   const [history, setHistory] = useState<
-    { id: string; offer_title: string | null; listing_name: string | null; redeemed_at: string; method: string }[]
+    {
+      id: string;
+      offer_title: string | null;
+      listing_name: string | null;
+      redeemed_at: string;
+      method: string;
+    }[]
   >([]);
   const [historyLoaded, setHistoryLoaded] = useState(false);
 
   useEffect(() => {
-    getLoyaltyCardFn().then((data) => {
-      if (!data.card_token) return;
-      setCardToken(data.card_token);
-      setTier(data.tier ?? "Member");
-      setPoints(Number(data.points ?? 0));
-      QRCode.toDataURL(`https://hunow.co.uk/c/${data.card_token}`, {
-        width: 200,
-        margin: 1,
-        color: { dark: "#080d2d", light: "#f5efe6" },
-      }).then(setQrDataUrl).catch(() => {});
-    }).catch(() => {});
-    getMyRedemptionsFn().then(setHistory).catch(() => {}).finally(() => setHistoryLoaded(true));
+    getLoyaltyCardFn()
+      .then((data) => {
+        if (!data.card_token) return;
+        setCardToken(data.card_token);
+        setTier(data.tier ?? "Member");
+        setPoints(Number(data.points ?? 0));
+        QRCode.toDataURL(`https://hunow.co.uk/c/${data.card_token}`, {
+          width: 200,
+          margin: 1,
+          color: { dark: "#080d2d", light: "#f5efe6" },
+        })
+          .then(setQrDataUrl)
+          .catch(() => {});
+      })
+      .catch(() => {});
+    getMyRedemptionsFn()
+      .then(setHistory)
+      .catch(() => {})
+      .finally(() => setHistoryLoaded(true));
   }, []);
 
   // Countdown timer for active code
@@ -706,7 +719,7 @@ function CardTab({ userName }: { userName: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ offer_id: selectedOfferId }),
       });
-      const data = await res.json() as { code?: string; expires_at?: string; error?: string };
+      const data = (await res.json()) as { code?: string; expires_at?: string; error?: string };
       if (!res.ok || !data.code) throw new Error(data.error ?? "Failed to generate code");
       setCode(data.code);
       setCodeExpiry(new Date(data.expires_at!));
@@ -728,7 +741,9 @@ function CardTab({ userName }: { userName: string }) {
         <div className="flex items-start justify-between">
           <div>
             <div className="font-display text-2xl uppercase leading-none tracking-wide">HU NOW</div>
-            <div className="font-mono text-[9px] uppercase tracking-widest text-accent mt-0.5">{tier}</div>
+            <div className="font-mono text-[9px] uppercase tracking-widest text-accent mt-0.5">
+              {tier}
+            </div>
           </div>
           <div className="text-right">
             <div className="font-mono text-[9px] uppercase text-white/50">Points</div>
@@ -769,20 +784,30 @@ function CardTab({ userName }: { userName: string }) {
             </div>
             <select
               value={selectedOfferId}
-              onChange={(e) => { setSelectedOfferId(e.target.value); setCode(null); setCodeError(""); }}
+              onChange={(e) => {
+                setSelectedOfferId(e.target.value);
+                setCode(null);
+                setCodeError("");
+              }}
               className="w-full bg-background border-2 border-foreground px-3 py-2.5 font-mono text-xs focus:outline-none"
             >
               <option value="">Select an offer…</option>
               {offers.map((o) => (
-                <option key={o.id} value={o.id}>{o.title} — {o.businessName}</option>
+                <option key={o.id} value={o.id}>
+                  {o.title} — {o.businessName}
+                </option>
               ))}
             </select>
 
             {code && codeSecondsLeft > 0 ? (
               <div className="text-center py-4 space-y-2">
-                <div className="font-display text-7xl tracking-[0.35em] text-foreground leading-none">{code}</div>
+                <div className="font-display text-7xl tracking-[0.35em] text-foreground leading-none">
+                  {code}
+                </div>
                 {selectedOffer && (
-                  <div className="font-mono text-[10px] text-accent uppercase">{selectedOffer.title}</div>
+                  <div className="font-mono text-[10px] text-accent uppercase">
+                    {selectedOffer.title}
+                  </div>
                 )}
                 <div className="font-mono text-xs text-muted-foreground">
                   Show to staff · expires {mm}:{ss}
@@ -816,7 +841,10 @@ function CardTab({ userName }: { userName: string }) {
         ) : (
           <div className="space-y-2">
             {history.map((r) => (
-              <div key={r.id} className="border border-foreground/15 p-3 flex justify-between gap-3">
+              <div
+                key={r.id}
+                className="border border-foreground/15 p-3 flex justify-between gap-3"
+              >
                 <div>
                   <p className="text-sm font-bold">{r.offer_title ?? "Offer"}</p>
                   {r.listing_name && (
@@ -826,7 +854,9 @@ function CardTab({ userName }: { userName: string }) {
                 <div className="text-right shrink-0">
                   <p className="font-mono text-[10px] text-muted-foreground">
                     {new Date(r.redeemed_at).toLocaleDateString("en-GB", {
-                      day: "numeric", month: "short", year: "numeric",
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
                     })}
                   </p>
                   <p className="font-mono text-[9px] text-accent uppercase">{r.method}</p>
@@ -861,7 +891,9 @@ function PushSubscribeButton() {
         applicationServerKey: urlBase64ToUint8Array(publicKey),
       });
       const json = sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } };
-      await saveWebPushSubscriptionFn({ data: { endpoint: json.endpoint, p256dh: json.keys.p256dh, auth: json.keys.auth } });
+      await saveWebPushSubscriptionFn({
+        data: { endpoint: json.endpoint, p256dh: json.keys.p256dh, auth: json.keys.auth },
+      });
       setState("on");
     } catch {
       setState("idle");
@@ -876,8 +908,19 @@ function PushSubscribeButton() {
       disabled={state === "loading"}
       className="mt-6 w-full flex items-center justify-center gap-2 border-2 border-foreground py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors disabled:opacity-50"
     >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
       </svg>
       {state === "loading" ? "Enabling…" : "Enable notifications"}
     </button>

@@ -89,11 +89,24 @@ function Offers() {
             >
               {!user && (
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/70 backdrop-blur-[2px]">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
-                  <a href="/sign-in" className="px-4 py-2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors">
+                  <a
+                    href="/sign-in"
+                    className="px-4 py-2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors"
+                  >
                     Sign in to view
                   </a>
                 </div>
@@ -102,15 +115,26 @@ function Offers() {
               {/* Card body */}
               <div className="p-6 flex flex-col flex-1">
                 <div className="flex items-start justify-between gap-2 mb-3">
-                  <div className="text-[10px] font-mono uppercase text-accent">{o.businessName}</div>
+                  <div className="text-[10px] font-mono uppercase text-accent">
+                    {o.businessName}
+                  </div>
                   {o.isFeatured && (
-                    <span className="text-[9px] font-bold uppercase bg-accent text-background px-2 py-0.5 shrink-0">Featured</span>
+                    <span className="text-[9px] font-bold uppercase bg-accent text-background px-2 py-0.5 shrink-0">
+                      Featured
+                    </span>
                   )}
                 </div>
                 <h3 className="text-xl font-bold mb-2 leading-snug">{o.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4 flex-1 leading-relaxed">{o.description}</p>
+                <p className="text-sm text-muted-foreground mb-4 flex-1 leading-relaxed">
+                  {o.description}
+                </p>
                 <div className="text-[10px] font-mono uppercase text-muted-foreground mb-4">
-                  Ends {new Date(o.endDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                  Ends{" "}
+                  {new Date(o.endDate).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </div>
 
                 {/* CTA */}
@@ -140,8 +164,15 @@ function Offers() {
                   params={{ slug: listing.slug }}
                   className="flex items-center gap-2 px-6 py-3 border-t border-foreground/10 text-[10px] font-bold uppercase hover:bg-foreground/5 transition-colors"
                 >
-                  <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true" className="text-accent shrink-0">
-                    <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 5 3.5 1.5 1.5 0 0 1 5 6.5z"/>
+                  <svg
+                    width="10"
+                    height="12"
+                    viewBox="0 0 10 12"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    className="text-accent shrink-0"
+                  >
+                    <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 5 3.5 1.5 1.5 0 0 1 5 6.5z" />
                   </svg>
                   {listing.name}
                 </Link>

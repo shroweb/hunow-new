@@ -13,7 +13,10 @@ export const exportAllDataFn = createServerFn({ method: "GET" }).handler(async (
   const { getDatabaseStore } = await import("./db.server");
   const { getNewsletterSubscribers } = await import("./newsletter.functions");
   await requireAdmin();
-  const [store, subscriberData] = await Promise.all([getDatabaseStore(), getNewsletterSubscribers()]);
+  const [store, subscriberData] = await Promise.all([
+    getDatabaseStore(),
+    getNewsletterSubscribers(),
+  ]);
   return {
     exportedAt: new Date().toISOString(),
     store,

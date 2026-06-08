@@ -20,7 +20,14 @@ import { ValidationErrors } from "@/components/admin/ValidationErrors";
 import { validateUniqueSlug, validateUrl } from "@/components/admin/validation-utils";
 import { readSeo } from "@/components/admin/seo-utils";
 import { setState, slugify, uid, useStore } from "@/lib/store";
-import { upsertEventFn, deleteEventFn, bulkArchiveEventsFn, importEventbriteUrlFn, importTicketmasterUrlFn, syncHullCityFixturesFn } from "@/lib/content.functions";
+import {
+  upsertEventFn,
+  deleteEventFn,
+  bulkArchiveEventsFn,
+  importEventbriteUrlFn,
+  importTicketmasterUrlFn,
+  syncHullCityFixturesFn,
+} from "@/lib/content.functions";
 import type { EventItem } from "@/types";
 
 export const Route = createFileRoute("/admin/events")({ component: AdminEvents });
@@ -283,7 +290,9 @@ function AdminEvents() {
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
           Hull City AFC
         </span>
-        <span className="text-xs text-muted-foreground flex-1">Sync upcoming fixtures from football-data.org</span>
+        <span className="text-xs text-muted-foreground flex-1">
+          Sync upcoming fixtures from football-data.org
+        </span>
         <button
           type="button"
           disabled={importing}
@@ -292,7 +301,9 @@ function AdminEvents() {
             setImportStatus("");
             try {
               const result = await syncHullCityFixturesFn();
-              setImportStatus(`✓ Synced ${result.imported} fixtures${result.skipped ? `, ${result.skipped} skipped` : ""}`);
+              setImportStatus(
+                `✓ Synced ${result.imported} fixtures${result.skipped ? `, ${result.skipped} skipped` : ""}`,
+              );
             } catch (err) {
               setImportStatus(`Error: ${String(err)}`);
             } finally {
