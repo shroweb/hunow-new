@@ -477,7 +477,7 @@ create index if not exists app_push_subscriptions_user_id_idx on app_push_subscr
 
 create table if not exists web_push_subscriptions (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references users(id) on delete cascade,
+  user_id text references users(id) on delete cascade,
   endpoint text not null unique,
   p256dh text not null,
   auth text not null,
