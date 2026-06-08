@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { useStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth.functions";
@@ -21,27 +20,6 @@ export const Route = createFileRoute("/offers")({
   component: Offers,
 });
 
-function CodeCopyButton({ code }: { code: string }) {
-  const [copied, setCopied] = useState(false);
-  const copy = () => {
-    void navigator.clipboard.writeText(code).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-  return (
-    <button
-      type="button"
-      onClick={copy}
-      className="w-full flex items-center justify-between bg-foreground text-background px-4 py-3 hover:bg-accent transition-colors group"
-    >
-      <span className="font-mono text-lg tracking-widest font-bold">{code}</span>
-      <span className="text-[9px] font-bold uppercase tracking-widest opacity-60 group-hover:opacity-100">
-        {copied ? "Copied ✓" : "Copy code"}
-      </span>
-    </button>
-  );
-}
 
 function Offers() {
   const { user } = Route.useLoaderData();
@@ -138,9 +116,7 @@ function Offers() {
                 </div>
 
                 {/* CTA */}
-                {o.code ? (
-                  <CodeCopyButton code={o.code} />
-                ) : user ? (
+                {user ? (
                   <Link
                     to="/account"
                     className="block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
