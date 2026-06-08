@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Plus } from "lucide-react";
 import {
   AdminField,
@@ -18,7 +18,7 @@ import { validateUniqueSlug, validateUrl } from "@/components/admin/validation-u
 import { readSeo } from "@/components/admin/seo-utils";
 import { WeekHoursPicker } from "@/components/admin/WeekHoursPicker";
 import { setState, slugify, uid, useStore } from "@/lib/store";
-import { upsertListingFn, deleteListingFn } from "@/lib/content.functions";
+import { upsertListingFn, deleteListingFn, searchGooglePlacesFn, getGooglePlaceDetailsFn } from "@/lib/content.functions";
 import type { Listing, WeekHours } from "@/types";
 
 export const Route = createFileRoute("/admin/listings")({ component: AdminListings });
@@ -41,6 +41,7 @@ function AdminListings() {
   const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [googleFill, setGoogleFill] = useState<{ name?: string; address?: string; phone?: string; website?: string; openingHours?: string; photo?: string } | null>(null);
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const verified = listings.filter((l) => l.isVerified).length;
@@ -185,13 +186,19 @@ function AdminListings() {
         {showForm && (
           <AdminFormPanel title={editing ? "Edit Place" : "New Place"}>
             <ValidationErrors errors={errors} />
-            <form onSubmit={onSubmit} className="space-y-6">
+            <GooglePlacesLookup
+              onFill={(details) => {
+                setErrors([]);
+                setGoogleFill(details);
+              }}
+            />
+            <form onSubmit={onSubmit} className="space-y-6" key={googleFill ? JSON.stringify(googleFill) : "default"}>
               <div className="grid lg:grid-cols-[1fr_340px] gap-6">
                 <div className="space-y-4">
                   <AdminField label="Name">
                     <input
                       name="name"
-                      defaultValue={editing?.name}
+                      defaultValue={googleFill?.name ?? editing?.name}
                       required
                       placeholder="Business or venue name"
                       className={adminInput}
@@ -211,7 +218,7 @@ function AdminListings() {
                     <AdminField label="Address">
                       <input
                         name="address"
-                        defaultValue={editing?.address}
+                        defaultValue={googleFill?.address ?? editing?.address}
                         required
                         placeholder="Street, Hull"
                         className={adminInput}
@@ -316,13 +323,13 @@ function AdminListings() {
                     <input
                       name="website"
                       type="url"
-                      defaultValue={editing?.website}
+                      defaultValue={googleFill?.website ?? editing?.website}
                       placeholder="https://..."
                       className={adminInput}
                     />
                   </AdminField>
                   <AdminField label="Phone">
-                    <input name="phone" defaultValue={editing?.phone} className={adminInput} />
+                    <input name="phone" defaultValue={googleFill?.phone ?? editing?.phone} className={adminInput} />
                   </AdminField>
                   <AdminField label="Email">
                     <input
@@ -530,4 +537,75 @@ function validateCoordinate(value: number | undefined, label: string, min: numbe
   if (!Number.isFinite(value)) return `${label} must be a number.`;
   if (value < min || value > max) return `${label} must be between ${min} and ${max}.`;
   return undefined;
+}
+
+type PlaceFill = { name?: string; address?: string; phone?: string; website?: string; openingHours?: string; photo?: string };
+
+function GooglePlacesLookup({ onFill }: { onFill: (d: PlaceFill) => void }) {
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<Array<{ placeId: string; description: string }>>([]);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
+  const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const search = (q: string) => {
+    setQuery(q);
+    if (debounce.current) clearTimeout(debounce.current);
+    if (!q.trim()) { setSuggestions([]); return; }
+    debounce.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const results = await searchGooglePlacesFn({ data: { query: q } });
+        setSuggestions(results);
+      } catch { setSuggestions([]); }
+      finally { setLoading(false); }
+    }, 400);
+  };
+
+  const pick = async (placeId: string) => {
+    setLoading(true);
+    setStatus("");
+    setSuggestions([]);
+    setQuery("");
+    try {
+      const d = await getGooglePlaceDetailsFn({ data: { placeId } });
+      onFill({ name: d.name, address: d.address, phone: d.phone, website: d.website, openingHours: d.openingHours, photo: d.photo });
+      setStatus(`✓ Filled from Google Places: ${d.name}`);
+    } catch (err) {
+      setStatus(`Error: ${String(err)}`);
+    } finally { setLoading(false); }
+  };
+
+  return (
+    <div className="mb-6 p-4 border border-blue-200 bg-blue-50">
+      <div className="font-mono text-[10px] uppercase tracking-widest text-blue-600 mb-2">
+        Auto-fill from Google Places
+      </div>
+      <div className="relative">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => search(e.target.value)}
+          placeholder="Search for a business name in Hull…"
+          className="w-full border border-border px-3 py-2 text-sm bg-white focus:outline-none"
+        />
+        {loading && <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">…</span>}
+        {suggestions.length > 0 && (
+          <div className="absolute z-20 top-full left-0 right-0 bg-white border border-border shadow-lg">
+            {suggestions.map((s) => (
+              <button
+                key={s.placeId}
+                type="button"
+                onClick={() => pick(s.placeId)}
+                className="w-full text-left px-3 py-2 text-sm hover:bg-accent/10 border-b border-border/50 last:border-0"
+              >
+                {s.description}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      {status && <p className="mt-2 text-xs font-mono text-blue-700">{status}</p>}
+    </div>
+  );
 }

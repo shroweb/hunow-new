@@ -20,7 +20,7 @@ import { ValidationErrors } from "@/components/admin/ValidationErrors";
 import { validateUniqueSlug, validateUrl } from "@/components/admin/validation-utils";
 import { readSeo } from "@/components/admin/seo-utils";
 import { setState, slugify, uid, useStore } from "@/lib/store";
-import { upsertEventFn, deleteEventFn, bulkArchiveEventsFn, importEventbriteUrlFn } from "@/lib/content.functions";
+import { upsertEventFn, deleteEventFn, bulkArchiveEventsFn, importEventbriteUrlFn, importTicketmasterUrlFn, syncHullCityFixturesFn } from "@/lib/content.functions";
 import type { EventItem } from "@/types";
 
 export const Route = createFileRoute("/admin/events")({ component: AdminEvents });
@@ -44,6 +44,7 @@ function AdminEvents() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [ebUrl, setEbUrl] = useState("");
+  const [tmUrl, setTmUrl] = useState("");
   const [importing, setImporting] = useState(false);
   const [importStatus, setImportStatus] = useState("");
   const [slugDraft, setSlugDraft] = useState("");
@@ -241,6 +242,66 @@ function AdminEvents() {
           className={adminBtn}
         >
           {importing ? "Importing…" : "Import"}
+        </button>
+        {importStatus && (
+          <span className="text-xs font-mono text-muted-foreground w-full">{importStatus}</span>
+        )}
+      </div>
+      <div className="px-6 md:px-10 py-3 border-b border-border bg-white flex flex-wrap items-center gap-2">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
+          Import from Ticketmaster
+        </span>
+        <input
+          type="url"
+          placeholder="https://www.ticketmaster.co.uk/event/1F00..."
+          value={tmUrl}
+          onChange={(e) => setTmUrl(e.target.value)}
+          className={`${adminInput} flex-1 min-w-0`}
+        />
+        <button
+          type="button"
+          disabled={importing || !tmUrl.trim()}
+          onClick={async () => {
+            setImporting(true);
+            setImportStatus("");
+            try {
+              const event = await importTicketmasterUrlFn({ data: { urlOrId: tmUrl.trim() } });
+              setImportStatus(`✓ Imported: ${event.title}`);
+              setTmUrl("");
+            } catch (err) {
+              setImportStatus(`Error: ${String(err)}`);
+            } finally {
+              setImporting(false);
+            }
+          }}
+          className={adminBtn}
+        >
+          {importing ? "Importing…" : "Import"}
+        </button>
+      </div>
+      <div className="px-6 md:px-10 py-3 border-b border-border bg-white flex flex-wrap items-center gap-2">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
+          Hull City AFC
+        </span>
+        <span className="text-xs text-muted-foreground flex-1">Sync upcoming fixtures from football-data.org</span>
+        <button
+          type="button"
+          disabled={importing}
+          onClick={async () => {
+            setImporting(true);
+            setImportStatus("");
+            try {
+              const result = await syncHullCityFixturesFn();
+              setImportStatus(`✓ Synced ${result.imported} fixtures${result.skipped ? `, ${result.skipped} skipped` : ""}`);
+            } catch (err) {
+              setImportStatus(`Error: ${String(err)}`);
+            } finally {
+              setImporting(false);
+            }
+          }}
+          className={adminBtn}
+        >
+          {importing ? "Syncing…" : "Sync Fixtures"}
         </button>
         {importStatus && (
           <span className="text-xs font-mono text-muted-foreground w-full">{importStatus}</span>

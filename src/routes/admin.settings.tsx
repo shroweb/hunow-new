@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { AdminField, AdminHeader, adminBtn, adminInput } from "@/components/admin/AdminLayout";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
 import { resetStoreToEmpty, exportAllDataFn } from "@/lib/admin-maintenance.functions";
+import { sendPushToSegmentFn } from "@/lib/content.functions";
 import { setState } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/settings")({
@@ -242,8 +243,17 @@ function AdminSettings() {
           </div>
         </form>
 
-        {/* Backup */}
+        {/* Web Push */}
         <div className="mt-12 border border-border p-6">
+          <div className="font-bold text-sm uppercase tracking-wide mb-1">Web Push Notifications</div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Send a push notification to subscribed users. Requires VAPID keys in environment variables.
+          </p>
+          <PushSendForm />
+        </div>
+
+        {/* Backup */}
+        <div className="mt-6 border border-border p-6">
           <div className="font-bold text-sm uppercase tracking-wide mb-1">Data backup</div>
           <p className="text-sm text-muted-foreground mb-4">
             Download a full JSON backup of all content and subscribers. Store it somewhere safe
@@ -291,5 +301,55 @@ function AdminSettings() {
         </div>
       </div>
     </div>
+  );
+}
+
+function PushSendForm() {
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [url, setUrl] = useState("");
+  const [segment, setSegment] = useState<"all" | "events" | "offers" | "businesses">("all");
+  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState("");
+
+  const send = async (e: FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setStatus("");
+    try {
+      const result = await sendPushToSegmentFn({ data: { segment, title, body, url: url || undefined } });
+      setStatus(`✓ Sent to ${result.sent} subscriber${result.sent !== 1 ? "s" : ""}${result.failed ? `, ${result.failed} failed` : ""}`);
+      setTitle(""); setBody(""); setUrl("");
+    } catch (err) {
+      setStatus(`Error: ${String(err)}`);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <form onSubmit={send} className="space-y-3 max-w-lg">
+      <div className="flex gap-2 flex-wrap">
+        {(["all", "events", "offers", "businesses"] as const).map((s) => (
+          <button key={s} type="button" onClick={() => setSegment(s)}
+            className={`px-3 py-1 text-[10px] font-bold uppercase ${segment === s ? "bg-foreground text-background" : "border border-foreground/30"}`}>
+            {s}
+          </button>
+        ))}
+      </div>
+      <AdminField label="Title">
+        <input value={title} onChange={(e) => setTitle(e.target.value)} required className={adminInput} placeholder="What's on this weekend…" />
+      </AdminField>
+      <AdminField label="Body">
+        <input value={body} onChange={(e) => setBody(e.target.value)} required className={adminInput} placeholder="Short message text" />
+      </AdminField>
+      <AdminField label="Link (optional)">
+        <input value={url} onChange={(e) => setUrl(e.target.value)} className={adminInput} placeholder="/whats-on" />
+      </AdminField>
+      <button type="submit" disabled={sending} className={`${adminBtn} disabled:opacity-50`}>
+        {sending ? "Sending…" : "Send Push Notification"}
+      </button>
+      {status && <p className="text-xs font-mono text-muted-foreground">{status}</p>}
+    </form>
   );
 }

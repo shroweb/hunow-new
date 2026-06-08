@@ -17,6 +17,27 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+// Handle incoming push notifications
+self.addEventListener('push', (e) => {
+  if (!e.data) return;
+  let payload;
+  try { payload = e.data.json(); } catch { payload = { title: 'HU NOW', body: e.data.text() }; }
+  e.waitUntil(
+    self.registration.showNotification(payload.title ?? 'HU NOW', {
+      body: payload.body,
+      icon: payload.icon ?? '/Frame 4.png',
+      badge: '/Frame 4.png',
+      data: { url: payload.url ?? '/' },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const url = e.notification.data?.url ?? '/';
+  e.waitUntil(clients.openWindow(url));
+});
+
 self.addEventListener('fetch', (e) => {
   const { request } = e;
   if (request.method !== 'GET') return;

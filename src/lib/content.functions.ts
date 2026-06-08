@@ -198,3 +198,66 @@ export const importEventbriteUrlFn = createServerFn({ method: "POST" })
     const { importEventbriteUrl } = await import("./eventbrite.server");
     return importEventbriteUrl(data.urlOrId);
   });
+
+// ---- Ticketmaster import ----
+
+export const importTicketmasterUrlFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ urlOrId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    await requireAdmin();
+    const { importTicketmasterUrl } = await import("./ticketmaster.server");
+    return importTicketmasterUrl(data.urlOrId);
+  });
+
+// ---- Hull City AFC fixtures ----
+
+export const syncHullCityFixturesFn = createServerFn({ method: "POST" }).handler(async () => {
+  const { requireAdmin } = await import("./auth.server");
+  await requireAdmin();
+  const { syncHullCityFixtures } = await import("./hull-city.server");
+  return syncHullCityFixtures();
+});
+
+// ---- Web Push ----
+
+export const getVapidPublicKeyFn = createServerFn({ method: "GET" }).handler(async () => {
+  const { getVapidPublicKey } = await import("./web-push.server");
+  return { publicKey: getVapidPublicKey() };
+});
+
+export const sendPushToSegmentFn = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      segment: z.enum(["all", "events", "offers", "businesses"]),
+      title: z.string().min(1),
+      body: z.string().min(1),
+      url: z.string().optional(),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    await requireAdmin();
+    const { sendPushToSegment } = await import("./web-push.server");
+    return sendPushToSegment(data.segment, { title: data.title, body: data.body, url: data.url });
+  });
+
+// ---- Google Places ----
+
+export const searchGooglePlacesFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ query: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    await requireAdmin();
+    const { searchPlaces } = await import("./google-places.server");
+    return searchPlaces(data.query);
+  });
+
+export const getGooglePlaceDetailsFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ placeId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    await requireAdmin();
+    const { getPlaceDetails } = await import("./google-places.server");
+    return getPlaceDetails(data.placeId);
+  });
