@@ -226,6 +226,37 @@ export const getVapidPublicKeyFn = createServerFn({ method: "GET" }).handler(asy
   return { publicKey: getVapidPublicKey() };
 });
 
+export const saveWebPushSubscriptionFn = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      endpoint: z.string().url(),
+      p256dh: z.string(),
+      auth: z.string(),
+      segments: z.array(z.string()).optional(),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { currentUser } = await import("./auth.server");
+    const { saveWebPushSubscription } = await import("./db.server");
+    const user = await currentUser();
+    await saveWebPushSubscription({ userId: user?.id ?? null, ...data });
+    return { ok: true };
+  });
+
+// ---- Admin: assign listing owner ----
+
+export const assignListingOwnerFn = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ listingId: z.string(), email: z.string().email() }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    await requireAdmin();
+    const { findUserByEmail, assignListingOwner } = await import("./db.server");
+    const user = await findUserByEmail(data.email);
+    if (!user) throw new Error(`No account found for ${data.email}`);
+    await assignListingOwner(data.listingId, user.id);
+    return { ok: true, userName: user.name };
+  });
+
 export const sendPushToSegmentFn = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({

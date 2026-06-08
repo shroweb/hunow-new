@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import {
   getBusinessListings,
@@ -15,7 +15,7 @@ import type { Listing, Offer } from "@/types";
 import type { ListingUpdateRow } from "@/lib/db.server";
 import type { Review } from "@/lib/reviews.functions";
 
-type Tab = "details" | "offers" | "updates" | "reviews";
+type Tab = "details" | "offers" | "redeem" | "updates" | "reviews";
 
 export const Route = createFileRoute("/business/listings")({
   loader: async () => ({ listings: await getBusinessListings() }),
@@ -195,7 +195,7 @@ function BusinessListings() {
           <div className="space-y-0">
             {/* Tabs */}
             <div className="flex border-b-2 border-foreground mb-0">
-              {(["details", "offers", "updates", "reviews"] as Tab[]).map((t) => (
+              {(["details", "offers", "redeem", "updates", "reviews"] as Tab[]).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -370,6 +370,17 @@ function BusinessListings() {
               </div>
             )}
 
+            {/* Redeem tab */}
+            {tab === "redeem" && (
+              <div className="border-2 border-t-0 border-foreground bg-white p-6">
+                <h2 className="font-display text-3xl uppercase mb-2">Redeem Offer</h2>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Scan a customer's HU NOW card QR code to redeem one of your offers.
+                </p>
+                <QrRedeemScanner offers={offers} />
+              </div>
+            )}
+
             {/* Updates tab */}
             {tab === "updates" && (
               <div className="border-2 border-t-0 border-foreground bg-white p-6 space-y-6">
@@ -503,6 +514,118 @@ function Stars({ rating }: { rating: number }) {
 
 const fieldClass =
   "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";
+
+function QrRedeemScanner({ offers }: { offers: Offer[] }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [scanning, setScanning] = useState(false);
+  const [scannedToken, setScannedToken] = useState("");
+  const [selectedOffer, setSelectedOffer] = useState(offers[0]?.id ?? "");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [statusMsg, setStatusMsg] = useState("");
+  const controlsRef = useRef<import("@zxing/browser").IScannerControls | null>(null);
+
+  const startScan = async () => {
+    const { BrowserQRCodeReader } = await import("@zxing/browser");
+    const reader = new BrowserQRCodeReader();
+    setScanning(true);
+    setScannedToken("");
+    setStatus("idle");
+    try {
+      const controls = await reader.decodeFromVideoDevice(
+        undefined,
+        videoRef.current!,
+        (result, _err, controls) => {
+          if (result) {
+            controls.stop();
+            setScannedToken(result.getText());
+            setScanning(false);
+          }
+        },
+      );
+      controlsRef.current = controls;
+    } catch {
+      setScanning(false);
+    }
+  };
+
+  const stopScan = () => {
+    controlsRef.current?.stop();
+    controlsRef.current = null;
+    setScanning(false);
+  };
+
+  useEffect(() => () => { controlsRef.current?.stop(); }, []);
+
+  const redeem = async () => {
+    if (!scannedToken || !selectedOffer) return;
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/v1/redeem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ qr_token: scannedToken, offer_id: selectedOffer }),
+      });
+      const data = await res.json() as { ok?: boolean; error?: string };
+      if (!res.ok || !data.ok) throw new Error(data.error ?? "Redemption failed");
+      setStatus("success");
+      setStatusMsg("Offer redeemed successfully!");
+      setScannedToken("");
+    } catch (err) {
+      setStatus("error");
+      setStatusMsg(err instanceof Error ? err.message : "Something went wrong");
+    }
+  };
+
+  return (
+    <div className="space-y-5 max-w-sm">
+      {offers.length === 0 ? (
+        <p className="text-sm text-muted-foreground font-mono">No active offers — add one in the Offers tab first.</p>
+      ) : (
+        <>
+          <div>
+            <label className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">Select offer</label>
+            <select value={selectedOffer} onChange={(e) => setSelectedOffer(e.target.value)} className={fieldClass}>
+              {offers.map((o) => (
+                <option key={o.id} value={o.id}>{o.title}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Camera viewfinder */}
+          <div className={`relative bg-foreground/5 border-2 border-foreground overflow-hidden ${scanning ? "block" : "hidden"}`}>
+            <video ref={videoRef} className="w-full aspect-square object-cover" autoPlay muted playsInline />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-48 h-48 border-2 border-accent" />
+            </div>
+            <button onClick={stopScan} className="absolute top-2 right-2 bg-foreground text-background text-[10px] font-bold uppercase px-3 py-1.5">Cancel</button>
+          </div>
+
+          {scannedToken ? (
+            <div className="space-y-3">
+              <p className="text-xs font-mono text-accent">✓ Card scanned</p>
+              <button onClick={redeem} disabled={status === "loading"} className="w-full bg-accent text-background py-3 font-bold uppercase tracking-widest text-xs hover:bg-foreground transition-colors disabled:opacity-50">
+                {status === "loading" ? "Redeeming…" : "Confirm Redemption"}
+              </button>
+              <button onClick={() => { setScannedToken(""); setStatus("idle"); }} className="w-full border-2 border-foreground py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground/5">
+                Scan Again
+              </button>
+            </div>
+          ) : !scanning && (
+            <button onClick={startScan} className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+              </svg>
+              Scan Customer Card
+            </button>
+          )}
+
+          {status === "success" && <p className="text-sm font-bold text-accent">{statusMsg}</p>}
+          {status === "error" && <p className="text-sm font-bold text-red-600">{statusMsg}</p>}
+        </>
+      )}
+    </div>
+  );
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

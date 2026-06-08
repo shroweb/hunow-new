@@ -459,6 +459,17 @@ create table if not exists app_push_subscriptions (
   updated_at timestamptz not null default now()
 );
 create index if not exists app_push_subscriptions_user_id_idx on app_push_subscriptions (user_id);
+
+create table if not exists web_push_subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete cascade,
+  endpoint text not null unique,
+  p256dh text not null,
+  auth text not null,
+  segments text[] not null default '{all}',
+  created_at timestamptz not null default now()
+);
+create index if not exists web_push_subscriptions_user_id_idx on web_push_subscriptions (user_id);
 `;
 
 export async function ensureSchema() {
@@ -1844,4 +1855,57 @@ export async function postListingUpdate(
 export async function deleteListingUpdate(id: string, userId: string): Promise<void> {
   await ensureSchema();
   await getPool().query("delete from listing_updates where id = $1 and user_id = $2", [id, userId]);
+}
+
+// ---- Web Push subscriptions ----
+
+export async function saveWebPushSubscription(input: {
+  userId: string | null;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  segments?: string[];
+}): Promise<void> {
+  await ensureSchema();
+  await getPool().query(
+    `insert into web_push_subscriptions (user_id, endpoint, p256dh, auth, segments)
+     values ($1, $2, $3, $4, $5)
+     on conflict (endpoint) do update set
+       user_id = coalesce(excluded.user_id, web_push_subscriptions.user_id),
+       p256dh = excluded.p256dh,
+       auth = excluded.auth,
+       segments = excluded.segments`,
+    [input.userId, input.endpoint, input.p256dh, input.auth, input.segments ?? ["all"]],
+  );
+}
+
+export async function deleteWebPushSubscription(endpoint: string): Promise<void> {
+  await ensureSchema();
+  await getPool().query("delete from web_push_subscriptions where endpoint = $1", [endpoint]);
+}
+
+// ---- Admin: assign listing owner ----
+
+export async function assignListingOwner(listingId: string, userId: string): Promise<void> {
+  await ensureSchema();
+  const pool = getPool();
+  // Set ownerUserId on the listing JSON
+  await pool.query(
+    `update listings set data = jsonb_set(data, '{ownerUserId}', to_jsonb($2::text)), updated_at = now() where id = $1`,
+    [listingId, userId],
+  );
+  // Promote user to business role
+  await pool.query(
+    `update users set app_role = 'business', updated_at = now() where id = $1`,
+    [userId],
+  );
+}
+
+export async function findUserByEmail(email: string): Promise<{ id: string; name: string; email: string } | null> {
+  await ensureSchema();
+  const result = await getPool().query<{ id: string; name: string; email: string }>(
+    "select id, name, email from users where lower(email) = lower($1) limit 1",
+    [email],
+  );
+  return result.rows[0] ?? null;
 }

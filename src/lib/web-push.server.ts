@@ -64,7 +64,7 @@ export async function sendPushToSegment(
     p256dh: string;
     auth: string;
   }>(
-    `select endpoint, p256dh, auth from push_subscriptions
+    `select endpoint, p256dh, auth from web_push_subscriptions
      where $1 = 'all' or $1 = any(segments)`,
     [segment],
   );

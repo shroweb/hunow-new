@@ -18,7 +18,7 @@ import { validateUniqueSlug, validateUrl } from "@/components/admin/validation-u
 import { readSeo } from "@/components/admin/seo-utils";
 import { WeekHoursPicker } from "@/components/admin/WeekHoursPicker";
 import { setState, slugify, uid, useStore } from "@/lib/store";
-import { upsertListingFn, deleteListingFn, searchGooglePlacesFn, getGooglePlaceDetailsFn } from "@/lib/content.functions";
+import { upsertListingFn, deleteListingFn, searchGooglePlacesFn, getGooglePlaceDetailsFn, assignListingOwnerFn } from "@/lib/content.functions";
 import type { Listing, WeekHours } from "@/types";
 
 export const Route = createFileRoute("/admin/listings")({ component: AdminListings });
@@ -511,6 +511,7 @@ function AdminListings() {
               >
                 Edit
               </button>
+              <AssignOwnerButton listingId={l.id} currentOwner={(l as { ownerUserId?: string }).ownerUserId} />
               <button
                 onClick={() => remove(l.id)}
                 className="text-[10px] font-bold uppercase text-red-600 underline"
@@ -522,6 +523,64 @@ function AdminListings() {
         />
       </div>
     </div>
+  );
+}
+
+function AssignOwnerButton({ listingId, currentOwner }: { listingId: string; currentOwner?: string }) {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const assign = async () => {
+    if (!email.trim()) return;
+    setSaving(true);
+    setStatus("");
+    try {
+      const res = await assignListingOwnerFn({ data: { listingId, email: email.trim() } });
+      setStatus(`✓ Assigned to ${res.userName}`);
+      setEmail("");
+    } catch (err) {
+      setStatus(err instanceof Error ? err.message : "Failed");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={`text-[10px] font-bold uppercase underline ${currentOwner ? "text-accent" : ""}`}
+      >
+        {currentOwner ? "Owner ✓" : "Assign owner"}
+      </button>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setOpen(false)}>
+          <div className="bg-white border-2 border-foreground p-6 w-80 space-y-3" onClick={(e) => e.stopPropagation()}>
+            <div className="font-bold text-sm uppercase tracking-wide">Assign business owner</div>
+            <p className="text-xs text-muted-foreground">Enter the email address of the user's HU NOW account. They'll get access to this listing in their business dashboard and their role will be set to Business.</p>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="owner@business.com"
+              className={adminInput}
+              onKeyDown={(e) => e.key === "Enter" && assign()}
+            />
+            <div className="flex gap-2">
+              <button onClick={assign} disabled={saving || !email.trim()} className={`${adminBtn} flex-1 disabled:opacity-50`}>
+                {saving ? "Assigning…" : "Assign"}
+              </button>
+              <button onClick={() => setOpen(false)} className="border-2 border-foreground px-4 py-2 text-[10px] font-bold uppercase hover:bg-foreground/5">
+                Cancel
+              </button>
+            </div>
+            {status && <p className="text-xs font-mono text-muted-foreground">{status}</p>}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

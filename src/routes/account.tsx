@@ -14,6 +14,7 @@ import {
   getActivityFeedFn,
   getLoyaltyCardFn,
 } from "@/lib/auth.functions";
+import { getVapidPublicKeyFn, saveWebPushSubscriptionFn } from "@/lib/content.functions";
 import type { AuthUser } from "@/lib/auth.server";
 
 type Tab = "card" | "profile" | "security" | "newsletter" | "activity" | "danger";
@@ -709,6 +710,61 @@ function CardTab({ userName }: { userName: string }) {
       <p className="mt-4 text-xs text-muted-foreground text-center font-mono">
         Show this QR code at a participating business to redeem offers and earn points.
       </p>
+
+      <PushSubscribeButton />
     </div>
   );
+}
+
+function PushSubscribeButton() {
+  const [state, setState] = useState<"idle" | "loading" | "on" | "unsupported">("idle");
+
+  useEffect(() => {
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+      setState("unsupported");
+      return;
+    }
+    if (Notification.permission === "granted") setState("on");
+  }, []);
+
+  const subscribe = async () => {
+    setState("loading");
+    try {
+      const { publicKey } = await getVapidPublicKeyFn();
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey),
+      });
+      const json = sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } };
+      await saveWebPushSubscriptionFn({ data: { endpoint: json.endpoint, p256dh: json.keys.p256dh, auth: json.keys.auth } });
+      setState("on");
+    } catch {
+      setState("idle");
+    }
+  };
+
+  if (state === "unsupported" || state === "on") return null;
+
+  return (
+    <button
+      onClick={subscribe}
+      disabled={state === "loading"}
+      className="mt-6 w-full flex items-center justify-center gap-2 border-2 border-foreground py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors disabled:opacity-50"
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+      {state === "loading" ? "Enabling…" : "Enable notifications"}
+    </button>
+  );
+}
+
+function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = atob(base64);
+  const arr = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; i++) arr[i] = rawData.charCodeAt(i);
+  return arr.buffer;
 }
