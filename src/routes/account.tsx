@@ -734,45 +734,104 @@ function CardTab({ userName }: { userName: string }) {
   const mm = String(Math.floor(codeSecondsLeft / 60)).padStart(2, "0");
   const ss = String(codeSecondsLeft % 60).padStart(2, "0");
 
+  // Tier-specific card colours
+  const tierPalette: Record<string, { from: string; to: string; accent: string; chip: string }> = {
+    gold:     { from: "#1a1200", to: "#3a2c00", accent: "#f0c040", chip: "#c8960a" },
+    silver:   { from: "#0e1520", to: "#1c2a3e", accent: "#c0ccd8", chip: "#7a8fa0" },
+    bronze:   { from: "#1c0e06", to: "#3a1e0c", accent: "#d08040", chip: "#a05820" },
+    standard: { from: "#06102a", to: "#0e1e48", accent: "#6090e0", chip: "#3a5898" },
+  };
+  const pal = tierPalette[tier.toLowerCase()] ?? tierPalette.standard;
+  const cardNum = cardToken
+    ? `•••• •••• ${cardToken.replace(/-/g, "").slice(0, 4).toUpperCase()}`
+    : "•••• •••• ••••";
+
   return (
-    <div className="max-w-sm mx-auto pt-6 pb-12 px-4 space-y-6">
-      {/* Membership card */}
-      <div className="relative bg-foreground text-background rounded-none overflow-hidden aspect-[1.586/1] flex flex-col justify-between p-6 shadow-2xl">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="font-display text-2xl uppercase leading-none tracking-wide">HU NOW</div>
-            <div className="font-mono text-[9px] uppercase tracking-widest text-accent mt-0.5">
-              {tier}
+    <div className="max-w-sm mx-auto pt-6 pb-12 px-4 space-y-5">
+      {/* ─── Premium membership card ─── */}
+      <div
+        className="relative overflow-hidden rounded-[18px] aspect-[1.586/1] shadow-[0_24px_64px_-8px_rgba(0,0,0,0.55)] select-none"
+        style={{ background: `linear-gradient(140deg, ${pal.from} 0%, ${pal.to} 100%)` }}
+      >
+        {/* Light bloom top-left */}
+        <div className="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-white/[0.07] blur-3xl pointer-events-none" />
+        {/* Subtle diagonal-line texture */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none" aria-hidden="true">
+          <defs>
+            <pattern id="card-lines" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+              <line x1="0" y1="0" x2="0" y2="18" stroke="white" strokeWidth="0.8" />
+            </pattern>
+          </defs>
+          <rect fill="url(#card-lines)" width="100%" height="100%" />
+        </svg>
+        {/* Large watermark */}
+        <div className="absolute -right-3 -bottom-5 font-display text-[72px] leading-none uppercase text-white/[0.05] pointer-events-none tracking-tight">
+          HU NOW
+        </div>
+
+        <div className="relative h-full flex flex-col justify-between p-5">
+          {/* Top row: brand + contactless */}
+          <div className="flex items-start justify-between">
+            <div className="font-display text-[22px] uppercase leading-none tracking-widest text-white">
+              HU NOW
+            </div>
+            {/* Contactless / NFC icon */}
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true" className="opacity-50 mt-0.5">
+              <path d="M11 4a7 7 0 0 1 0 14" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+              <path d="M11 7a4 4 0 0 1 0 8"  stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+              <path d="M11 10a1 1 0 0 1 0 2"  stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+            </svg>
+          </div>
+
+          {/* Chip + card number */}
+          <div className="flex items-center gap-3">
+            {/* EMV chip */}
+            <svg width="34" height="26" viewBox="0 0 34 26" className="shrink-0">
+              <rect width="34" height="26" rx="4" fill={pal.chip} />
+              <rect x="1" y="8.5" width="32" height="9" fill={pal.chip} opacity="0.55" />
+              <rect x="11"  y="1"   width="12" height="24" fill={pal.chip} opacity="0.55" />
+              <rect x="11"  y="8.5" width="12" height="9"  fill={pal.chip} opacity="0.9" />
+            </svg>
+            <span className="font-mono text-[13px] tracking-[0.18em] text-white/40">{cardNum}</span>
+          </div>
+
+          {/* Bottom row: name + points */}
+          <div className="flex items-end justify-between">
+            <div>
+              <div className="text-[8px] font-mono uppercase tracking-[0.18em] text-white/40 mb-0.5">Member</div>
+              <div className="font-bold text-[15px] uppercase tracking-wider leading-none text-white">{userName}</div>
+              <div className="mt-1.5 flex items-center gap-1.5">
+                <span className="size-1.5 rounded-full" style={{ backgroundColor: pal.accent }} />
+                <span className="text-[8px] font-mono uppercase tracking-[0.15em]" style={{ color: pal.accent }}>
+                  {tier}
+                </span>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-[8px] font-mono uppercase tracking-[0.18em] text-white/40 mb-0.5">Points</div>
+              <div className="text-[26px] font-bold leading-none" style={{ color: pal.accent }}>
+                {points.toLocaleString()}
+              </div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="font-mono text-[9px] uppercase text-white/50">Points</div>
-            <div className="font-bold text-lg text-accent">{points}</div>
-          </div>
-        </div>
-        <div>
-          <div className="font-mono text-[9px] uppercase text-white/50 mb-0.5">Member</div>
-          <div className="font-bold text-lg uppercase tracking-wide">{userName}</div>
         </div>
       </div>
 
-      {/* QR code (static card scan) */}
-      <div className="bg-[#f5efe6] border-2 border-foreground p-6 flex flex-col items-center gap-3">
-        <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+      {/* ─── QR code ─── */}
+      <div className="rounded-2xl overflow-hidden border border-foreground/10 bg-white flex flex-col items-center gap-3 py-6 px-4 shadow-sm">
+        <div className="font-mono text-[9px] uppercase tracking-widest text-foreground/40">
           Scan at business to redeem
         </div>
         {qrDataUrl ? (
-          <img src={qrDataUrl} alt="Your HU NOW card QR code" width={160} height={160} />
+          <img src={qrDataUrl} alt="Your HU NOW card QR code" width={160} height={160} className="rounded-sm" />
         ) : (
-          <div className="w-40 h-40 bg-foreground/10 flex items-center justify-center">
+          <div className="w-40 h-40 bg-foreground/5 rounded-sm flex items-center justify-center">
             <span className="font-mono text-xs text-muted-foreground">Loading…</span>
           </div>
         )}
-        {cardToken && (
-          <div className="font-mono text-[9px] text-muted-foreground truncate max-w-full">
-            {cardToken.slice(0, 8)}…
-          </div>
-        )}
+        <div className="font-mono text-[9px] text-foreground/30 tracking-widest">
+          {cardToken ? `${cardToken.slice(0, 8).toUpperCase()}…` : ""}
+        </div>
       </div>
 
       {/* One-time redemption code */}
