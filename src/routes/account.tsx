@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, useCallback, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import QRCode from "qrcode";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import {
@@ -18,7 +18,6 @@ import {
 import { getVapidPublicKeyFn, saveWebPushSubscriptionFn } from "@/lib/content.functions";
 import type { AuthUser } from "@/lib/auth.server";
 import { useStore } from "@/lib/store";
-import type { Offer } from "@/types";
 
 type Tab = "card" | "profile" | "security" | "newsletter" | "activity" | "danger";
 
@@ -648,7 +647,7 @@ const input =
   "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";
 
 function CardTab({ userName }: { userName: string }) {
-  const offers = useStore((s) => s.offers.filter((o) => o.status === "active"));
+  const offers = useStore((s) => (s.offers ?? []).filter((o) => o.status === "active"));
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [cardToken, setCardToken] = useState<string | null>(null);
   const [tier, setTier] = useState("Member");

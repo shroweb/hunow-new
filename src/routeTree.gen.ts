@@ -73,10 +73,10 @@ import { Route as AdminAdsRouteImport } from './routes/admin.ads'
 import { Route as TaxonomySlugRouteImport } from './routes/$taxonomy.$slug'
 import { Route as CSectionSubRouteImport } from './routes/c.$section.$sub'
 import { Route as ApiV1RedeemRouteImport } from './routes/api.v1.redeem'
-import { Route as ApiV1GenerateCodeRouteImport } from './routes/api.v1.generate-code'
 import { Route as ApiV1OffersRouteImport } from './routes/api.v1.offers'
 import { Route as ApiV1MeRouteImport } from './routes/api.v1.me'
 import { Route as ApiV1ListingsRouteImport } from './routes/api.v1.listings'
+import { Route as ApiV1GenerateCodeRouteImport } from './routes/api.v1.generate-code'
 import { Route as ApiCronPublishRouteImport } from './routes/api.cron.publish'
 import { Route as ApiV1OffersIdRouteImport } from './routes/api.v1.offers.$id'
 import { Route as ApiV1MeRedemptionsRouteImport } from './routes/api.v1.me.redemptions'
@@ -408,11 +408,6 @@ const ApiV1RedeemRoute = ApiV1RedeemRouteImport.update({
   path: '/api/v1/redeem',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiV1GenerateCodeRoute = ApiV1GenerateCodeRouteImport.update({
-  id: '/api/v1/generate-code',
-  path: '/api/v1/generate-code',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiV1OffersRoute = ApiV1OffersRouteImport.update({
   id: '/api/v1/offers',
   path: '/api/v1/offers',
@@ -426,6 +421,11 @@ const ApiV1MeRoute = ApiV1MeRouteImport.update({
 const ApiV1ListingsRoute = ApiV1ListingsRouteImport.update({
   id: '/api/v1/listings',
   path: '/api/v1/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1GenerateCodeRoute = ApiV1GenerateCodeRouteImport.update({
+  id: '/api/v1/generate-code',
+  path: '/api/v1/generate-code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCronPublishRoute = ApiCronPublishRouteImport.update({
@@ -543,11 +543,11 @@ export interface FileRoutesByFullPath {
   '/tag/$tag': typeof TagTagRoute
   '/admin/': typeof AdminIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
+  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
   '/api/v1/redeem': typeof ApiV1RedeemRoute
-  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/c/$section/$sub': typeof CSectionSubRoute
   '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
@@ -622,11 +622,11 @@ export interface FileRoutesByTo {
   '/tag/$tag': typeof TagTagRoute
   '/admin': typeof AdminIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
+  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
   '/api/v1/redeem': typeof ApiV1RedeemRoute
-  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/c/$section/$sub': typeof CSectionSubRoute
   '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
@@ -703,11 +703,11 @@ export interface FileRoutesById {
   '/tag/$tag': typeof TagTagRoute
   '/admin/': typeof AdminIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
+  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/offers': typeof ApiV1OffersRouteWithChildren
   '/api/v1/redeem': typeof ApiV1RedeemRoute
-  '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/c/$section/$sub': typeof CSectionSubRoute
   '/api/v1/auth/forgot-password': typeof ApiV1AuthForgotPasswordRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
@@ -785,6 +785,7 @@ export interface FileRouteTypes {
     | '/tag/$tag'
     | '/admin/'
     | '/api/cron/publish'
+    | '/api/v1/generate-code'
     | '/api/v1/listings'
     | '/api/v1/me'
     | '/api/v1/offers'
@@ -863,6 +864,7 @@ export interface FileRouteTypes {
     | '/tag/$tag'
     | '/admin'
     | '/api/cron/publish'
+    | '/api/v1/generate-code'
     | '/api/v1/listings'
     | '/api/v1/me'
     | '/api/v1/offers'
@@ -942,6 +944,7 @@ export interface FileRouteTypes {
     | '/tag/$tag'
     | '/admin/'
     | '/api/cron/publish'
+    | '/api/v1/generate-code'
     | '/api/v1/listings'
     | '/api/v1/me'
     | '/api/v1/offers'
@@ -995,11 +998,11 @@ export interface RootRouteChildren {
   ProfileUserIdRoute: typeof ProfileUserIdRoute
   TagTagRoute: typeof TagTagRoute
   ApiCronPublishRoute: typeof ApiCronPublishRoute
+  ApiV1GenerateCodeRoute: typeof ApiV1GenerateCodeRoute
   ApiV1ListingsRoute: typeof ApiV1ListingsRouteWithChildren
   ApiV1MeRoute: typeof ApiV1MeRouteWithChildren
   ApiV1OffersRoute: typeof ApiV1OffersRouteWithChildren
   ApiV1RedeemRoute: typeof ApiV1RedeemRoute
-  ApiV1GenerateCodeRoute: typeof ApiV1GenerateCodeRoute
   ApiV1AuthForgotPasswordRoute: typeof ApiV1AuthForgotPasswordRoute
   ApiV1AuthLoginRoute: typeof ApiV1AuthLoginRoute
   ApiV1AuthRegisterRoute: typeof ApiV1AuthRegisterRoute
@@ -1455,13 +1458,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1RedeemRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/v1/generate-code': {
-      id: '/api/v1/generate-code'
-      path: '/api/v1/generate-code'
-      fullPath: '/api/v1/generate-code'
-      preLoaderRoute: typeof ApiV1GenerateCodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/v1/offers': {
       id: '/api/v1/offers'
       path: '/api/v1/offers'
@@ -1481,6 +1477,13 @@ declare module '@tanstack/react-router' {
       path: '/api/v1/listings'
       fullPath: '/api/v1/listings'
       preLoaderRoute: typeof ApiV1ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/generate-code': {
+      id: '/api/v1/generate-code'
+      path: '/api/v1/generate-code'
+      fullPath: '/api/v1/generate-code'
+      preLoaderRoute: typeof ApiV1GenerateCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/cron/publish': {
@@ -1753,11 +1756,11 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileUserIdRoute: ProfileUserIdRoute,
   TagTagRoute: TagTagRoute,
   ApiCronPublishRoute: ApiCronPublishRoute,
+  ApiV1GenerateCodeRoute: ApiV1GenerateCodeRoute,
   ApiV1ListingsRoute: ApiV1ListingsRouteWithChildren,
   ApiV1MeRoute: ApiV1MeRouteWithChildren,
   ApiV1OffersRoute: ApiV1OffersRouteWithChildren,
   ApiV1RedeemRoute: ApiV1RedeemRoute,
-  ApiV1GenerateCodeRoute: ApiV1GenerateCodeRoute,
   ApiV1AuthForgotPasswordRoute: ApiV1AuthForgotPasswordRoute,
   ApiV1AuthLoginRoute: ApiV1AuthLoginRoute,
   ApiV1AuthRegisterRoute: ApiV1AuthRegisterRoute,

@@ -288,11 +288,11 @@ export const getMyRedemptionsFn = createServerFn({ method: "GET" }).handler(asyn
     points: number;
   }>(
     `select r.id, r.offer_id,
-            o.data->>'title' as offer_title,
-            l.data->>'name'  as listing_name,
+            o.data->>'title'                          as offer_title,
+            l.data->>'name'                           as listing_name,
             r.redeemed_at,
-            r.method,
-            $2::int          as points
+            coalesce(r.method::text, 'qr')            as method,
+            $2::int                                   as points
      from app_redemptions r
      join loyalty_cards c on c.id = r.card_id
      left join offers   o on o.id  = r.offer_id
