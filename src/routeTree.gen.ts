@@ -66,6 +66,7 @@ import { Route as AdminImportRouteImport } from './routes/admin.import'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminEditorialPicksRouteImport } from './routes/admin.editorial-picks'
 import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
+import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as AdminAreasRouteImport } from './routes/admin.areas'
@@ -384,6 +385,11 @@ const AdminArticlesRoute = AdminArticlesRouteImport.update({
   path: '/articles',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
+  id: '/businesses',
+  path: '/businesses',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAreasRoute = AdminAreasRouteImport.update({
   id: '/areas',
   path: '/areas',
@@ -516,6 +522,7 @@ export interface FileRoutesByFullPath {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
@@ -596,6 +603,7 @@ export interface FileRoutesByTo {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
@@ -678,6 +686,7 @@ export interface FileRoutesById {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
@@ -761,6 +770,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/areas'
     | '/admin/articles'
+    | '/admin/businesses'
     | '/admin/claims'
     | '/admin/comments'
     | '/admin/editorial-picks'
@@ -841,6 +851,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/areas'
     | '/admin/articles'
+    | '/admin/businesses'
     | '/admin/claims'
     | '/admin/comments'
     | '/admin/editorial-picks'
@@ -922,6 +933,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/areas'
     | '/admin/articles'
+    | '/admin/businesses'
     | '/admin/claims'
     | '/admin/comments'
     | '/admin/editorial-picks'
@@ -1435,6 +1447,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminArticlesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/businesses': {
+      id: '/admin/businesses'
+      path: '/businesses'
+      fullPath: '/admin/businesses'
+      preLoaderRoute: typeof AdminBusinessesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/areas': {
       id: '/admin/areas'
       path: '/areas'
@@ -1595,6 +1614,7 @@ interface AdminRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminAreasRoute: typeof AdminAreasRoute
   AdminArticlesRoute: typeof AdminArticlesRoute
+  AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminClaimsRoute: typeof AdminClaimsRoute
   AdminCommentsRoute: typeof AdminCommentsRoute
   AdminEditorialPicksRoute: typeof AdminEditorialPicksRoute
@@ -1621,6 +1641,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminAreasRoute: AdminAreasRoute,
   AdminArticlesRoute: AdminArticlesRoute,
+  AdminBusinessesRoute: AdminBusinessesRoute,
   AdminClaimsRoute: AdminClaimsRoute,
   AdminCommentsRoute: AdminCommentsRoute,
   AdminEditorialPicksRoute: AdminEditorialPicksRoute,

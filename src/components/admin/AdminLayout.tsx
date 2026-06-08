@@ -6,6 +6,7 @@ import {
   CalendarDays,
   MapPin,
   Tag,
+  Building2,
   Inbox,
   Megaphone,
   Image,
@@ -51,6 +52,7 @@ const navSections: { title: string; items: { to: string; label: string; icon: Lu
   {
     title: "Directory",
     items: [
+      { to: "/admin/businesses", label: "Businesses", icon: Building2 },
       { to: "/admin/listings", label: "Listings", icon: MapPin },
       { to: "/admin/offers", label: "Offers", icon: Tag },
       { to: "/admin/claims", label: "Claims", icon: BadgeCheck },
