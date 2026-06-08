@@ -14,12 +14,12 @@ export const Route = createFileRoute("/api/v1/generate-code")({
         }
 
         try {
-          const { getAppUser } = await import("@/lib/app-auth.server");
+          const { currentUser } = await import("@/lib/auth.server");
           const { getPool, ensureSchema } = await import("@/lib/db.server");
           await ensureSchema();
           const pool = getPool();
 
-          const appUser = await getAppUser(request);
+          const appUser = await currentUser();
           if (!appUser) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
           // Get the user's loyalty card

@@ -674,7 +674,7 @@ function CardTab({ userName }: { userName: string }) {
       setCardToken(data.card_token);
       setTier(data.tier ?? "Member");
       setPoints(Number(data.points ?? 0));
-      QRCode.toDataURL(data.card_token, {
+      QRCode.toDataURL(`https://hunow.co.uk/c/${data.card_token}`, {
         width: 200,
         margin: 1,
         color: { dark: "#080d2d", light: "#f5efe6" },

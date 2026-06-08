@@ -570,7 +570,14 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
       const controls = await reader.decodeFromVideoDevice(
         undefined, videoRef.current!,
         (result, _err, controls) => {
-          if (result) { controls.stop(); setScannedToken(result.getText()); setScanning(false); }
+          if (result) {
+            controls.stop();
+            const text = result.getText();
+            // QR encodes "https://hunow.co.uk/c/<token>" — extract just the token
+            const match = text.match(/\/c\/([0-9a-f-]{36})/i);
+            setScannedToken(match ? match[1] : text);
+            setScanning(false);
+          }
         },
       );
       controlsRef.current = controls;
