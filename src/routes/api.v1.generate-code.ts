@@ -33,7 +33,7 @@ export const Route = createFileRoute("/api/v1/generate-code")({
           // Verify the offer exists and is active
           const { ACTIVE_OFFER_SQL } = await import("@/lib/api-offers");
           const offerResult = await pool.query<{ listing_id: string | null }>(
-            `select data->>'listingId' as listing_id from offers where id = $1 and ${ACTIVE_OFFER_SQL} limit 1`,
+            `select o.data->>'listingId' as listing_id from offers o where o.id = $1 and ${ACTIVE_OFFER_SQL} limit 1`,
             [body.offer_id],
           );
           if (!offerResult.rows[0]) {

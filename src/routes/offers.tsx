@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { useStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth.functions";
-import { redeemOffer } from "@/lib/public.functions";
-import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 
 export const Route = createFileRoute("/offers")({
   head: () => ({
@@ -21,6 +20,28 @@ export const Route = createFileRoute("/offers")({
   },
   component: Offers,
 });
+
+function CodeCopyButton({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    void navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="w-full flex items-center justify-between bg-foreground text-background px-4 py-3 hover:bg-accent transition-colors group"
+    >
+      <span className="font-mono text-lg tracking-widest font-bold">{code}</span>
+      <span className="text-[9px] font-bold uppercase tracking-widest opacity-60 group-hover:opacity-100">
+        {copied ? "Copied ✓" : "Copy code"}
+      </span>
+    </button>
+  );
+}
 
 function Offers() {
   const { user } = Route.useLoaderData();
@@ -93,31 +114,23 @@ function Offers() {
                 </div>
 
                 {/* CTA */}
-                {listing ? (
+                {o.code ? (
+                  <CodeCopyButton code={o.code} />
+                ) : user ? (
                   <Link
-                    to="/places/$slug"
-                    params={{ slug: listing.slug }}
-                    onClick={() => {
-                      void redeemOffer({ data: { offerId: o.id } }).catch(() => {});
-                      void trackAnalyticsEvent({ data: { eventType: "offer_claim", path: "/offers", label: o.title } }).catch(() => {});
-                    }}
+                    to="/account"
                     className="block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
                   >
-                    {o.code ? `Use code: ${o.code}` : "Claim offer"}
+                    Redeem with HU NOW card
                   </Link>
-                ) : user ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void redeemOffer({ data: { offerId: o.id } }).catch(() => {});
-                      void trackAnalyticsEvent({ data: { eventType: "offer_claim", path: "/offers", label: o.title } }).catch(() => {});
-                      alert(o.code ? `Use code: ${o.code}` : "Offer claimed. Show this page in-store.");
-                    }}
-                    className="bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors w-full"
+                ) : (
+                  <a
+                    href="/sign-in"
+                    className="block border-2 border-foreground px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors text-center"
                   >
-                    Claim offer
-                  </button>
-                ) : null}
+                    Sign in to redeem
+                  </a>
+                )}
               </div>
 
               {/* Venue footer */}
