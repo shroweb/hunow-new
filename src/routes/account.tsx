@@ -810,7 +810,7 @@ function CardTab({ userName }: { userName: string }) {
               </div>
             </div>
             {/* Tap hint */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[7px] font-mono uppercase tracking-widest text-white/20">tap to scan</div>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[7px] font-mono uppercase tracking-widest text-white/60">tap to scan</div>
           </div>
 
           {/* ── BACK (QR) ── */}
