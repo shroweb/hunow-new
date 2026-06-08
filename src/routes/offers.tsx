@@ -20,7 +20,6 @@ export const Route = createFileRoute("/offers")({
   component: Offers,
 });
 
-
 function Offers() {
   const { user } = Route.useLoaderData();
   const offers = useStore((s) => s.offers).filter((o) => o.status === "active");
