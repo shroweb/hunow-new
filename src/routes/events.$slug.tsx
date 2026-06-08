@@ -149,7 +149,7 @@ function EventDetail() {
           <h1 className="text-5xl md:text-7xl font-display uppercase leading-none mb-8">
             {event.title}
           </h1>
-          <div className="grid md:grid-cols-3 gap-6 border-y-2 border-foreground py-6 mb-8 font-mono text-xs uppercase">
+          <div className="grid grid-cols-3 gap-4 border-y-2 border-foreground py-5 mb-8 font-mono text-xs uppercase">
             <div>
               <div className="text-muted-foreground mb-1">Date</div>
               <div className="font-bold">
