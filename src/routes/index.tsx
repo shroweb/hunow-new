@@ -328,6 +328,9 @@ function Index() {
                     {e.locationName}
                   </div>
                 </div>
+                <svg className="shrink-0 text-foreground/25 group-hover:text-accent transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </Link>
             ))}
           </div>
@@ -422,6 +425,9 @@ function Index() {
                       {a.author} · {a.readingMinutes} min
                     </div>
                   </div>
+                  <svg className="shrink-0 text-foreground/25 group-hover:text-accent transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </a>
               ))}
             </div>
@@ -603,6 +609,9 @@ function Index() {
                       {l.description}
                     </p>
                   </div>
+                  <svg className="shrink-0 text-foreground/25 group-hover:text-accent transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </Link>
               ))}
             </div>
