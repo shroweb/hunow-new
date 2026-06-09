@@ -66,6 +66,26 @@ export const updateAdminUserRole = createServerFn({ method: "POST" })
     return updateUserRoleForAdmin(data);
   });
 
+export const updateAdminUserAppRole = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      userId: z.string().min(1),
+      appRole: z.enum(["customer", "business"]),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { getPool } = await import("./db.server");
+    await requireAdmin();
+    const pool = getPool();
+    const result = await pool.query<{ id: string; app_role: string }>(
+      `update users set app_role = $2, updated_at = now() where id = $1 returning id, app_role`,
+      [data.userId, data.appRole],
+    );
+    if (!result.rows[0]) throw new Error("User not found.");
+    return { id: result.rows[0].id, appRole: result.rows[0].app_role };
+  });
+
 export const updateProfileFn = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({

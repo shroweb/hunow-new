@@ -7,9 +7,8 @@ import {
   adminBtn,
   adminInput,
 } from "@/components/admin/AdminLayout";
-import { getAdminUsers, updateAdminUserRole } from "@/lib/auth.functions";
+import { getAdminUsers, updateAdminUserRole, updateAdminUserAppRole } from "@/lib/auth.functions";
 import type { AdminUserRow, AuthRole } from "@/lib/auth.server";
-import { Building2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/users")({ component: AdminUsers });
 
@@ -17,6 +16,7 @@ function AdminUsers() {
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [savingAppRoleId, setSavingAppRoleId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
@@ -55,11 +55,25 @@ function AdminUsers() {
     setError(null);
     try {
       const updated = await updateAdminUserRole({ data: { userId: user.id, role } });
-      setUsers((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+      setUsers((current) => current.map((item) => (item.id === updated.id ? { ...item, ...updated } : item)));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to update role.");
     } finally {
       setSavingId(null);
+    }
+  }
+
+  async function changeAppRole(user: AdminUserRow, appRole: "customer" | "business") {
+    if (appRole === user.appRole) return;
+    setSavingAppRoleId(user.id);
+    setError(null);
+    try {
+      const updated = await updateAdminUserAppRole({ data: { userId: user.id, appRole } });
+      setUsers((current) => current.map((item) => (item.id === updated.id ? { ...item, appRole: updated.appRole } : item)));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to update type.");
+    } finally {
+      setSavingAppRoleId(null);
     }
   }
 
@@ -117,13 +131,15 @@ function AdminUsers() {
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
                 </select>,
-                appRole === "business" ? (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-accent uppercase">
-                    <Building2 className="w-3 h-3" /> Business
-                  </span>
-                ) : (
-                  <span className="text-[10px] text-muted-foreground uppercase">Member</span>
-                ),
+                <select
+                  value={appRole === "business" ? "business" : "customer"}
+                  disabled={savingAppRoleId === user.id}
+                  onChange={(event) => void changeAppRole(user, event.target.value as "customer" | "business")}
+                  className={`${adminInput} min-w-32 py-2`}
+                >
+                  <option value="customer">Member</option>
+                  <option value="business">Business</option>
+                </select>,
                 <span className="font-mono text-[10px] uppercase text-muted-foreground">
                   {new Date(user.createdAt).toLocaleDateString("en-GB", {
                     day: "2-digit",
