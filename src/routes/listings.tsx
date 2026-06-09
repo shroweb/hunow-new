@@ -158,7 +158,10 @@ function ListingsPage() {
             disabled={geoLoading}
             className={`px-6 py-3 border-2 text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50 flex items-center gap-2 ${userCoords ? "border-accent text-accent hover:bg-accent hover:text-background" : "border-foreground hover:bg-foreground hover:text-background"}`}
           >
-            📍 {geoLoading ? "Locating…" : userCoords ? "Near me ×" : "Near me"}
+            <svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" aria-hidden="true">
+              <path d="M5.5 0C2.46 0 0 2.46 0 5.5c0 4.125 5.5 8.5 5.5 8.5S11 9.625 11 5.5C11 2.46 8.54 0 5.5 0zm0 7.5a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
+            </svg>
+            {geoLoading ? "Locating…" : userCoords ? "Near me ×" : "Near me"}
           </button>
         </div>
         {geoError && <p className="mt-2 text-xs text-red-600 font-mono">{geoError}</p>}

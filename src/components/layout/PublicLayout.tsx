@@ -143,6 +143,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             </Link>
             <Link
               to="/account"
+              search={{ tab: "card" }}
               className="hidden md:inline-block px-[18px] py-[9px] bg-foreground text-background text-xs font-bold uppercase tracking-wider hover:bg-accent transition-colors"
             >
               {accountLabel}
@@ -329,6 +330,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               </Link>
               <Link
                 to="/account"
+                search={{ tab: "card" }}
                 onClick={() => setMobileOpen(false)}
                 className="block text-xs font-bold uppercase tracking-widest"
               >

@@ -183,7 +183,12 @@ function SearchPage() {
                       <div>
                         <p className="font-bold group-hover:underline">{e.title}</p>
                         <p className="text-sm text-muted-foreground mt-0.5">
-                          {e.locationName} · {e.startDate}
+                          {e.locationName} ·{" "}
+                          {new Date(`${e.startDate}T12:00:00`).toLocaleDateString("en-GB", {
+                            weekday: "short",
+                            day: "numeric",
+                            month: "short",
+                          })}
                         </p>
                       </div>
                       <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">

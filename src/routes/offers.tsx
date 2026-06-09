@@ -55,7 +55,22 @@ function Offers() {
         )}
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        {offers.length === 0 && (
+          <div className="border-2 border-dashed border-foreground/20 p-12 text-center space-y-3">
+            <p className="font-display text-3xl uppercase">No offers right now</p>
+            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+              Check back soon — new deals from Hull's independents are added regularly.
+            </p>
+            <Link
+              to="/listings"
+              className="inline-block mt-2 text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent"
+            >
+              Browse all businesses →
+            </Link>
+          </div>
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {offers.map((o) => {
           const listing =
             listings.find((l) => l.id === o.listingId) ??
@@ -108,7 +123,7 @@ function Offers() {
                 </p>
                 <div className="text-[10px] font-mono uppercase text-muted-foreground mb-4">
                   Ends{" "}
-                  {new Date(o.endDate).toLocaleDateString("en-GB", {
+                  {new Date(`${o.endDate}T12:00:00`).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
@@ -120,6 +135,7 @@ function Offers() {
                   {user ? (
                     <Link
                       to="/account"
+                      search={{ tab: "card" }}
                       className="flex-1 block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
                     >
                       Redeem with HU NOW card
@@ -163,6 +179,7 @@ function Offers() {
             </div>
           );
         })}
+        </div>
       </section>
     </PublicLayout>
   );

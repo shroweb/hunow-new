@@ -72,7 +72,7 @@ function OpenNow() {
             ].map(([key, label]) => (
               <button
                 key={key}
-                onClick={() => setMode(key as "now" | "late" | "sunday")}
+                onClick={() => { setMode(key as "now" | "late" | "sunday"); setCat("All"); }}
                 className={`px-3 py-1.5 text-[10px] font-bold uppercase ${mode === key ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
               >
                 {label}
@@ -96,13 +96,15 @@ function OpenNow() {
       <section className="max-w-7xl mx-auto px-4 py-12">
         {filtered.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="font-display text-4xl uppercase mb-4">Nothing open right now</p>
+            <p className="font-display text-4xl uppercase mb-4">
+              {mode === "now" ? "Nothing open right now" : mode === "late" ? "No places open late" : "No places open on Sunday"}
+            </p>
             <p className="text-muted-foreground">
-              Check back soon, or browse{" "}
+              Browse{" "}
               <a href="/listings" className="underline font-bold">
                 all listings
-              </a>
-              .
+              </a>{" "}
+              or check back later.
             </p>
           </div>
         ) : (

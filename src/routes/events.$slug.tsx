@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { EventCard, ListingCard } from "@/components/cards";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -155,18 +155,18 @@ function EventDetail() {
               <div className="font-bold">
                 {event.endDate ? (
                   <>
-                    {new Date(event.startDate).toLocaleDateString("en-GB", {
+                    {new Date(`${event.startDate}T12:00:00`).toLocaleDateString("en-GB", {
                       day: "numeric",
                       month: "long",
                     })}
                     {" – "}
-                    {new Date(event.endDate).toLocaleDateString("en-GB", {
+                    {new Date(`${event.endDate}T12:00:00`).toLocaleDateString("en-GB", {
                       day: "numeric",
                       month: "long",
                     })}
                   </>
                 ) : (
-                  new Date(event.startDate).toLocaleDateString("en-GB", {
+                  new Date(`${event.startDate}T12:00:00`).toLocaleDateString("en-GB", {
                     weekday: "long",
                     day: "numeric",
                     month: "long",
@@ -260,12 +260,10 @@ function EventDetail() {
                 </a>
               </div>
             </div>
-            <iframe
-              title={`Map for ${event.locationName}`}
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=-0.4,53.7,0.0,53.9&layer=mapnik&marker=53.745%2C-0.332`}
-              className="w-full h-48 border-t border-foreground/20"
-              loading="lazy"
-              aria-hidden="true"
+            <EventMap
+              address={`${event.locationName}, ${event.address}`}
+              lat={venue?.latitude}
+              lng={venue?.longitude}
             />
           </div>
           {/* Primary CTAs */}
@@ -412,5 +410,78 @@ function RsvpButton({ eventId }: { eventId: string }) {
       {going ? "✓ Going" : "I'm going"}
       {count > 0 && <span className="ml-2 opacity-60">{count}</span>}
     </button>
+  );
+}
+
+// ── EventMap ───────────────────────────────────────────────────────────────────
+
+function EventMap({
+  address,
+  lat,
+  lng,
+}: {
+  address: string;
+  lat?: number | null;
+  lng?: number | null;
+}) {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [resolved, setResolved] = useState<{ lat: number; lng: number } | null>(
+    lat != null && lng != null ? { lat, lng } : null,
+  );
+
+  useEffect(() => {
+    if (resolved || !address) return;
+    // Geocode address via Nominatim
+    fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
+      { headers: { "Accept-Language": "en" } },
+    )
+      .then((r) => r.json())
+      .then((data: { lat?: string; lon?: string }[]) => {
+        if (data[0]?.lat) setResolved({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon!) });
+      })
+      .catch(() => {});
+  }, [address, resolved]);
+
+  useEffect(() => {
+    if (!resolved || !mapRef.current) return;
+    let destroyed = false;
+    const init = async () => {
+      const L = (await import("leaflet")).default;
+      if (destroyed || !mapRef.current) return;
+      // @ts-expect-error icon fix
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+      });
+      const map = L.map(mapRef.current!, { zoomControl: true, scrollWheelZoom: false });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+        maxZoom: 19,
+      }).addTo(map);
+      map.setView([resolved.lat, resolved.lng], 16);
+      L.marker([resolved.lat, resolved.lng])
+        .addTo(map)
+        .bindPopup(`<strong>${address.split(",")[0]}</strong>`)
+        .openPopup();
+      return map;
+    };
+    let mapInstance: import("leaflet").Map | undefined;
+    void init().then((m) => { mapInstance = m; });
+    return () => {
+      destroyed = true;
+      mapInstance?.remove();
+    };
+  }, [resolved, address]);
+
+  if (!resolved) return null;
+
+  return (
+    <>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+      <div ref={mapRef} className="w-full h-48 border-t border-foreground/20" />
+    </>
   );
 }

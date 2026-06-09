@@ -22,6 +22,13 @@ import { useStore } from "@/lib/store";
 type Tab = "card" | "profile" | "security" | "newsletter" | "activity" | "danger";
 
 export const Route = createFileRoute("/account")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    tab: (["card", "profile", "security", "newsletter", "activity", "danger"].includes(
+      search.tab as string,
+    )
+      ? search.tab
+      : "card") as Tab,
+  }),
   head: () => ({
     meta: [
       { title: "Account — HU NOW" },
@@ -33,10 +40,11 @@ export const Route = createFileRoute("/account")({
 });
 
 function Account() {
+  const { tab: initialTab } = Route.useSearch();
   const [user, setUser] = useState<
     (AuthUser & { avatarUrl?: string | null; bio?: string }) | null | undefined
   >(undefined);
-  const [tab, setTab] = useState<Tab>("card");
+  const [tab, setTab] = useState<Tab>(initialTab);
 
   useEffect(() => {
     getCurrentUser()
@@ -810,7 +818,7 @@ function CardTab({ userName }: { userName: string }) {
               </div>
             </div>
             {/* Tap hint */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[7px] font-mono uppercase tracking-widest text-white/60">tap to scan</div>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[7px] font-mono uppercase tracking-widest text-white/60">tap to flip</div>
           </div>
 
           {/* ── BACK (QR) ── */}

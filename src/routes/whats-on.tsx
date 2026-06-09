@@ -124,7 +124,7 @@ function WhatsOn() {
           {/* Single horizontally-scrollable chip row */}
           <div className="flex gap-1.5 overflow-x-auto scrollbar-none flex-1 min-w-0 py-0.5">
             <button
-              onClick={() => setWhen("all")}
+              onClick={() => { setWhen("all"); setCategory("All"); setFreeOnly(false); }}
               className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "all" && category === "All" && !freeOnly ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               All
