@@ -549,26 +549,27 @@ function Index() {
             <Link
               to="/places/$slug"
               params={{ slug: listings[0].slug }}
-              className="group relative block md:col-span-2 aspect-[16/10] overflow-hidden bg-stone-900"
+              className="group block md:col-span-2"
             >
-              <img
-                src={img(listings[0].featuredImage, 900, 560)}
-                alt={listings[0].name}
-                width={900}
-                height={560}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <div className="text-[9px] font-mono font-bold uppercase text-accent mb-2">
+              <div className="w-full aspect-[16/10] overflow-hidden bg-stone-200">
+                <img
+                  src={img(listings[0].featuredImage, 900, 560)}
+                  alt={listings[0].name}
+                  width={900}
+                  height={560}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="pt-3 pb-1">
+                <div className="text-[9px] font-mono font-bold uppercase text-accent mb-1.5">
                   {listings[0].category} · {listings[0].area}
                 </div>
-                <h3 className="text-3xl md:text-4xl font-bold leading-tight text-background group-hover:underline mb-2">
+                <h3 className="text-2xl md:text-3xl font-bold leading-tight group-hover:underline mb-1.5">
                   {listings[0].name}
                 </h3>
-                <p className="text-sm text-background/70 line-clamp-1">{listings[0].description}</p>
+                <p className="text-sm text-muted-foreground line-clamp-2">{listings[0].description}</p>
               </div>
             </Link>
             {/* Secondary listings */}
