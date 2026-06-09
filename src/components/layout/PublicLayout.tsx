@@ -604,15 +604,25 @@ function Footer() {
             )}
           </div>
         )}
-        <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-white/30">
-          <a href="mailto:hello@hunow.co.uk" className="hover:text-white/60 transition-colors">
-            hello@hunow.co.uk
-          </a>
-          <a href="/privacy" className="hover:text-white/60 transition-colors">
-            Privacy
-          </a>
-          <a href="/terms" className="hover:text-white/60 transition-colors">
-            Terms
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-white/30">
+            <a href="mailto:hello@hunow.co.uk" className="hover:text-white/60 transition-colors">
+              hello@hunow.co.uk
+            </a>
+            <a href="/privacy" className="hover:text-white/60 transition-colors">
+              Privacy
+            </a>
+            <a href="/terms" className="hover:text-white/60 transition-colors">
+              Terms
+            </a>
+          </div>
+          <a
+            href="https://swift7.co.uk"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-mono text-white/20 hover:text-white/50 transition-colors"
+          >
+            Web Design in Hull by Swift7
           </a>
         </div>
       </div>
