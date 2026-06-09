@@ -65,6 +65,14 @@ function WhatsOn() {
   const [view, setView] = useState<"list" | "calendar">("list");
   const [page, setPage] = useState(1);
 
+  // If "today" is requested but nothing is on today, silently treat as "all"
+  const effectiveWhen = useMemo<"today" | "weekend" | "all">(() => {
+    if (when !== "today") return when;
+    const today = todayIso();
+    const hasToday = events.some((e) => e.startDate === today);
+    return hasToday ? "today" : "all";
+  }, [when, events]);
+
   const filtered = useMemo(() => {
     const today = todayIso();
     const [satStr, sunStr] = weekendRange();
@@ -72,29 +80,18 @@ function WhatsOn() {
       (e) =>
         (category === "All" || e.category === category) &&
         (!freeOnly || e.isFree) &&
-        (when === "all" ||
-          (when === "today" && e.startDate === today) ||
-          (when === "weekend" && (e.startDate === satStr || e.startDate === sunStr))) &&
+        (effectiveWhen === "all" ||
+          (effectiveWhen === "today" && e.startDate === today) ||
+          (effectiveWhen === "weekend" && (e.startDate === satStr || e.startDate === sunStr))) &&
         (!query ||
           e.title.toLowerCase().includes(query.toLowerCase()) ||
           e.locationName.toLowerCase().includes(query.toLowerCase())),
     );
-  }, [events, category, freeOnly, when, query]);
-
-  // If "today" is selected but there's nothing on today, fall back to "all"
-  useEffect(() => {
-    if (when === "today" && events.length > 0) {
-      const today = todayIso();
-      const hasToday = events.some(
-        (e) => e.status === "published" && e.startDate === today,
-      );
-      if (!hasToday) setWhen("all");
-    }
-  }, [events, when]);
+  }, [events, category, freeOnly, effectiveWhen, query]);
 
   useEffect(() => {
     setPage(1);
-  }, [category, freeOnly, when, query, view]);
+  }, [category, freeOnly, effectiveWhen, query, view]);
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
@@ -128,19 +125,19 @@ function WhatsOn() {
           <div className="flex gap-1.5 overflow-x-auto scrollbar-none flex-1 min-w-0 py-0.5">
             <button
               onClick={() => setWhen("all")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${when === "all" && category === "All" && !freeOnly ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "all" && category === "All" && !freeOnly ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               All
             </button>
             <button
               onClick={() => setWhen("today")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${when === "today" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "today" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               Today
             </button>
             <button
               onClick={() => setWhen("weekend")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${when === "weekend" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "weekend" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               This Weekend
             </button>
