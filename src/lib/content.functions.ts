@@ -199,17 +199,6 @@ export const importEventbriteUrlFn = createServerFn({ method: "POST" })
     return importEventbriteUrl(data.urlOrId);
   });
 
-// ---- Ticketmaster import ----
-
-export const importTicketmasterUrlFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ urlOrId: z.string().min(1) }))
-  .handler(async ({ data }) => {
-    const { requireAdmin } = await import("./auth.server");
-    await requireAdmin();
-    const { importTicketmasterUrl } = await import("./ticketmaster.server");
-    return importTicketmasterUrl(data.urlOrId);
-  });
-
 // ---- Hull City AFC fixtures ----
 
 export const syncHullCityFixturesFn = createServerFn({ method: "POST" }).handler(async () => {

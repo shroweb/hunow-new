@@ -70,6 +70,11 @@ export async function syncHullCityFixtures(): Promise<{ imported: number; skippe
   });
 
   if (!res.ok) {
+    if (res.status === 403) {
+      throw new Error(
+        "football-data.org: The Championship (Hull City's league) requires a paid plan. Upgrade at football-data.org or enter fixtures manually.",
+      );
+    }
     const body = await res.text();
     throw new Error(`football-data.org API error ${res.status}: ${body}`);
   }

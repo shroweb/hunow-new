@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { AdminHeader, adminBtn, adminBtnOutline, adminInput } from "@/components/admin/AdminLayout";
@@ -78,44 +78,6 @@ const importEvents = createServerFn({ method: "POST" })
     return { ok: true, created, errors };
   });
 
-const fetchSkiddle = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ apiKey: z.string().min(1) }))
-  .handler(async ({ data }) => {
-    const { requireAdmin } = await import("@/lib/auth.server");
-    await requireAdmin();
-    // Hull coords: 53.7457, -0.3367
-    const url = `https://www.skiddle.com/api/v1/events/?api_key=${data.apiKey}&latitude=53.7457&longitude=-0.3367&radius=10&limit=50&order=date`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Skiddle API error: ${res.status}`);
-    const json = (await res.json()) as {
-      results?: {
-        id: string;
-        eventname: string;
-        description: string;
-        date: string;
-        openingtimes?: { doorsopen?: string; doorsclose?: string };
-        venue?: { name?: string; address?: string };
-        MinPrice?: string;
-        link?: string;
-        imageurl?: string;
-        genres?: Array<{ name: string }>;
-      }[];
-    };
-    const events = (json.results ?? []).map((e) => ({
-      title: e.eventname,
-      description: e.description || "",
-      startDate: e.date,
-      startTime: e.openingtimes?.doorsopen || "19:00",
-      endTime: e.openingtimes?.doorsclose,
-      locationName: e.venue?.name || "Hull",
-      address: e.venue?.address || "Hull",
-      category: e.genres?.[0]?.name || "Music",
-      price: e.MinPrice ? `£${e.MinPrice}` : "Free",
-      ticketUrl: e.link,
-      featuredImage: e.imageurl,
-    }));
-    return { ok: true, events };
-  });
 
 export const Route = createFileRoute("/admin/import")({
   component: AdminImport,
@@ -124,15 +86,14 @@ export const Route = createFileRoute("/admin/import")({
 type PreviewEvent = z.infer<typeof importSchema>["events"][number];
 
 function AdminImport() {
-  const [tab, setTab] = useState<"json" | "skiddle">("json");
   const [json, setJson] = useState("");
-  const [skiddleKey, setSkiddleKey] = useState(process.env.SKIDDLE_API_KEY ?? "");
   const [preview, setPreview] = useState<PreviewEvent[]>([]);
   const [parseError, setParseError] = useState("");
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
 
   function parseJson() {
+
     setParseError("");
     try {
       const parsed = JSON.parse(json);
@@ -140,20 +101,6 @@ function AdminImport() {
       setPreview(arr as PreviewEvent[]);
     } catch (err) {
       setParseError(err instanceof Error ? err.message : "Invalid JSON");
-    }
-  }
-
-  async function fetchFromSkiddle(e: FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setParseError("");
-    try {
-      const result = await fetchSkiddle({ data: { apiKey: skiddleKey } });
-      setPreview(result.events);
-    } catch (err) {
-      setParseError(err instanceof Error ? err.message : "Fetch failed");
-    } finally {
-      setBusy(false);
     }
   }
 
@@ -179,7 +126,7 @@ function AdminImport() {
     <>
       <AdminHeader
         title="Import Events"
-        subtitle="Import from a JSON array or fetch directly from Skiddle. All imports create drafts."
+        subtitle="Paste a JSON array of events. All imports create drafts."
       />
       <div className="p-6 md:p-10 space-y-8 max-w-3xl">
         {status && (
@@ -188,81 +135,28 @@ function AdminImport() {
           </div>
         )}
 
-        {/* Tabs */}
-        <div className="flex border-b-2 border-foreground">
-          {(["json", "skiddle"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={`px-6 py-3 text-xs font-bold uppercase tracking-widest border-b-2 -mb-[2px] transition-colors ${tab === t ? "border-accent text-accent" : "border-transparent text-foreground/50 hover:text-foreground"}`}
-            >
-              {t === "json" ? "Paste JSON" : "Skiddle API"}
-            </button>
-          ))}
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Paste a JSON array of events. Required fields:{" "}
+            <code className="font-mono text-xs bg-foreground/5 px-1">title</code>,{" "}
+            <code className="font-mono text-xs bg-foreground/5 px-1">startDate</code>{" "}
+            (YYYY-MM-DD). Optional: description, startTime, endTime, locationName, address,
+            category, price, ticketUrl, featuredImage.
+          </p>
+          <textarea
+            className={adminInput}
+            rows={10}
+            value={json}
+            onChange={(e) => setJson(e.target.value)}
+            placeholder={
+              '[{"title":"Hull Jazz Fest","startDate":"2026-07-12","locationName":"Hull Marina","category":"Music"}]'
+            }
+          />
+          {parseError && <p className="text-sm text-red-600 font-mono">{parseError}</p>}
+          <button type="button" className={adminBtnOutline} onClick={parseJson}>
+            Preview
+          </button>
         </div>
-
-        {tab === "json" && (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Paste a JSON array of events. Required fields:{" "}
-              <code className="font-mono text-xs bg-foreground/5 px-1">title</code>,{" "}
-              <code className="font-mono text-xs bg-foreground/5 px-1">startDate</code>{" "}
-              (YYYY-MM-DD). Optional: description, startTime, endTime, locationName, address,
-              category, price, ticketUrl, featuredImage.
-            </p>
-            <textarea
-              className={adminInput}
-              rows={10}
-              value={json}
-              onChange={(e) => setJson(e.target.value)}
-              placeholder={
-                '[{"title":"Hull Jazz Fest","startDate":"2026-07-12","locationName":"Hull Marina","category":"Music"}]'
-              }
-            />
-            {parseError && <p className="text-sm text-red-600 font-mono">{parseError}</p>}
-            <button type="button" className={adminBtnOutline} onClick={parseJson}>
-              Preview
-            </button>
-          </div>
-        )}
-
-        {tab === "skiddle" && (
-          <form onSubmit={fetchFromSkiddle} className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Fetch upcoming events within 10 km of Hull from the{" "}
-              <a
-                href="https://www.skiddle.com/api/"
-                target="_blank"
-                rel="noreferrer"
-                className="underline"
-              >
-                Skiddle API
-              </a>
-              . You need a free API key.
-            </p>
-            <label className="block space-y-1">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">
-                Skiddle API Key
-              </span>
-              <input
-                className={adminInput}
-                value={skiddleKey}
-                onChange={(e) => setSkiddleKey(e.target.value)}
-                placeholder="your_skiddle_api_key"
-                required
-              />
-            </label>
-            {parseError && <p className="text-sm text-red-600 font-mono">{parseError}</p>}
-            <button
-              type="submit"
-              disabled={busy}
-              className={`${adminBtnOutline} disabled:opacity-40`}
-            >
-              {busy ? "Fetching…" : "Fetch events"}
-            </button>
-          </form>
-        )}
 
         {/* Preview */}
         {preview.length > 0 && (

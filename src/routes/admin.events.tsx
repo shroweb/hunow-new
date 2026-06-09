@@ -25,7 +25,6 @@ import {
   deleteEventFn,
   bulkArchiveEventsFn,
   importEventbriteUrlFn,
-  importTicketmasterUrlFn,
   syncHullCityFixturesFn,
 } from "@/lib/content.functions";
 import type { EventItem } from "@/types";
@@ -51,7 +50,6 @@ function AdminEvents() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [ebUrl, setEbUrl] = useState("");
-  const [tmUrl, setTmUrl] = useState("");
   const [importing, setImporting] = useState(false);
   const [importStatus, setImportStatus] = useState("");
   const [slugDraft, setSlugDraft] = useState("");
@@ -253,38 +251,6 @@ function AdminEvents() {
         {importStatus && (
           <span className="text-xs font-mono text-muted-foreground w-full">{importStatus}</span>
         )}
-      </div>
-      <div className="px-6 md:px-10 py-3 border-b border-border bg-white flex flex-wrap items-center gap-2">
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
-          Import from Ticketmaster
-        </span>
-        <input
-          type="url"
-          placeholder="https://www.ticketmaster.co.uk/event/1F00..."
-          value={tmUrl}
-          onChange={(e) => setTmUrl(e.target.value)}
-          className={`${adminInput} flex-1 min-w-0`}
-        />
-        <button
-          type="button"
-          disabled={importing || !tmUrl.trim()}
-          onClick={async () => {
-            setImporting(true);
-            setImportStatus("");
-            try {
-              const event = await importTicketmasterUrlFn({ data: { urlOrId: tmUrl.trim() } });
-              setImportStatus(`✓ Imported: ${event.title}`);
-              setTmUrl("");
-            } catch (err) {
-              setImportStatus(`Error: ${String(err)}`);
-            } finally {
-              setImporting(false);
-            }
-          }}
-          className={adminBtn}
-        >
-          {importing ? "Importing…" : "Import"}
-        </button>
       </div>
       <div className="px-6 md:px-10 py-3 border-b border-border bg-white flex flex-wrap items-center gap-2">
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
