@@ -5,9 +5,10 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { AdSlot } from "@/components/AdSlot";
 import { PollWidget } from "@/components/PollWidget";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { ArticleCard, EventCard, ListingCard, OfferCard } from "@/components/cards";
+import { EventCard, ListingCard, OfferCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
+import { img } from "@/data/seed";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,7 +36,7 @@ function Index() {
   const events = publishedEvents.slice(0, 4);
   const articles = useStore((s) => s.articles)
     .filter((a) => a.status === "published")
-    .slice(0, 3);
+    .slice(0, 4);
   const offers = useStore((s) => s.offers)
     .filter((o) => o.status === "active")
     .slice(0, 3);
@@ -292,15 +293,106 @@ function Index() {
         </aside>
       </main>
 
-      {/* Latest Stories */}
+      {/* Latest Stories — editorial layout */}
       <section className="max-w-7xl mx-auto px-4 py-16 border-t border-border">
-        <h2 className="text-5xl font-display mb-12 uppercase">Latest Stories</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {articles.map((a) => (
-            <ArticleCard key={a.id} article={a} />
-          ))}
+        <div className="flex items-end justify-between mb-10 gap-4">
+          <h2 className="text-5xl font-display uppercase">Latest Stories</h2>
+          <Link
+            to="/stories"
+            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent"
+          >
+            All stories →
+          </Link>
         </div>
+        {articles.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            {/* Lead article */}
+            <a href={articlePath(articles[0])} className="group block md:col-span-2">
+              <div className="w-full aspect-[16/10] bg-stone-200 overflow-hidden mb-5 relative">
+                <img
+                  src={img(articles[0].featuredImage, 900, 560)}
+                  alt={articles[0].title}
+                  width={900}
+                  height={560}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <span className="inline-block text-[10px] font-mono font-bold uppercase bg-foreground text-background px-2 py-1 mb-3">
+                {articles[0].category}
+              </span>
+              <h3 className="text-3xl md:text-4xl font-bold leading-tight group-hover:underline mb-3">
+                {articles[0].title}
+              </h3>
+              <p className="text-sm text-muted-foreground line-clamp-3">{articles[0].excerpt}</p>
+              <div className="text-[10px] font-mono uppercase text-muted-foreground mt-3">
+                {articles[0].author} · {articles[0].readingMinutes} min read
+              </div>
+            </a>
+            {/* Secondary articles */}
+            <div className="flex flex-col gap-6 md:border-l-2 md:border-foreground md:pl-10">
+              {articles.slice(1, 3).map((a) => (
+                <a key={a.id} href={articlePath(a)} className="group flex gap-4 items-start">
+                  <div className="w-20 h-20 shrink-0 overflow-hidden bg-stone-200">
+                    <img
+                      src={img(a.featuredImage, 160, 160)}
+                      alt={a.title}
+                      width={160}
+                      height={160}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[9px] font-mono font-bold uppercase text-accent block mb-1">
+                      {a.category}
+                    </span>
+                    <h3 className="text-sm font-bold leading-tight group-hover:underline">
+                      {a.title}
+                    </h3>
+                    <div className="text-[9px] font-mono uppercase text-muted-foreground mt-2">
+                      {a.author} · {a.readingMinutes} min
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
+
+      {/* Editorial feature band */}
+      {featuredArticles[0] && (
+        <section className="border-y-2 border-foreground overflow-hidden">
+          <a href={articlePath(featuredArticles[0])} className="group relative block min-h-[340px] md:min-h-[420px]">
+            <img
+              src={img(featuredArticles[0].featuredImage, 1400, 600)}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-foreground/72" />
+            <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 flex flex-col justify-end min-h-[340px] md:min-h-[420px]">
+              <div className="max-w-3xl">
+                <span className="inline-block bg-accent text-background text-[10px] font-mono font-bold uppercase px-3 py-1 mb-5">
+                  {featuredArticles[0].category}
+                </span>
+                <h2 className="text-4xl md:text-6xl lg:text-7xl font-display uppercase leading-none text-background mb-4 group-hover:text-accent transition-colors duration-300">
+                  {featuredArticles[0].title}
+                </h2>
+                <p className="text-background/75 text-lg max-w-2xl mb-6 hidden md:block">
+                  {featuredArticles[0].excerpt}
+                </p>
+                <span className="inline-block border-b-2 border-accent text-background text-[10px] font-bold uppercase tracking-widest pb-1">
+                  Read the story →
+                </span>
+              </div>
+            </div>
+          </a>
+        </section>
+      )}
 
       {/* Independent Hull */}
       <section className="max-w-7xl mx-auto px-4 py-16 border-t border-border">
