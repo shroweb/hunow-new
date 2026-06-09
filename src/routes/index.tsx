@@ -299,23 +299,23 @@ function Index() {
                 params={{ slug: e.slug }}
                 className="group flex gap-4 items-center py-3.5"
               >
-                <div className="w-[72px] h-[72px] shrink-0 overflow-hidden bg-stone-200">
+                <div className="w-20 shrink-0 overflow-hidden bg-stone-200 aspect-[4/3]">
                   <img
-                    src={img(e.featuredImage, 144, 144)}
+                    src={img(e.featuredImage, 160, 120)}
                     alt={e.title}
-                    width={144}
-                    height={144}
+                    width={160}
+                    height={120}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-mono text-[9px] font-bold uppercase text-accent mb-0.5">
+                  <div className="font-mono text-[9px] font-bold uppercase text-accent mb-1">
                     {e.category} · {formatHomeDate(e.startDate)}
                   </div>
-                  <h3 className="text-sm font-bold leading-tight group-hover:underline">{e.title}</h3>
-                  <div className="text-[9px] font-mono uppercase text-muted-foreground mt-0.5">
+                  <h3 className="text-sm font-bold leading-snug group-hover:underline mb-0.5">{e.title}</h3>
+                  <div className="text-[9px] font-mono uppercase text-muted-foreground">
                     {e.locationName}
                   </div>
                 </div>
@@ -571,41 +571,47 @@ function Index() {
               </div>
             </Link>
             {/* Secondary listings */}
-            <div className="flex flex-col gap-6 md:border-l-2 md:border-foreground md:pl-10">
-              {listings.slice(1, 4).map((l) => (
-                <Link
-                  key={l.id}
-                  to="/places/$slug"
-                  params={{ slug: l.slug }}
-                  className="group flex gap-4 items-start"
-                >
-                  <div className="w-20 h-20 shrink-0 overflow-hidden bg-stone-200">
-                    {l.featuredImage && (
-                      <img
-                        src={img(l.featuredImage, 160, 160)}
-                        alt={l.name}
-                        width={160}
-                        height={160}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[9px] font-mono font-bold uppercase text-accent block mb-1">
-                      {l.category} · {l.area}
-                    </span>
-                    <h3 className="text-sm font-bold leading-tight group-hover:underline">{l.name}</h3>
-                    <p className="text-[9px] font-mono uppercase text-muted-foreground mt-1 line-clamp-1">
-                      {l.description}
-                    </p>
-                  </div>
-                  <svg className="shrink-0 text-foreground/25 group-hover:text-accent transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
-              ))}
+            <div className="flex flex-col md:border-l-2 md:border-foreground md:pl-10">
+              <div className="divide-y divide-foreground/10 flex-1">
+                {listings.slice(1, 4).map((l) => (
+                  <Link
+                    key={l.id}
+                    to="/places/$slug"
+                    params={{ slug: l.slug }}
+                    className="group flex gap-4 items-center py-4"
+                  >
+                    <div className="w-20 shrink-0 overflow-hidden bg-stone-200 aspect-[4/3]">
+                      {l.featuredImage && (
+                        <img
+                          src={img(l.featuredImage, 160, 120)}
+                          alt={l.name}
+                          width={160}
+                          height={120}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[9px] font-mono font-bold uppercase text-accent block mb-1">
+                        {l.category} · {l.area}
+                      </span>
+                      <h3 className="text-sm font-bold leading-snug group-hover:underline mb-0.5">{l.name}</h3>
+                      <p className="text-[11px] text-muted-foreground line-clamp-1">{l.description}</p>
+                    </div>
+                    <svg className="shrink-0 text-foreground/25 group-hover:text-accent transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </Link>
+                ))}
+              </div>
+              <Link
+                to="/places"
+                className="mt-6 text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 self-start hover:text-accent hover:border-accent"
+              >
+                All places →
+              </Link>
             </div>
           </div>
         )}
