@@ -86,9 +86,6 @@ function Index() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,12,39,0.88)_0%,rgba(7,12,39,0.70)_44%,rgba(7,12,39,0.24)_100%)]" />
         <div className="relative max-w-7xl mx-auto px-4 py-14 md:py-20 min-h-[calc(100vh-92px)] flex items-center">
           <div className="max-w-5xl">
-            <div className="mb-5 inline-flex border border-background/50 px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest text-background/85">
-              Hull Marina / What&apos;s on now
-            </div>
             <h1 className="text-6xl md:text-9xl font-display leading-[0.9] text-balance mb-8">
               DISCOVER WHAT&apos;S <span className="text-accent">HAPPENING</span> IN HULL
             </h1>
@@ -125,9 +122,6 @@ function Index() {
               </Link>
               <Link to="/submit" className="underline underline-offset-4 decoration-accent">
                 Submit an event
-              </Link>
-              <Link to="/advertise" className="underline underline-offset-4 decoration-accent">
-                Advertise with HU NOW
               </Link>
             </div>
           </div>
@@ -263,38 +257,35 @@ function Index() {
               </Link>
             </div>
           </div>
-          {/* Lead event */}
+          {/* Lead event — full-bleed with overlay */}
           {events[0] && (
             <Link
               to="/events/$slug"
               params={{ slug: events[0].slug }}
-              className="group grid md:grid-cols-2 gap-6 items-start mb-8 pb-8 border-b-2 border-foreground"
+              className="group relative block w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-stone-900 mb-6"
             >
-              <div className="aspect-[16/10] overflow-hidden bg-stone-200">
-                <img
-                  src={img(events[0].featuredImage, 700, 440)}
-                  alt={events[0].title}
-                  width={700}
-                  height={440}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div>
-                <div className="font-mono text-[10px] font-bold uppercase text-accent mb-3">
+              <img
+                src={img(events[0].featuredImage, 900, 420)}
+                alt={events[0].title}
+                width={900}
+                height={420}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+                <div className="font-mono text-[10px] font-bold uppercase text-accent mb-2">
                   {events[0].category}
+                  {events[0].isSponsored && (
+                    <span className="ml-3 text-background/60">· Sponsored</span>
+                  )}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold leading-tight group-hover:underline mb-3">
+                <h3 className="text-xl md:text-2xl font-bold leading-tight text-background group-hover:underline mb-2">
                   {events[0].title}
                 </h3>
-                <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                  {events[0].description}
-                </p>
-                <div className="text-[10px] font-mono uppercase text-foreground/60">
-                  {formatHomeDate(events[0].startDate)} · {events[0].startTime}
-                  <br />
-                  {events[0].locationName}
+                <div className="text-[10px] font-mono uppercase text-background/60">
+                  {formatHomeDate(events[0].startDate)} · {events[0].startTime} · {events[0].locationName}
                 </div>
               </div>
             </Link>
@@ -306,14 +297,14 @@ function Index() {
                 key={e.id}
                 to="/events/$slug"
                 params={{ slug: e.slug }}
-                className="group flex gap-4 items-center py-4"
+                className="group flex gap-4 items-center py-3.5"
               >
-                <div className="w-16 h-16 shrink-0 overflow-hidden bg-stone-200">
+                <div className="w-[72px] h-[72px] shrink-0 overflow-hidden bg-stone-200">
                   <img
-                    src={img(e.featuredImage, 128, 128)}
+                    src={img(e.featuredImage, 144, 144)}
                     alt={e.title}
-                    width={128}
-                    height={128}
+                    width={144}
+                    height={144}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -553,30 +544,31 @@ function Index() {
         </div>
         {listings.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            {/* Lead listing */}
+            {/* Lead listing — full-bleed with overlay */}
             <Link
               to="/places/$slug"
               params={{ slug: listings[0].slug }}
-              className="group block md:col-span-2"
+              className="group relative block md:col-span-2 aspect-[16/10] overflow-hidden bg-stone-900"
             >
-              <div className="w-full aspect-[16/10] bg-stone-200 overflow-hidden mb-5">
-                <img
-                  src={img(listings[0].featuredImage, 900, 560)}
-                  alt={listings[0].name}
-                  width={900}
-                  height={560}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+              <img
+                src={img(listings[0].featuredImage, 900, 560)}
+                alt={listings[0].name}
+                width={900}
+                height={560}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="text-[9px] font-mono font-bold uppercase text-accent mb-2">
+                  {listings[0].category} · {listings[0].area}
+                </div>
+                <h3 className="text-3xl md:text-4xl font-bold leading-tight text-background group-hover:underline mb-2">
+                  {listings[0].name}
+                </h3>
+                <p className="text-sm text-background/70 line-clamp-1">{listings[0].description}</p>
               </div>
-              <div className="text-[9px] font-mono font-bold uppercase text-accent mb-2">
-                {listings[0].category} · {listings[0].area}
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold leading-tight group-hover:underline mb-2">
-                {listings[0].name}
-              </h3>
-              <p className="text-sm text-muted-foreground line-clamp-2">{listings[0].description}</p>
             </Link>
             {/* Secondary listings */}
             <div className="flex flex-col gap-6 md:border-l-2 md:border-foreground md:pl-10">
