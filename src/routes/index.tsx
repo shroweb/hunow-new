@@ -222,7 +222,7 @@ function Index() {
               <Link
                 to="/whats-on"
                 search={{ when: "today" }}
-                className="px-3 py-1 text-[10px] font-bold uppercase bg-accent text-background hover:bg-foreground"
+                className="px-3 py-1 text-[10px] font-bold uppercase border border-foreground/20 hover:bg-foreground/5"
               >
                 Today
               </Link>
@@ -461,51 +461,76 @@ function Index() {
       )}
 
       {/* Newsletter CTA */}
-      <section className="bg-accent border-y-2 border-foreground">
-        <div className="max-w-7xl mx-auto px-4 py-14 md:py-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 md:gap-16">
-          <div className="flex-1">
-            <div className="text-background/70 text-[10px] font-mono uppercase tracking-widest mb-3">
-              Free weekly newsletter
+      <section className="bg-foreground text-background border-y-2 border-foreground">
+        <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+          {/* Left — copy */}
+          <div>
+            <div className="text-accent text-[10px] font-mono uppercase tracking-widest mb-4">
+              Free · Every week
             </div>
-            <h2 className="text-4xl md:text-6xl font-display uppercase leading-none text-background">
+            <h2 className="text-5xl md:text-7xl font-display uppercase leading-none mb-6">
               Hull in your inbox
             </h2>
-            <p className="mt-3 text-background/80 max-w-md text-sm">
-              Events, new openings, hidden gems and the best of the city — every week.
-            </p>
+            <ul className="space-y-2 text-background/70 text-sm">
+              {[
+                "What's on this week — events, gigs, markets",
+                "New openings and independent businesses",
+                "Hidden gems and city guides",
+                "Exclusive reader offers",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="text-accent mt-0.5 shrink-0">—</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
-          {nlDone ? (
-            <p className="shrink-0 text-background font-bold uppercase tracking-widest text-sm border-b-2 border-background pb-1">
-              You're in ✓
-            </p>
-          ) : (
-            <form
-              className="shrink-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                if (!nlEmail) return;
-                try {
-                  await subscribeNewsletter({ data: { email: nlEmail, segments: ["events", "offers"] } });
-                } catch {}
-                setNlDone(true);
-              }}
-            >
-              <input
-                type="email"
-                required
-                value={nlEmail}
-                onChange={(e) => setNlEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="bg-background border-2 border-background px-5 py-3 font-mono text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-background/60 w-full sm:w-64"
-              />
-              <button
-                type="submit"
-                className="bg-foreground text-background px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-background hover:text-foreground transition-colors shrink-0"
+          {/* Right — form */}
+          <div>
+            {nlDone ? (
+              <div className="border-2 border-accent p-8">
+                <div className="text-accent text-[10px] font-mono uppercase tracking-widest mb-3">
+                  You're subscribed
+                </div>
+                <p className="text-2xl font-display uppercase leading-tight">
+                  Welcome to the list. See you in your inbox.
+                </p>
+              </div>
+            ) : (
+              <form
+                className="space-y-4"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!nlEmail) return;
+                  try {
+                    await subscribeNewsletter({ data: { email: nlEmail, segments: ["events", "offers"] } });
+                  } catch {}
+                  setNlDone(true);
+                }}
               >
-                Sign up free
-              </button>
-            </form>
-          )}
+                <label className="block text-[10px] font-mono uppercase tracking-widest text-background/60 mb-1">
+                  Your email address
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={nlEmail}
+                  onChange={(e) => setNlEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full bg-transparent border-2 border-background/30 focus:border-accent px-5 py-4 font-mono text-sm text-background placeholder:text-background/30 focus:outline-none transition-colors"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-accent text-foreground px-6 py-4 font-bold uppercase tracking-widest text-xs hover:bg-background hover:text-foreground transition-colors"
+                >
+                  Sign up — it's free →
+                </button>
+                <p className="text-[10px] font-mono text-background/40 uppercase">
+                  No spam. Unsubscribe any time.
+                </p>
+              </form>
+            )}
+          </div>
         </div>
       </section>
 
@@ -557,15 +582,17 @@ function Index() {
                   className="group flex gap-4 items-start"
                 >
                   <div className="w-20 h-20 shrink-0 overflow-hidden bg-stone-200">
-                    <img
-                      src={img(l.featuredImage, 160, 160)}
-                      alt={l.name}
-                      width={160}
-                      height={160}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    {l.featuredImage && (
+                      <img
+                        src={img(l.featuredImage, 160, 160)}
+                        alt={l.name}
+                        width={160}
+                        height={160}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="text-[9px] font-mono font-bold uppercase text-accent block mb-1">
