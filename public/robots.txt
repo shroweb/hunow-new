@@ -1,4 +1,29 @@
 User-agent: *
 Allow: /
 
-Sitemap: /sitemap.xml
+# Block WordPress/legacy CMS paths from old site — these no longer exist
+Disallow: /wp-admin/
+Disallow: /wp-content/
+Disallow: /wp-includes/
+Disallow: /wp-json/
+Disallow: /wp-login.php
+Disallow: /xmlrpc.php
+Disallow: /cgi-sys/
+Disallow: /cgi-bin/
+Disallow: /?p=
+Disallow: /?page_id=
+Disallow: /feed/
+Disallow: /*/feed/
+Disallow: /category/
+Disallow: /tag/
+
+# Block auth/account pages
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /account
+Disallow: /unsubscribe
+Disallow: /admin/
+
+Sitemap: https://hunow.co.uk/sitemap.xml

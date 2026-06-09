@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, Link } from "@tanstack/react-router";
+import { createFileRoute, redirect, notFound, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { resolveRedirect } from "@/lib/redirects.functions";
 
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/$")({
     if (match) {
       throw redirect({ href: match.to_path, statusCode: match.permanent ? 301 : 302 });
     }
-    return null;
+    throw notFound();
   },
   component: NotFound,
 });

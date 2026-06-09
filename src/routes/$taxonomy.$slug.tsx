@@ -23,7 +23,17 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
   component: ArticleDetail,
   loader: async ({ params }) => {
     const article = await fetchArticleBySlug({ data: { slug: params.slug } });
-    if (!article) throw notFound();
+    if (!article) {
+      // Old site used /category/slug for listings (e.g. /eat/thieving-harrys) — try listing lookup
+      const { fetchListingBySlug } = await import("@/lib/content-read.functions");
+      const listing = await fetchListingBySlug({ data: { slug: params.slug } }).catch(() => null);
+      if (listing) throw redirect({ href: `/places/${listing.slug}`, statusCode: 301 });
+      // Also try event lookup (e.g. /events/hull-fair-2026)
+      const { fetchEventBySlug } = await import("@/lib/content-read.functions");
+      const event = await fetchEventBySlug({ data: { slug: params.slug } }).catch(() => null);
+      if (event?.status === "published") throw redirect({ href: `/events/${event.slug}`, statusCode: 301 });
+      throw notFound();
+    }
 
     // Redirect to canonical URL if taxonomy param doesn't match the article's subcategory
     const canonicalTaxonomy = article.subcategory ?? "stories";
