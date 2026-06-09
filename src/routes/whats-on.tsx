@@ -81,6 +81,17 @@ function WhatsOn() {
     );
   }, [events, category, freeOnly, when, query]);
 
+  // If "today" is selected but there's nothing on today, fall back to "all"
+  useEffect(() => {
+    if (when === "today" && events.length > 0) {
+      const today = todayIso();
+      const hasToday = events.some(
+        (e) => e.status === "published" && e.startDate === today,
+      );
+      if (!hasToday) setWhen("all");
+    }
+  }, [events, when]);
+
   useEffect(() => {
     setPage(1);
   }, [category, freeOnly, when, query, view]);
