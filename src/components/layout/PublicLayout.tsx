@@ -606,8 +606,11 @@ function Footer() {
           <a href="mailto:hello@hunow.co.uk" className="hover:text-white/60 transition-colors">
             hello@hunow.co.uk
           </a>
-          <a href="#" className="hover:text-white/60 transition-colors">
+          <a href="/privacy" className="hover:text-white/60 transition-colors">
             Privacy
+          </a>
+          <a href="/terms" className="hover:text-white/60 transition-colors">
+            Terms
           </a>
         </div>
       </div>

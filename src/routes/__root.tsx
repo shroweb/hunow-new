@@ -116,8 +116,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { property: "og:title", content: title },
         { property: "og:description", content: ogDesc },
         { property: "og:type", content: "website" },
-        ...(s.og_image ? [{ property: "og:image", content: s.og_image }] : []),
-        { name: "twitter:card", content: s.og_image ? "summary_large_image" : "summary" },
+        { property: "og:image", content: s.og_image || "/hunow.jpg" },
+        { name: "twitter:card", content: "summary_large_image" },
         ...(s.ga_id ? [{ "data-ga-id": s.ga_id }] : []),
       ],
       links: [

@@ -26,6 +26,8 @@ import { Route as OffersRouteImport } from './routes/offers'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
@@ -174,6 +176,16 @@ const ListingsRoute = ListingsRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -512,6 +524,8 @@ export interface FileRoutesByFullPath {
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -594,6 +608,8 @@ export interface FileRoutesByTo {
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -678,6 +694,8 @@ export interface FileRoutesById {
   '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -763,6 +781,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/open-now'
     | '/places'
+    | '/privacy'
     | '/reset-password'
     | '/saved'
     | '/search'
@@ -772,6 +791,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/stories'
     | '/submit'
+    | '/terms'
     | '/unsubscribe'
     | '/whats-on'
     | '/$taxonomy/$slug'
@@ -845,6 +865,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/open-now'
     | '/places'
+    | '/privacy'
     | '/reset-password'
     | '/saved'
     | '/search'
@@ -854,6 +875,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/stories'
     | '/submit'
+    | '/terms'
     | '/unsubscribe'
     | '/whats-on'
     | '/$taxonomy/$slug'
@@ -928,6 +950,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/open-now'
     | '/places'
+    | '/privacy'
     | '/reset-password'
     | '/saved'
     | '/search'
@@ -937,6 +960,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/stories'
     | '/submit'
+    | '/terms'
     | '/unsubscribe'
     | '/whats-on'
     | '/$taxonomy/$slug'
@@ -1012,6 +1036,7 @@ export interface RootRouteChildren {
   OffersRoute: typeof OffersRoute
   OpenNowRoute: typeof OpenNowRoute
   PlacesRoute: typeof PlacesRouteWithChildren
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SavedRoute: typeof SavedRoute
   SearchRoute: typeof SearchRoute
@@ -1021,6 +1046,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StoriesRoute: typeof StoriesRouteWithChildren
   SubmitRoute: typeof SubmitRoute
+  TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   WhatsOnRoute: typeof WhatsOnRoute
   ApiImageProxyRoute: typeof ApiImageProxyRoute
@@ -1065,6 +1091,13 @@ declare module '@tanstack/react-router' {
       path: '/submit'
       fullPath: '/submit'
       preLoaderRoute: typeof SubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stories': {
@@ -1128,6 +1161,13 @@ declare module '@tanstack/react-router' {
       path: '/places'
       fullPath: '/places'
       preLoaderRoute: typeof PlacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/open-now': {
@@ -1797,6 +1837,7 @@ const rootRouteChildren: RootRouteChildren = {
   OffersRoute: OffersRoute,
   OpenNowRoute: OpenNowRoute,
   PlacesRoute: PlacesRouteWithChildren,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SavedRoute: SavedRoute,
   SearchRoute: SearchRoute,
@@ -1806,6 +1847,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StoriesRoute: StoriesRouteWithChildren,
   SubmitRoute: SubmitRoute,
+  TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   WhatsOnRoute: WhatsOnRoute,
   ApiImageProxyRoute: ApiImageProxyRoute,
