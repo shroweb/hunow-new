@@ -5,10 +5,11 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { AdSlot } from "@/components/AdSlot";
 import { PollWidget } from "@/components/PollWidget";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { EventCard, ListingCard, OfferCard } from "@/components/cards";
+import { OfferCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
 import { img } from "@/data/seed";
+import { subscribeNewsletter } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,6 +33,8 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [cmdOpen, setCmdOpen] = useState(false);
   const [heroQ, setHeroQ] = useState("");
+  const [nlEmail, setNlEmail] = useState("");
+  const [nlDone, setNlDone] = useState(false);
   const publishedEvents = useStore((s) => s.events).filter((e) => e.status === "published");
   const events = publishedEvents.slice(0, 4);
   const articles = useStore((s) => s.articles)
@@ -42,7 +45,7 @@ function Index() {
     .slice(0, 3);
   const listings = useStore((s) => s.listings)
     .filter((l) => l.isFeatured)
-    .slice(0, 3);
+    .slice(0, 4);
 
   const featuredArticles = useStore((s) => s.articles).filter(
     (a) => a.isFeatured && a.status === "published",
@@ -260,9 +263,72 @@ function Index() {
               </Link>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10">
-            {events.map((e) => (
-              <EventCard key={e.id} event={e} />
+          {/* Lead event */}
+          {events[0] && (
+            <Link
+              to="/events/$slug"
+              params={{ slug: events[0].slug }}
+              className="group grid md:grid-cols-2 gap-6 items-start mb-8 pb-8 border-b-2 border-foreground"
+            >
+              <div className="aspect-[16/10] overflow-hidden bg-stone-200">
+                <img
+                  src={img(events[0].featuredImage, 700, 440)}
+                  alt={events[0].title}
+                  width={700}
+                  height={440}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div>
+                <div className="font-mono text-[10px] font-bold uppercase text-accent mb-3">
+                  {events[0].category}
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold leading-tight group-hover:underline mb-3">
+                  {events[0].title}
+                </h3>
+                <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                  {events[0].description}
+                </p>
+                <div className="text-[10px] font-mono uppercase text-foreground/60">
+                  {formatHomeDate(events[0].startDate)} · {events[0].startTime}
+                  <br />
+                  {events[0].locationName}
+                </div>
+              </div>
+            </Link>
+          )}
+          {/* Remaining events — compact rows */}
+          <div className="divide-y divide-foreground/10">
+            {events.slice(1).map((e) => (
+              <Link
+                key={e.id}
+                to="/events/$slug"
+                params={{ slug: e.slug }}
+                className="group flex gap-4 items-center py-4"
+              >
+                <div className="w-16 h-16 shrink-0 overflow-hidden bg-stone-200">
+                  <img
+                    src={img(e.featuredImage, 128, 128)}
+                    alt={e.title}
+                    width={128}
+                    height={128}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-mono text-[9px] font-bold uppercase text-accent mb-0.5">
+                    {e.category} · {formatHomeDate(e.startDate)}
+                  </div>
+                  <h3 className="text-sm font-bold leading-tight group-hover:underline">{e.title}</h3>
+                  <div className="text-[9px] font-mono uppercase text-muted-foreground mt-0.5">
+                    {e.locationName}
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
           <div className="mt-8">
@@ -394,22 +460,127 @@ function Index() {
         </section>
       )}
 
-      {/* Independent Hull */}
-      <section className="max-w-7xl mx-auto px-4 py-16 border-t border-border">
+      {/* Newsletter CTA */}
+      <section className="bg-accent border-y-2 border-foreground">
+        <div className="max-w-7xl mx-auto px-4 py-14 md:py-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 md:gap-16">
+          <div className="flex-1">
+            <div className="text-background/70 text-[10px] font-mono uppercase tracking-widest mb-3">
+              Free weekly newsletter
+            </div>
+            <h2 className="text-4xl md:text-6xl font-display uppercase leading-none text-background">
+              Hull in your inbox
+            </h2>
+            <p className="mt-3 text-background/80 max-w-md text-sm">
+              Events, new openings, hidden gems and the best of the city — every week.
+            </p>
+          </div>
+          {nlDone ? (
+            <p className="shrink-0 text-background font-bold uppercase tracking-widest text-sm border-b-2 border-background pb-1">
+              You're in ✓
+            </p>
+          ) : (
+            <form
+              className="shrink-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!nlEmail) return;
+                try {
+                  await subscribeNewsletter({ data: { email: nlEmail, segments: ["events", "offers"] } });
+                } catch {}
+                setNlDone(true);
+              }}
+            >
+              <input
+                type="email"
+                required
+                value={nlEmail}
+                onChange={(e) => setNlEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="bg-background border-2 border-background px-5 py-3 font-mono text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-background/60 w-full sm:w-64"
+              />
+              <button
+                type="submit"
+                className="bg-foreground text-background px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-background hover:text-foreground transition-colors shrink-0"
+              >
+                Sign up free
+              </button>
+            </form>
+          )}
+        </div>
+      </section>
+
+      {/* Independent Hull — editorial layout */}
+      <section className="max-w-7xl mx-auto px-4 py-16 border-b border-border">
         <div className="flex items-end justify-between mb-10 gap-4">
           <h2 className="text-5xl font-display uppercase">Independent Hull</h2>
           <Link
             to="/places"
-            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1"
+            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent"
           >
             All places →
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {listings.map((l) => (
-            <ListingCard key={l.id} listing={l} />
-          ))}
-        </div>
+        {listings.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            {/* Lead listing */}
+            <Link
+              to="/places/$slug"
+              params={{ slug: listings[0].slug }}
+              className="group block md:col-span-2"
+            >
+              <div className="w-full aspect-[16/10] bg-stone-200 overflow-hidden mb-5">
+                <img
+                  src={img(listings[0].featuredImage, 900, 560)}
+                  alt={listings[0].name}
+                  width={900}
+                  height={560}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="text-[9px] font-mono font-bold uppercase text-accent mb-2">
+                {listings[0].category} · {listings[0].area}
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold leading-tight group-hover:underline mb-2">
+                {listings[0].name}
+              </h3>
+              <p className="text-sm text-muted-foreground line-clamp-2">{listings[0].description}</p>
+            </Link>
+            {/* Secondary listings */}
+            <div className="flex flex-col gap-6 md:border-l-2 md:border-foreground md:pl-10">
+              {listings.slice(1, 4).map((l) => (
+                <Link
+                  key={l.id}
+                  to="/places/$slug"
+                  params={{ slug: l.slug }}
+                  className="group flex gap-4 items-start"
+                >
+                  <div className="w-20 h-20 shrink-0 overflow-hidden bg-stone-200">
+                    <img
+                      src={img(l.featuredImage, 160, 160)}
+                      alt={l.name}
+                      width={160}
+                      height={160}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[9px] font-mono font-bold uppercase text-accent block mb-1">
+                      {l.category} · {l.area}
+                    </span>
+                    <h3 className="text-sm font-bold leading-tight group-hover:underline">{l.name}</h3>
+                    <p className="text-[9px] font-mono uppercase text-muted-foreground mt-1 line-clamp-1">
+                      {l.description}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
