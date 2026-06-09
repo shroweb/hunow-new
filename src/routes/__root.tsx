@@ -113,11 +113,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { title },
         { name: "description", content: desc },
         { name: "author", content: siteName },
+        { property: "og:site_name", content: siteName },
+        { property: "og:locale", content: "en_GB" },
         { property: "og:title", content: title },
         { property: "og:description", content: ogDesc },
         { property: "og:type", content: "website" },
         { property: "og:image", content: s.og_image || "/hunow.jpg" },
+        { property: "og:image:alt", content: `${siteName} — ${tagline}` },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: ogDesc },
+        { name: "twitter:image", content: s.og_image || "/hunow.jpg" },
+        ...(s.social_twitter ? [{ name: "twitter:site", content: `@${s.social_twitter.replace(/^@/, "")}` }] : []),
+        ...(s.gsc_verify ? [{ name: "google-site-verification", content: s.gsc_verify }] : []),
         ...(s.ga_id ? [{ "data-ga-id": s.ga_id }] : []),
       ],
       links: [
@@ -156,14 +164,48 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
         ...(s.ga_id ? [{ rel: "preconnect", href: "https://www.googletagmanager.com" }] : []),
       ],
-      scripts: s.ga_id
-        ? [
-            { src: `https://www.googletagmanager.com/gtag/js?id=${s.ga_id}`, async: true },
+      scripts: [
+        // Global Organisation + WebSite schema (entity & Sitelinks Search Box)
+        {
+          type: "application/ld+json",
+          children: JSON.stringify([
             {
-              children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${s.ga_id}');`,
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: siteName,
+              url: "https://hunow.co.uk",
+              logo: "https://hunow.co.uk/hunow.jpg",
+              description: desc,
+              sameAs: [
+                s.social_facebook,
+                s.social_instagram ? `https://instagram.com/${s.social_instagram.replace(/^@/, "")}` : undefined,
+                s.social_twitter ? `https://twitter.com/${s.social_twitter.replace(/^@/, "")}` : undefined,
+                s.social_tiktok,
+                s.social_youtube,
+              ].filter(Boolean),
             },
-          ]
-        : [],
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: siteName,
+              url: "https://hunow.co.uk",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: { "@type": "EntryPoint", urlTemplate: "https://hunow.co.uk/search?q={search_term_string}" },
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ]),
+        },
+        ...(s.ga_id
+          ? [
+              { src: `https://www.googletagmanager.com/gtag/js?id=${s.ga_id}`, async: true },
+              {
+                children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${s.ga_id}');`,
+              },
+            ]
+          : []),
+      ],
     };
   },
   shellComponent: RootShell,

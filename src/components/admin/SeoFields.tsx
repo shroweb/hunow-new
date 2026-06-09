@@ -11,8 +11,16 @@ interface Props {
 
 const cls = "w-full bg-white border border-foreground/20 px-3 py-2 font-mono text-xs";
 
-// Backend integration point: persist these fields alongside the entity
-// and consume them in the public detail route's head() for SEO/social.
+function LenHint({ value, max }: { value: string; max: number }) {
+  const len = value.length;
+  const over = len > max;
+  return (
+    <span className={over ? "text-red-500 font-bold" : "text-muted-foreground"}>
+      {len}/{max}{over ? " — too long" : ""}
+    </span>
+  );
+}
+
 export function SeoFields({
   defaultValue,
   fallbackTitle,
@@ -21,9 +29,8 @@ export function SeoFields({
 }: Props) {
   const [open, setOpen] = useState(false);
   const v = defaultValue ?? {};
-
-  const titleLen = v.title?.length ?? 0;
-  const descLen = v.description?.length ?? 0;
+  const [titleVal, setTitleVal] = useState(v.title ?? "");
+  const [descVal, setDescVal] = useState(v.description ?? "");
 
   return (
     <details
@@ -36,25 +43,39 @@ export function SeoFields({
         <span className="text-muted-foreground">{open ? "Hide" : "Edit"}</span>
       </summary>
       <div className="p-4 space-y-3 border-t border-foreground/20">
+        {/* Google preview */}
+        {(titleVal || fallbackTitle) && (
+          <div className="bg-white border border-foreground/10 p-3 rounded text-xs mb-1">
+            <div className="text-[10px] font-mono uppercase text-muted-foreground mb-1">Google preview</div>
+            <div className="text-[#1a0dab] text-sm leading-snug truncate">
+              {titleVal || fallbackTitle}
+            </div>
+            <div className="text-[#006621] text-[11px]">hunow.co.uk</div>
+            <div className="text-[#545454] text-[11px] line-clamp-2 mt-0.5">
+              {descVal || fallbackDescription || "No description set."}
+            </div>
+          </div>
+        )}
         <div>
           <label className="block text-[10px] font-mono uppercase mb-1">
-            Meta title <span className="text-muted-foreground">({titleLen}/60 recommended)</span>
+            Meta title <LenHint value={titleVal} max={60} />
           </label>
           <input
             name="seo.title"
-            defaultValue={v.title}
+            value={titleVal}
+            onChange={(e) => setTitleVal(e.target.value)}
             placeholder={fallbackTitle ?? "Defaults to post title"}
             className={cls}
           />
         </div>
         <div>
           <label className="block text-[10px] font-mono uppercase mb-1">
-            Meta description{" "}
-            <span className="text-muted-foreground">({descLen}/160 recommended)</span>
+            Meta description <LenHint value={descVal} max={160} />
           </label>
           <textarea
             name="seo.description"
-            defaultValue={v.description}
+            value={descVal}
+            onChange={(e) => setDescVal(e.target.value)}
             rows={2}
             placeholder={fallbackDescription ?? "Defaults to excerpt"}
             className={cls}

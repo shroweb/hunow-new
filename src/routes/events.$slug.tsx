@@ -54,6 +54,8 @@ export const Route = createFileRoute("/events/$slug")({
             description: e.description,
             startDate: `${e.startDate}T${e.startTime}`,
             endDate: e.endTime ? `${e.startDate}T${e.endTime}` : undefined,
+            eventStatus: "https://schema.org/EventScheduled",
+            eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
             image,
             url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
             location: {
@@ -70,6 +72,18 @@ export const Route = createFileRoute("/events/$slug")({
                 }
               : { "@type": "Offer", price: e.price, priceCurrency: "GBP", url: e.ticketUrl },
             organizer: { "@type": "Organization", name: "HU NOW" },
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://hunow.co.uk" },
+              { "@type": "ListItem", position: 2, name: "What's On", item: "https://hunow.co.uk/whats-on" },
+              { "@type": "ListItem", position: 3, name: e.title, item: `https://hunow.co.uk${url}` },
+            ],
           }),
         },
       ],

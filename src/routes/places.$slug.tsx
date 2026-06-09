@@ -84,6 +84,18 @@ export const Route = createFileRoute("/places/$slug")({
             openingHours: l.openingHours,
           }),
         },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://hunow.co.uk" },
+              { "@type": "ListItem", position: 2, name: "Places", item: "https://hunow.co.uk/places" },
+              { "@type": "ListItem", position: 3, name: l.name, item: `https://hunow.co.uk${url}` },
+            ],
+          }),
+        },
       ],
     };
   },

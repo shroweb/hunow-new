@@ -60,6 +60,12 @@ const SECTIONS: { title: string; fields: FieldDef[] }[] = [
         placeholder: "G-XXXXXXXXXX",
         hint: "Paste your GA4 measurement ID to enable analytics. Leave blank to disable.",
       },
+      {
+        key: "gsc_verify",
+        label: "Google Search Console verification",
+        placeholder: "abc123XYZ...",
+        hint: "Paste the content value from the GSC HTML meta tag (the part after content=\"\"). Adds a google-site-verification meta tag to every page.",
+      },
     ],
   },
   {
