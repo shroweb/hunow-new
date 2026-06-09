@@ -262,29 +262,30 @@ function Index() {
             <Link
               to="/events/$slug"
               params={{ slug: events[0].slug }}
-              className="group relative block w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-stone-900 mb-6"
+              className="group block w-full mb-6"
             >
-              <img
-                src={img(events[0].featuredImage, 900, 420)}
-                alt={events[0].title}
-                width={900}
-                height={420}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-                <div className="font-mono text-[10px] font-bold uppercase text-accent mb-2">
+              <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-stone-200">
+                <img
+                  src={img(events[0].featuredImage, 900, 420)}
+                  alt={events[0].title}
+                  width={900}
+                  height={420}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="pt-3 pb-1">
+                <div className="font-mono text-[10px] font-bold uppercase text-accent mb-1.5">
                   {events[0].category}
                   {events[0].isSponsored && (
-                    <span className="ml-3 text-background/60">· Sponsored</span>
+                    <span className="ml-3 text-muted-foreground">· Sponsored</span>
                   )}
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold leading-tight text-background group-hover:underline mb-2">
+                <h3 className="text-xl md:text-2xl font-bold leading-tight group-hover:underline mb-1.5">
                   {events[0].title}
                 </h3>
-                <div className="text-[10px] font-mono uppercase text-background/60">
+                <div className="text-[10px] font-mono uppercase text-muted-foreground">
                   {formatHomeDate(events[0].startDate)} · {events[0].startTime} · {events[0].locationName}
                 </div>
               </div>
