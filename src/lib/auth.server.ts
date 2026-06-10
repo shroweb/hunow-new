@@ -69,6 +69,8 @@ async function ensureAuthSchema() {
         create index if not exists users_email_idx on users (email);
         create index if not exists sessions_user_id_idx on sessions (user_id);
         create index if not exists sessions_expires_at_idx on sessions (expires_at);
+
+        alter table users add column if not exists app_role text not null default 'customer' check (app_role in ('customer', 'business'));
         `,
       )
       .then(() => undefined);

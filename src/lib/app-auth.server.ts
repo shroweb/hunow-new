@@ -60,13 +60,30 @@ export interface AppUser {
 }
 
 export async function getAppUser(request: Request): Promise<AppUser | null> {
+  // 1. JWT Bearer token (native / API clients)
   const auth = request.headers.get("authorization");
-  if (!auth?.startsWith("Bearer ")) return null;
-  const userId = verifyAppToken(auth.slice(7));
-  if (!userId) return null;
-  const result = await getPool().query<AppUser>(
-    "select id, email, name, role, app_role from users where id = $1",
-    [userId],
+  if (auth?.startsWith("Bearer ")) {
+    const userId = verifyAppToken(auth.slice(7));
+    if (!userId) return null;
+    const result = await getPool().query<AppUser>(
+      "select id, email, name, role, app_role from users where id = $1",
+      [userId],
+    );
+    return result.rows[0] ?? null;
+  }
+
+  // 2. Session cookie (web portal)
+  const cookieHeader = request.headers.get("cookie") ?? "";
+  const match = cookieHeader.match(/(?:^|;\s*)hunow_session=([^;]+)/);
+  const sessionId = match?.[1];
+  if (!sessionId) return null;
+  const result = await getPool().query<AppUser & { expires_at: Date }>(
+    `select u.id, u.email, u.name, u.role, u.app_role
+     from sessions s
+     join users u on u.id = s.user_id
+     where s.id = $1 and s.expires_at > now()
+     limit 1`,
+    [sessionId],
   );
   return result.rows[0] ?? null;
 }
