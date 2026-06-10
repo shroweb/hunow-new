@@ -11,11 +11,13 @@ export interface AuthUser {
   email: string;
   name: string;
   role: AuthRole;
+  appRole?: "customer" | "business";
 }
 
-export interface AdminUserRow extends AuthUser {
+export interface AdminUserRow extends Omit<AuthUser, "appRole"> {
   createdAt: string;
   updatedAt: string;
+  appRole: string;
 }
 
 const { Pool } = pg;
@@ -162,19 +164,22 @@ export async function currentUser(): Promise<AuthUser | null> {
   await ensureAuthSchema();
   const sessionId = getCookie(SESSION_COOKIE);
   if (!sessionId) return null;
-  const result = await getPool().query<AuthUser>(
+  const result = await getPool().query<AuthUser & { app_role: string }>(
     `
-    select users.id, users.email, users.name, users.role
+    select users.id, users.email, users.name, users.role, users.app_role
     from sessions
     join users on users.id = sessions.user_id
     where sessions.id = $1 and sessions.expires_at > now()
     `,
     [sessionId],
   );
-  const user = result.rows[0] ?? null;
-  if (!user) {
+  const row = result.rows[0] ?? null;
+  if (!row) {
     deleteCookie(SESSION_COOKIE, { path: "/" });
+    return null;
   }
+  const { app_role, ...rest } = row;
+  const user: AuthUser = { ...rest, appRole: (app_role as "customer" | "business") ?? "customer" };
   return user;
 }
 

@@ -131,6 +131,28 @@ function Account() {
           </div>
         </div>
 
+        {/* Business portal banner */}
+        {user.appRole === "business" && (
+          <Link
+            to="/business/listings"
+            className="group flex items-center justify-between gap-4 bg-foreground text-background px-6 py-4 mb-8 hover:bg-accent transition-colors"
+          >
+            <div>
+              <div className="text-[9px] font-mono font-bold uppercase tracking-widest text-background/50 group-hover:text-background/70 mb-0.5">
+                Business account
+              </div>
+              <div className="font-bold text-sm">Go to Business Dashboard →</div>
+              <div className="text-[11px] text-background/60 mt-0.5">
+                Manage your listing, scan QR codes and redeem offers
+              </div>
+            </div>
+            <svg className="shrink-0 opacity-40 group-hover:opacity-70 transition-opacity" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 22V12h6v10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+        )}
+
         {/* Tabs */}
         <div className="flex gap-0 border-b-2 border-foreground mb-8 overflow-x-auto">
           {TABS.map((t) => (
