@@ -105,7 +105,7 @@ export const Route = createFileRoute("/api/v1/redeem")({
 
           // ── Look up offer ─────────────────────────────────────────────────
           const offerResult = await pool.query<{ data: Offer }>(
-            `select data from offers where id = $1 and ${ACTIVE_OFFER_SQL} limit 1`,
+            `select data from offers o where o.id = $1 and ${ACTIVE_OFFER_SQL} limit 1`,
             [offerId],
           );
           const offer = offerResult.rows[0]?.data;
