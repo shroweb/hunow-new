@@ -11,6 +11,7 @@ import { addToHistory } from "@/lib/reading-history";
 import { useStore } from "@/lib/store";
 import { fetchListingBySlug } from "@/lib/content-read.functions";
 import { autoLink } from "@/lib/autolink";
+import { sanitizeHtml, escapeAttr } from "@/lib/sanitize";
 import {
   getListingReviews,
   submitReview,
@@ -58,7 +59,10 @@ export const Route = createFileRoute("/places/$slug")({
         { name: "twitter:description", content: description },
         { name: "twitter:image", content: image },
       ],
-      links: [{ rel: "canonical", href: l.seo?.canonicalUrl ?? url }],
+      links: [
+        { rel: "canonical", href: l.seo?.canonicalUrl ?? url },
+        { rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" },
+      ],
       scripts: [
         {
           type: "application/ld+json",
@@ -91,7 +95,12 @@ export const Route = createFileRoute("/places/$slug")({
             "@type": "BreadcrumbList",
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Home", item: "https://hunow.co.uk" },
-              { "@type": "ListItem", position: 2, name: "Places", item: "https://hunow.co.uk/places" },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Places",
+                item: "https://hunow.co.uk/places",
+              },
               { "@type": "ListItem", position: 3, name: l.name, item: `https://hunow.co.uk${url}` },
             ],
           }),
@@ -375,7 +384,7 @@ function PlaceDetail() {
             </h2>
             <p
               className="text-lg leading-relaxed mb-4"
-              dangerouslySetInnerHTML={{ __html: linkedDescription }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(linkedDescription) }}
             />
             {listing.tags && listing.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
@@ -782,7 +791,7 @@ function ListingMap({ listing }: { listing: Listing }) {
       map.setView([lat, lng], 16);
       L.marker([lat, lng])
         .addTo(map)
-        .bindPopup(`<strong>${listing.name}</strong><br>${listing.address}`)
+        .bindPopup(`<strong>${escapeAttr(listing.name)}</strong><br>${escapeAttr(listing.address)}`)
         .openPopup();
     };
 
@@ -798,12 +807,7 @@ function ListingMap({ listing }: { listing: Listing }) {
     };
   }, [listing.id, listing.latitude, listing.longitude, listing.address]);
 
-  return (
-    <>
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-      <div ref={mapRef} style={{ height: "260px", width: "100%" }} />
-    </>
-  );
+  return <div ref={mapRef} style={{ height: "260px", width: "100%" }} />;
 }
 
 function Stat({ label, value }: { label: string; value: string }) {

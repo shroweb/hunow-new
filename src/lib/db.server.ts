@@ -571,6 +571,10 @@ async function seedIfEmpty() {
 }
 
 export async function getDatabaseStore(): Promise<AppStore> {
+  const { cacheGet, cacheSet } = await import("./cache.server");
+  const cached = cacheGet<AppStore>("db:store");
+  if (cached) return cached;
+
   await ensureSchema();
   await seedIfEmpty();
 
@@ -588,6 +592,7 @@ export async function getDatabaseStore(): Promise<AppStore> {
   );
   store.newsletter = subscribers.rows.map((row) => row.email);
 
+  cacheSet("db:store", store, 60_000); // cache for 60s
   return store;
 }
 
@@ -653,11 +658,15 @@ async function upsertRecord(table: UpsertTable, id: string, data: unknown) {
      on conflict (id) do update set data = $2`,
     [id, JSON.stringify(data)],
   );
+  const { cacheInvalidate } = await import("./cache.server");
+  cacheInvalidate("db:store");
 }
 
 async function deleteRecord(table: UpsertTable, id: string) {
   await ensureSchema();
   await getPool().query(`delete from ${table} where id = $1`, [id]);
+  const { cacheInvalidate } = await import("./cache.server");
+  cacheInvalidate("db:store");
 }
 
 export async function upsertArticle(article: import("@/types").Article) {
@@ -704,11 +713,22 @@ export async function deleteOffer(id: string) {
 }
 
 export async function searchContent(term: string) {
-  await ensureSeeded();
+  const { cacheGet, cacheSet } = await import("./cache.server");
   const query = term.trim();
   if (query.length < 2) {
     return { articles: [], events: [], listings: [], offers: [] };
   }
+
+  const cacheKey = `search:${query.toLowerCase()}`;
+  const cached = cacheGet<{
+    articles: import("@/types").Article[];
+    events: import("@/types").EventItem[];
+    listings: import("@/types").Listing[];
+    offers: import("@/types").Offer[];
+  }>(cacheKey);
+  if (cached) return cached;
+
+  await ensureSeeded();
   const pool = getPool();
   const [articles, events, listings, offers] = await Promise.all([
     pool.query<{ data: import("@/types").Article }>(
@@ -789,12 +809,14 @@ export async function searchContent(term: string) {
       [query],
     ),
   ]);
-  return {
+  const result = {
     articles: articles.rows.map((row) => row.data),
     events: events.rows.map((row) => row.data),
     listings: listings.rows.map((row) => row.data),
     offers: offers.rows.map((row) => row.data),
   };
+  cacheSet(cacheKey, result, 300_000); // cache for 5 minutes
+  return result;
 }
 
 export async function upsertAd(ad: import("@/types").AdPlacement) {

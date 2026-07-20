@@ -5,7 +5,10 @@ export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       { title: "Privacy Policy — HU NOW" },
-      { name: "description", content: "How HU NOW collects, uses, and protects your personal data." },
+      {
+        name: "description",
+        content: "How HU NOW collects, uses, and protects your personal data.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -22,7 +25,6 @@ function Privacy() {
         </p>
 
         <div className="prose prose-sm max-w-none space-y-8 text-foreground/80 leading-relaxed">
-
           <section>
             <h2 className="font-display text-2xl uppercase text-foreground mb-3">Who we are</h2>
             <p>
@@ -31,62 +33,71 @@ function Privacy() {
               <a href="mailto:hello@hunow.co.uk" className="underline">
                 hello@hunow.co.uk
               </a>
-              . For the purposes of UK GDPR, we are the data controller for the personal data described
-              in this policy.
+              . For the purposes of UK GDPR, we are the data controller for the personal data
+              described in this policy.
             </p>
           </section>
 
           <section>
-            <h2 className="font-display text-2xl uppercase text-foreground mb-3">What data we collect</h2>
+            <h2 className="font-display text-2xl uppercase text-foreground mb-3">
+              What data we collect
+            </h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong>Account data</strong> — name, email address, and password hash when you create
-                an account.
+                <strong>Account data</strong> — name, email address, and password hash when you
+                create an account.
               </li>
               <li>
-                <strong>Profile data</strong> — optional avatar image and short biography if you choose
-                to add them.
+                <strong>Profile data</strong> — optional avatar image and short biography if you
+                choose to add them.
               </li>
               <li>
-                <strong>Loyalty card data</strong> — a unique card token, points balance, and redemption
-                history tied to your account.
+                <strong>Loyalty card data</strong> — a unique card token, points balance, and
+                redemption history tied to your account.
               </li>
               <li>
-                <strong>Usage data</strong> — pages viewed, search terms entered, and saved items. This
-                is stored in our own database and is not shared with third-party analytics services unless
-                you have consented.
+                <strong>Usage data</strong> — pages viewed, search terms entered, and saved items.
+                This is stored in our own database and is not shared with third-party analytics
+                services unless you have consented.
               </li>
               <li>
-                <strong>Push notification tokens</strong> — if you opt in to push notifications, your
-                browser's push subscription endpoint is stored so we can send you updates. You can
-                withdraw consent at any time via your browser settings or your account page.
+                <strong>Push notification tokens</strong> — if you opt in to push notifications,
+                your browser's push subscription endpoint is stored so we can send you updates. You
+                can withdraw consent at any time via your browser settings or your account page.
               </li>
               <li>
-                <strong>Business enquiries</strong> — if you submit a claim or contact form, we retain
-                your message and contact details to respond to your enquiry.
+                <strong>Business enquiries</strong> — if you submit a claim or contact form, we
+                retain your message and contact details to respond to your enquiry.
               </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="font-display text-2xl uppercase text-foreground mb-3">How we use your data</h2>
+            <h2 className="font-display text-2xl uppercase text-foreground mb-3">
+              How we use your data
+            </h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>To provide and maintain your account and loyalty card.</li>
               <li>To send transactional emails such as password resets (via Resend).</li>
               <li>To send push notifications you have opted in to.</li>
-              <li>To send the HU NOW newsletter if you have subscribed — you can unsubscribe at any time.</li>
+              <li>
+                To send the HU NOW newsletter if you have subscribed — you can unsubscribe at any
+                time.
+              </li>
               <li>To moderate user-generated content such as reviews and comments.</li>
               <li>To improve the site based on aggregated, anonymised usage patterns.</li>
             </ul>
             <p className="mt-4">
-              Our legal basis is <strong>contract</strong> (account and loyalty card), <strong>legitimate
-              interests</strong> (usage analytics, moderation), and <strong>consent</strong> (newsletter,
-              push notifications).
+              Our legal basis is <strong>contract</strong> (account and loyalty card),{" "}
+              <strong>legitimate interests</strong> (usage analytics, moderation), and{" "}
+              <strong>consent</strong> (newsletter, push notifications).
             </p>
           </section>
 
           <section>
-            <h2 className="font-display text-2xl uppercase text-foreground mb-3">Who we share data with</h2>
+            <h2 className="font-display text-2xl uppercase text-foreground mb-3">
+              Who we share data with
+            </h2>
             <p>We do not sell your personal data. We share data only with:</p>
             <ul className="list-disc pl-5 space-y-2 mt-3">
               <li>
@@ -122,11 +133,13 @@ function Privacy() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl uppercase text-foreground mb-3">How long we keep data</h2>
+            <h2 className="font-display text-2xl uppercase text-foreground mb-3">
+              How long we keep data
+            </h2>
             <p>
-              Account data is retained for as long as your account is active. If you delete your account,
-              your personal data is removed within 30 days. Anonymised usage statistics may be retained
-              indefinitely.
+              Account data is retained for as long as your account is active. If you delete your
+              account, your personal data is removed within 30 days. Anonymised usage statistics may
+              be retained indefinitely.
             </p>
           </section>
 
@@ -146,7 +159,8 @@ function Privacy() {
               <a href="mailto:hello@hunow.co.uk" className="underline">
                 hello@hunow.co.uk
               </a>
-              . We will respond within 30 days. You also have the right to lodge a complaint with the{" "}
+              . We will respond within 30 days. You also have the right to lodge a complaint with
+              the{" "}
               <a
                 href="https://ico.org.uk/make-a-complaint/"
                 target="_blank"
@@ -169,7 +183,9 @@ function Privacy() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl uppercase text-foreground mb-3">Changes to this policy</h2>
+            <h2 className="font-display text-2xl uppercase text-foreground mb-3">
+              Changes to this policy
+            </h2>
             <p>
               We may update this policy from time to time. Material changes will be communicated by
               updating the "Last updated" date above. Continued use of the site after a change

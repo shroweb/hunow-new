@@ -47,19 +47,53 @@ async function normalizeCatastrophicSsrResponse(
   });
 }
 
+function addSecurityHeaders(response: Response): Response {
+  const headers = new Headers(response.headers);
+  // Prevent MIME sniffing
+  headers.set("X-Content-Type-Options", "nosniff");
+  // Prevent clickjacking
+  headers.set("X-Frame-Options", "DENY");
+  // Enable XSS protection in older browsers
+  headers.set("X-XSS-Protection", "1; mode=block");
+  // Referrer policy
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  // Permissions policy (restrict camera, microphone, geolocation)
+  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(self)");
+  // CSP — restrict scripts to same origin + trusted CDNs
+  headers.set(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net",
+      "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com",
+      "img-src 'self' data: https: blob:",
+      "font-src 'self' https://fonts.gstatic.com",
+      "connect-src 'self' https://nominatim.openstreetmap.org",
+      "frame-ancestors 'none'",
+    ].join("; "),
+  );
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(request, response);
+      return addSecurityHeaders(await normalizeCatastrophicSsrResponse(request, response));
     } catch (error) {
       console.error(error);
       void reportServerError(error, { source: "server_fetch", url: request.url });
-      return new Response(renderErrorPage(), {
-        status: 500,
-        headers: { "content-type": "text/html; charset=utf-8" },
-      });
+      return addSecurityHeaders(
+        new Response(renderErrorPage(), {
+          status: 500,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        }),
+      );
     }
   },
 };

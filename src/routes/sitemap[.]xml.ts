@@ -51,8 +51,18 @@ export const Route = createFileRoute("/sitemap.xml")({
         entries.push({ path: "/open-now", changefreq: "daily", priority: "0.8", lastmod: today() });
         entries.push({ path: "/areas", changefreq: "weekly", priority: "0.7", lastmod: today() });
         entries.push({ path: "/series", changefreq: "weekly", priority: "0.6", lastmod: today() });
-        entries.push({ path: "/newsletter", changefreq: "monthly", priority: "0.6", lastmod: today() });
-        entries.push({ path: "/contact", changefreq: "monthly", priority: "0.5", lastmod: today() });
+        entries.push({
+          path: "/newsletter",
+          changefreq: "monthly",
+          priority: "0.6",
+          lastmod: today(),
+        });
+        entries.push({
+          path: "/contact",
+          changefreq: "monthly",
+          priority: "0.5",
+          lastmod: today(),
+        });
 
         // Section pages
         for (const taxonomy of TAXONOMIES) {

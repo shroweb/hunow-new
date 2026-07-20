@@ -5,6 +5,7 @@ import { ListingCard } from "@/components/cards";
 import { PaginationControls } from "@/components/PaginationControls";
 import { useStore } from "@/lib/store";
 import { openStatus } from "@/lib/hours";
+import { escapeAttr } from "@/lib/sanitize";
 import type { Listing } from "@/types";
 
 const PER_PAGE = 12;
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/listings")({
         content: "Browse independent businesses, shops, restaurants and venues across Hull.",
       },
     ],
+    links: [{ rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" }],
   }),
   component: ListingsPage,
 });
@@ -159,7 +161,7 @@ function ListingsPage() {
             className={`px-6 py-3 border-2 text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50 flex items-center gap-2 ${userCoords ? "border-accent text-accent hover:bg-accent hover:text-background" : "border-foreground hover:bg-foreground hover:text-background"}`}
           >
             <svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" aria-hidden="true">
-              <path d="M5.5 0C2.46 0 0 2.46 0 5.5c0 4.125 5.5 8.5 5.5 8.5S11 9.625 11 5.5C11 2.46 8.54 0 5.5 0zm0 7.5a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
+              <path d="M5.5 0C2.46 0 0 2.46 0 5.5c0 4.125 5.5 8.5 5.5 8.5S11 9.625 11 5.5C11 2.46 8.54 0 5.5 0zm0 7.5a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
             </svg>
             {geoLoading ? "Locating…" : userCoords ? "Near me ×" : "Near me"}
           </button>
@@ -366,9 +368,9 @@ function MapView({
         const marker = L.default.marker([l.latitude!, l.longitude!]).addTo(map);
         marker.bindPopup(
           `<div style="font-family:monospace;font-size:11px">
-            <strong style="font-size:13px;font-family:sans-serif">${l.name}</strong><br>
-            ${l.category} · ${l.area}<br>
-            <a href="/places/${l.slug}" style="color:oklch(0.65 0.2 45);font-weight:bold">View listing →</a>
+            <strong style="font-size:13px;font-family:sans-serif">${escapeAttr(l.name)}</strong><br>
+            ${escapeAttr(l.category)} · ${escapeAttr(l.area)}<br>
+            <a href="/places/${escapeAttr(l.slug)}" style="color:oklch(0.65 0.2 45);font-weight:bold">View listing →</a>
           </div>`,
         );
         bounds.push([l.latitude!, l.longitude!]);
@@ -397,8 +399,6 @@ function MapView({
         className="md:col-span-8 border-2 border-foreground overflow-hidden"
         style={{ height: "560px" }}
       >
-        {/* Leaflet CSS */}
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <div ref={mapRef} style={{ height: "100%", width: "100%" }} />
         {withCoords.length < listings.length && (
           <div className="absolute bottom-0 left-0 right-0 bg-background/80 text-[9px] font-mono uppercase px-3 py-1 text-muted-foreground">

@@ -78,7 +78,6 @@ const importEvents = createServerFn({ method: "POST" })
     return { ok: true, created, errors };
   });
 
-
 export const Route = createFileRoute("/admin/import")({
   component: AdminImport,
 });
@@ -93,7 +92,6 @@ function AdminImport() {
   const [busy, setBusy] = useState(false);
 
   function parseJson() {
-
     setParseError("");
     try {
       const parsed = JSON.parse(json);
@@ -139,9 +137,9 @@ function AdminImport() {
           <p className="text-sm text-muted-foreground">
             Paste a JSON array of events. Required fields:{" "}
             <code className="font-mono text-xs bg-foreground/5 px-1">title</code>,{" "}
-            <code className="font-mono text-xs bg-foreground/5 px-1">startDate</code>{" "}
-            (YYYY-MM-DD). Optional: description, startTime, endTime, locationName, address,
-            category, price, ticketUrl, featuredImage.
+            <code className="font-mono text-xs bg-foreground/5 px-1">startDate</code> (YYYY-MM-DD).
+            Optional: description, startTime, endTime, locationName, address, category, price,
+            ticketUrl, featuredImage.
           </p>
           <textarea
             className={adminInput}

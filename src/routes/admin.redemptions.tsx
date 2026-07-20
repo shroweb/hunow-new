@@ -75,7 +75,9 @@ function AdminRedemptions() {
           <button
             onClick={() => {
               setLoading(true);
-              getAdminRedemptionsFn().then(setRows).finally(() => setLoading(false));
+              getAdminRedemptionsFn()
+                .then(setRows)
+                .finally(() => setLoading(false));
             }}
             className={adminBtn}
           >

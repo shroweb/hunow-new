@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 import { autoLink, autoLinkMarkdown, type Entity } from "@/lib/autolink";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface Block {
   type: "p" | "h2" | "h3" | "blockquote" | "image" | "divider";
@@ -116,13 +117,7 @@ export function TableOfContents({ content }: { content: string }) {
 /** Renders HTML content from the Tiptap editor */
 export function ArticleHtml({ content, entities }: { content: string; entities?: Entity[] }) {
   const html = entities?.length ? autoLink(content, entities) : content;
-  return (
-    <div
-      className="prose-hunow"
-      // Content is admin-authored only — safe to render
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
+  return <div className="prose-hunow" dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />;
 }
 
 /** Auto-detects HTML vs legacy markdown */

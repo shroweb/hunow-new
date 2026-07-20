@@ -16,7 +16,8 @@ function LenHint({ value, max }: { value: string; max: number }) {
   const over = len > max;
   return (
     <span className={over ? "text-red-500 font-bold" : "text-muted-foreground"}>
-      {len}/{max}{over ? " — too long" : ""}
+      {len}/{max}
+      {over ? " — too long" : ""}
     </span>
   );
 }
@@ -46,7 +47,9 @@ export function SeoFields({
         {/* Google preview */}
         {(titleVal || fallbackTitle) && (
           <div className="bg-white border border-foreground/10 p-3 rounded text-xs mb-1">
-            <div className="text-[10px] font-mono uppercase text-muted-foreground mb-1">Google preview</div>
+            <div className="text-[10px] font-mono uppercase text-muted-foreground mb-1">
+              Google preview
+            </div>
             <div className="text-[#1a0dab] text-sm leading-snug truncate">
               {titleVal || fallbackTitle}
             </div>

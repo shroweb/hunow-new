@@ -64,7 +64,7 @@ const SECTIONS: { title: string; fields: FieldDef[] }[] = [
         key: "gsc_verify",
         label: "Google Search Console verification",
         placeholder: "abc123XYZ...",
-        hint: "Paste the content value from the GSC HTML meta tag (the part after content=\"\"). Adds a google-site-verification meta tag to every page.",
+        hint: 'Paste the content value from the GSC HTML meta tag (the part after content=""). Adds a google-site-verification meta tag to every page.',
       },
     ],
   },

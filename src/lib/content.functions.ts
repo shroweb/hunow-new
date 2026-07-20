@@ -15,10 +15,163 @@ import type {
   Offer,
 } from "@/types";
 
+// ---- Zod schemas for admin content validation ----
+
+const seoMetaSchema = z.object({
+  title: z.string().max(200).optional(),
+  description: z.string().max(500).optional(),
+  ogImage: z.string().optional(),
+  canonicalUrl: z.string().optional(),
+  noIndex: z.boolean().optional(),
+});
+
+const articleSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1).max(300),
+  slug: z.string().min(1).max(200),
+  excerpt: z.string().max(500),
+  content: z.string().max(100000),
+  category: z.string().min(1).max(100),
+  tags: z.array(z.string().max(50)),
+  featuredImage: z.string().max(500),
+  author: z.string().min(1).max(200),
+  status: z.enum(["draft", "published", "pending", "expired", "scheduled", "archived"]),
+  isFeatured: z.boolean(),
+  isSponsored: z.boolean(),
+  sponsorName: z.string().max(200).optional(),
+  readingMinutes: z.number().min(0).max(120),
+  publishedAt: z.string(),
+  scheduledFor: z.string().optional(),
+  section: z.string().max(100).optional(),
+  subcategory: z.string().max(100).optional(),
+  series: z.string().max(100).optional(),
+  seriesOrder: z.number().optional(),
+  pollId: z.string().optional(),
+  seo: seoMetaSchema.optional(),
+});
+
+const eventSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1).max(300),
+  slug: z.string().min(1).max(200),
+  description: z.string().max(2000),
+  content: z.string().max(100000).optional(),
+  category: z.string().min(1).max(100),
+  startDate: z.string(),
+  endDate: z.string().optional(),
+  startTime: z.string(),
+  endTime: z.string().optional(),
+  locationName: z.string().min(1).max(200),
+  address: z.string().min(1).max(300),
+  price: z.string().max(50),
+  isFree: z.boolean(),
+  ticketUrl: z.string().url().optional(),
+  featuredImage: z.string().max(500),
+  gallery: z.array(z.string().max(500)).optional(),
+  status: z.enum(["draft", "published", "pending", "expired", "scheduled", "archived"]),
+  isFeatured: z.boolean(),
+  isSponsored: z.boolean(),
+  scheduledFor: z.string().optional(),
+  recurrence: z
+    .object({
+      type: z.enum(["weekly", "biweekly", "monthly"]),
+      until: z.string().optional(),
+    })
+    .optional(),
+  seo: seoMetaSchema.optional(),
+});
+
+const listingSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1).max(300),
+  slug: z.string().min(1).max(200),
+  description: z.string().max(5000),
+  category: z.string().min(1).max(100),
+  area: z.string().min(1).max(100),
+  address: z.string().min(1).max(300),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  mapUrl: z.string().optional(),
+  openingHours: z.string().max(200),
+  website: z.string().url().optional(),
+  phone: z.string().max(30).optional(),
+  email: z.string().email().optional(),
+  featuredImage: z.string().max(500),
+  gallery: z.array(z.string().max(500)).optional(),
+  hours: z.any().optional(),
+  tags: z.array(z.string().max(50)).optional(),
+  isFeatured: z.boolean(),
+  isHiddenGem: z.boolean(),
+  isIndependent: z.boolean(),
+  isVerified: z.boolean().optional(),
+  ownerUserId: z.string().optional(),
+  activeOfferId: z.string().optional(),
+  seo: seoMetaSchema.optional(),
+});
+
+const offerSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1).max(200),
+  listingId: z.string().min(1),
+  businessName: z.string().min(1).max(200),
+  description: z.string().max(2000),
+  terms: z.string().max(1000),
+  code: z.string().max(50).optional(),
+  startDate: z.string(),
+  endDate: z.string(),
+  redemptionCount: z.number().min(0),
+  usageLimit: z.number().min(0).optional(),
+  category: z.string().min(1).max(100),
+  status: z.enum(["pending", "active", "expired", "rejected"]),
+  isFeatured: z.boolean().optional(),
+  submittedByUserId: z.string().optional(),
+  adminNote: z.string().max(1000).optional(),
+  seo: seoMetaSchema.optional(),
+});
+
+const adSchema = z.object({
+  id: z.string().min(1),
+  advertiserName: z.string().min(1).max(200),
+  placement: z.string().min(1).max(50),
+  image: z.string().max(500),
+  url: z.string().url(),
+  startDate: z.string(),
+  endDate: z.string(),
+  impressions: z.number().min(0),
+  clicks: z.number().min(0),
+  status: z.enum(["active", "paused", "expired"]),
+});
+
+const mediaSchema = z.object({
+  id: z.string().min(1),
+  url: z.string().max(500),
+  fileName: z.string().max(200),
+  alt: z.string().max(300),
+  credit: z.string().max(200).optional(),
+  focalPoint: z.string().optional(),
+  createdAt: z.string(),
+});
+
+const collectionSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1).max(200),
+  slug: z.string().min(1).max(200),
+  description: z.string().max(1000),
+  status: z.enum(["draft", "published"]),
+  featuredImage: z.string().max(500).optional(),
+  items: z.array(
+    z.object({
+      kind: z.enum(["article", "event", "listing", "offer"]),
+      id: z.string(),
+    }),
+  ),
+  updatedAt: z.string(),
+});
+
 // ---- Articles ----
 
 export const upsertArticleFn = createServerFn({ method: "POST" })
-  .inputValidator(z.custom<Article>())
+  .inputValidator(articleSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertArticle } = await import("./db.server");
@@ -40,7 +193,7 @@ export const deleteArticleFn = createServerFn({ method: "POST" })
 // ---- Events ----
 
 export const upsertEventFn = createServerFn({ method: "POST" })
-  .inputValidator(z.custom<EventItem>())
+  .inputValidator(eventSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertEvent } = await import("./db.server");
@@ -72,7 +225,7 @@ export const bulkArchiveEventsFn = createServerFn({ method: "POST" })
 // ---- Listings ----
 
 export const upsertListingFn = createServerFn({ method: "POST" })
-  .inputValidator(z.custom<Listing>())
+  .inputValidator(listingSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertListing } = await import("./db.server");
@@ -94,7 +247,7 @@ export const deleteListingFn = createServerFn({ method: "POST" })
 // ---- Offers ----
 
 export const upsertOfferFn = createServerFn({ method: "POST" })
-  .inputValidator(z.custom<Offer>())
+  .inputValidator(offerSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertOffer } = await import("./db.server");
@@ -116,7 +269,7 @@ export const deleteOfferFn = createServerFn({ method: "POST" })
 // ---- Ads ----
 
 export const upsertAdFn = createServerFn({ method: "POST" })
-  .inputValidator(z.custom<AdPlacement>())
+  .inputValidator(adSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertAd } = await import("./db.server");
@@ -138,7 +291,7 @@ export const deleteAdFn = createServerFn({ method: "POST" })
 // ---- Media ----
 
 export const upsertMediaFn = createServerFn({ method: "POST" })
-  .inputValidator(z.custom<MediaAsset>())
+  .inputValidator(mediaSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertMedia } = await import("./db.server");
@@ -160,7 +313,7 @@ export const deleteMediaFn = createServerFn({ method: "POST" })
 // ---- Collections ----
 
 export const upsertCollectionFn = createServerFn({ method: "POST" })
-  .inputValidator(z.custom<EditorialCollection>())
+  .inputValidator(collectionSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertCollection } = await import("./db.server");
@@ -257,7 +410,8 @@ export const createBusinessOwnerFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();
-    const { findUserByEmail, assignListingOwner, getPool, ensureSchema } = await import("./db.server");
+    const { findUserByEmail, assignListingOwner, getPool, ensureSchema } =
+      await import("./db.server");
     await ensureSchema();
     const pool = getPool();
 

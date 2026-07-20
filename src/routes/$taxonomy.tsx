@@ -1,4 +1,11 @@
-import { createFileRoute, Link, notFound, redirect, Outlet, useRouterState } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  notFound,
+  redirect,
+  Outlet,
+  useRouterState,
+} from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard, ListingCard } from "@/components/cards";
@@ -17,7 +24,9 @@ export const Route = createFileRoute("/$taxonomy")({
     if (!taxonomy) {
       // Old site used bare top-level slugs (e.g. /hull-secret-history) — try article lookup
       const { fetchArticleBySlug } = await import("@/lib/content-read.functions");
-      const article = await fetchArticleBySlug({ data: { slug: params.taxonomy } }).catch(() => null);
+      const article = await fetchArticleBySlug({ data: { slug: params.taxonomy } }).catch(
+        () => null,
+      );
       if (article?.status === "published") {
         const { articlePath } = await import("@/lib/taxonomy");
         throw redirect({ href: articlePath(article), statusCode: 301 });

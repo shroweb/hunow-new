@@ -405,8 +405,27 @@ function Footer() {
 
   return (
     <footer className="bg-foreground text-background mt-20">
+      {/* Editorial masthead */}
+      <div className="max-w-7xl mx-auto px-4 pt-14 pb-10 border-b border-white/10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="font-display text-6xl md:text-8xl tracking-wide leading-none mb-4">
+              HU NOW
+            </div>
+            <p className="text-white/40 text-sm max-w-md leading-relaxed">
+              An independent guide to Hull — events, food, culture and the city's best independent
+              businesses. Made by people who love the city.
+            </p>
+          </div>
+          <div className="text-[10px] font-mono uppercase tracking-widest text-white/20 leading-loose shrink-0 text-right">
+            <div>Hull, East Yorkshire</div>
+            <div>England, HU1</div>
+            <div className="mt-1 text-white/10">Independent since 2024</div>
+          </div>
+        </div>
+      </div>
       {/* Main grid */}
-      <div className="max-w-7xl mx-auto px-4 pt-16 pb-12 grid grid-cols-2 md:grid-cols-4 gap-10 border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-4 pt-12 pb-12 grid grid-cols-2 md:grid-cols-4 gap-10 border-b border-white/10">
         {/* Explore */}
         <div>
           <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">

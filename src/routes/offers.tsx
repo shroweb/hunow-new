@@ -71,114 +71,114 @@ function Offers() {
           </div>
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {offers.map((o) => {
-          const listing =
-            listings.find((l) => l.id === o.listingId) ??
-            listings.find((l) => l.name.toLowerCase() === o.businessName.toLowerCase());
-          return (
-            <div
-              key={o.id}
-              className="border-2 border-foreground bg-background flex flex-col relative"
-            >
-              {!user && (
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/70 backdrop-blur-[2px]">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                  </svg>
-                  <a
-                    href="/sign-in"
-                    className="px-4 py-2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors"
-                  >
-                    Sign in to view
-                  </a>
-                </div>
-              )}
-
-              {/* Card body */}
-              <div className="p-6 flex flex-col flex-1">
-                <div className="flex items-start justify-between gap-2 mb-3">
-                  <div className="text-[10px] font-mono uppercase text-accent">
-                    {o.businessName}
-                  </div>
-                  {o.isFeatured && (
-                    <span className="text-[9px] font-bold uppercase bg-accent text-background px-2 py-0.5 shrink-0">
-                      Featured
-                    </span>
-                  )}
-                </div>
-                <h3 className="text-xl font-bold mb-2 leading-snug">{o.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4 flex-1 leading-relaxed">
-                  {o.description}
-                </p>
-                <div className="text-[10px] font-mono uppercase text-muted-foreground mb-4">
-                  Ends{" "}
-                  {new Date(`${o.endDate}T12:00:00`).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </div>
-
-                {/* CTA */}
-                <div className="flex gap-2">
-                  {user ? (
-                    <Link
-                      to="/account"
-                      search={{ tab: "card" }}
-                      className="flex-1 block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
+          {offers.map((o) => {
+            const listing =
+              listings.find((l) => l.id === o.listingId) ??
+              listings.find((l) => l.name.toLowerCase() === o.businessName.toLowerCase());
+            return (
+              <div
+                key={o.id}
+                className="border-2 border-foreground bg-background flex flex-col relative"
+              >
+                {!user && (
+                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/70 backdrop-blur-[2px]">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
                     >
-                      Redeem with HU NOW card
-                    </Link>
-                  ) : (
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
                     <a
                       href="/sign-in"
-                      className="flex-1 block border-2 border-foreground px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors text-center"
+                      className="px-4 py-2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors"
                     >
-                      Sign in to redeem
+                      Sign in to view
                     </a>
-                  )}
-                  <ShareMenu
-                    title={`${o.title} — ${o.businessName}`}
-                    text={o.description}
-                    className="shrink-0 px-3 py-3 border-2 border-foreground text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
-                  />
-                </div>
-              </div>
+                  </div>
+                )}
 
-              {/* Venue footer */}
-              {listing && (
-                <Link
-                  to="/places/$slug"
-                  params={{ slug: listing.slug }}
-                  className="flex items-center gap-2 px-6 py-3 border-t border-foreground/10 text-[10px] font-bold uppercase hover:bg-foreground/5 transition-colors"
-                >
-                  <svg
-                    width="10"
-                    height="12"
-                    viewBox="0 0 10 12"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    className="text-accent shrink-0"
+                {/* Card body */}
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="text-[10px] font-mono uppercase text-accent">
+                      {o.businessName}
+                    </div>
+                    {o.isFeatured && (
+                      <span className="text-[9px] font-bold uppercase bg-accent text-background px-2 py-0.5 shrink-0">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 leading-snug">{o.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4 flex-1 leading-relaxed">
+                    {o.description}
+                  </p>
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground mb-4">
+                    Ends{" "}
+                    {new Date(`${o.endDate}T12:00:00`).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </div>
+
+                  {/* CTA */}
+                  <div className="flex gap-2">
+                    {user ? (
+                      <Link
+                        to="/account"
+                        search={{ tab: "card" }}
+                        className="flex-1 block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
+                      >
+                        Redeem with HU NOW card
+                      </Link>
+                    ) : (
+                      <a
+                        href="/sign-in"
+                        className="flex-1 block border-2 border-foreground px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors text-center"
+                      >
+                        Sign in to redeem
+                      </a>
+                    )}
+                    <ShareMenu
+                      title={`${o.title} — ${o.businessName}`}
+                      text={o.description}
+                      className="shrink-0 px-3 py-3 border-2 border-foreground text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Venue footer */}
+                {listing && (
+                  <Link
+                    to="/places/$slug"
+                    params={{ slug: listing.slug }}
+                    className="flex items-center gap-2 px-6 py-3 border-t border-foreground/10 text-[10px] font-bold uppercase hover:bg-foreground/5 transition-colors"
                   >
-                    <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 5 3.5 1.5 1.5 0 0 1 5 6.5z" />
-                  </svg>
-                  {listing.name}
-                </Link>
-              )}
-            </div>
-          );
-        })}
+                    <svg
+                      width="10"
+                      height="12"
+                      viewBox="0 0 10 12"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      className="text-accent shrink-0"
+                    >
+                      <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 5 3.5 1.5 1.5 0 0 1 5 6.5z" />
+                    </svg>
+                    {listing.name}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
     </PublicLayout>

@@ -31,7 +31,8 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
       // Also try event lookup (e.g. /events/hull-fair-2026)
       const { fetchEventBySlug } = await import("@/lib/content-read.functions");
       const event = await fetchEventBySlug({ data: { slug: params.slug } }).catch(() => null);
-      if (event?.status === "published") throw redirect({ href: `/events/${event.slug}`, statusCode: 301 });
+      if (event?.status === "published")
+        throw redirect({ href: `/events/${event.slug}`, statusCode: 301 });
       throw notFound();
     }
 
@@ -89,7 +90,10 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
               url: process.env.SITE_URL ?? "https://hunow.co.uk",
               logo: { "@type": "ImageObject", url: "https://hunow.co.uk/hunow.jpg" },
             },
-            mainEntityOfPage: { "@type": "WebPage", "@id": `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}` },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+            },
             url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
           }),
         },
@@ -100,8 +104,18 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
             "@type": "BreadcrumbList",
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Home", item: "https://hunow.co.uk" },
-              { "@type": "ListItem", position: 2, name: "Stories", item: "https://hunow.co.uk/stories" },
-              { "@type": "ListItem", position: 3, name: a.title, item: `https://hunow.co.uk${url}` },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Stories",
+                item: "https://hunow.co.uk/stories",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: a.title,
+                item: `https://hunow.co.uk${url}`,
+              },
             ],
           }),
         },

@@ -1,18 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { Building2, Plus, Check } from "lucide-react";
-import {
-  AdminHeader,
-  adminBtn,
-  adminInput,
-  AdminField,
-} from "@/components/admin/AdminLayout";
+import { AdminHeader, adminBtn, adminInput, AdminField } from "@/components/admin/AdminLayout";
 import { setState, slugify, uid, useStore } from "@/lib/store";
-import {
-  upsertListingFn,
-  upsertOfferFn,
-  createBusinessOwnerFn,
-} from "@/lib/content.functions";
+import { upsertListingFn, upsertOfferFn, createBusinessOwnerFn } from "@/lib/content.functions";
 import type { Listing, Offer } from "@/types";
 
 export const Route = createFileRoute("/admin/businesses")({ component: AdminBusinesses });
@@ -28,9 +19,7 @@ function AdminBusinesses() {
   const [success, setSuccess] = useState("");
 
   // Businesses = listings that have an ownerUserId set
-  const businesses = listings.filter(
-    (l) => (l as Listing & { ownerUserId?: string }).ownerUserId,
-  );
+  const businesses = listings.filter((l) => (l as Listing & { ownerUserId?: string }).ownerUserId);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,10 +36,22 @@ function AdminBusinesses() {
     const offerDesc = String(fd.get("offerDescription") || "").trim();
     const offerEndDate = String(fd.get("offerEndDate") || "").trim();
 
-    if (!name) { setError("Business name is required."); return; }
-    if (!category) { setError("Category is required."); return; }
-    if (!ownerEmail) { setError("Owner email is required."); return; }
-    if (!ownerName) { setError("Owner name is required."); return; }
+    if (!name) {
+      setError("Business name is required.");
+      return;
+    }
+    if (!category) {
+      setError("Category is required.");
+      return;
+    }
+    if (!ownerEmail) {
+      setError("Owner email is required.");
+      return;
+    }
+    if (!ownerName) {
+      setError("Owner name is required.");
+      return;
+    }
 
     setSaving(true);
     try {
@@ -129,7 +130,14 @@ function AdminBusinesses() {
         title="Businesses"
         subtitle={`${businesses.length} with owner assigned`}
         action={
-          <button onClick={() => { setShowForm((v) => !v); setError(""); setSuccess(""); }} className={adminBtn}>
+          <button
+            onClick={() => {
+              setShowForm((v) => !v);
+              setError("");
+              setSuccess("");
+            }}
+            className={adminBtn}
+          >
             <Plus className="w-3 h-3" /> Add Business
           </button>
         }
@@ -138,30 +146,40 @@ function AdminBusinesses() {
       <div className="p-6 md:p-10 space-y-8">
         {/* Quick-add form */}
         {showForm && (
-          <form
-            onSubmit={onSubmit}
-            className="border-2 border-foreground p-6 space-y-5 max-w-xl"
-          >
+          <form onSubmit={onSubmit} className="border-2 border-foreground p-6 space-y-5 max-w-xl">
             <div className="font-bold text-sm uppercase tracking-widest">New Business</div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <AdminField label="Business name *">
-                  <input name="name" required className={adminInput} placeholder="e.g. The Minerva" />
+                  <input
+                    name="name"
+                    required
+                    className={adminInput}
+                    placeholder="e.g. The Minerva"
+                  />
                 </AdminField>
               </div>
 
               <AdminField label="Category *">
                 <select name="category" required className={adminInput} defaultValue="">
-                  <option value="" disabled>Select…</option>
+                  <option value="" disabled>
+                    Select…
+                  </option>
                   {LISTING_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
                   ))}
                 </select>
               </AdminField>
 
               <AdminField label="Address">
-                <input name="address" className={adminInput} placeholder="e.g. 1 Nelson St, HU1 1XE" />
+                <input
+                  name="address"
+                  className={adminInput}
+                  placeholder="e.g. 1 Nelson St, HU1 1XE"
+                />
               </AdminField>
             </div>
 
@@ -174,7 +192,10 @@ function AdminBusinesses() {
                   placeholder="e.g. Jane Smith"
                 />
               </AdminField>
-              <AdminField label="Owner email *" hint="Account created automatically if they don't have one">
+              <AdminField
+                label="Owner email *"
+                hint="Account created automatically if they don't have one"
+              >
                 <input
                   name="ownerEmail"
                   type="email"
@@ -193,11 +214,20 @@ function AdminBusinesses() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <AdminField label="Offer title">
-                    <input name="offerTitle" className={adminInput} placeholder="e.g. 10% off for HU NOW readers" />
+                    <input
+                      name="offerTitle"
+                      className={adminInput}
+                      placeholder="e.g. 10% off for HU NOW readers"
+                    />
                   </AdminField>
                 </div>
                 <AdminField label="Description">
-                  <textarea name="offerDescription" rows={2} className={adminInput} placeholder="Short description…" />
+                  <textarea
+                    name="offerDescription"
+                    rows={2}
+                    className={adminInput}
+                    placeholder="Short description…"
+                  />
                 </AdminField>
                 <AdminField label="Expires">
                   <input name="offerEndDate" type="date" className={adminInput} />
@@ -234,17 +264,28 @@ function AdminBusinesses() {
         {businesses.length === 0 ? (
           <div className="text-sm text-muted-foreground">
             No businesses with owners yet. Use "Add Business" above, or go to{" "}
-            <Link to="/admin/listings" className="underline">Listings</Link> and click "Assign owner" on any listing.
+            <Link to="/admin/listings" className="underline">
+              Listings
+            </Link>{" "}
+            and click "Assign owner" on any listing.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="border-b-2 border-foreground">
-                  <th className="text-left py-2 pr-6 text-[10px] font-mono uppercase tracking-widest">Business</th>
-                  <th className="text-left py-2 pr-6 text-[10px] font-mono uppercase tracking-widest">Category</th>
-                  <th className="text-left py-2 pr-6 text-[10px] font-mono uppercase tracking-widest">Active offer</th>
-                  <th className="text-left py-2 pr-6 text-[10px] font-mono uppercase tracking-widest">Actions</th>
+                  <th className="text-left py-2 pr-6 text-[10px] font-mono uppercase tracking-widest">
+                    Business
+                  </th>
+                  <th className="text-left py-2 pr-6 text-[10px] font-mono uppercase tracking-widest">
+                    Category
+                  </th>
+                  <th className="text-left py-2 pr-6 text-[10px] font-mono uppercase tracking-widest">
+                    Active offer
+                  </th>
+                  <th className="text-left py-2 pr-6 text-[10px] font-mono uppercase tracking-widest">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>

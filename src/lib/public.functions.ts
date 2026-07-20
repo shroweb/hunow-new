@@ -9,6 +9,12 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
+    const { checkRateLimit, getClientIp } = await import("./rate-limit.server");
+    const { getRequest } = await import("@tanstack/start-server-core");
+    const request = getRequest();
+    const ip = request ? getClientIp(request) : "unknown";
+    const allowed = await checkRateLimit(`newsletter:${ip}`, 10, 60 * 60);
+    if (!allowed) throw new Error("Too many subscription attempts. Please try again later.");
     const { addNewsletterSubscriber } = await import("./db.server");
     await addNewsletterSubscriber(data.email, data.segments);
     return { ok: true };
@@ -61,8 +67,13 @@ export const submitContact = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
+    const { checkRateLimit, getClientIp } = await import("./rate-limit.server");
+    const { getRequest } = await import("@tanstack/start-server-core");
+    const request = getRequest();
+    const ip = request ? getClientIp(request) : "unknown";
+    const allowed = await checkRateLimit(`contact:${ip}`, 5, 60 * 60);
+    if (!allowed) throw new Error("Too many contact submissions. Please try again later.");
     const { addPublicSubmission } = await import("./db.server");
-    const { uid } = await import("./auth.server").then(() => ({ uid: () => crypto.randomUUID() }));
     await addPublicSubmission({
       id: crypto.randomUUID(),
       type: "contact",
@@ -85,6 +96,12 @@ export const submitContact = createServerFn({ method: "POST" })
 export const redeemOffer = createServerFn({ method: "POST" })
   .inputValidator(z.object({ offerId: z.string().min(1) }))
   .handler(async ({ data }) => {
+    const { checkRateLimit, getClientIp } = await import("./rate-limit.server");
+    const { getRequest } = await import("@tanstack/start-server-core");
+    const request = getRequest();
+    const ip = request ? getClientIp(request) : "unknown";
+    const allowed = await checkRateLimit(`redeem:${ip}`, 10, 60 * 60);
+    if (!allowed) throw new Error("Too many redemption attempts. Please try again later.");
     const { incrementOfferRedemption } = await import("./db.server");
     const offer = await incrementOfferRedemption(data.offerId);
     return { ok: true, offer };

@@ -4,9 +4,17 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { signUpUser } from "@/lib/auth.functions";
 import { AuthField, AuthShell } from "./sign-in";
 
+function sanitizeRedirect(redirect: unknown): string {
+  if (typeof redirect !== "string") return "/account";
+  if (!redirect.startsWith("/") || redirect.startsWith("//") || /:\/\//.test(redirect)) {
+    return "/account";
+  }
+  return redirect;
+}
+
 export const Route = createFileRoute("/sign-up")({
   validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search.redirect === "string" ? search.redirect : "/account",
+    redirect: sanitizeRedirect(search.redirect),
   }),
   head: () => ({
     meta: [

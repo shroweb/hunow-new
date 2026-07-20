@@ -292,7 +292,11 @@ function AdminOffers() {
                 )}
               </div>,
               o.businessName,
-              <span className={`font-mono text-xs ${expiringSoon ? "text-amber-700 font-bold" : ""}`}>{o.endDate}</span>,
+              <span
+                className={`font-mono text-xs ${expiringSoon ? "text-amber-700 font-bold" : ""}`}
+              >
+                {o.endDate}
+              </span>,
               <AdminStatus status={o.status} />,
               <div className="flex gap-3">
                 <button
@@ -306,7 +310,14 @@ function AdminOffers() {
                 </button>
                 <button
                   onClick={() => {
-                    setEditing({ ...o, id: uid(), startDate: "", endDate: "", status: "active", redemptionCount: 0 });
+                    setEditing({
+                      ...o,
+                      id: uid(),
+                      startDate: "",
+                      endDate: "",
+                      status: "active",
+                      redemptionCount: 0,
+                    });
                     setShowForm(true);
                     setErrors([]);
                   }}

@@ -818,15 +818,21 @@ function RedeemPanel({ offers, listingId }: { offers: Offer[]; listingId: string
           <div className="grid grid-cols-3 gap-3 mb-3">
             <div className="border border-foreground/10 p-3 text-center">
               <div className="font-display text-3xl leading-none">{stats.thisWeek}</div>
-              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">This week</div>
+              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">
+                This week
+              </div>
             </div>
             <div className="border border-foreground/10 p-3 text-center">
               <div className="font-display text-3xl leading-none">{stats.thisMonth}</div>
-              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">This month</div>
+              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">
+                This month
+              </div>
             </div>
             <div className="border border-foreground/10 p-3 text-center">
               <div className="font-display text-3xl leading-none">{stats.total}</div>
-              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">All time</div>
+              <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">
+                All time
+              </div>
             </div>
           </div>
           {stats.topOffer && (

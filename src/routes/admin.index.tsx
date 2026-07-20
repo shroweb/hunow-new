@@ -21,7 +21,9 @@ function Dashboard() {
   const publishedArticles = articles.filter((a) => a.status === "published").length;
   const publishedEvents = events.filter((e) => e.status === "published").length;
   const activeListings = listings.filter((l) => !l.isHiddenGem || l.isFeatured).length;
-  const businessCount = listings.filter((l) => (l as Listing & { ownerUserId?: string }).ownerUserId).length;
+  const businessCount = listings.filter(
+    (l) => (l as Listing & { ownerUserId?: string }).ownerUserId,
+  ).length;
   const upcomingEvents = [...events]
     .filter((e) => e.status === "published")
     .sort((a, b) => a.startDate.localeCompare(b.startDate))

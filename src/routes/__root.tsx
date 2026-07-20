@@ -124,7 +124,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: ogDesc },
         { name: "twitter:image", content: s.og_image || "/hunow.jpg" },
-        ...(s.social_twitter ? [{ name: "twitter:site", content: `@${s.social_twitter.replace(/^@/, "")}` }] : []),
+        ...(s.social_twitter
+          ? [{ name: "twitter:site", content: `@${s.social_twitter.replace(/^@/, "")}` }]
+          : []),
         ...(s.gsc_verify ? [{ name: "google-site-verification", content: s.gsc_verify }] : []),
         ...(s.ga_id ? [{ "data-ga-id": s.ga_id }] : []),
       ],
@@ -178,8 +180,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               description: desc,
               sameAs: [
                 s.social_facebook,
-                s.social_instagram ? `https://instagram.com/${s.social_instagram.replace(/^@/, "")}` : undefined,
-                s.social_twitter ? `https://twitter.com/${s.social_twitter.replace(/^@/, "")}` : undefined,
+                s.social_instagram
+                  ? `https://instagram.com/${s.social_instagram.replace(/^@/, "")}`
+                  : undefined,
+                s.social_twitter
+                  ? `https://twitter.com/${s.social_twitter.replace(/^@/, "")}`
+                  : undefined,
                 s.social_tiktok,
                 s.social_youtube,
               ].filter(Boolean),
@@ -191,7 +197,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               url: "https://hunow.co.uk",
               potentialAction: {
                 "@type": "SearchAction",
-                target: { "@type": "EntryPoint", urlTemplate: "https://hunow.co.uk/search?q={search_term_string}" },
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://hunow.co.uk/search?q={search_term_string}",
+                },
                 "query-input": "required name=search_term_string",
               },
             },

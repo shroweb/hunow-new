@@ -11,6 +11,7 @@ import { fetchEventBySlug } from "@/lib/content-read.functions";
 import { getEventRsvp, toggleRsvp } from "@/lib/rsvp.functions";
 import { addToHistory } from "@/lib/reading-history";
 import { autoLink } from "@/lib/autolink";
+import { sanitizeHtml, escapeAttr } from "@/lib/sanitize";
 import { img } from "@/data/seed";
 import { relatedForEvent } from "@/lib/related-content";
 
@@ -43,7 +44,10 @@ export const Route = createFileRoute("/events/$slug")({
         { name: "twitter:description", content: description },
         { name: "twitter:image", content: image },
       ],
-      links: [{ rel: "canonical", href: e.seo?.canonicalUrl ?? url }],
+      links: [
+        { rel: "canonical", href: e.seo?.canonicalUrl ?? url },
+        { rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" },
+      ],
       scripts: [
         {
           type: "application/ld+json",
@@ -81,8 +85,18 @@ export const Route = createFileRoute("/events/$slug")({
             "@type": "BreadcrumbList",
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Home", item: "https://hunow.co.uk" },
-              { "@type": "ListItem", position: 2, name: "What's On", item: "https://hunow.co.uk/whats-on" },
-              { "@type": "ListItem", position: 3, name: e.title, item: `https://hunow.co.uk${url}` },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "What's On",
+                item: "https://hunow.co.uk/whats-on",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: e.title,
+                item: `https://hunow.co.uk${url}`,
+              },
             ],
           }),
         },
@@ -220,7 +234,7 @@ function EventDetail() {
           {linkedContent ? (
             <div
               className="mb-8 [&_h2]:font-display [&_h2]:uppercase [&_h2]:text-3xl [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:leading-none [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:text-lg [&_ul]:leading-relaxed [&_ul]:mb-4 [&_ul]:pl-6 [&_ul]:list-disc [&_li]:mb-2 [&_strong]:font-bold"
-              dangerouslySetInnerHTML={{ __html: linkedContent }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(linkedContent) }}
             />
           ) : null}
           <div className="border-2 border-foreground mb-8 overflow-hidden">
@@ -452,7 +466,8 @@ function EventMap({
     )
       .then((r) => r.json())
       .then((data: { lat?: string; lon?: string }[]) => {
-        if (data[0]?.lat) setResolved({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon!) });
+        if (data[0]?.lat)
+          setResolved({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon!) });
       })
       .catch(() => {});
   }, [address, resolved]);
@@ -478,12 +493,14 @@ function EventMap({
       map.setView([resolved.lat, resolved.lng], 16);
       L.marker([resolved.lat, resolved.lng])
         .addTo(map)
-        .bindPopup(`<strong>${address.split(",")[0]}</strong>`)
+        .bindPopup(`<strong>${escapeAttr(address.split(",")[0])}</strong>`)
         .openPopup();
       return map;
     };
     let mapInstance: import("leaflet").Map | undefined;
-    void init().then((m) => { mapInstance = m; });
+    void init().then((m) => {
+      mapInstance = m;
+    });
     return () => {
       destroyed = true;
       mapInstance?.remove();
@@ -492,10 +509,5 @@ function EventMap({
 
   if (!resolved) return null;
 
-  return (
-    <>
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-      <div ref={mapRef} className="w-full h-48 border-t border-foreground/20" />
-    </>
-  );
+  return <div ref={mapRef} className="w-full h-48 border-t border-foreground/20" />;
 }

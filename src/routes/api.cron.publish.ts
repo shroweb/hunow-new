@@ -15,13 +15,14 @@ export const Route = createFileRoute("/api/cron/publish")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        // Verify secret — Vercel also sends its own Authorization header in production
+        // Verify secret — always required
         const secret = process.env.CRON_SECRET;
-        if (secret) {
-          const auth = request.headers.get("authorization");
-          if (auth !== `Bearer ${secret}`) {
-            return new Response("Unauthorized", { status: 401 });
-          }
+        if (!secret) {
+          return new Response("Server misconfigured: CRON_SECRET not set", { status: 500 });
+        }
+        const auth = request.headers.get("authorization");
+        if (auth !== `Bearer ${secret}`) {
+          return new Response("Unauthorized", { status: 401 });
         }
 
         const results: string[] = [];

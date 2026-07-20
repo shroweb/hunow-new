@@ -72,7 +72,10 @@ function OpenNow() {
             ].map(([key, label]) => (
               <button
                 key={key}
-                onClick={() => { setMode(key as "now" | "late" | "sunday"); setCat("All"); }}
+                onClick={() => {
+                  setMode(key as "now" | "late" | "sunday");
+                  setCat("All");
+                }}
                 className={`px-3 py-1.5 text-[10px] font-bold uppercase ${mode === key ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
               >
                 {label}
@@ -97,7 +100,11 @@ function OpenNow() {
         {filtered.length === 0 ? (
           <div className="py-24 text-center">
             <p className="font-display text-4xl uppercase mb-4">
-              {mode === "now" ? "Nothing open right now" : mode === "late" ? "No places open late" : "No places open on Sunday"}
+              {mode === "now"
+                ? "Nothing open right now"
+                : mode === "late"
+                  ? "No places open late"
+                  : "No places open on Sunday"}
             </p>
             <p className="text-muted-foreground">
               Browse{" "}

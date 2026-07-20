@@ -23,6 +23,41 @@ export const img = (id: string, w = 1200, h = 800) => {
   return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
 };
 
+/** Generate a WebP URL for an Unsplash image */
+export const imgWebp = (id: string, w = 1200, h = 800) => {
+  if (
+    !id ||
+    id.startsWith("data:") ||
+    id.startsWith("http://") ||
+    id.startsWith("https://") ||
+    id.startsWith("blob:") ||
+    id.startsWith("/")
+  ) {
+    return undefined;
+  }
+  return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80&fm=webp`;
+};
+
+/** Generate srcSet string for responsive images */
+export const imgSrcSet = (id: string, widths: number[], h?: number) => {
+  if (
+    !id ||
+    id.startsWith("data:") ||
+    id.startsWith("http://") ||
+    id.startsWith("https://") ||
+    id.startsWith("blob:") ||
+    id.startsWith("/")
+  ) {
+    return undefined;
+  }
+  return widths
+    .map(
+      (w) =>
+        `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h ?? Math.round(w * 0.75)}&q=80 ${w}w`,
+    )
+    .join(", ");
+};
+
 export const seedArticles: Article[] = [
   {
     id: "a1",
