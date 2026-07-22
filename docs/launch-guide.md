@@ -64,7 +64,6 @@ Optional:
 
 - `ERROR_WEBHOOK_URL` or `SENTRY_WEBHOOK_URL`
 - `DISABLE_SELF_REGISTRATION=true`
-- `SKIDDLE_API_KEY`
 
 ## 5. Monitoring
 

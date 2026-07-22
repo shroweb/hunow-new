@@ -11,7 +11,7 @@ import type {
 } from "@/types";
 
 // Backend integration point: replace this in-memory + localStorage layer
-// with calls to your real API (Supabase, Lovable Cloud, REST, etc.).
+// with calls to your real API (Supabase, REST, etc.).
 
 interface Store {
   articles: Article[];
