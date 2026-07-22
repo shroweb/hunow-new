@@ -12,5 +12,14 @@ export default defineConfig({
   },
   nitro: {
     preset: "vercel",
+    vercel: {
+      config: {
+        functions: {
+          "__server.func": {
+            memory: 1024,
+          },
+        },
+      },
+    },
   },
 });

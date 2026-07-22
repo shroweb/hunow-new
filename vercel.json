@@ -1,9 +1,4 @@
 {
-  "functions": {
-    ".vercel/output/functions/__server.func": {
-      "memory": 1024
-    }
-  },
   "crons": [{ "path": "/api/cron/publish", "schedule": "0 9 * * *" }],
   "redirects": [
     {
