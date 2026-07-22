@@ -1,6 +1,6 @@
 {
   "functions": {
-    "dist/server/server.js": {
+    ".vercel/output/functions/__server.func": {
       "memory": 1024
     }
   },
