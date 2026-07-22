@@ -1,4 +1,4 @@
-const CACHE_VERSION = "hunow-v3";
+const CACHE_VERSION = "hunow-v4";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const PAGE_CACHE = `${CACHE_VERSION}-pages`;
 const IMAGE_CACHE = `${CACHE_VERSION}-images`;
