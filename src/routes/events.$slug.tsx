@@ -6,21 +6,28 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SaveButton } from "@/components/SaveButton";
 import { ShareMenu } from "@/components/ShareMenu";
 import { downloadICS, googleCalUrl } from "@/lib/ics";
-import { useStore } from "@/lib/store";
 import { fetchEventBySlug } from "@/lib/content-read.functions";
 import { getEventRsvp, toggleRsvp } from "@/lib/rsvp.functions";
 import { addToHistory } from "@/lib/reading-history";
 import { autoLink } from "@/lib/autolink";
 import { sanitizeHtml, escapeAttr } from "@/lib/sanitize";
 import { img } from "@/data/seed";
-import { relatedForEvent } from "@/lib/related-content";
 
 export const Route = createFileRoute("/events/$slug")({
   component: EventDetail,
   loader: async ({ params }) => {
     const event = await fetchEventBySlug({ data: { slug: params.slug } });
     if (!event) throw notFound();
-    return { event };
+    const { fetchRelatedForEvent } = await import("@/lib/content-read.functions");
+    const related = await fetchRelatedForEvent({
+      data: {
+        eventId: event.id,
+        category: event.category,
+        locationName: event.locationName,
+        address: event.address || "",
+      },
+    }).catch(() => ({ events: [], listings: [] }));
+    return { event, related };
   },
   head: ({ loaderData, params }) => {
     const e = loaderData?.event;
@@ -116,32 +123,22 @@ export const Route = createFileRoute("/events/$slug")({
 });
 
 function EventDetail() {
-  const { slug } = Route.useParams();
-  const { event: loadedEvent } = Route.useLoaderData();
-  const events = useStore((s) => s.events);
-  const listings = useStore((s) => s.listings);
-  const event = events.find((e) => e.slug === slug) ?? loadedEvent;
+  const { event: loadedEvent, related: loaderRelated } = Route.useLoaderData();
+  const event = loadedEvent;
   if (!event) throw notFound();
 
   useEffect(() => {
     addToHistory({ kind: "event", id: event.id, slug: event.slug, title: event.title });
   }, [event.id]);
 
-  const articles = useStore((s) => s.articles);
-  const venue = listings.find((l) => l.name.toLowerCase() === event.locationName.toLowerCase());
-  const { events: related, listings: relatedVenues } = relatedForEvent({
-    event,
-    events,
-    listings,
-  });
+  const related = loaderRelated.events;
+  const relatedVenues = loaderRelated.listings;
+  const venue = relatedVenues[0] ?? undefined;
 
   const linkedContent = event.content
     ? autoLink(event.content, [
-        ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
-        ...events
-          .filter((e) => e.id !== event.id)
-          .map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
-        ...articles.map((a) => ({ name: a.title, path: `/stories/${a.slug}` })),
+        ...relatedVenues.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+        ...related.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
       ])
     : undefined;
 

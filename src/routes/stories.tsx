@@ -1,10 +1,11 @@
 import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AdSlot } from "@/components/AdSlot";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard } from "@/components/cards";
 import { PaginationControls } from "@/components/PaginationControls";
-import { useStore } from "@/lib/store";
+import { fetchPagedArticles } from "@/lib/content-read.functions";
+import type { Article } from "@/types";
 
 const PER_PAGE = 12;
 
@@ -39,18 +40,45 @@ function Stories() {
 }
 
 function StoriesIndex() {
-  const articles = useStore((s) => s.articles).filter((a) => a.status === "published");
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
   const [cat, setCat] = useState("All");
   const [page, setPage] = useState(1);
-  const filtered = useMemo(
-    () => articles.filter((a) => cat === "All" || a.category === cat),
-    [articles, cat],
-  );
+
   useEffect(() => {
     setPage(1);
   }, [cat]);
-  const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    fetchPagedArticles({
+      data: {
+        category: cat === "All" ? undefined : cat,
+        page,
+        limit: 12,
+        status: "published",
+      },
+    })
+      .then((res) => {
+        if (!active) return;
+        setArticles(res.items);
+        setTotalCount(res.totalCount);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [cat, page]);
+
+  const totalPages = Math.ceil(totalCount / PER_PAGE);
+
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b border-border">
@@ -75,19 +103,31 @@ function StoriesIndex() {
         <div className="mb-10">
           <AdSlot placement="Homepage Inline Banner" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-          {paged.map((a) => (
-            <ArticleCard key={a.id} article={a} />
-          ))}
-        </div>
-        <PaginationControls
-          page={page}
-          totalPages={totalPages}
-          total={filtered.length}
-          perPage={PER_PAGE}
-          onPrev={() => setPage((p) => p - 1)}
-          onNext={() => setPage((p) => p + 1)}
-        />
+        {loading ? (
+          <div className="py-20 text-center font-mono text-sm uppercase text-muted-foreground animate-pulse">
+            Loading stories…
+          </div>
+        ) : articles.length === 0 ? (
+          <div className="py-20 text-center font-mono text-sm uppercase text-muted-foreground">
+            No stories match your filter.
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+              {articles.map((a) => (
+                <ArticleCard key={a.id} article={a} />
+              ))}
+            </div>
+            <PaginationControls
+              page={page}
+              totalPages={totalPages}
+              total={totalCount}
+              perPage={PER_PAGE}
+              onPrev={() => setPage((p) => p - 1)}
+              onNext={() => setPage((p) => p + 1)}
+            />
+          </>
+        )}
       </section>
     </PublicLayout>
   );

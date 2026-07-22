@@ -4,7 +4,7 @@ import { z } from "zod";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { EventCard } from "@/components/cards";
 import { PaginationControls } from "@/components/PaginationControls";
-import { useStore } from "@/lib/store";
+import { fetchPagedEvents } from "@/lib/content-read.functions";
 import type { EventItem } from "@/types";
 
 const PER_PAGE = 12;
@@ -57,43 +57,89 @@ function weekendRange(): [string, string] {
 
 function WhatsOn() {
   const search = Route.useSearch();
-  const events = useStore((s) => s.events).filter((e) => e.status === "published");
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
   const [category, setCategory] = useState(search.category ?? "All");
   const [freeOnly, setFreeOnly] = useState(search.free ?? false);
   const [when, setWhen] = useState<"today" | "weekend" | "all">(search.when ?? "all");
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [view, setView] = useState<"list" | "calendar">("list");
   const [page, setPage] = useState(1);
 
-  // If "today" is requested but nothing is on today, silently treat as "all"
-  const effectiveWhen = useMemo<"today" | "weekend" | "all">(() => {
-    if (when !== "today") return when;
-    const today = todayIso();
-    const hasToday = events.some((e) => e.startDate === today);
-    return hasToday ? "today" : "all";
-  }, [when, events]);
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [query]);
 
-  const filtered = useMemo(() => {
-    const today = todayIso();
-    const [satStr, sunStr] = weekendRange();
-    return events.filter(
-      (e) =>
-        (category === "All" || e.category === category) &&
-        (!freeOnly || e.isFree) &&
-        (effectiveWhen === "all" ||
-          (effectiveWhen === "today" && e.startDate === today) ||
-          (effectiveWhen === "weekend" && (e.startDate === satStr || e.startDate === sunStr))) &&
-        (!query ||
-          e.title.toLowerCase().includes(query.toLowerCase()) ||
-          e.locationName.toLowerCase().includes(query.toLowerCase())),
-    );
-  }, [events, category, freeOnly, effectiveWhen, query]);
+  // If "today" is requested but nothing is on today, silently treat as "all"
+  const [hasTodayCheck, setHasTodayCheck] = useState(true);
 
   useEffect(() => {
+    if (when !== "today") return;
+    fetchPagedEvents({
+      data: {
+        when: "today",
+        page: 1,
+        limit: 1,
+        status: "published",
+      },
+    })
+      .then((res) => {
+        setHasTodayCheck(res.totalCount > 0);
+      })
+      .catch(() => {
+        setHasTodayCheck(false);
+      });
+  }, [when]);
+
+  const effectiveWhen = useMemo<"today" | "weekend" | "all">(() => {
+    if (when !== "today") return when;
+    return hasTodayCheck ? "today" : "all";
+  }, [when, hasTodayCheck]);
+
+  // Fetch events from server
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    fetchPagedEvents({
+      data: {
+        category: category === "All" ? undefined : category,
+        freeOnly: freeOnly ? true : undefined,
+        when: effectiveWhen === "all" ? undefined : effectiveWhen,
+        q: debouncedQuery || undefined,
+        page: view === "calendar" ? 1 : page,
+        limit: view === "calendar" ? 500 : 12,
+        status: "published",
+      },
+    })
+      .then((res) => {
+        if (!active) return;
+        setEvents(res.items);
+        setTotalCount(res.totalCount);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [category, freeOnly, effectiveWhen, debouncedQuery, page, view]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
     setPage(1);
-  }, [category, freeOnly, effectiveWhen, query, view]);
-  const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  }, [category, freeOnly, effectiveWhen, debouncedQuery, view]);
+
+  const totalPages = Math.ceil(totalCount / PER_PAGE);
+  const paged = events;
 
   return (
     <PublicLayout>
@@ -182,12 +228,16 @@ function WhatsOn() {
       </section>
 
       <section className="max-w-7xl mx-auto px-4 py-12">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="py-32 text-center font-mono text-sm uppercase text-muted-foreground animate-pulse">
+            Loading events…
+          </div>
+        ) : events.length === 0 ? (
           <div className="py-32 text-center font-mono text-sm uppercase text-muted-foreground">
             No events match your filters.
           </div>
         ) : view === "calendar" ? (
-          <CalendarView events={filtered} />
+          <CalendarView events={events} />
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
@@ -198,7 +248,7 @@ function WhatsOn() {
             <PaginationControls
               page={page}
               totalPages={totalPages}
-              total={filtered.length}
+              total={totalCount}
               perPage={PER_PAGE}
               onPrev={() => setPage((p) => p - 1)}
               onNext={() => setPage((p) => p + 1)}

@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ListingCard } from "@/components/cards";
 import { PaginationControls } from "@/components/PaginationControls";
-import { useStore } from "@/lib/store";
+import { fetchPagedListings } from "@/lib/content-read.functions";
 import { openStatus } from "@/lib/hours";
 import { escapeAttr } from "@/lib/sanitize";
 import type { Listing } from "@/types";
@@ -13,6 +13,14 @@ const PER_PAGE = 12;
 const NEAR_KEY = "hunow:near:coords:v2";
 
 export const Route = createFileRoute("/listings")({
+  loader: async () => {
+    const { getTaxonomy } = await import("@/lib/taxonomy-config.functions");
+    const taxonomy = await getTaxonomy();
+    return {
+      categories: ["All", ...(taxonomy.categories ?? [])],
+      areas: ["All", ...(taxonomy.areas ?? [])],
+    };
+  },
   head: () => ({
     meta: [
       { title: "Business Listings — HU NOW" },
@@ -37,16 +45,29 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
 }
 
 function ListingsPage() {
-  const listings = useStore((s) => s.listings);
+  const { categories, areas } = Route.useLoaderData();
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
   const [cat, setCat] = useState("All");
   const [area, setArea] = useState("All");
   const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
   const [openNow, setOpenNow] = useState(false);
   const [view, setView] = useState<"list" | "map">("list");
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState("");
   const [page, setPage] = useState(1);
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQ(q);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [q]);
 
   // Restore saved coords
   useEffect(() => {
@@ -93,26 +114,42 @@ function ListingsPage() {
     }
   };
 
-  const categories = useMemo(
-    () => ["All", ...Array.from(new Set(listings.map((l) => l.category)))],
-    [listings],
-  );
-  const areas = useMemo(
-    () => ["All", ...Array.from(new Set(listings.map((l) => l.area)))],
-    [listings],
-  );
+  // Fetch listings from server
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    fetchPagedListings({
+      data: {
+        category: cat === "All" ? undefined : cat,
+        area: area === "All" ? undefined : area,
+        q: debouncedQ || undefined,
+        page: view === "map" ? 1 : page,
+        limit: view === "map" ? 500 : 12,
+      },
+    })
+      .then((res) => {
+        if (!active) return;
+        setListings(res.items);
+        setTotalCount(res.totalCount);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [cat, area, debouncedQ, page, view]);
 
   const filtered = useMemo(() => {
-    let result = listings.filter((l) => {
-      if (cat !== "All" && l.category !== cat) return false;
-      if (area !== "All" && l.area !== area) return false;
-      if (q && !`${l.name} ${l.description}`.toLowerCase().includes(q.toLowerCase())) return false;
-      if (openNow && !openStatus(l.hours).open) return false;
-      return true;
-    });
+    let result = listings;
+    if (openNow) {
+      result = result.filter((l) => openStatus(l.hours).open);
+    }
     // Sort by distance when user location is known
     if (userCoords) {
-      result = result
+      result = [...result]
         .map((l) => ({
           listing: l,
           dist:
@@ -124,15 +161,17 @@ function ListingsPage() {
         .map((x) => x.listing);
     }
     return result;
-  }, [listings, cat, area, q, openNow, userCoords]);
+  }, [listings, openNow, userCoords]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
     setPage(1);
-  }, [cat, area, q, openNow, userCoords]);
+  }, [cat, area, debouncedQ, openNow, userCoords]);
 
-  const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const totalPages = Math.ceil((openNow ? filtered.length : totalCount) / PER_PAGE);
+  const paged = openNow
+    ? filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+    : filtered;
 
   const distanceFor = (l: Listing) => {
     if (!userCoords || l.latitude == null || l.longitude == null) return null;
@@ -269,9 +308,13 @@ function ListingsPage() {
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         <p className="text-[10px] font-mono uppercase text-muted-foreground mb-6">
-          {filtered.length} {filtered.length === 1 ? "listing" : "listings"}
+          {openNow ? filtered.length : totalCount} {(openNow ? filtered.length : totalCount) === 1 ? "listing" : "listings"}
         </p>
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <span className="font-mono text-sm uppercase animate-pulse">Loading listings…</span>
+          </div>
+        ) : filtered.length === 0 ? (
           <p className="text-muted-foreground">No listings match your filters.</p>
         ) : view === "map" ? (
           <MapView listings={filtered} userCoords={userCoords} />
@@ -292,7 +335,7 @@ function ListingsPage() {
             <PaginationControls
               page={page}
               totalPages={totalPages}
-              total={filtered.length}
+              total={openNow ? filtered.length : totalCount}
               perPage={PER_PAGE}
               onPrev={() => setPage((p) => p - 1)}
               onNext={() => setPage((p) => p + 1)}

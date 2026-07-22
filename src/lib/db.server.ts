@@ -887,6 +887,200 @@ export async function getListingBySlug(slug: string) {
   return result.rows[0]?.data as import("@/types").Listing | undefined;
 }
 
+export async function getPagedListings(options: {
+  category?: string;
+  area?: string;
+  q?: string;
+  page?: number;
+  limit?: number;
+}) {
+  await ensureSeeded();
+  const cat = options.category && options.category !== "All" ? options.category : null;
+  const area = options.area && options.area !== "All" ? options.area : null;
+  const q = options.q ? `%${options.q}%` : null;
+  const page = options.page ?? 1;
+  const limit = options.limit ?? 12;
+  const offset = (page - 1) * limit;
+
+  let query = "select data from listings where 1=1";
+  let countQuery = "select count(*) from listings where 1=1";
+  const params: unknown[] = [];
+  let paramIndex = 1;
+
+  if (cat) {
+    query += ` and category = $${paramIndex}`;
+    countQuery += ` and category = $${paramIndex}`;
+    params.push(cat);
+    paramIndex++;
+  }
+
+  if (area) {
+    query += ` and area = $${paramIndex}`;
+    countQuery += ` and area = $${paramIndex}`;
+    params.push(area);
+    paramIndex++;
+  }
+
+  if (q) {
+    query += ` and (data->>'name' ilike $${paramIndex} or data->>'description' ilike $${paramIndex})`;
+    countQuery += ` and (data->>'name' ilike $${paramIndex} or data->>'description' ilike $${paramIndex})`;
+    params.push(q);
+    paramIndex++;
+  }
+
+  query += " order by created_at desc";
+  query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
+  params.push(limit, offset);
+
+  const pool = getPool();
+  const [itemsResult, countResult] = await Promise.all([
+    pool.query<{ data: unknown }>(query, params),
+    pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
+  ]);
+
+  return {
+    items: itemsResult.rows.map((r) => r.data) as import("@/types").Listing[],
+    totalCount: Number(countResult.rows[0].count),
+  };
+}
+
+export async function getPagedEvents(options: {
+  category?: string;
+  freeOnly?: boolean;
+  when?: "today" | "weekend" | "all";
+  q?: string;
+  page?: number;
+  limit?: number;
+  status?: string;
+}) {
+  await ensureSeeded();
+  const cat = options.category && options.category !== "All" ? options.category : null;
+  const q = options.q ? `%${options.q}%` : null;
+  const freeOnly = options.freeOnly ?? false;
+  const when = options.when ?? "all";
+  const page = options.page ?? 1;
+  const limit = options.limit ?? 12;
+  const offset = (page - 1) * limit;
+  const status = options.status ?? "published";
+
+  let query = "select data from events where 1=1";
+  let countQuery = "select count(*) from events where 1=1";
+  const params: unknown[] = [];
+  let paramIndex = 1;
+
+  if (cat) {
+    query += ` and category = $${paramIndex}`;
+    countQuery += ` and category = $${paramIndex}`;
+    params.push(cat);
+    paramIndex++;
+  }
+
+  if (freeOnly) {
+    query += ` and (data->>'isFree')::boolean = true`;
+    countQuery += ` and (data->>'isFree')::boolean = true`;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  if (when === "today") {
+    query += ` and data->>'startDate' = $${paramIndex}`;
+    countQuery += ` and data->>'startDate' = $${paramIndex}`;
+    params.push(today);
+    paramIndex++;
+  } else if (when === "weekend") {
+    const now = new Date();
+    const day = now.getDay();
+    const daysToSat = day === 6 ? 0 : 6 - day;
+    const sat = new Date(now);
+    sat.setDate(now.getDate() + daysToSat);
+    const sun = new Date(sat);
+    sun.setDate(sat.getDate() + 1);
+    const satStr = sat.toISOString().slice(0, 10);
+    const sunStr = sun.toISOString().slice(0, 10);
+
+    query += ` and (data->>'startDate' = $${paramIndex} or data->>'startDate' = $${paramIndex + 1})`;
+    countQuery += ` and (data->>'startDate' = $${paramIndex} or data->>'startDate' = $${paramIndex + 1})`;
+    params.push(satStr, sunStr);
+    paramIndex += 2;
+  }
+
+  if (q) {
+    query += ` and (data->>'title' ilike $${paramIndex} or data->>'locationName' ilike $${paramIndex})`;
+    countQuery += ` and (data->>'title' ilike $${paramIndex} or data->>'locationName' ilike $${paramIndex})`;
+    params.push(q);
+    paramIndex++;
+  }
+
+  if (status) {
+    query += ` and data->>'status' = $${paramIndex}`;
+    countQuery += ` and data->>'status' = $${paramIndex}`;
+    params.push(status);
+    paramIndex++;
+  }
+
+  query += " order by data->>'startDate' asc, created_at desc";
+  query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
+  params.push(limit, offset);
+
+  const pool = getPool();
+  const [itemsResult, countResult] = await Promise.all([
+    pool.query<{ data: unknown }>(query, params),
+    pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
+  ]);
+
+  return {
+    items: itemsResult.rows.map((r) => r.data) as import("@/types").EventItem[],
+    totalCount: Number(countResult.rows[0].count),
+  };
+}
+
+export async function getPagedArticles(options: {
+  category?: string;
+  page?: number;
+  limit?: number;
+  status?: string;
+}) {
+  await ensureSeeded();
+  const cat = options.category && options.category !== "All" ? options.category : null;
+  const page = options.page ?? 1;
+  const limit = options.limit ?? 12;
+  const offset = (page - 1) * limit;
+  const status = options.status ?? "published";
+
+  let query = "select data from articles where 1=1";
+  let countQuery = "select count(*) from articles where 1=1";
+  const params: unknown[] = [];
+  let paramIndex = 1;
+
+  if (cat) {
+    query += ` and category = $${paramIndex}`;
+    countQuery += ` and category = $${paramIndex}`;
+    params.push(cat);
+    paramIndex++;
+  }
+
+  if (status) {
+    query += ` and data->>'status' = $${paramIndex}`;
+    countQuery += ` and data->>'status' = $${paramIndex}`;
+    params.push(status);
+    paramIndex++;
+  }
+
+  query += " order by created_at desc";
+  query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
+  params.push(limit, offset);
+
+  const pool = getPool();
+  const [itemsResult, countResult] = await Promise.all([
+    pool.query<{ data: unknown }>(query, params),
+    pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
+  ]);
+
+  return {
+    items: itemsResult.rows.map((r) => r.data) as import("@/types").Article[],
+    totalCount: Number(countResult.rows[0].count),
+  };
+}
+
 export async function recordAdEvent(adId: string, eventType: "impression" | "click") {
   await ensureSchema();
   await seedIfEmpty();
@@ -1949,4 +2143,125 @@ export async function findUserByEmail(
     [email],
   );
   return result.rows[0] ?? null;
+}
+
+export async function getRelatedForListing(listingId: string, category: string, area: string, name: string) {
+  await ensureSeeded();
+  const pool = getPool();
+  const lowerName = `%${name.toLowerCase().trim()}%`;
+  const lowerArea = `%${area.toLowerCase().trim()}%`;
+
+  const [articlesRes, eventsRes, listingsRes] = await Promise.all([
+    pool.query<{ data: unknown }>(
+      `select data from articles
+       where data->>'status' = 'published'
+         and (category = $1 or lower(data->>'content') ilike $2 or lower(data->>'title') ilike $2)
+       order by created_at desc limit 3`,
+      [category, lowerName],
+    ),
+    pool.query<{ data: unknown }>(
+      `select data from events
+       where data->>'status' = 'published'
+         and (category = $1 or lower(data->>'locationName') ilike $2 or lower(data->>'address') ilike $3)
+       order by data->>'startDate' asc, created_at desc limit 3`,
+      [category, lowerName, lowerArea],
+    ),
+    pool.query<{ data: unknown }>(
+      `select data from listings
+       where id != $1
+         and (category = $2 or area = $3)
+       order by case when category = $2 and area = $3 then 1
+                     when category = $2 then 2
+                     else 3 end asc, created_at desc limit 3`,
+      [listingId, category, area],
+    ),
+  ]);
+
+  return {
+    articles: articlesRes.rows.map((r) => r.data) as import("@/types").Article[],
+    events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
+    listings: listingsRes.rows.map((r) => r.data) as import("@/types").Listing[],
+  };
+}
+
+export async function getRelatedForEvent(eventId: string, category: string, locationName: string, address: string) {
+  await ensureSeeded();
+  const pool = getPool();
+  const lowerLoc = `%${locationName.toLowerCase().trim()}%`;
+
+  const [eventsRes, listingsRes] = await Promise.all([
+    pool.query<{ data: unknown }>(
+      `select data from events
+       where id != $1 and data->>'status' = 'published'
+         and (category = $2 or lower(data->>'locationName') ilike $3)
+       order by data->>'startDate' asc, created_at desc limit 3`,
+      [eventId, category, lowerLoc],
+    ),
+    pool.query<{ data: unknown }>(
+      `select data from listings
+       where lower(data->>'name') ilike $1
+       order by created_at desc limit 1`,
+      [lowerLoc],
+    ),
+  ]);
+
+  return {
+    events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
+    listings: listingsRes.rows.map((r) => r.data) as import("@/types").Listing[],
+  };
+}
+
+export async function getRelatedForArticle(articleId: string, category: string, subcategory: string, title: string) {
+  await ensureSeeded();
+  const pool = getPool();
+  const lowerTitle = `%${title.toLowerCase().trim()}%`;
+
+  const [articlesRes, eventsRes, listingsRes] = await Promise.all([
+    pool.query<{ data: unknown }>(
+      `select data from articles
+       where id != $1 and data->>'status' = 'published'
+         and (category = $2 or subcategory = $3)
+       order by created_at desc limit 3`,
+      [articleId, category, subcategory],
+    ),
+    pool.query<{ data: unknown }>(
+      `select data from events
+       where data->>'status' = 'published'
+         and (category = $2 or lower(data->>'title') ilike $3)
+       order by data->>'startDate' asc, created_at desc limit 2`,
+      [category, lowerTitle],
+    ),
+    pool.query<{ data: unknown }>(
+      `select data from listings
+       where category = $1 or lower(data->>'name') ilike $2
+       order by created_at desc limit 2`,
+      [category, lowerTitle],
+    ),
+  ]);
+
+  return {
+    articles: articlesRes.rows.map((r) => r.data) as import("@/types").Article[],
+    events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
+    listings: listingsRes.rows.map((r) => r.data) as import("@/types").Listing[],
+  };
+}
+
+export async function getOfferById(id: string) {
+  await ensureSeeded();
+  const r = await getPool().query<{ data: unknown }>(
+    "select data from offers where id = $1 and data->>'status' = 'active' limit 1",
+    [id],
+  );
+  return r.rows[0]?.data as import("@/types").Offer | undefined;
+}
+
+export async function getActiveOffers(excludeListingId: string, limit = 2) {
+  await ensureSeeded();
+  const r = await getPool().query<{ data: unknown }>(
+    `select data from offers
+     where listing_id != $1 and data->>'status' = 'active'
+     order by created_at desc limit $2`,
+    [excludeListingId, limit],
+  );
+  return r.rows.map((row) => row.data) as import("@/types").Offer[];
 }

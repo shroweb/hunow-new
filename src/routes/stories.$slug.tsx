@@ -8,11 +8,9 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SaveButton } from "@/components/SaveButton";
 import { ShareMenu } from "@/components/ShareMenu";
 import { ReadingProgress } from "@/components/ReadingProgress";
-import { useStore } from "@/lib/store";
 import { ArticleContent, TableOfContents } from "@/components/ArticleContent";
 import { ArticleComments } from "@/components/ArticleComments";
 import { img } from "@/data/seed";
-import { relatedForArticle } from "@/lib/related-content";
 import { subscribeNewsletter } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/stories/$slug")({
@@ -24,7 +22,16 @@ export const Route = createFileRoute("/stories/$slug")({
     if (article.subcategory) {
       throw redirect({ to: articlePath(article), replace: true });
     }
-    return { article };
+    const { fetchRelatedForArticle } = await import("@/lib/content-read.functions");
+    const related = await fetchRelatedForArticle({
+      data: {
+        articleId: article.id,
+        category: article.category,
+        subcategory: article.subcategory || "",
+        title: article.title,
+      },
+    }).catch(() => ({ articles: [], events: [], listings: [] }));
+    return { article, related };
   },
   head: ({ loaderData, params }) => {
     const a = loaderData?.article;
@@ -85,30 +92,18 @@ export const Route = createFileRoute("/stories/$slug")({
 });
 
 function StoryDetail() {
-  const { slug } = Route.useParams();
-  const { article: loadedArticle } = Route.useLoaderData();
-  const articles = useStore((s) => s.articles);
-  const events = useStore((s) => s.events);
-  const listings = useStore((s) => s.listings);
-  const article = articles.find((a) => a.slug === slug) ?? loadedArticle;
+  const { article: loadedArticle, related: loaderRelated } = Route.useLoaderData();
+  const article = loadedArticle;
   if (!article) throw notFound();
-  const {
-    articles: related,
-    events: relatedEvents,
-    listings: relatedPlaces,
-  } = relatedForArticle({
-    article,
-    articles,
-    events,
-    listings,
-  });
+
+  const related = loaderRelated.articles;
+  const relatedEvents = loaderRelated.events;
+  const relatedPlaces = loaderRelated.listings;
 
   const entities = [
-    ...listings.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
-    ...events.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
-    ...articles
-      .filter((a) => a.id !== article.id)
-      .map((a) => ({ name: a.title, path: articlePath(a) })),
+    ...relatedPlaces.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+    ...relatedEvents.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
+    ...related.map((a) => ({ name: a.title, path: articlePath(a) })),
   ];
 
   return (

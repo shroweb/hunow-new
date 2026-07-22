@@ -8,7 +8,6 @@ import { ShareMenu } from "@/components/ShareMenu";
 import { Gallery } from "@/components/Lightbox";
 import { openStatus, formatWeek } from "@/lib/hours";
 import { addToHistory } from "@/lib/reading-history";
-import { useStore } from "@/lib/store";
 import { fetchListingBySlug } from "@/lib/content-read.functions";
 import { autoLink } from "@/lib/autolink";
 import { sanitizeHtml, escapeAttr } from "@/lib/sanitize";
@@ -22,7 +21,6 @@ import { getCurrentUser } from "@/lib/auth.functions";
 import { claimListing } from "@/lib/business.functions";
 import { img } from "@/data/seed";
 import type { Listing } from "@/types";
-import { relatedForListing } from "@/lib/related-content";
 
 export const Route = createFileRoute("/places/$slug")({
   component: PlaceDetail,
@@ -30,12 +28,25 @@ export const Route = createFileRoute("/places/$slug")({
     const listing = await fetchListingBySlug({ data: { slug: params.slug } });
     if (!listing) throw notFound();
     const { getListingUpdates } = await import("@/lib/db.server");
-    const [reviews, user, updates] = await Promise.all([
+    const { fetchRelatedForListing, fetchOfferById, fetchActiveOffers } = await import("@/lib/content-read.functions");
+    const [reviews, user, updates, related, offer, nearbyOffers] = await Promise.all([
       getListingReviews({ data: { listingId: listing.id } }).catch(() => [] as Review[]),
       getCurrentUser().catch(() => null),
       getListingUpdates(listing.id).catch(() => []),
+      fetchRelatedForListing({
+        data: {
+          listingId: listing.id,
+          category: listing.category,
+          area: listing.area,
+          name: listing.name,
+        },
+      }).catch(() => ({ articles: [], events: [], listings: [] })),
+      listing.activeOfferId
+        ? fetchOfferById({ data: { id: listing.activeOfferId } }).catch(() => null)
+        : Promise.resolve(undefined),
+      fetchActiveOffers({ data: { excludeListingId: listing.id, limit: 2 } }).catch(() => []),
     ]);
-    return { listing, reviews, user, updates };
+    return { listing, reviews, user, updates, related, offer, nearbyOffers };
   },
   head: ({ loaderData, params }) => {
     const l = loaderData?.listing;
@@ -122,45 +133,32 @@ export const Route = createFileRoute("/places/$slug")({
 
 function PlaceDetail() {
   const { slug } = Route.useParams();
-  const { listing: loadedListing, reviews: initialReviews, user, updates } = Route.useLoaderData();
-  const listings = useStore((s) => s.listings);
-  const articles = useStore((s) => s.articles);
-  const offers = useStore((s) => s.offers);
-  const events = useStore((s) => s.events);
-  const listing = listings.find((l) => l.slug === slug) ?? loadedListing;
+  const {
+    listing: loadedListing,
+    reviews: initialReviews,
+    user,
+    updates,
+    related,
+    offer,
+    nearbyOffers,
+  } = Route.useLoaderData();
+  const listing = loadedListing;
   if (!listing) throw notFound();
 
+  const relatedArticles = related.articles;
+  const nearbyEvents = related.events;
+  const similar = related.listings;
+
   const entities = [
-    ...listings
-      .filter((l) => l.id !== listing.id)
-      .map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
-    ...events.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
-    ...articles.map((a) => ({ name: a.title, path: `/stories/${a.slug}` })),
+    ...similar.map((l) => ({ name: l.name, path: `/places/${l.slug}` })),
+    ...nearbyEvents.map((e) => ({ name: e.title, path: `/events/${e.slug}` })),
+    ...relatedArticles.map((a) => ({ name: a.title, path: `/stories/${a.slug}` })),
   ];
   const linkedDescription = autoLink(listing.description, entities);
 
   useEffect(() => {
     addToHistory({ kind: "place", id: listing.id, slug: listing.slug, title: listing.name });
   }, [listing.id]);
-  const offer = listing.activeOfferId
-    ? offers.find(
-        (o) =>
-          o.id === listing.activeOfferId && o.listingId === listing.id && o.status === "active",
-      )
-    : undefined;
-  const {
-    articles: relatedArticles,
-    events: nearbyEvents,
-    listings: similar,
-  } = relatedForListing({
-    listing,
-    articles,
-    events,
-    listings,
-  });
-  const nearbyOffers = offers
-    .filter((o) => o.listingId !== listing.id && o.status === "active")
-    .slice(0, 2);
   const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.name} ${listing.address}`)}`;
   const mapLinkUrl = listing.mapUrl || directionsUrl;
   const status = openStatus(listing.hours);
