@@ -542,7 +542,7 @@ async function verifyPassword(password: string, stored: string) {
 
 function scrypt(password: string, salt: string) {
   return new Promise<Buffer>((resolve, reject) => {
-    crypto.scrypt(password, salt, 64, { N: 65536, r: 8, p: 1 }, (error, key) => {
+    crypto.scrypt(password, salt, 64, { N: 16384, r: 8, p: 1 }, (error, key) => {
       if (error) reject(error);
       else resolve(key);
     });
