@@ -28,18 +28,8 @@ export const getStoreFromDatabase = createServerFn({ method: "GET" }).handler(as
 
 export const saveStoreToDatabase = createServerFn({ method: "POST" })
   .inputValidator(storeSchema)
-  .handler(async ({ data }) => {
-    const { requireAdmin } = await import("./auth.server");
-    const { saveDatabaseStore } = await import("./db.server");
-    await requireAdmin();
-    if (
-      process.env.NODE_ENV === "production" &&
-      process.env.HUNOW_ALLOW_FULL_STORE_SAVE !== "true"
-    ) {
-      throw new Error(
-        "Full-store saves are disabled in production. Use targeted admin writes instead.",
-      );
-    }
-    await saveDatabaseStore(data);
-    return { ok: true };
+  .handler(async () => {
+    throw new Error(
+      "Full-store saves are disabled. Use targeted database writes instead.",
+    );
   });
