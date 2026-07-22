@@ -37,7 +37,7 @@ export const Route = createFileRoute("/api/v1/auth/register")({
           }
 
           const existing = await pool.query("select id from users where email = $1", [email]);
-          if (existing.rowCount && existing.rowCount > 0) {
+          if (existing.rows.length > 0) {
             return Response.json(
               { error: "An account already exists for that email" },
               { status: 409 },
@@ -50,10 +50,25 @@ export const Route = createFileRoute("/api/v1/auth/register")({
           const passwordHash = await hashAppPassword(body.password);
           const userId = crypto.randomUUID();
 
-          await pool.query(
-            "insert into users (id, email, name, password_hash, role, app_role) values ($1, $2, $3, $4, 'user', $5)",
-            [userId, email, body.name.trim(), passwordHash, appRole],
+          const count = await pool.query<{ count: string }>(
+            "select count(*)::text as count from users",
           );
+          const role = Number(count.rows[0]?.count ?? 0) === 0 ? "admin" : "user";
+
+          try {
+            await pool.query(
+              "insert into users (id, email, name, password_hash, role, app_role) values ($1, $2, $3, $4, $5, $6)",
+              [userId, email, body.name.trim(), passwordHash, role, appRole],
+            );
+          } catch (err: any) {
+            if (err.code === "23505") {
+              return Response.json(
+                { error: "An account already exists for that email" },
+                { status: 409 },
+              );
+            }
+            throw err;
+          }
 
           let loyalty = {
             points: 0,

@@ -62,7 +62,10 @@ function SignUp() {
           <AuthField label="Password" name="password" type="password" autoComplete="new-password" />
           <p className="text-xs text-muted-foreground">Use at least 8 characters.</p>
           {error && <p className="text-sm font-bold text-red-600">{error}</p>}
-          <button className="w-full bg-foreground text-background px-6 py-4 text-xs font-bold uppercase tracking-widest">
+          <button
+            disabled={submitting}
+            className="w-full bg-foreground text-background px-6 py-4 text-xs font-bold uppercase tracking-widest disabled:opacity-50"
+          >
             {submitting ? "Creating..." : "Create account"}
           </button>
         </form>

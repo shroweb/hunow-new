@@ -64,7 +64,10 @@ function SignIn() {
             autoComplete="current-password"
           />
           {error && <p className="text-sm font-bold text-red-600">{error}</p>}
-          <button className="w-full bg-foreground text-background px-6 py-4 text-xs font-bold uppercase tracking-widest">
+          <button
+            disabled={submitting}
+            className="w-full bg-foreground text-background px-6 py-4 text-xs font-bold uppercase tracking-widest disabled:opacity-50"
+          >
             {submitting ? "Signing in..." : "Sign in"}
           </button>
         </form>

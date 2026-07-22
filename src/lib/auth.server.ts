@@ -98,7 +98,7 @@ export async function createAccount(input: { name: string; email: string; passwo
   }
 
   const existing = await getPool().query("select id from users where email = $1", [email]);
-  if (existing.rowCount && existing.rowCount > 0) {
+  if (existing.rows.length > 0) {
     throw new Error("An account already exists for that email.");
   }
 
@@ -114,10 +114,17 @@ export async function createAccount(input: { name: string; email: string; passwo
     role,
   };
 
-  await getPool().query(
-    "insert into users (id, email, name, password_hash, role) values ($1, $2, $3, $4, $5)",
-    [user.id, user.email, user.name, await hashPassword(input.password), user.role],
-  );
+  try {
+    await getPool().query(
+      "insert into users (id, email, name, password_hash, role) values ($1, $2, $3, $4, $5)",
+      [user.id, user.email, user.name, await hashPassword(input.password), user.role],
+    );
+  } catch (err: any) {
+    if (err.code === "23505") {
+      throw new Error("An account already exists for that email.");
+    }
+    throw err;
+  }
   await createSession(user.id);
   // Fire-and-forget welcome email — don't block signup
   void import("./email.server").then(({ sendWelcomeEmail }) =>

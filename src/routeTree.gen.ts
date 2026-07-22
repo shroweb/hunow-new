@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatsOnRouteImport } from './routes/whats-on'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -20,14 +21,13 @@ import { Route as SeriesRouteImport } from './routes/series'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as OpenNowRouteImport } from './routes/open-now'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
@@ -58,6 +58,7 @@ import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminRedirectsRouteImport } from './routes/admin.redirects'
+import { Route as AdminRedemptionsRouteImport } from './routes/admin.redemptions'
 import { Route as AdminPwaRouteImport } from './routes/admin.pwa'
 import { Route as AdminPollsRouteImport } from './routes/admin.polls'
 import { Route as AdminOffersRouteImport } from './routes/admin.offers'
@@ -68,9 +69,8 @@ import { Route as AdminImportRouteImport } from './routes/admin.import'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminEditorialPicksRouteImport } from './routes/admin.editorial-picks'
 import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
-import { Route as AdminRedemptionsRouteImport } from './routes/admin.redemptions'
-import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
+import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as AdminAreasRouteImport } from './routes/admin.areas'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
@@ -101,6 +101,11 @@ const WhatsOnRoute = WhatsOnRouteImport.update({
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubmitRoute = SubmitRouteImport.update({
@@ -148,6 +153,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlacesRoute = PlacesRouteImport.update({
   id: '/places',
   path: '/places',
@@ -176,16 +186,6 @@ const ListingsRoute = ListingsRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -338,6 +338,11 @@ const AdminRedirectsRoute = AdminRedirectsRouteImport.update({
   path: '/redirects',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRedemptionsRoute = AdminRedemptionsRouteImport.update({
+  id: '/redemptions',
+  path: '/redemptions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPwaRoute = AdminPwaRouteImport.update({
   id: '/pwa',
   path: '/pwa',
@@ -393,19 +398,14 @@ const AdminClaimsRoute = AdminClaimsRouteImport.update({
   path: '/claims',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminArticlesRoute = AdminArticlesRouteImport.update({
-  id: '/articles',
-  path: '/articles',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRedemptionsRoute = AdminRedemptionsRouteImport.update({
-  id: '/redemptions',
-  path: '/redemptions',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
   id: '/businesses',
   path: '/businesses',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminArticlesRoute = AdminArticlesRouteImport.update({
+  id: '/articles',
+  path: '/articles',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAreasRoute = AdminAreasRouteImport.update({
@@ -525,7 +525,6 @@ export interface FileRoutesByFullPath {
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -535,6 +534,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stories': typeof StoriesRouteWithChildren
   '/submit': typeof SubmitRoute
+  '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
@@ -544,7 +544,6 @@ export interface FileRoutesByFullPath {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
-  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
@@ -555,6 +554,7 @@ export interface FileRoutesByFullPath {
   '/admin/offers': typeof AdminOffersRoute
   '/admin/polls': typeof AdminPollsRoute
   '/admin/pwa': typeof AdminPwaRoute
+  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -609,7 +609,6 @@ export interface FileRoutesByTo {
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -619,6 +618,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stories': typeof StoriesRouteWithChildren
   '/submit': typeof SubmitRoute
+  '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
@@ -628,7 +628,6 @@ export interface FileRoutesByTo {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
-  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
@@ -639,6 +638,7 @@ export interface FileRoutesByTo {
   '/admin/offers': typeof AdminOffersRoute
   '/admin/polls': typeof AdminPollsRoute
   '/admin/pwa': typeof AdminPwaRoute
+  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -695,7 +695,6 @@ export interface FileRoutesById {
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -705,6 +704,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stories': typeof StoriesRouteWithChildren
   '/submit': typeof SubmitRoute
+  '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
@@ -714,7 +714,6 @@ export interface FileRoutesById {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
-  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
@@ -725,6 +724,7 @@ export interface FileRoutesById {
   '/admin/offers': typeof AdminOffersRoute
   '/admin/polls': typeof AdminPollsRoute
   '/admin/pwa': typeof AdminPwaRoute
+  '/admin/redemptions': typeof AdminRedemptionsRoute
   '/admin/redirects': typeof AdminRedirectsRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -801,7 +801,6 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/businesses'
     | '/admin/claims'
-    | '/admin/redemptions'
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
@@ -812,6 +811,7 @@ export interface FileRouteTypes {
     | '/admin/offers'
     | '/admin/polls'
     | '/admin/pwa'
+    | '/admin/redemptions'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -885,7 +885,6 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/businesses'
     | '/admin/claims'
-    | '/admin/redemptions'
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
@@ -896,6 +895,7 @@ export interface FileRouteTypes {
     | '/admin/offers'
     | '/admin/polls'
     | '/admin/pwa'
+    | '/admin/redemptions'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -970,7 +970,6 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/businesses'
     | '/admin/claims'
-    | '/admin/redemptions'
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
@@ -981,6 +980,7 @@ export interface FileRouteTypes {
     | '/admin/offers'
     | '/admin/polls'
     | '/admin/pwa'
+    | '/admin/redemptions'
     | '/admin/redirects'
     | '/admin/reviews'
     | '/admin/settings'
@@ -1086,18 +1086,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/submit': {
-      id: '/submit'
-      path: '/submit'
-      fullPath: '/submit'
-      preLoaderRoute: typeof SubmitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/terms': {
       id: '/terms'
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/submit': {
+      id: '/submit'
+      path: '/submit'
+      fullPath: '/submit'
+      preLoaderRoute: typeof SubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stories': {
@@ -1156,18 +1156,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/places': {
-      id: '/places'
-      path: '/places'
-      fullPath: '/places'
-      preLoaderRoute: typeof PlacesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/places': {
+      id: '/places'
+      path: '/places'
+      fullPath: '/places'
+      preLoaderRoute: typeof PlacesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/open-now': {
@@ -1415,6 +1415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRedirectsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/redemptions': {
+      id: '/admin/redemptions'
+      path: '/redemptions'
+      fullPath: '/admin/redemptions'
+      preLoaderRoute: typeof AdminRedemptionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/pwa': {
       id: '/admin/pwa'
       path: '/pwa'
@@ -1492,25 +1499,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminClaimsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/articles': {
-      id: '/admin/articles'
-      path: '/articles'
-      fullPath: '/admin/articles'
-      preLoaderRoute: typeof AdminArticlesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/redemptions': {
-      id: '/admin/redemptions'
-      path: '/redemptions'
-      fullPath: '/admin/redemptions'
-      preLoaderRoute: typeof AdminRedemptionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/businesses': {
       id: '/admin/businesses'
       path: '/businesses'
       fullPath: '/admin/businesses'
       preLoaderRoute: typeof AdminBusinessesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/articles': {
+      id: '/admin/articles'
+      path: '/articles'
+      fullPath: '/admin/articles'
+      preLoaderRoute: typeof AdminArticlesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/areas': {
@@ -1675,7 +1675,6 @@ interface AdminRouteChildren {
   AdminArticlesRoute: typeof AdminArticlesRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminClaimsRoute: typeof AdminClaimsRoute
-  AdminRedemptionsRoute: typeof AdminRedemptionsRoute
   AdminCommentsRoute: typeof AdminCommentsRoute
   AdminEditorialPicksRoute: typeof AdminEditorialPicksRoute
   AdminEventsRoute: typeof AdminEventsRoute
@@ -1686,6 +1685,7 @@ interface AdminRouteChildren {
   AdminOffersRoute: typeof AdminOffersRoute
   AdminPollsRoute: typeof AdminPollsRoute
   AdminPwaRoute: typeof AdminPwaRoute
+  AdminRedemptionsRoute: typeof AdminRedemptionsRoute
   AdminRedirectsRoute: typeof AdminRedirectsRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -1703,7 +1703,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminArticlesRoute: AdminArticlesRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminClaimsRoute: AdminClaimsRoute,
-  AdminRedemptionsRoute: AdminRedemptionsRoute,
   AdminCommentsRoute: AdminCommentsRoute,
   AdminEditorialPicksRoute: AdminEditorialPicksRoute,
   AdminEventsRoute: AdminEventsRoute,
@@ -1714,6 +1713,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminOffersRoute: AdminOffersRoute,
   AdminPollsRoute: AdminPollsRoute,
   AdminPwaRoute: AdminPwaRoute,
+  AdminRedemptionsRoute: AdminRedemptionsRoute,
   AdminRedirectsRoute: AdminRedirectsRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
