@@ -95,6 +95,7 @@ export interface Offer {
   id: string;
   title: string;
   listingId: string;
+  listingSlug?: string;
   businessName: string;
   description: string;
   terms: string;

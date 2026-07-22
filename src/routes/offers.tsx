@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { useStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth.functions";
 import { ShareMenu } from "@/components/ShareMenu";
 
@@ -15,16 +14,18 @@ export const Route = createFileRoute("/offers")({
     ],
   }),
   loader: async () => {
-    const user = await getCurrentUser().catch(() => null);
-    return { user };
+    const { fetchActiveOffers } = await import("@/lib/content-read.functions");
+    const [user, offers] = await Promise.all([
+      getCurrentUser().catch(() => null),
+      fetchActiveOffers({ data: { limit: 100 } }).catch(() => []),
+    ]);
+    return { user, offers };
   },
   component: Offers,
 });
 
 function Offers() {
-  const { user } = Route.useLoaderData();
-  const offers = useStore((s) => s.offers).filter((o) => o.status === "active");
-  const listings = useStore((s) => s.listings);
+  const { user, offers } = Route.useLoaderData();
 
   return (
     <PublicLayout>
@@ -72,9 +73,6 @@ function Offers() {
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {offers.map((o) => {
-            const listing =
-              listings.find((l) => l.id === o.listingId) ??
-              listings.find((l) => l.name.toLowerCase() === o.businessName.toLowerCase());
             return (
               <div
                 key={o.id}
@@ -157,10 +155,10 @@ function Offers() {
                 </div>
 
                 {/* Venue footer */}
-                {listing && (
+                {o.listingSlug && (
                   <Link
                     to="/places/$slug"
-                    params={{ slug: listing.slug }}
+                    params={{ slug: o.listingSlug }}
                     className="flex items-center gap-2 px-6 py-3 border-t border-foreground/10 text-[10px] font-bold uppercase hover:bg-foreground/5 transition-colors"
                   >
                     <svg
@@ -173,7 +171,7 @@ function Offers() {
                     >
                       <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 5 3.5 1.5 1.5 0 0 1 5 6.5z" />
                     </svg>
-                    {listing.name}
+                    {o.businessName}
                   </Link>
                 )}
               </div>

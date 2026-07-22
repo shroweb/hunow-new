@@ -118,7 +118,7 @@ export const fetchOfferById = createServerFn({ method: "GET" })
   });
 
 export const fetchActiveOffers = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ excludeListingId: z.string(), limit: z.number().optional() }))
+  .inputValidator(z.object({ excludeListingId: z.string().optional(), limit: z.number().optional() }))
   .handler(async ({ data }) => {
     const { getActiveOffers } = await import("./db.server");
     return getActiveOffers(data.excludeListingId, data.limit);

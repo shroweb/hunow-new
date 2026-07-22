@@ -2255,13 +2255,24 @@ export async function getOfferById(id: string) {
   return r.rows[0]?.data as import("@/types").Offer | undefined;
 }
 
-export async function getActiveOffers(excludeListingId: string, limit = 2) {
+export async function getActiveOffers(excludeListingId?: string, limit = 100) {
   await ensureSeeded();
-  const r = await getPool().query<{ data: unknown }>(
-    `select data from offers
-     where listing_id != $1 and data->>'status' = 'active'
-     order by created_at desc limit $2`,
-    [excludeListingId, limit],
-  );
-  return r.rows.map((row) => row.data) as import("@/types").Offer[];
+  const pool = getPool();
+  const sql = excludeListingId
+    ? `select o.data, l.slug as listing_slug
+       from offers o
+       left join listings l on o.listing_id = l.id
+       where o.listing_id != $1 and o.data->>'status' = 'active'
+       order by o.created_at desc limit $2`
+    : `select o.data, l.slug as listing_slug
+       from offers o
+       left join listings l on o.listing_id = l.id
+       where o.data->>'status' = 'active'
+       order by o.created_at desc limit $1`;
+  const params = excludeListingId ? [excludeListingId, limit] : [limit];
+  const r = await pool.query<{ data: any; listing_slug?: string }>(sql, params);
+  return r.rows.map((row) => ({
+    ...(row.data as import("@/types").Offer),
+    listingSlug: row.listing_slug ?? undefined,
+  }));
 }
