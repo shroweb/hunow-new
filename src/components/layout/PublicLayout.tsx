@@ -404,7 +404,7 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-foreground text-background mt-20">
+    <footer className="bg-foreground text-background border-t border-white/10">
       {/* Editorial masthead */}
       <div className="max-w-7xl mx-auto px-4 pt-14 pb-10 border-b border-white/10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -603,7 +603,7 @@ function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="max-w-7xl mx-auto px-4 py-8 pb-24 md:pb-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="font-display text-3xl tracking-wide">HU NOW</div>
         {/* Social links */}
         {Object.entries(SOCIAL_LABELS).some(([key]) => socialLinks[key]) && (
