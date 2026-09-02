@@ -2,6 +2,11 @@
   "crons": [{ "path": "/api/cron/publish", "schedule": "0 9 * * *" }],
   "redirects": [
     {
+      "source": "/events",
+      "destination": "/whats-on",
+      "permanent": true
+    },
+    {
       "source": "/events/hull-fair-2025",
       "destination": "/events/hull-fair-2026",
       "permanent": true
