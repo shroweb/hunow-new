@@ -1,15 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import pg from "pg";
-import process from "node:process";
 import type { SavedItem } from "@/lib/bookmarks";
-
-const { Pool } = pg;
-let pool: pg.Pool | undefined;
-function getPool() {
-  if (!pool) pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  return pool;
-}
+import { getPool } from "./db.server";
 
 async function ensureTable() {
   await getPool()

@@ -20,6 +20,66 @@
     { "source": "/ads", "destination": "/", "permanent": true },
     { "source": "/pdfviewer", "destination": "/", "permanent": true },
     {
+      "source": "/articles",
+      "destination": "/stories",
+      "permanent": true
+    },
+    {
+      "source": "/articles/:slug",
+      "destination": "/stories/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/article/:slug",
+      "destination": "/stories/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/place/:slug",
+      "destination": "/places/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/event/:slug",
+      "destination": "/events/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/directory",
+      "destination": "/listings",
+      "permanent": true
+    },
+    {
+      "source": "/whatson",
+      "destination": "/whats-on",
+      "permanent": true
+    },
+    {
+      "source": "/what-on",
+      "destination": "/whats-on",
+      "permanent": true
+    },
+    {
+      "source": "/deals",
+      "destination": "/offers",
+      "permanent": true
+    },
+    {
+      "source": "/deal",
+      "destination": "/offers",
+      "permanent": true
+    },
+    {
+      "source": "/neighbourhoods",
+      "destination": "/areas",
+      "permanent": true
+    },
+    {
+      "source": "/neighbourhood",
+      "destination": "/areas",
+      "permanent": true
+    },
+    {
       "source": "/major-improvements-coming-to-hull-docks",
       "destination": "/stories",
       "permanent": true

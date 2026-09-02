@@ -78,7 +78,12 @@ function getDatabaseUrl() {
 
 export function getPool() {
   if (!pool) {
-    pool = new Pool({ connectionString: getDatabaseUrl() });
+    pool = new Pool({
+      connectionString: getDatabaseUrl(),
+      max: process.env.VERCEL ? 3 : 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
+    });
   }
   return pool;
 }

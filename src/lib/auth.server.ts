@@ -3,6 +3,7 @@ import process from "node:process";
 import pg from "pg";
 import { deleteCookie, getCookie, setCookie } from "@tanstack/react-start/server";
 import { getRequest } from "@tanstack/start-server-core";
+import { getPool } from "./db.server";
 
 export type AuthRole = "user" | "admin";
 
@@ -20,29 +21,10 @@ export interface AdminUserRow extends Omit<AuthUser, "appRole"> {
   appRole: string;
 }
 
-const { Pool } = pg;
 const SESSION_COOKIE = "hunow_session";
 const SESSION_DAYS = 30;
 
-let pool: pg.Pool | undefined;
 let authSchemaReady: Promise<void> | undefined;
-
-function getDatabaseUrl() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error(
-      "DATABASE_URL is not set. Copy .env.example to .env and start Docker Postgres.",
-    );
-  }
-  return databaseUrl;
-}
-
-function getPool() {
-  if (!pool) {
-    pool = new Pool({ connectionString: getDatabaseUrl() });
-  }
-  return pool;
-}
 
 async function ensureAuthSchema() {
   if (!authSchemaReady) {

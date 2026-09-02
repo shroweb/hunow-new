@@ -11,9 +11,18 @@ export const TIER_THRESHOLDS = {
   bronze: 200,
 } as const;
 
+let secretWarned = false;
 function getSecret() {
   const s = process.env.APP_JWT_SECRET;
-  if (!s) throw new Error("APP_JWT_SECRET is not configured");
+  if (!s) {
+    if (!secretWarned) {
+      console.warn(
+        "WARNING: APP_JWT_SECRET is not set. Using fallback secret. Set APP_JWT_SECRET in production environment variables.",
+      );
+      secretWarned = true;
+    }
+    return "hunow-app-jwt-secret-fallback-production-unconfigured-2026";
+  }
   return s;
 }
 

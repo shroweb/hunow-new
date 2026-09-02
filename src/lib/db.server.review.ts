@@ -1,16 +1,7 @@
-// Separate module to avoid circular imports with db.server.ts
-import pg from "pg";
-import process from "node:process";
+import { getPool } from "./db.server";
 
-const { Pool } = pg;
-
-let pool: pg.Pool | undefined;
 let ready: Promise<void> | undefined;
-
-export function getPool() {
-  if (!pool) pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  return pool;
-}
+export { getPool };
 
 export async function getListingReviewsAdmin(listingId: string) {
   await ensureSchemaOnce();
