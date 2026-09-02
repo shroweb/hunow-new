@@ -352,13 +352,22 @@ export const importEventbriteUrlFn = createServerFn({ method: "POST" })
     return importEventbriteUrl(data.urlOrId);
   });
 
-// ---- Hull City AFC fixtures ----
+// ---- Hull Sports fixtures (Hull City, Hull KR, Hull FC) ----
+
+export const syncHullSportsFixturesFn = createServerFn({ method: "POST" })
+  .validator((d: { team?: "hull-city" | "hull-kr" | "hull-fc" | "all" } | undefined) => d)
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    await requireAdmin();
+    const { syncHullSportsFixtures } = await import("./hull-city.server");
+    return syncHullSportsFixtures(data?.team ?? "all");
+  });
 
 export const syncHullCityFixturesFn = createServerFn({ method: "POST" }).handler(async () => {
   const { requireAdmin } = await import("./auth.server");
   await requireAdmin();
-  const { syncHullCityFixtures } = await import("./hull-city.server");
-  return syncHullCityFixtures();
+  const { syncHullSportsFixtures } = await import("./hull-city.server");
+  return syncHullSportsFixtures("all");
 });
 
 // ---- Web Push ----

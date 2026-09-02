@@ -26,6 +26,7 @@ import {
   bulkArchiveEventsFn,
   importEventbriteUrlFn,
   syncHullCityFixturesFn,
+  syncHullSportsFixturesFn,
 } from "@/lib/content.functions";
 import type { EventItem } from "@/types";
 
@@ -51,6 +52,7 @@ function AdminEvents() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [ebUrl, setEbUrl] = useState("");
   const [importing, setImporting] = useState(false);
+  const [importingTeam, setImportingTeam] = useState<string | null>(null);
   const [importStatus, setImportStatus] = useState("");
   const [slugDraft, setSlugDraft] = useState("");
   const [slugManual, setSlugManual] = useState(false);
@@ -252,48 +254,158 @@ function AdminEvents() {
           <span className="text-xs font-mono text-muted-foreground w-full">{importStatus}</span>
         )}
       </div>
-      <div className="px-6 md:px-10 py-3 border-b border-border bg-white flex flex-wrap items-center gap-2">
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0 font-bold">
-          Hull City AFC
-        </span>
-        <span className="text-xs text-muted-foreground flex-1">
-          Pull live upcoming matches directly into the What's On calendar (No API key needed)
-        </span>
-        <button
-          type="button"
-          disabled={importing}
-          onClick={async () => {
-            setImporting(true);
-            setImportStatus("");
-            try {
-              const result = await syncHullCityFixturesFn();
-              if (result.events?.length > 0) {
-                setState(
-                  (s) => {
-                    const existingIds = new Set(result.events.map((e) => e.id));
-                    return {
-                      ...s,
-                      events: [...result.events, ...s.events.filter((e) => !existingIds.has(e.id))],
-                    };
-                  },
-                  { persist: false },
-                );
+      <div className="px-6 md:px-10 py-3 border-b border-border bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-foreground font-bold">
+              Hull Sports Fixtures Sync
+            </span>
+            <span className="text-[10px] bg-accent/20 text-foreground font-mono px-1.5 py-0.5 font-bold uppercase">
+              City · KR · FC
+            </span>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            Pull full season & upcoming fixtures directly into What's On with official dates, kick-off times, and ticketing
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            disabled={importing}
+            onClick={async () => {
+              setImporting(true);
+              setImportingTeam("hull-city");
+              setImportStatus("");
+              try {
+                const result = await syncHullSportsFixturesFn({ data: { team: "hull-city" } });
+                if (result.events?.length > 0) {
+                  setState(
+                    (s) => {
+                      const existingIds = new Set(result.events.map((e) => e.id));
+                      return {
+                        ...s,
+                        events: [...result.events, ...s.events.filter((e) => !existingIds.has(e.id))],
+                      };
+                    },
+                    { persist: false },
+                  );
+                }
+                setImportStatus(`✓ Hull City: Synced ${result.imported} fixtures across the full season.`);
+              } catch (err) {
+                setImportStatus(`Error: ${String(err)}`);
+              } finally {
+                setImporting(false);
+                setImportingTeam(null);
               }
-              const fixtureNames = result.fixtures?.slice(0, 3).join(", ");
-              const extra = (result.fixtures?.length || 0) > 3 ? ` +${(result.fixtures?.length || 0) - 3} more` : "";
-              setImportStatus(
-                `✓ Synced ${result.imported} fixtures${fixtureNames ? ` (${fixtureNames}${extra})` : ""}${result.skipped ? `, ${result.skipped} skipped` : ""}`,
-              );
-            } catch (err) {
-              setImportStatus(`Error: ${String(err)}`);
-            } finally {
-              setImporting(false);
-            }
-          }}
-          className={adminBtn}
-        >
-          {importing ? "Syncing Fixtures…" : "Sync Hull City Fixtures"}
-        </button>
+            }}
+            className={adminBtn}
+            title="Sync all remaining Hull City AFC fixtures for the entire season"
+          >
+            {importingTeam === "hull-city" ? "Syncing City…" : "Hull City (Full Season)"}
+          </button>
+          <button
+            type="button"
+            disabled={importing}
+            onClick={async () => {
+              setImporting(true);
+              setImportingTeam("hull-kr");
+              setImportStatus("");
+              try {
+                const result = await syncHullSportsFixturesFn({ data: { team: "hull-kr" } });
+                if (result.events?.length > 0) {
+                  setState(
+                    (s) => {
+                      const existingIds = new Set(result.events.map((e) => e.id));
+                      return {
+                        ...s,
+                        events: [...result.events, ...s.events.filter((e) => !existingIds.has(e.id))],
+                      };
+                    },
+                    { persist: false },
+                  );
+                }
+                setImportStatus(`✓ Hull KR: Synced ${result.imported} Super League fixtures.`);
+              } catch (err) {
+                setImportStatus(`Error: ${String(err)}`);
+              } finally {
+                setImporting(false);
+                setImportingTeam(null);
+              }
+            }}
+            className={adminBtn}
+            title="Sync Hull KR (Hull Kingston Rovers) Super League fixtures"
+          >
+            {importingTeam === "hull-kr" ? "Syncing KR…" : "Hull KR"}
+          </button>
+          <button
+            type="button"
+            disabled={importing}
+            onClick={async () => {
+              setImporting(true);
+              setImportingTeam("hull-fc");
+              setImportStatus("");
+              try {
+                const result = await syncHullSportsFixturesFn({ data: { team: "hull-fc" } });
+                if (result.events?.length > 0) {
+                  setState(
+                    (s) => {
+                      const existingIds = new Set(result.events.map((e) => e.id));
+                      return {
+                        ...s,
+                        events: [...result.events, ...s.events.filter((e) => !existingIds.has(e.id))],
+                      };
+                    },
+                    { persist: false },
+                  );
+                }
+                setImportStatus(`✓ Hull FC: Synced ${result.imported} Super League fixtures.`);
+              } catch (err) {
+                setImportStatus(`Error: ${String(err)}`);
+              } finally {
+                setImporting(false);
+                setImportingTeam(null);
+              }
+            }}
+            className={adminBtn}
+            title="Sync Hull FC Super League fixtures (KC / MKM Stadium)"
+          >
+            {importingTeam === "hull-fc" ? "Syncing FC…" : "Hull FC (KC)"}
+          </button>
+          <button
+            type="button"
+            disabled={importing}
+            onClick={async () => {
+              setImporting(true);
+              setImportingTeam("all");
+              setImportStatus("");
+              try {
+                const result = await syncHullSportsFixturesFn({ data: { team: "all" } });
+                if (result.events?.length > 0) {
+                  setState(
+                    (s) => {
+                      const existingIds = new Set(result.events.map((e) => e.id));
+                      return {
+                        ...s,
+                        events: [...result.events, ...s.events.filter((e) => !existingIds.has(e.id))],
+                      };
+                    },
+                    { persist: false },
+                  );
+                }
+                setImportStatus(`✓ Synced ${result.imported} total fixtures across Hull City, Hull KR, and Hull FC!`);
+              } catch (err) {
+                setImportStatus(`Error: ${String(err)}`);
+              } finally {
+                setImporting(false);
+                setImportingTeam(null);
+              }
+            }}
+            className="px-3 py-1.5 bg-accent text-foreground text-xs font-bold uppercase tracking-widest hover:bg-accent/80 transition-colors disabled:opacity-50"
+            title="Sync all Hull sports fixtures at once"
+          >
+            {importingTeam === "all" ? "Syncing All…" : "⚡ Sync All Teams"}
+          </button>
+        </div>
         {importStatus && (
           <span className="text-xs font-mono text-muted-foreground w-full">{importStatus}</span>
         )}
