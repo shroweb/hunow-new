@@ -253,11 +253,11 @@ function AdminEvents() {
         )}
       </div>
       <div className="px-6 md:px-10 py-3 border-b border-border bg-white flex flex-wrap items-center gap-2">
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0 font-bold">
           Hull City AFC
         </span>
         <span className="text-xs text-muted-foreground flex-1">
-          Sync upcoming fixtures from football-data.org
+          Pull live upcoming matches directly into the What's On calendar (No API key needed)
         </span>
         <button
           type="button"
@@ -267,8 +267,22 @@ function AdminEvents() {
             setImportStatus("");
             try {
               const result = await syncHullCityFixturesFn();
+              if (result.events?.length > 0) {
+                setState(
+                  (s) => {
+                    const existingIds = new Set(result.events.map((e) => e.id));
+                    return {
+                      ...s,
+                      events: [...result.events, ...s.events.filter((e) => !existingIds.has(e.id))],
+                    };
+                  },
+                  { persist: false },
+                );
+              }
+              const fixtureNames = result.fixtures?.slice(0, 3).join(", ");
+              const extra = (result.fixtures?.length || 0) > 3 ? ` +${(result.fixtures?.length || 0) - 3} more` : "";
               setImportStatus(
-                `✓ Synced ${result.imported} fixtures${result.skipped ? `, ${result.skipped} skipped` : ""}`,
+                `✓ Synced ${result.imported} fixtures${fixtureNames ? ` (${fixtureNames}${extra})` : ""}${result.skipped ? `, ${result.skipped} skipped` : ""}`,
               );
             } catch (err) {
               setImportStatus(`Error: ${String(err)}`);
@@ -278,7 +292,7 @@ function AdminEvents() {
           }}
           className={adminBtn}
         >
-          {importing ? "Syncing…" : "Sync Fixtures"}
+          {importing ? "Syncing Fixtures…" : "Sync Hull City Fixtures"}
         </button>
         {importStatus && (
           <span className="text-xs font-mono text-muted-foreground w-full">{importStatus}</span>
