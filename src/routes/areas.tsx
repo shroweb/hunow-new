@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { getAreasIndexData } from "@/lib/area-guides.functions";
+import { img } from "@/data/seed";
 
 export const Route = createFileRoute("/areas")({
   loader: async () => ({ areas: await getAreasIndexData() }),
@@ -39,7 +40,7 @@ function AreasIndex() {
               {featuredImage ? (
                 <div className="h-36 overflow-hidden">
                   <img
-                    src={featuredImage}
+                    src={img(featuredImage, 600, 400)}
                     alt={area}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />

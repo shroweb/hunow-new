@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { AdminHeader, adminBtn, adminInput } from "@/components/admin/AdminLayout";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { getAllAreaGuidesAdmin, upsertAreaGuideAdmin } from "@/lib/area-guides.functions";
 import type { AreaGuideRow } from "@/lib/db.server";
 
@@ -67,16 +68,25 @@ function AdminAreas() {
               key={entry.slug}
               type="button"
               onClick={() => select(entry)}
-              className={`w-full text-left border-2 p-4 transition-colors ${
+              className={`w-full text-left border-2 p-3 transition-colors flex items-center justify-between gap-3 ${
                 selected?.slug === entry.slug
                   ? "border-accent bg-accent/10"
                   : "border-foreground bg-white hover:bg-foreground/5"
               }`}
             >
-              <span className="block font-bold">{entry.area}</span>
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">
-                {entry.guide?.intro ? "Has intro" : "No intro yet"}
-              </span>
+              <div className="min-w-0">
+                <span className="block font-bold truncate">{entry.area}</span>
+                <span className="font-mono text-[10px] uppercase text-muted-foreground">
+                  {entry.guide?.intro ? "Has intro" : "No intro yet"}
+                </span>
+              </div>
+              {entry.guide?.featuredImage && (
+                <img
+                  src={entry.guide.featuredImage}
+                  alt=""
+                  className="size-9 object-cover border border-foreground/20 shrink-0"
+                />
+              )}
             </button>
           ))}
         </aside>
@@ -101,24 +111,11 @@ function AdminAreas() {
               />
             </label>
 
-            <label className="block space-y-1">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">
-                Featured Image URL
-              </span>
-              <input
-                className={adminInput}
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                placeholder="https://…"
-              />
-              {image && (
-                <img
-                  src={image}
-                  alt="Preview"
-                  className="mt-2 h-32 w-full object-cover border border-foreground/20"
-                />
-              )}
-            </label>
+            <ImageUpload
+              value={image}
+              onChange={setImage}
+              label="Featured Image"
+            />
 
             <div className="flex items-center gap-4">
               <button type="submit" className={adminBtn}>

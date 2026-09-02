@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ListingCard, EventCard, ArticleCard } from "@/components/cards";
 import { getAreaPageData } from "@/lib/area-guides.functions";
+import { img } from "@/data/seed";
 
 export const Route = createFileRoute("/areas/$area")({
   loader: async ({ params }) => {
@@ -47,7 +48,7 @@ function AreaPage() {
         {guide.featuredImage ? (
           <>
             <img
-              src={guide.featuredImage}
+              src={img(guide.featuredImage, 1400, 800)}
               alt={area}
               className="absolute inset-0 w-full h-full object-cover"
             />

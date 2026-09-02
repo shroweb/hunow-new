@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { AdminField, AdminHeader, adminBtn, adminInput } from "@/components/admin/AdminLayout";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { getSettings, saveSetting } from "@/lib/settings.functions";
 import { resetStoreToEmpty, exportAllDataFn } from "@/lib/admin-maintenance.functions";
 import { sendPushToSegmentFn } from "@/lib/content.functions";
@@ -18,7 +19,7 @@ interface FieldDef {
   key: string;
   label: string;
   placeholder?: string;
-  type?: "text" | "url" | "email" | "tel" | "textarea";
+  type?: "text" | "url" | "email" | "tel" | "textarea" | "image";
   hint?: string;
 }
 
@@ -49,8 +50,8 @@ const SECTIONS: { title: string; fields: FieldDef[] }[] = [
       },
       {
         key: "og_image",
-        label: "Default OG image URL",
-        type: "url",
+        label: "Default OG image",
+        type: "image",
         placeholder: "https://hunow.co.uk/og-default.jpg",
         hint: "Fallback social share image (1200×630px recommended). Leave blank to use Twitter summary card.",
       },
@@ -216,7 +217,13 @@ function AdminSettings() {
               </div>
               {section.fields.map(({ key, label, placeholder, type = "text", hint }) => (
                 <AdminField key={key} label={label}>
-                  {type === "textarea" ? (
+                  {type === "image" ? (
+                    <ImageUpload
+                      name={key}
+                      defaultValue={settings[key] ?? ""}
+                      label={label}
+                    />
+                  ) : type === "textarea" ? (
                     <textarea
                       name={key}
                       defaultValue={settings[key] ?? ""}
