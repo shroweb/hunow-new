@@ -108,6 +108,51 @@ export const Route = createFileRoute("/events/$slug")({
             ],
           }),
         },
+        ...(e.slug === "hull-fair-2026"
+          ? [
+              {
+                type: "application/ld+json",
+                children: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "FAQPage",
+                  mainEntity: [
+                    {
+                      "@type": "Question",
+                      name: "What are the dates for Hull Fair 2026?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Hull Fair 2026 runs from Friday 9 October to Saturday 17 October 2026 at Walton Street Fairground. By royal charter tradition, the fair is closed on Sunday 11 October.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "Do you need tickets for Hull Fair?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "No. Entry to Hull Fair is 100% free. You do not need an admission ticket or booking to enter the fairground site.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "How much are rides at Hull Fair?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Rides are individually priced: children's rides typically cost £2.00–£3.00, family rides cost £3.00–£4.00, and major thrill rides cost £4.00–£5.00+ each.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "Where can you park for Hull Fair?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Official Park and Ride services operate from Priory Park (HU4 7DY) in West Hull and Craven Park (HU9 5DX) in East Hull. Stadium parking is available at the MKM Stadium (£5–£6). Surrounding streets are strict residents-only permit zones.",
+                      },
+                    },
+                  ],
+                }),
+              },
+            ]
+          : []),
       ],
     };
   },

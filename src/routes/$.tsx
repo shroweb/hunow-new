@@ -5,6 +5,9 @@ import { resolveRedirect } from "@/lib/redirects.functions";
 export const Route = createFileRoute("/$")({
   loader: async ({ location }) => {
     const path = `/${location.pathname.replace(/^\//, "")}`.replace(/\/$/, "") || "/";
+    if (path.startsWith("/wp-content") || path.startsWith("/pdfviewer")) {
+      throw redirect({ href: "/", statusCode: 301 });
+    }
     const match = await resolveRedirect({ data: { path } });
     if (match) {
       throw redirect({ href: match.to_path, statusCode: match.permanent ? 301 : 302 });

@@ -195,6 +195,124 @@ export const seedArticles: Article[] = [
     },
   },
   {
+    id: "article-essential-guide-to-christmas-in-hull",
+    title: "The Essential Guide to Christmas 2026 in Hull: Markets, Light Switch-On & Events",
+    slug: "essential-guide-to-christmas-in-hull",
+    excerpt:
+      "Everything happening for Christmas 2026 in Hull. Queen Victoria Square lights switch-on, Trinity Market festive night markets, Beverley Festival of Christmas, and theatre pantomimes.",
+    content: `<h2>Christmas 2026 in Hull & East Yorkshire</h2>
+<p>From historic cobbled streets illuminated by thousands of twinkling festoon bulbs to bustling Victorian artisan craft markets and packed theatre pantomimes, Hull comes alive across November and December. Here is your definitive guide to the essential events, markets, light switch-ons, and seasonal celebrations across the city for Christmas 2026.</p>
+
+<h2>1. Queen Victoria Square Christmas Lights Switch-On</h2>
+<p>Hull's festive season officially begins with the spectacular <strong>Queen Victoria Square Light Switch-On</strong> in late November. Centred around the grand backdrop of Hull City Hall and the Ferens Art Gallery, the square fills with thousands of families for live entertainment, community choirs, and special guest appearances before the big countdown triggers the illuminations and a rooftop pyrotechnic finale.</p>
+<ul>
+  <li><strong>Location:</strong> Queen Victoria Square, Hull City Centre (HU1 3RA)</li>
+  <li><strong>Admission:</strong> Free entry</li>
+  <li><strong>Highlights:</strong> Giant illuminated Christmas tree, street food stalls, live brass bands, and late-night shopping opening.</li>
+</ul>
+
+<h2>2. Trinity Market Victorian Christmas & Festive Night Markets</h2>
+<p>Hull Old Town's independent market hall hosts a series of special <strong>Christmas Night Markets</strong> throughout December. Expect the indoor food court serving festive street food — spiced bratwurst, Yorkshire pudding wraps, festive loaded roasties, mulled spiced cider, and hot chocolate with toasted marshmallows — alongside dozens of local makers and craftsmen selling unique gifts, prints, and ceramics.</p>
+<ul>
+  <li><strong>Location:</strong> Trinity Market, Trinity House Lane, Hull HU1 2JH</li>
+  <li><strong>Dates:</strong> Every Thursday evening and selected weekends in December</li>
+  <li><strong>Vibe:</strong> Live acoustic music, festive drinks, covered and warm.</li>
+</ul>
+
+<h2>3. Beverley Festival of Christmas</h2>
+<p>Just 15 minutes north of Hull, the world-famous <strong>Beverley Festival of Christmas</strong> transforms the historic Georgian market town into a Victorian winter wonderland. More than 120 Victorian stalls take over Saturday Market, Wednesday Market, and North Bar Within, featuring reindeer parades, traditional fairground rides, and carol singing outside Beverley Minster.</p>
+<ul>
+  <li><strong>Location:</strong> Saturday Market & Wednesday Market, Beverley (HU17 8AA)</li>
+  <li><strong>Travel Advice:</strong> Park & Ride services run continuously from Beverley Racecourse; public buses run frequently from Hull Paragon Interchange.</li>
+</ul>
+
+<h2>4. Festive Shows & Pantomimes</h2>
+<ul>
+  <li><strong>Hull New Theatre:</strong> The region's flagship star-studded family pantomime features high-energy comedy, spectacular staging, and audience participation from early December through mid-January.</li>
+  <li><strong>Hull Truck Theatre (Ferensway):</strong> Celebrated for inventive, heartwarming home-grown holiday productions tailored for younger children and theatre lovers alike.</li>
+  <li><strong>Hull City Hall:</strong> Traditional candlelit orchestral performances of Handel's Messiah and festive brass band concerts.</li>
+</ul>
+
+<h2>5. Festive Food & Independent Shopping</h2>
+<p>Combine your day with independent gift shopping down <strong>Humber Street in the Fruit Market</strong>, where local boutiques, art galleries, and craft bakeries offer thoughtful presents you won't find on the high street. Warm up afterwards in one of Old Town's historic taverns by an open real log fire.</p>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "things-to-do",
+    author: "HU NOW Editorial Team",
+    readingMinutes: 5,
+    featuredImage: "photo-1512389142860-9c449e58a543",
+    status: "published",
+    publishedAt: "2026-09-03",
+    tags: ["Christmas", "Hull Christmas Markets", "Beverley Festival of Christmas", "Light Switch On", "Guides"],
+    isFeatured: true,
+    isSponsored: false,
+    seo: {
+      title: "The Essential Guide to Christmas 2026 in Hull: Markets, Lights & Events",
+      description:
+        "Complete guide to Christmas 2026 in Hull. Queen Victoria Square lights switch-on, Trinity Market Christmas markets, Beverley Festival of Christmas and festive theatre shows.",
+    },
+  },
+  {
+    id: "article-hull-bonfire-night-fireworks-guide-2026",
+    title: "Bonfire Night & Fireworks in Hull & East Yorkshire 2026: Dates, Times & Tickets",
+    slug: "hull-bonfire-night-fireworks-guide-2026",
+    excerpt:
+      "Where to watch fireworks in Hull and East Yorkshire for Bonfire Night 2026. Dates, ticket details, food stalls, and timings for Craven Park, Brantingham, Beverley, and community displays.",
+    content: `<h2>Bonfire Night & Fireworks in Hull & East Yorkshire 2026</h2>
+<p>Looking for the best places to watch fireworks across Hull, Beverley, and East Yorkshire this November? Whether you want a massive stadium laser and pyrotechnic musical extravaganza or a traditional village green bonfire with jacket potatoes and sparklers, here is your complete guide to Bonfire Night 2026.</p>
+
+<h2>1. Craven Park Fireworks Spectacular (East Hull)</h2>
+<p>Hull's largest organised fireworks event takes place at <strong>Sewell Group Craven Park</strong>, home of Hull KR. The evening features an immense musical fireworks display lighting up the night sky above the stadium bowl, accompanied by live DJ entertainment, funfair rides for children, and stadium street food kiosks.</p>
+<ul>
+  <li><strong>Location:</strong> Sewell Group Craven Park, Preston Road, Hull HU9 5DX</li>
+  <li><strong>Timings:</strong> Gates open at 4:30 PM, display begins at approximately 7:30 PM</li>
+  <li><strong>Tickets:</strong> Advance online booking recommended; early-bird family tickets available.</li>
+</ul>
+
+<h2>2. Brantingham Park Big Fireworks Display (Brough / West Hull)</h2>
+<p>Situated in the grounds of Hull Ionians RUFC, <strong>Brantingham Park</strong> hosts one of the most popular community fireworks displays in the East Riding. The event boasts an enormous bonfire, extensive licensed bars, hog roast and burger stalls, and a dedicated low-noise children's display preceding the main musical show.</p>
+<ul>
+  <li><strong>Location:</strong> Brantingham Park, Brantingham Road, Brough HU15 1HX</li>
+  <li><strong>Parking:</strong> On-site field parking available (arrive early to avoid queues on Cave Road).</li>
+</ul>
+
+<h2>3. Beverley Westwood & Town Fireworks</h2>
+<p>A classic Guy Fawkes celebration against the atmospheric landscape of the Beverley Westwood pasture. Organised by Beverley Lions and local community partners, it features a traditional wood bonfire built by volunteers and a stunning aerial fireworks display illuminating the Westwood Black Mill.</p>
+<ul>
+  <li><strong>Location:</strong> Beverley Westwood (near the Black Mill), HU17 8RG</li>
+  <li><strong>Admission:</strong> Free entry with voluntary bucket donations supporting local charities.</li>
+</ul>
+
+<h2>4. Swanland Playing Fields Community Bonfire</h2>
+<p>A firm favourite with West Hull families, Swanland's annual bonfire night provides a welcoming, community-focused evening with hot food stalls, children's rides, mulled wine, and synchronized fireworks over the playing fields.</p>
+<ul>
+  <li><strong>Location:</strong> Swanland Playing Fields, West Leys Road, Swanland HU14 3LZ</li>
+</ul>
+
+<h2>Bonfire Night Safety & Visiting Tips</h2>
+<ul>
+  <li><strong>Arrive Early:</strong> Popular displays in Craven Park and Brantingham see heavy traffic on approach roads between 6:00 PM and 7:00 PM.</li>
+  <li><strong>Wrap Up Warm:</strong> November evenings in East Yorkshire can be cold and windy; thermal layers, gloves, and waterproof boots are recommended.</li>
+  <li><strong>Pet Welfare:</strong> Keep dogs and cats safely indoors with curtains drawn and soothing music playing during peak fireworks hours (6:00 PM – 9:00 PM).</li>
+</ul>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "things-to-do",
+    author: "HU NOW Editorial Team",
+    readingMinutes: 4,
+    featuredImage: "photo-1514565131-fce0801e5785",
+    status: "published",
+    publishedAt: "2026-09-03",
+    tags: ["Bonfire Night", "Fireworks", "Craven Park", "Beverley", "Guides"],
+    isFeatured: true,
+    isSponsored: false,
+    seo: {
+      title: "Bonfire Night & Fireworks Displays in Hull & East Yorkshire 2026",
+      description:
+        "Complete guide to Bonfire Night & Fireworks 2026 in Hull and East Yorkshire. Craven Park, Brantingham, Beverley Westwood, dates, tickets, and times.",
+    },
+  },
+  {
     id: "a2",
     title: "10 Minutes with Local Mural Artist Spray-K",
     slug: "10-minutes-spray-k",

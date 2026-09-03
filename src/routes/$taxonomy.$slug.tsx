@@ -130,6 +130,43 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
             ],
           }),
         },
+        ...(a.slug === "guide-to-parking-at-hull-fair"
+          ? [
+              {
+                type: "application/ld+json",
+                children: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "FAQPage",
+                  mainEntity: [
+                    {
+                      "@type": "Question",
+                      name: "Where is the best place to park for Hull Fair 2026?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "The best and easiest place to park is the official Priory Park and Ride (HU4 7DY) off the A63 in Hessle. It offers over 650 secure spaces and direct shuttle buses running frequently right to Walton Street gates.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "Can you park at the MKM Stadium for Hull Fair?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yes, dedicated parking is available inside West Park via the Walton Street / Anlaby Road entrance for £5–£6 per vehicle on non-match days.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "Can you park on the streets near Walton Street?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "No. All residential streets within a 1-mile radius of Walton Street are strictly enforced residents-only permit zones. Civil enforcement officers issue immediate penalty charge notices (PCNs) and tow unauthorised vehicles.",
+                      },
+                    },
+                  ],
+                }),
+              },
+            ]
+          : []),
       ],
     };
   },
