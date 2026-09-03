@@ -1,5 +1,5 @@
 import type { EventItem } from "@/types";
-import { slugify } from "./dedupe.server";
+import { slugify, formatEventTitle } from "./dedupe.server";
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
@@ -36,7 +36,8 @@ export async function fetchVisitHullEvents(limit = 25): Promise<EventItem[]> {
             const data = JSON.parse(schemaMatch[1]);
             if (data["@type"] !== "Event" || !data.name || !data.startDate) return null;
 
-            const title = String(data.name).trim();
+            const rawName = String(data.name).trim();
+            const title = formatEventTitle(rawName);
             const startDate = String(data.startDate).slice(0, 10);
             if (new Date(startDate) < new Date(new Date().setDate(new Date().getDate() - 1))) {
               // Skip past events

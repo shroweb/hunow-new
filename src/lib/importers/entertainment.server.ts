@@ -1,5 +1,5 @@
 import type { EventItem } from "@/types";
-import { slugify } from "./dedupe.server";
+import { slugify, formatEventTitle } from "./dedupe.server";
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
@@ -63,7 +63,8 @@ export async function fetchConnexinLiveEvents(): Promise<EventItem[]> {
       const startDate = parseHumanDate(rawDate);
       if (!startDate) continue;
 
-      const titleLower = rawTitle.toLowerCase();
+      const title = formatEventTitle(rawTitle);
+      const titleLower = title.toLowerCase();
       let category = "Music";
       if (titleLower.includes("comedy") || titleLower.includes("ramsey") || titleLower.includes("kay")) {
         category = "Comedy";
@@ -73,12 +74,12 @@ export async function fetchConnexinLiveEvents(): Promise<EventItem[]> {
         category = "Family";
       }
 
-      const id = `connexin-${slugify(rawTitle)}-${startDate}`;
+      const id = `connexin-${slugify(title)}-${startDate}`;
       events.push({
         id,
-        title: rawTitle,
-        slug: slugify(`connexin-${rawTitle}-${startDate}`),
-        description: `Live show at Connexin Live, Hull's premier entertainment arena. Featuring ${rawTitle}.`,
+        title,
+        slug: slugify(`connexin-${title}-${startDate}`),
+        description: `Live show at Connexin Live, Hull's premier entertainment arena. Featuring ${title}.`,
         category,
         area: "City Centre",
         startDate,
@@ -132,17 +133,18 @@ export async function fetchHullTheatresEvents(): Promise<EventItem[]> {
         ? { lat: 53.7437, lng: -0.3392 }
         : { lat: 53.7472, lng: -0.3398 };
 
-      const titleLower = rawTitle.toLowerCase();
+      const title = formatEventTitle(rawTitle);
+      const titleLower = title.toLowerCase();
       let category = "Theatre";
       if (titleLower.includes("comedy") || titleLower.includes("lol")) category = "Comedy";
       else if (titleLower.includes("organ") || titleLower.includes("orchestra") || titleLower.includes("concert")) category = "Music";
 
-      const id = `hulltheatres-${slugify(rawTitle)}-${startDate}`;
+      const id = `hulltheatres-${slugify(title)}-${startDate}`;
       events.push({
         id,
-        title: rawTitle,
-        slug: slugify(`${venueName}-${rawTitle}-${startDate}`),
-        description: `Experience ${rawTitle} live on stage at ${venueName}. Performance dates: ${rawDateStr}.`,
+        title,
+        slug: slugify(`${venueName}-${title}-${startDate}`),
+        description: `Experience ${title} live on stage at ${venueName}. Performance dates: ${rawDateStr}.`,
         category,
         area: "City Centre",
         startDate,

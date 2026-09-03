@@ -23,6 +23,96 @@ export function slugify(text: string): string {
     .slice(0, 80);
 }
 
+const MINOR_WORDS = new Set([
+  "a", "an", "the", "and", "but", "or", "for", "nor", "on", "at", "to",
+  "from", "by", "with", "in", "of", "vs", "v", "via", "featuring"
+]);
+
+const SPECIAL_CASES = new Map([
+  ["fc", "FC"],
+  ["kr", "KR"],
+  ["uk", "UK"],
+  ["kc", "KC"],
+  ["mkm", "MKM"],
+  ["dj", "DJ"],
+  ["vip", "VIP"],
+  ["cbeebies", "CBeebies"],
+  ["bbc", "BBC"],
+  ["fsa", "FSA"],
+  ["qa", "Q&A"],
+  ["q&a", "Q&A"],
+  ["lol", "LOL"],
+  ["ub40", "UB40"],
+  ["5k", "5k"],
+  ["10k", "10k"],
+  ["live", "Live"],
+  ["ii", "II"],
+  ["iii", "III"],
+  ["iv", "IV"],
+]);
+
+/**
+ * Normalizes event titles: converts shouting ALL-CAPS titles into polished Title Case
+ * while preserving standard acronyms (e.g. CBeebies, FC, KR, UB40).
+ */
+export function formatEventTitle(title: string): string {
+  if (!title) return "";
+  const trimmed = title.trim().replace(/\s+/g, " ");
+  const letters = trimmed.replace(/[^a-zA-Z]/g, "");
+  if (letters.length === 0) return trimmed;
+
+  const upperCount = (letters.match(/[A-Z]/g) || []).length;
+  const isAllCaps = upperCount / letters.length > 0.70 && letters.length > 3;
+
+  if (!isAllCaps) {
+    return trimmed;
+  }
+
+  const words = trimmed.split(" ");
+  return words.map((word, i) => {
+    const prevWord = i > 0 ? words[i - 1] : "";
+    const isStartOfClause =
+      i === 0 || prevWord.endsWith(":") || prevWord.endsWith("-") || prevWord.endsWith("—");
+
+    const match = word.match(/^([^a-zA-Z0-9]*)(.*?)([^a-zA-Z0-9]*)$/);
+    if (!match) return word;
+    const [, pre, core, post] = match;
+    const lower = core.toLowerCase();
+
+    if (SPECIAL_CASES.has(lower)) {
+      return pre + SPECIAL_CASES.get(lower) + post;
+    }
+
+    if (!isStartOfClause && MINOR_WORDS.has(lower)) {
+      return pre + lower + post;
+    }
+
+    if (core.includes("-")) {
+      const parts = core.split("-").map((p) => {
+        const pLower = p.toLowerCase();
+        if (SPECIAL_CASES.has(pLower)) return SPECIAL_CASES.get(pLower);
+        return p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+      });
+      return pre + parts.join("-") + post;
+    }
+
+    if (core.includes("'") || core.includes("\u2019")) {
+      const sep = core.includes("'") ? "'" : "\u2019";
+      const parts = core.split(sep);
+      return (
+        pre +
+        parts[0].charAt(0).toUpperCase() +
+        parts[0].slice(1).toLowerCase() +
+        sep +
+        parts.slice(1).map((p) => p.toLowerCase()).join(sep) +
+        post
+      );
+    }
+
+    return pre + core.charAt(0).toUpperCase() + core.slice(1).toLowerCase() + post;
+  }).join(" ");
+}
+
 /**
  * Check if an event already exists in the database by slug, ID, or (title + startDate).
  */
@@ -64,13 +154,34 @@ export async function findExistingEvent(
 
 export async function upsertEventDeduplicated(
   pool: Pool,
-  event: EventItem,
+  rawEvent: EventItem,
 ): Promise<"created" | "updated" | "skipped"> {
+  const cleanTitle = formatEventTitle(rawEvent.title);
+  let cleanDesc = rawEvent.description || "";
+  if (rawEvent.title !== cleanTitle && cleanDesc.includes(rawEvent.title)) {
+    cleanDesc = cleanDesc.replaceAll(rawEvent.title, cleanTitle);
+  }
+  const event: EventItem = {
+    ...rawEvent,
+    title: cleanTitle,
+    description: cleanDesc,
+  };
+
   const existing = await findExistingEvent(pool, event);
 
   if (existing) {
     let changed = false;
     const merged = { ...existing };
+
+    // Update title if existing has shouting all caps
+    if (merged.title !== cleanTitle) {
+      merged.title = cleanTitle;
+      changed = true;
+    }
+    if (merged.description && rawEvent.title !== cleanTitle && merged.description.includes(rawEvent.title)) {
+      merged.description = merged.description.replaceAll(rawEvent.title, cleanTitle);
+      changed = true;
+    }
 
     // Enrich missing fields from the new scrape
     if ((!merged.ticketUrl || merged.ticketUrl.length === 0) && event.ticketUrl) {
