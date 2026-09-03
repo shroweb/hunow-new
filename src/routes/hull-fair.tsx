@@ -266,7 +266,7 @@ function HullFairPage() {
 
       {/* 2. Quick Navigation Bar */}
       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border py-3 px-4 overflow-x-auto scrollbar-none">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 whitespace-nowrap text-xs font-bold uppercase">
+        <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center gap-2 whitespace-nowrap text-xs font-bold uppercase">
           <span className="text-muted-foreground font-mono text-[10px] mr-2">Jump to:</span>
           <a href="#dates" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
             📅 Dates & Times
