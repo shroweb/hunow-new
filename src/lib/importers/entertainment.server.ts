@@ -13,17 +13,18 @@ function parseMonth(mon: string): string {
   return months[mon.toLowerCase()] || "01";
 }
 
-// "SATURDAY, 5 SEPTEMBER 2026" or "5 SEP 2026" -> "2026-09-05"
 function parseHumanDate(dateStr: string): string {
-  const clean = dateStr.replace(/^[a-zA-Z]+,\s*/, "").trim(); // strip "SATURDAY, "
-  const parts = clean.split(/\s+/);
-  if (parts.length >= 3) {
-    const day = parts[0].padStart(2, "0");
-    const month = parseMonth(parts[1]);
-    const year = parts[2];
-    return `${year}-${month}-${day}`;
-  }
-  return "";
+  const yearMatch = dateStr.match(/\b(202[5-9])\b/);
+  const year = yearMatch ? yearMatch[1] : new Date().getFullYear().toString();
+
+  const monthMatch = dateStr.match(/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b/i);
+  if (!monthMatch) return "";
+  const month = parseMonth(monthMatch[1]);
+
+  const dayMatch = dateStr.match(/\b([1-9]|[12][0-9]|3[01])\b/);
+  const day = dayMatch ? dayMatch[1].padStart(2, "0") : "01";
+
+  return `${year}-${month}-${day}`;
 }
 
 // "1 Sep - 5 Sep 2026" -> "2026-09-01"
