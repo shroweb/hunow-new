@@ -21,6 +21,22 @@ import { useStore } from "@/lib/store";
 
 type Tab = "card" | "profile" | "security" | "newsletter" | "activity" | "danger";
 
+const btn =
+  "inline-flex items-center bg-foreground text-background px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-accent transition-colors";
+const btnOutline =
+  "inline-flex items-center border-2 border-foreground px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground hover:text-background transition-colors";
+const input =
+  "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";
+
+function readDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
 export const Route = createFileRoute("/account")({
   validateSearch: (search: Record<string, unknown>) => ({
     tab: (["card", "profile", "security", "newsletter", "activity", "danger"].includes(
@@ -218,12 +234,15 @@ function Avatar({
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
-  const initials = user.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const initials =
+    (user?.name || "U")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "U";
 
   async function onFile(file: File | null) {
     if (!file) return;
@@ -679,25 +698,12 @@ function Field({
   );
 }
 
-function readDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result ?? ""));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-}
-
-const btn =
-  "inline-flex items-center bg-foreground text-background px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-accent transition-colors";
-const btnOutline =
-  "inline-flex items-center border-2 border-foreground px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-foreground hover:text-background transition-colors";
-const input =
-  "w-full bg-background border-2 border-foreground px-4 py-3 font-mono text-sm focus:outline-none";
-
-function CardTab({ userName }: { userName: string }) {
+function CardTab({ userName }: { userName?: string }) {
   const allOffers = useStore((s) => s.offers ?? []);
-  const offers = useMemo(() => allOffers.filter((o) => o.status === "active"), [allOffers]);
+  const offers = useMemo(
+    () => (allOffers || []).filter((o) => o && o.status === "active"),
+    [allOffers],
+  );
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [cardToken, setCardToken] = useState<string | null>(null);
   const [tier, setTier] = useState("Member");
@@ -791,10 +797,11 @@ function CardTab({ userName }: { userName: string }) {
     bronze: { from: "#1c0e06", to: "#3a1e0c", accent: "#d08040", chip: "#a05820" },
     standard: { from: "#06102a", to: "#0e1e48", accent: "#6090e0", chip: "#3a5898" },
   };
-  const pal = tierPalette[tier.toLowerCase()] ?? tierPalette.standard;
+  const pal = tierPalette[(tier || "").toLowerCase()] ?? tierPalette.standard;
   const cardNum = cardToken
     ? `•••• •••• ${cardToken.replace(/-/g, "").slice(0, 4).toUpperCase()}`
     : "•••• •••• ••••";
+  const pointsNumber = Number(points ?? 0) || 0;
 
   return (
     <div className="max-w-sm mx-auto pt-6 pb-12 px-4 space-y-5">
@@ -915,7 +922,7 @@ function CardTab({ userName }: { userName: string }) {
                     Points
                   </div>
                   <div className="text-[26px] font-bold leading-none" style={{ color: pal.accent }}>
-                    {points.toLocaleString()}
+                    {pointsNumber.toLocaleString()}
                   </div>
                 </div>
               </div>
@@ -1023,29 +1030,37 @@ function CardTab({ userName }: { userName: string }) {
           <p className="font-mono text-xs text-muted-foreground">No redemptions yet.</p>
         ) : (
           <div className="space-y-2">
-            {history.map((r) => (
-              <div
-                key={r.id}
-                className="border border-foreground/15 p-3 flex justify-between gap-3"
-              >
-                <div>
-                  <p className="text-sm font-bold">{r.offer_title ?? "Offer"}</p>
-                  {r.listing_name && (
-                    <p className="font-mono text-[10px] text-muted-foreground">{r.listing_name}</p>
-                  )}
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="font-mono text-[10px] text-muted-foreground">
-                    {new Date(r.redeemed_at).toLocaleDateString("en-GB", {
+            {history.map((r) => {
+              let dateStr = "";
+              try {
+                dateStr = r.redeemed_at
+                  ? new Date(r.redeemed_at).toLocaleDateString("en-GB", {
                       day: "numeric",
                       month: "short",
                       year: "numeric",
-                    })}
-                  </p>
-                  <p className="font-mono text-[9px] text-accent uppercase">{r.method}</p>
+                    })
+                  : "";
+              } catch {
+                dateStr = "";
+              }
+              return (
+                <div
+                  key={r.id}
+                  className="border border-foreground/15 p-3 flex justify-between gap-3"
+                >
+                  <div>
+                    <p className="text-sm font-bold">{r.offer_title ?? "Offer"}</p>
+                    {r.listing_name && (
+                      <p className="font-mono text-[10px] text-muted-foreground">{r.listing_name}</p>
+                    )}
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-mono text-[10px] text-muted-foreground">{dateStr}</p>
+                    <p className="font-mono text-[9px] text-accent uppercase">{r.method || "qr"}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
