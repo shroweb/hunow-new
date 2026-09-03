@@ -357,7 +357,7 @@ export const seedArticles: Article[] = [
     section: "food-and-drink",
     author: "HU NOW Food & Drink Team",
     readingMinutes: 5,
-    featuredImage: "photo-1544025162-d76694265947",
+    featuredImage: "photo-1635897411141-7bd2b9c6ab16",
     status: "published",
     publishedAt: "2026-09-03",
     tags: ["Sunday Roast", "Food & Drink", "Old Town", "Pubs", "East Yorkshire", "Guides"],
