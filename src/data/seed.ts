@@ -595,26 +595,44 @@ export const seedEvents: EventItem[] = [
     description:
       "Europe's largest travelling fair returns to Walton Street for its 134th year — nine nights of rides, lights, and brandy snap from 9–17 October. Entry to the fairground is free; rides and stalls are individually priced.",
     content: `
-<h2>What to expect</h2>
-<p>Hull Fair takes over the entire Walton Street site with over 250 rides and stalls. From white-knuckle rollercoasters and ghost trains to traditional gallopers, hook-a-duck and the brandy snap stalls that have been a fixture for generations — there's something for every age.</p>
-<p>Entry to the fairground is free. Rides and stalls are individually priced, with most rides costing £2–5 per person. The fair opens at noon daily and runs until 11pm, with the biggest crowds on Friday and Saturday evenings.</p>
-
-<h2>Tips for visiting</h2>
+<h2>Hull Fair 2026 Dates & Opening Times</h2>
+<p>Hull Fair 2026 officially runs from <strong>Friday 9 October to Saturday 17 October 2026</strong>. Please note that by royal charter tradition, <strong>the fair is closed on Sunday 11 October</strong>.</p>
 <ul>
-  <li><strong>Go mid-week</strong> — Thursday afternoons are the quietest; Friday and Saturday evenings are the busiest.</li>
-  <li><strong>Bring cash</strong> — most rides and stalls are cash only, though some now accept card.</li>
-  <li><strong>Dress for October</strong> — it can be cold and wet. Comfortable shoes are essential on the uneven ground.</li>
-  <li><strong>Budget around £20–30 per person</strong> for a few rides and something to eat.</li>
-  <li><strong>Try the brandy snap</strong> — Hull Fair's signature treat, sold fresh from stalls that have traded here for generations.</li>
+  <li><strong>Opening Day (Friday 9 October):</strong> 5:00 PM – 11:00 PM</li>
+  <li><strong>Saturdays (10 & 17 October):</strong> 12:00 PM (Noon) – 11:00 PM</li>
+  <li><strong>Sunday 11 October:</strong> CLOSED ALL DAY</li>
+  <li><strong>Monday 12 October – Friday 16 October:</strong> 2:00 PM – 11:00 PM daily</li>
 </ul>
 
-<h2>Getting there</h2>
-<p>Parking is very limited in the immediate area. Hull City Council runs <strong>dedicated park-and-ride services</strong> from several sites around the city during fair week — the most convenient option for most visitors.</p>
-<p>The fairground is a <strong>20-minute walk</strong> from Hull city centre, or a short bus ride on routes serving Anlaby Road and Hessle Road. East Yorkshire buses run additional services during fair week.</p>
+<h2>Hull Fair 2026 Tickets & Prices: Do You Need a Ticket?</h2>
+<p><strong>Entry to Hull Fair is 100% FREE.</strong> You do not need to buy an admission ticket or book in advance — you can simply walk straight onto the Walton Street fairground site.</p>
+<p>All rides, food stalls, and games are individually priced:</p>
+<ul>
+  <li><strong>Children's Rides:</strong> Typically £2.00 to £3.00 per ride.</li>
+  <li><strong>Family & Classic Rides (Ferris Wheel, Gallopers, Dodgems):</strong> Typically £3.00 to £4.00.</li>
+  <li><strong>Major Thrill & White-Knuckle Rides:</strong> Typically £4.00 to £5.00+ each.</li>
+  <li><strong>Side Stalls & Games (Hook-a-Duck, Darts, Rifle Range):</strong> Typically £2.00 to £3.00 per turn.</li>
+  <li><strong>Food & Sweets:</strong> Brandy snap from £2, nougat, candy floss, hot roast chestnuts, and loaded chips £3 to £7.</li>
+</ul>
 
-<h2>A Hull institution since 1278</h2>
-<p>Hull Fair has been held annually since 1278, making it one of the oldest surviving fairs in the world. It was originally a charter fair granted by King Edward I and has been held on or near Walton Street since the Victorian era.</p>
-<p>For most Hull families it is a fixed point in the autumn calendar — the smell of brandy snap, the sound of generators, and the glow of lights visible from miles away are as much a part of the city as the Humber itself.</p>
+<h2>Payment: Cash vs. Card</h2>
+<p>While an increasing number of showmen now have contactless card machines, <strong>many stalls and smaller children's rides remain strictly cash-only</strong> due to mobile network congestion on site.</p>
+<p>There are mobile cash ATMs situated at the north and south gates of Walton Street, but they charge withdrawal transaction fees and develop long queues during peak hours. <strong>We strongly recommend bringing £20 to £30 in cash per person</strong> before you arrive.</p>
+
+<h2>Parking & Getting to Walton Street</h2>
+<p>Parking in the immediate Walton Street area is strictly restricted with residents-only permit zones. We strongly advise using the council-run Park & Ride services or stadium parking.</p>
+<p>👉 <strong>For complete parking details, shuttle buses, and map locations, see our <a href="/guides/guide-to-parking-at-hull-fair">Full Guide to Parking at Hull Fair 2026</a>.</strong></p>
+
+<h2>What to Expect at Europe's Largest Travelling Fair</h2>
+<p>Hull Fair occupies 16 acres of Walton Street and the neighbouring parkland with more than <strong>250 rides, 80+ side stalls, and dozens of international food trucks</strong>. From 50-metre observation wheels giving panoramic views across the Humber to high-intensity reverse bungees and historic steam-driven carousels, there is entertainment for all generations.</p>
+
+<h2>Tips for Visiting in 2026</h2>
+<ul>
+  <li><strong>Quietest Times:</strong> Monday to Thursday afternoons (2 PM – 5 PM) are ideal for families with young children and prams.</li>
+  <li><strong>Busiest Times:</strong> Friday evenings and Saturday nights attract peak crowds; expect queues for headline rides.</li>
+  <li><strong>Clothing:</strong> Walton Street is open to the elements — wear warm, waterproof layers and sturdy shoes for walking on asphalt and gravel.</li>
+  <li><strong>Brandy Snap:</strong> Wright's Brandy Snap stalls have traded at Hull Fair for over a century — don't leave without a bag of freshly rolled brandy snaps!</li>
+</ul>
     `.trim(),
     category: "Family",
     startDate: "2026-10-09",
@@ -625,14 +643,14 @@ export const seedEvents: EventItem[] = [
     address: "Walton Street, Hull HU3 6HR",
     price: "Free entry · rides £2–5 each",
     isFree: true,
-    featuredImage: "photo-1567095761054-7a02e69e5c43",
+    featuredImage: "photo-1513889961551-628c1e5e2ee9",
     status: "published",
     isFeatured: true,
     isSponsored: false,
     seo: {
-      title: "Hull Fair 2026 — 9–17 October, Walton Street",
+      title: "Hull Fair 2026 Dates, Prices, Tickets & Times — Walton Street",
       description:
-        "Hull Fair 2026 runs 9–17 October at Walton Street. Europe's largest travelling fair, free entry, 250+ rides and stalls. One of the world's oldest charter fairs, held in Hull since 1278.",
+        "Everything you need to know about Hull Fair 2026 (9–17 October). Free entry, ticket prices, ride costs, daily opening times, cash tips and parking details.",
     },
   },
   {
