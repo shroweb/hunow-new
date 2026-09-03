@@ -878,24 +878,24 @@ function Index() {
 
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
 
-      {/* [NEW] Send us a tip — full bleed dark treatment */}
-      <section className="bg-foreground text-background border-t-2 border-foreground">
-        <div className="max-w-7xl mx-auto px-4 py-16 md:py-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      {/* Send us a tip — editorial bordered block */}
+      <section className="bg-background text-foreground border-t-2 border-foreground py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
             <div className="text-[10px] font-mono uppercase tracking-widest mb-3 text-accent">
               Got a story?
             </div>
-            <h2 className="text-4xl md:text-6xl font-display uppercase leading-none text-background">
+            <h2 className="text-4xl md:text-6xl font-display uppercase leading-none text-foreground">
               Send us a tip
             </h2>
-            <p className="mt-4 max-w-xl text-background/50 text-sm">
+            <p className="mt-4 max-w-xl text-muted-foreground text-sm">
               News tips, press releases, events, openings — if it's happening in Hull, we want to
               know about it.
             </p>
           </div>
           <Link
             to="/contact"
-            className="bg-accent text-foreground px-8 py-4 font-bold uppercase tracking-widest text-xs shrink-0 hover:bg-background hover:text-background transition-colors"
+            className="bg-foreground text-background px-8 py-4 font-bold uppercase tracking-widest text-xs shrink-0 hover:bg-accent hover:text-foreground transition-colors"
           >
             Get in touch →
           </Link>
