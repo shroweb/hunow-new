@@ -94,6 +94,19 @@ export const Route = createFileRoute("/api/cron/publish")({
           }
           if (archived > 0) results.push(`Archived ${archived} past event(s)`);
 
+          // 3b. Automated Event Scraper Sync (checks deduplication & respects deleted_events tombstone)
+          try {
+            const { runAutomatedEventImport } = await import("@/lib/importers/importer.functions");
+            const syncReport = await runAutomatedEventImport();
+            if (syncReport.created > 0 || syncReport.updated > 0) {
+              results.push(
+                `Scraped events: ${syncReport.created} new, ${syncReport.updated} updated, ${syncReport.skipped} skipped (duplicates/deleted)`
+              );
+            }
+          } catch (syncErr) {
+            console.warn("[cron/publish] event scraper sync warning:", syncErr);
+          }
+
           // 4. Send scheduled newsletter campaigns
           const client = await pool.connect();
           try {

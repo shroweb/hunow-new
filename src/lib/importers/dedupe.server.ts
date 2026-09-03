@@ -114,11 +114,55 @@ export function formatEventTitle(title: string): string {
 }
 
 /**
- * Check if an event already exists in the database by slug, ID, or (title + startDate).
+ * Check if an event was previously deleted by an admin.
  */
+export async function isEventDeleted(
+  pool: Pool,
+  event: { id?: string; title: string; startDate: string; slug?: string; ticketUrl?: string },
+): Promise<boolean> {
+  try {
+    // 1. Check exact id
+    if (event.id) {
+      const res = await pool.query("SELECT 1 FROM deleted_events WHERE id = $1 LIMIT 1", [event.id]);
+      if (res.rowCount && res.rowCount > 0) return true;
+    }
+    // 2. Check exact slug
+    if (event.slug) {
+      const res = await pool.query("SELECT 1 FROM deleted_events WHERE slug = $1 LIMIT 1", [event.slug]);
+      if (res.rowCount && res.rowCount > 0) return true;
+    }
+    // 3. Check ticketUrl
+    if (event.ticketUrl && event.ticketUrl.length > 5) {
+      const res = await pool.query("SELECT 1 FROM deleted_events WHERE ticket_url = $1 LIMIT 1", [event.ticketUrl]);
+      if (res.rowCount && res.rowCount > 0) return true;
+    }
+    // 4. Check startDate & normalized title match
+    if (event.startDate && event.title) {
+      const res = await pool.query<{ title: string }>(
+        "SELECT title FROM deleted_events WHERE start_date = $1",
+        [event.startDate],
+      );
+      const norm = normalizeString(event.title);
+      for (const row of res.rows) {
+        const deletedNorm = normalizeString(row.title);
+        if (
+          deletedNorm === norm ||
+          (deletedNorm.length > 5 && norm.includes(deletedNorm)) ||
+          (norm.length > 5 && deletedNorm.includes(norm))
+        ) {
+          return true;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("isEventDeleted check warning:", err);
+  }
+  return false;
+}
+
 export async function findExistingEvent(
   pool: Pool,
-  event: { title: string; startDate: string; locationName?: string; slug?: string },
+  event: { title: string; startDate: string; locationName?: string; slug?: string; ticketUrl?: string },
 ): Promise<EventItem | null> {
   const normTitle = normalizeString(event.title);
 
@@ -131,7 +175,16 @@ export async function findExistingEvent(
     if (res.rowCount && res.rowCount > 0) return res.rows[0].data;
   }
 
-  // 2. Exact match on startDate
+  // 2. Exact match on ticketUrl if provided
+  if (event.ticketUrl && event.ticketUrl.length > 10) {
+    const res = await pool.query<{ id: string; data: EventItem }>(
+      "SELECT id, data FROM events WHERE data->>'ticketUrl' = $1 LIMIT 1",
+      [event.ticketUrl],
+    );
+    if (res.rowCount && res.rowCount > 0) return res.rows[0].data;
+  }
+
+  // 3. Exact match on startDate
   const dateRes = await pool.query<{ id: string; data: EventItem }>(
     "SELECT id, data FROM events WHERE data->>'startDate' = $1",
     [event.startDate],
@@ -166,6 +219,12 @@ export async function upsertEventDeduplicated(
     title: cleanTitle,
     description: cleanDesc,
   };
+
+  // 0. Check if user explicitly deleted this event previously
+  const wasDeleted = await isEventDeleted(pool, event);
+  if (wasDeleted) {
+    return "skipped";
+  }
 
   const existing = await findExistingEvent(pool, event);
 

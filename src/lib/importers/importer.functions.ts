@@ -170,3 +170,43 @@ export const syncAllSourcesFn = createServerFn({ method: "POST" })
       reports: [ent, civ, food, com],
     };
   });
+
+/**
+ * System / Cron runner: automatically imports events without needing an active admin session.
+ * Fully checks deduplication and honors the deleted_events tombstone table.
+ */
+export async function runAutomatedEventImport(): Promise<{
+  scanned: number;
+  created: number;
+  updated: number;
+  skipped: number;
+}> {
+  await ensureSchema();
+  const pool = getPool();
+
+  const [connexin, theatres, civic, community] = await Promise.all([
+    fetchConnexinLiveEvents().catch(() => []),
+    fetchHullTheatresEvents().catch(() => []),
+    fetchVisitHullEvents(35).catch(() => []),
+    generateHullCommunityEvents().catch(() => []),
+  ]);
+
+  const allEvents = [...connexin, ...theatres, ...civic, ...community];
+  let created = 0;
+  let updated = 0;
+  let skipped = 0;
+
+  for (const ev of allEvents) {
+    const res = await upsertEventDeduplicated(pool, ev);
+    if (res === "created") created++;
+    else if (res === "updated") updated++;
+    else skipped++;
+  }
+
+  return {
+    scanned: allEvents.length,
+    created,
+    updated,
+    skipped,
+  };
+}

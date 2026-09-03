@@ -313,6 +313,264 @@ export const seedArticles: Article[] = [
     },
   },
   {
+    id: "article-best-sunday-roasts-hull-east-yorkshire",
+    title: "The Best Sunday Roasts in Hull & East Yorkshire: From Old Town Taverns to Country Inns",
+    slug: "best-sunday-roasts-hull-east-yorkshire",
+    excerpt:
+      "Where to get the ultimate Sunday roast in Hull and East Yorkshire. Giant Yorkshire puddings, slow-roasted local beef, crispy roasties, and rich gravy at the best pubs and restaurants.",
+    content: `<h2>The Quest for the Perfect Sunday Roast</h2>
+<p>In Yorkshire, Sunday lunch is taken seriously. We demand towering, crisp-edged Yorkshire puddings, slow-roasted local meats with serious flavour, roast potatoes that crackle on the outside and fluff up in the centre, and gravy that has simmered for hours. Whether you want a historic wooden-beamed tavern in Hull Old Town or an award-winning country dining pub in the East Riding, here are the finest Sunday roasts to book this weekend.</p>
+
+<h2>1. The Minerva Hotel (Nelson Street Pier, Hull Old Town)</h2>
+<p>Perched right on the riverfront overlooking the Humber Estuary, The Minerva is renowned for delivering one of the most generous, classic Sunday roasts in the city. Expect hand-carved topside of beef, roast loin of pork with golden crackling, or roast turkey served with giant homemade Yorkshire puddings, honey-glazed root vegetables, and lashings of rich meat gravy.</p>
+<ul>
+  <li><strong>Vibe:</strong> Historic maritime pub with panoramic river views and open fireplaces.</li>
+  <li><strong>Tip:</strong> Book a table in the conservatory or arrive early for a walk along the pier before lunch.</li>
+</ul>
+
+<h2>2. The Lion & Key (High Street, Hull Old Town)</h2>
+<p>Famous for its ceiling covered in vintage beer mats and traditional tavern atmosphere, The Lion & Key delivers serious pub dining. Their Sunday lunch features prime cuts from local Yorkshire butchers, accompanied by real ale gravy, seasonal greens, and homemade stuffing.</p>
+<ul>
+  <li><strong>Drink Pairing:</strong> Pick from an unbeatable selection of local craft ales and cask bitters on tap.</li>
+</ul>
+
+<h2>3. The Pipe and Glass (South Dalton, East Yorkshire)</h2>
+<p>Just 25 minutes from Hull near Beverley, The Pipe and Glass holds a Michelin star and sets the benchmark for British country dining. Their Sunday roasts feature dry-aged Yorkshire beef, slow-cooked local belly pork, and roasted loin of lamb served with seasonal vegetables grown in their kitchen garden.</p>
+<ul>
+  <li><strong>Best for:</strong> Special occasions and food lovers seeking the ultimate gastro experience.</li>
+  <li><strong>Booking:</strong> Essential weeks in advance.</li>
+</ul>
+
+<h2>4. The Wheatsheaf (Kirk Ella)</h2>
+<p>A firm favourite with West Hull families, The Wheatsheaf provides a welcoming village pub setting with a dedicated Sunday roast menu featuring succulent roasted meats, cauliflower cheese, and vegetarian nut roasts that don't skimp on flavour.</p>
+
+<h2>5. The Green Dragon (Welton)</h2>
+<p>Famous for its connection to highwayman Dick Turpin, this historic 17th-century coaching inn tucked beside the Welton village duck pond serves an exceptional traditional roast beside crackling log fires.</p>
+
+<h2>Booking & Visiting Advice</h2>
+<ul>
+  <li><strong>Book in advance:</strong> Sunday roasts in Hull regularly sell out by 2:00 PM; reserve your table by Thursday or Friday.</li>
+  <li><strong>Dietary requirements:</strong> Most featured pubs offer robust vegetarian and vegan roast options with vegetable gravies.</li>
+</ul>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "food-and-drink",
+    author: "HU NOW Food & Drink Team",
+    readingMinutes: 5,
+    featuredImage: "photo-1544025162-d76694265947",
+    status: "published",
+    publishedAt: "2026-09-03",
+    tags: ["Sunday Roast", "Food & Drink", "Old Town", "Pubs", "East Yorkshire", "Guides"],
+    isFeatured: true,
+    isSponsored: false,
+    seo: {
+      title: "The Best Sunday Roasts in Hull & East Yorkshire: Ultimate Guide",
+      description:
+        "Complete guide to the best Sunday roasts in Hull and East Yorkshire. Giant Yorkshire puddings, local roast beef, country pubs, and booking tips.",
+    },
+  },
+  {
+    id: "article-free-things-to-do-with-kids-in-hull",
+    title: "Free Things to Do with Kids in Hull: The Ultimate Family Day Out Guide",
+    slug: "free-things-to-do-with-kids-in-hull",
+    excerpt:
+      "Looking for budget-friendly family days out? From the free Streetlife Museum and Ferens Art Gallery to East Park's splash boat and animal walk, here are Hull's best free activities for kids.",
+    content: `<h2>Great Family Days Out That Won't Cost a Penny</h2>
+<p>Entertaining kids during school holidays or rainy weekends doesn't need to break the bank. Hull is one of the most generous cities in the UK for free culture and open-air family attractions, with world-class museums that charge zero admission fee.</p>
+
+<h2>1. Streetlife Museum of Transport (Hull Museums Quarter)</h2>
+<p>Step through 200 years of transport history in the heart of Old Town. Kids can climb aboard a genuine 1940s Hull electric tram, sit inside historic horse-drawn carriages, and wander through a full-scale reconstruction of a Victorian high street complete with traditional sweet shops and vintage bicycles.</p>
+<ul>
+  <li><strong>Admission:</strong> 100% Free</li>
+  <li><strong>Location:</strong> High Street, Hull Old Town (HU1 1PS)</li>
+  <li><strong>Highlights:</strong> Carriage simulator ride, interactive horse stable, and pram-friendly lifts throughout.</li>
+</ul>
+
+<h2>2. East Park & Animal Education Centre (Holderness Road)</h2>
+<p>Covering 130 acres, East Park is Hull's flagship green space. The park features an extensive free Animal Education Centre where children can see deer, wallabies, exotic birds, and farm animals up close. In warmer months, the modern water splash park is a summer favourite for toddlers and children.</p>
+<ul>
+  <li><strong>Cost:</strong> Free entry to park and animal centre</li>
+  <li><strong>Facilities:</strong> Children's play areas, large boating lake, cafe, and free parking.</li>
+</ul>
+
+<h2>3. Ferens Art Gallery & Explore Art Zone</h2>
+<p>Located in Queen Victoria Square, the award-winning Ferens Art Gallery houses a dedicated Children's Gallery designed specifically for young visitors. Children can touch interactive tactile displays, try dressing-up boxes, and participate in regular weekend craft workshops.</p>
+<ul>
+  <li><strong>Admission:</strong> Free</li>
+  <li><strong>Bonus:</strong> Baby-changing facilities and child-friendly cafe on site.</li>
+</ul>
+
+<h2>4. Hull and East Riding Museum (Woolly Mammoth & Roman Mosaics)</h2>
+<p>Walk beneath a life-sized replica of a prehistoric woolly mammoth, step inside an authentic Iron Age roundhouse, and discover stunning Roman mosaics excavated from local East Yorkshire villa sites.</p>
+<ul>
+  <li><strong>Admission:</strong> Free</li>
+  <li><strong>Location:</strong> Museums Quarter (next door to Streetlife)</li>
+</ul>
+
+<h2>5. Humber Bridge Country Park (The Little Swiss)</h2>
+<p>Set in a former chalk quarry beneath the majestic towers of the Humber Bridge, this 48-acre nature reserve offers gentle walking trails through woodland, meadows, and pond habitats. Kids love spotting wildlife along the cliff nature walks and picnicking on the open lawns.</p>
+<ul>
+  <li><strong>Cost:</strong> Free entry & free parking</li>
+  <li><strong>Location:</strong> Ferriby Road, Hessle (HU13 0HB)</li>
+</ul>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "things-to-do",
+    author: "HU NOW Family Team",
+    readingMinutes: 5,
+    featuredImage: "photo-1472162072942-cd5147eb3902",
+    status: "published",
+    publishedAt: "2026-09-03",
+    tags: ["Family", "Free Things To Do", "Kids", "East Park", "Museums", "Guides"],
+    isFeatured: true,
+    isSponsored: false,
+    seo: {
+      title: "Free Things to Do with Kids in Hull: Best Family Days Out Guide",
+      description:
+        "Ultimate guide to free family activities and kids days out in Hull. Free museums, East Park animals, Ferens Art Gallery, and nature trails.",
+    },
+  },
+  {
+    id: "article-dog-friendly-pubs-cafes-hull",
+    title: "Dog-Friendly Pubs and Cafes in Hull & East Yorkshire: Where Four-Legged Friends Are Welcome",
+    slug: "dog-friendly-pubs-cafes-hull",
+    excerpt:
+      "A complete guide to dog-friendly pubs, craft taprooms, and cafes in Hull and East Yorkshire. Free dog treats, sheltered courtyards, and scenic dog walks nearby.",
+    content: `<h2>Where Dogs Are Welcomed as Part of the Family</h2>
+<p>Hull and East Yorkshire are fantastic areas for dog owners. From historic cobblestone Old Town courtyards to bustling artisan cafes along Humber Street, there is no need to leave your four-legged companion at home. Here is our curated guide to the best spots for dog-friendly pints, coffee, and weekend lunches.</p>
+
+<h2>1. The Sailmakers Arms (High Street, Hull Old Town)</h2>
+<p>The Sailmakers Arms is celebrated for its sheltered outdoor courtyard and welcoming attitude towards well-behaved dogs. Bar staff always have dog treats and fresh water bowls on hand while owners enjoy local real ales and Sunday roasts.</p>
+<ul>
+  <li><strong>Walk:</strong> Pair with a stroll along the historic Old Town High Street and River Hull footpath.</li>
+</ul>
+
+<h2>2. Thieving Harry's (Humber Street, Fruit Market)</h2>
+<p>Overlooking the Hull Marina basin, Thieving Harry's is a favourite weekend morning haunt for dog walkers. Dogs are warmly welcomed both inside and at the outdoor street tables. Enjoy artisan coffee, loaded breakfast toasties, and fresh bakes with your pooch by your side.</p>
+<ul>
+  <li><strong>Walk:</strong> Walk around the marina pier and along the promenade to Victoria Dock.</li>
+</ul>
+
+<h2>3. The Minerva Hotel (Nelson Street Pier)</h2>
+<p>After letting your dog stretch its legs along the Humber waterfront, head into The Minerva for a pint by the open coal fire. Dogs are welcome in the traditional front bar area.</p>
+
+<h2>4. Atom Bar (Princes Avenue, Hull & Beverley)</h2>
+<p>Independent local brewery Atom crafts world-class beers and welcomes dogs in both their Hull Princes Avenue bar and their historic Beverley town centre taproom. Clean, friendly, and laid-back.</p>
+
+<h2>5. Beverley Westwood & Country Pubs</h2>
+<p>Take your dog for an off-lead run across the open pasture of the Beverley Westwood, then retreat into dog-friendly historic pubs like <strong>The Woolpack</strong> or <strong>The Monks Walk</strong> for a well-earned drink.</p>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "food-and-drink",
+    author: "HU NOW Editorial Team",
+    readingMinutes: 4,
+    featuredImage: "photo-1583511655857-d19b40a7a54e",
+    status: "published",
+    publishedAt: "2026-09-03",
+    tags: ["Dog Friendly", "Pubs", "Cafes", "Old Town", "Fruit Market", "Guides"],
+    isFeatured: true,
+    isSponsored: false,
+    seo: {
+      title: "Dog-Friendly Pubs and Cafes in Hull & East Yorkshire: Curated Guide",
+      description:
+        "The ultimate guide to dog-friendly pubs, cafes, and bars in Hull and East Yorkshire. Free treats, water bowls, outdoor courtyards, and nearby walking routes.",
+    },
+  },
+  {
+    id: "article-mkm-stadium-matchday-guide-hull-city-hull-fc",
+    title: "MKM Stadium Matchday Guide: Parking, Pubs & Tips for Hull City & Hull FC Fans",
+    slug: "mkm-stadium-matchday-guide-hull-city-hull-fc",
+    excerpt:
+      "Heading to the MKM Stadium for Hull City AFC or Hull FC? Here is your complete matchday guide: official car parking prices, away-friendly pubs, train travel, and turnstile tips.",
+    content: `<h2>The Complete MKM Stadium Matchday Guide</h2>
+<p>The 25,586-capacity <strong>MKM Stadium (formerly KC Stadium)</strong> is the shared home of football Championship club <strong>Hull City AFC</strong> and Super League rugby club <strong>Hull FC</strong>. Situated inside the green expanse of West Park, reaching the stadium and enjoying the matchday atmosphere is easy when you know the local territory.</p>
+
+<h2>1. Getting to the Stadium</h2>
+<ul>
+  <li><strong>By Train:</strong> Hull Paragon Interchange is approximately a 20-minute signposted walk from the stadium via the tree-lined pedestrian footbridge crossing directly into West Park.</li>
+  <li><strong>By Bus:</strong> Frequent buses run along Anlaby Road from the city centre interchange (services 2, 3, 4, 57, and 66) dropping off outside West Park.</li>
+  <li><strong>By Car:</strong> From the M62/A63 Clive Sullivan Way, follow signs for MKM Stadium / KC Stadium onto the Daltry Street flyover towards Anlaby Road.</li>
+</ul>
+
+<h2>2. Matchday Parking Options</h2>
+<ul>
+  <li><strong>Stadium Car Park (Walton Street):</strong> Located adjacent to the ground inside West Park. Parking costs £5 per car (cash and contactless accepted). Please note: on evening matches, the car park fills quickly, so arrive at least 60 minutes before kick-off.</li>
+  <li><strong>Priory Park & Ride (HU4 7DY):</strong> Matchday shuttle buses operate from the Priory Park & Ride off the A63 directly to the stadium.</li>
+  <li><strong>City Centre Multi-Storeys:</strong> St Stephen's (HU2 8LN) and Osborne Street car parks provide secure 24/7 parking a short walk or bus ride away.</li>
+  <li><strong>Warning:</strong> Residential streets surrounding the stadium have strict residents-only permit parking schemes enforced on matchdays.</li>
+</ul>
+
+<h2>3. Matchday Pubs & Food</h2>
+<ul>
+  <li><strong>Home Fans:</strong> The Boot Room, The Walton Street Social Club, and Anlaby Road pubs fill with black-and-amber faithful before kickoff.</li>
+  <li><strong>Away Fans:</strong> The city centre pubs surrounding Hull Paragon Interchange (such as The Admiral of the Humber, The Hop & Vine, and Minerva Pier) welcome visiting supporters without incident.</li>
+  <li><strong>Food Inside Ground:</strong> Traditional Hull patties, hot pies, burgers, and hot drinks are available across all concourses. Contactless payments are accepted at all kiosks.</li>
+</ul>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "things-to-do",
+    author: "HU NOW Sports Team",
+    readingMinutes: 5,
+    featuredImage: "photo-1522778119026-d647f0596c20",
+    status: "published",
+    publishedAt: "2026-09-03",
+    tags: ["Hull City", "Hull FC", "MKM Stadium", "Matchday Guide", "Parking", "Guides"],
+    isFeatured: true,
+    isSponsored: false,
+    seo: {
+      title: "MKM Stadium Matchday Guide: Parking, Pubs & Visiting Fans",
+      description:
+        "Complete matchday guide for Hull City AFC and Hull FC at the MKM Stadium. Official car parking prices, away-friendly pubs, directions from Paragon Station.",
+    },
+  },
+  {
+    id: "article-new-years-eve-hull-2026-parties-events",
+    title: "Where to Celebrate New Year's Eve 2026/2027 in Hull: Parties, Dinners & Club Nights",
+    slug: "new-years-eve-hull-2026-parties-events",
+    excerpt:
+      "Plan your New Year's Eve in Hull. From riverside midnight gatherings at Hull Marina and historic Old Town pub trails to ticketed galas, club nights, and celebratory dining.",
+    content: `<h2>Ring in 2027 in Style Across Kingston upon Hull</h2>
+<p>Whether you want a lively countdown on the cobblestones of Old Town, a glamorous black-tie dining banquet overlooking the marina, or an all-night alternative music party, Hull offers an electric atmosphere for New Year's Eve. Here is your definitive guide to celebrating NYE in Hull.</p>
+
+<h2>1. Hull Marina & Humber Street Midnight Countdown</h2>
+<p>The Fruit Market and Hull Marina basin form the focal point for many revellers at midnight. Bars and restaurants along Humber Street — from craft taprooms to cocktail lounges — host special ticketed parties with DJs, live music, and midnight champagne toasts before crowds gather by the water to watch midnight fireworks across the estuary.</p>
+
+<h2>2. Old Town Historic Pub Trail</h2>
+<p>For those who love real ale, crackling log fires, and traditional British hospitality, Old Town's historic taverns offer an unbeatable pub crawl on New Year's Eve. Pop into <strong>The Minerva</strong>, <strong>The Lion & Key</strong>, <strong>The Sailmakers Arms</strong>, and <strong>Ye Olde White Harte</strong>. Arrive early to secure your spot as bars fill to capacity by 9:00 PM.</p>
+
+<h2>3. Live Music & Alternative Countdowns</h2>
+<ul>
+  <li><strong>The New Adelphi Club (De Grey Street):</strong> Hull's legendary grassroots venue hosts its annual New Year's Eve party featuring local indie bands, garage rock, and an unpretentious party crowd.</li>
+  <li><strong>The Welly Club (Beverley Road):</strong> The city's famous indie and alternative club night with three rooms of rock, pop-punk, and retro anthems until 4:00 AM.</li>
+  <li><strong>Connexin Live (Myton Street):</strong> Check the arena calendar for major headline touring concerts and big band gala celebrations.</li>
+</ul>
+
+<h2>4. Celebratory Dining: Where to Book</h2>
+<p>Hull's top independent restaurants offer bespoke multi-course tasting menus on New Year's Eve. Booking early (by mid-November) is critical for Old Town and Humber Street dining rooms. Look out for festive menus with wine pairings and midnight bubbles.</p>
+
+<h2>NYE Travel Advice in Hull</h2>
+<ul>
+  <li><strong>Taxis:</strong> Taxis on New Year's Eve are in extremely high demand between 12:30 AM and 3:30 AM. Pre-book your ride home or agree a designated driver in advance.</li>
+  <li><strong>Buses:</strong> East Yorkshire Buses operate special evening timetables on 31 December with services tapering off around 8:00 PM; plan your travel ahead of time.</li>
+</ul>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "whats-on",
+    author: "HU NOW What's On Team",
+    readingMinutes: 4,
+    featuredImage: "photo-1467810563316-b5476525c0f9",
+    status: "published",
+    publishedAt: "2026-09-03",
+    tags: ["New Years Eve", "NYE Hull", "Parties", "Nightlife", "Old Town", "Guides"],
+    isFeatured: true,
+    isSponsored: false,
+    seo: {
+      title: "New Year's Eve 2026/2027 in Hull: Best Parties, Dinners & Events",
+      description:
+        "Complete guide to New Year's Eve in Hull. Humber Street parties, Old Town pub trails, live music countdowns, celebratory dining, and taxi tips.",
+    },
+  },
+  {
     id: "a2",
     title: "10 Minutes with Local Mural Artist Spray-K",
     slug: "10-minutes-spray-k",

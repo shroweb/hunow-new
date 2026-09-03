@@ -114,6 +114,14 @@ create table if not exists events (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+create table if not exists deleted_events (
+  id text primary key,
+  title text,
+  start_date text,
+  slug text,
+  ticket_url text,
+  deleted_at timestamptz not null default now()
+);
 create table if not exists listings (
   id text primary key,
   data jsonb not null,
@@ -685,6 +693,22 @@ export async function upsertEvent(event: import("@/types").EventItem) {
   await upsertRecord("events", event.id, event);
 }
 export async function deleteEvent(id: string) {
+  await ensureSchema();
+  const pool = getPool();
+  try {
+    const evRes = await pool.query<{ data: any }>("SELECT data FROM events WHERE id = $1", [id]);
+    if (evRes.rows[0]?.data) {
+      const ev = evRes.rows[0].data;
+      await pool.query(
+        `INSERT INTO deleted_events (id, title, start_date, slug, ticket_url, deleted_at)
+         VALUES ($1, $2, $3, $4, $5, NOW())
+         ON CONFLICT (id) DO UPDATE SET deleted_at = NOW()`,
+        [id, ev.title || "", ev.startDate || "", ev.slug || "", ev.ticketUrl || ""]
+      );
+    }
+  } catch (err) {
+    console.warn("Failed to record deleted_event tombstone:", err);
+  }
   await deleteRecord("events", id);
 }
 export async function bulkArchiveEvents(beforeDate: string) {
