@@ -55,7 +55,6 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       >
         Skip to content
       </a>
-      <LocalStatusTicker />
       <nav
         className="pwa-nav sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b-2 border-foreground"
         onMouseLeave={() => setOpen(null)}
@@ -407,6 +406,7 @@ function Footer() {
 
   return (
     <footer className="bg-foreground text-background border-t border-white/10">
+      <LocalStatusTicker />
       {/* Editorial masthead */}
       <div className="max-w-7xl mx-auto px-4 pt-14 pb-10 border-b border-white/10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">

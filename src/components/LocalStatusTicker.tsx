@@ -53,7 +53,7 @@ export function LocalStatusTicker() {
       : "bg-rose-600 text-white";
 
   return (
-    <div className="bg-foreground text-background border-b border-foreground/20 text-[11px] font-mono py-1.5 px-4 overflow-x-auto scrollbar-none">
+    <div className="bg-black/30 text-background border-b border-white/10 text-[11px] font-mono py-2.5 px-4 overflow-x-auto scrollbar-none">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-6 whitespace-nowrap">
         {/* Left: Bridge & Weather */}
         <div className="flex items-center gap-4">
