@@ -33,7 +33,14 @@ export const Route = createFileRoute("/$taxonomy")({
       }
       throw notFound();
     }
-    return { taxonomy };
+    const { getDatabaseStore } = await import("@/lib/db.server");
+    const store = await getDatabaseStore().catch(() => null);
+    return {
+      taxonomy,
+      articles: store?.articles ?? [],
+      events: store?.events ?? [],
+      listings: store?.listings ?? [],
+    };
   },
   head: ({ loaderData }) => {
     const taxonomy = loaderData?.taxonomy;
@@ -60,15 +67,28 @@ export const Route = createFileRoute("/$taxonomy")({
 });
 
 function TaxonomyPage() {
-  const { taxonomy } = Route.useLoaderData();
+  const {
+    taxonomy,
+    articles: loaderArticles,
+    events: loaderEvents,
+    listings: loaderListings,
+  } = Route.useLoaderData();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const articles = useStore((s) => s.articles)
+  const storeArticles = useStore((s) => s.articles);
+  const storeEvents = useStore((s) => s.events);
+  const storeListings = useStore((s) => s.listings);
+
+  const allArticles = loaderArticles?.length ? loaderArticles : storeArticles;
+  const allEvents = loaderEvents?.length ? loaderEvents : storeEvents;
+  const allListings = loaderListings?.length ? loaderListings : storeListings;
+
+  const articles = allArticles
     .filter((article) => article.status === "published")
     .filter((article) => articleMatchesTaxonomy(article, taxonomy));
-  const events = useStore((s) => s.events)
+  const events = allEvents
     .filter((event) => event.status === "published")
     .filter((event) => eventMatchesTaxonomy(event, taxonomy));
-  const listings = useStore((s) => s.listings).filter((listing) =>
+  const listings = allListings.filter((listing) =>
     listingMatchesTaxonomy(listing, taxonomy),
   );
   const total = articles.length + events.length + listings.length;

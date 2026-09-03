@@ -6,11 +6,18 @@ import { findSection, findSub, type NavSection, type NavSub } from "@/lib/nav";
 import { AdSlot } from "@/components/AdSlot";
 
 export const Route = createFileRoute("/c/$section/$sub")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     const section = findSection(params.section);
     const sub = findSub(params.section, params.sub);
     if (!section || !sub) throw notFound();
-    return { section, sub };
+    const { getDatabaseStore } = await import("@/lib/db.server");
+    const store = await getDatabaseStore().catch(() => null);
+    return {
+      section,
+      sub,
+      articles: store?.articles ?? [],
+      events: store?.events ?? [],
+    };
   },
   head: ({ loaderData }) => ({
     meta: loaderData
@@ -45,14 +52,25 @@ export const Route = createFileRoute("/c/$section/$sub")({
 });
 
 function SubPage() {
-  const { section, sub } = Route.useLoaderData();
-  const articles = useStore((s) => s.articles).filter(
+  const {
+    section,
+    sub,
+    articles: loaderArticles,
+    events: loaderEvents,
+  } = Route.useLoaderData();
+  const storeArticles = useStore((s) => s.articles);
+  const storeEvents = useStore((s) => s.events);
+
+  const allArticles = loaderArticles?.length ? loaderArticles : storeArticles;
+  const allEvents = loaderEvents?.length ? loaderEvents : storeEvents;
+
+  const articles = allArticles.filter(
     (a) =>
       a.status === "published" &&
       ((a.section === section.slug && a.subcategory === sub.slug) ||
         a.tags.some((t) => t.toLowerCase() === sub.slug)),
   );
-  const events = useStore((s) => s.events).filter(
+  const events = allEvents.filter(
     (e) => e.status === "published" && e.category.toLowerCase() === sub.slug,
   );
 
