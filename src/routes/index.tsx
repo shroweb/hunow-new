@@ -242,6 +242,44 @@ function Index() {
         </div>
       </section>
 
+      {/* Hull Fair 2026 Superhub Banner Feature */}
+      <section className="border-b-2 border-foreground bg-gradient-to-r from-[#0b0130] via-black to-[#0b0130] text-white">
+        <div className="max-w-7xl mx-auto px-4 py-6 md:py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-2xl shrink-0">
+              🎪
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-accent mb-1 font-bold">
+                <span>Annual Tradition</span>
+                <span>•</span>
+                <span>9–17 October 2026</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-display uppercase tracking-tight leading-none text-white">
+                Hull Fair 2026 Complete Guide
+              </h2>
+              <p className="text-xs md:text-sm text-white/70 mt-1 max-w-2xl">
+                Official dates, daily opening hours, Priory Park & Ride details, ride prices, and the legendary food bucket list.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 shrink-0 w-full md:w-auto">
+            <Link
+              to="/hull-fair"
+              className="flex-1 md:flex-initial text-center px-6 py-3 bg-accent text-background font-bold text-xs uppercase tracking-widest hover:bg-accent/90 transition-colors"
+            >
+              Explore Hull Fair Hub →
+            </Link>
+            <Link
+              to="/guides/guide-to-parking-at-hull-fair"
+              className="hidden sm:inline-block px-4 py-3 border border-white/20 text-white text-xs font-bold uppercase tracking-widest hover:border-white hover:bg-white/10 transition-colors"
+            >
+              Parking Guide
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* [8] Spotlight — live city picks */}
       <section className="border-b-2 border-foreground bg-background">
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-10">

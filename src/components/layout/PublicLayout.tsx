@@ -252,6 +252,21 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
                     <div className="col-span-8 grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3">
                       {section.subs.map((sub) => {
+                        if (sub.slug === "hull-fair") {
+                          return (
+                            <Link
+                              key={sub.slug}
+                              to="/hull-fair"
+                              onClick={() => setOpen(null)}
+                              className="group flex items-baseline justify-between border-b border-accent/40 py-2 text-accent font-bold hover:border-accent"
+                            >
+                              <span className="font-bold">{sub.label}</span>
+                              <span className="text-[10px] font-mono uppercase text-accent group-hover:translate-x-0.5 transition-transform">
+                                →
+                              </span>
+                            </Link>
+                          );
+                        }
                         const hasTaxonomy = Boolean(findTaxonomy(sub.slug));
                         return (
                           <Link
@@ -302,6 +317,18 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                   </a>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 pl-2">
                     {s.subs.map((sub) => {
+                      if (sub.slug === "hull-fair") {
+                        return (
+                          <Link
+                            key={sub.slug}
+                            to="/hull-fair"
+                            onClick={() => setMobileOpen(false)}
+                            className="text-sm py-1 font-bold text-accent"
+                          >
+                            {sub.label}
+                          </Link>
+                        );
+                      }
                       const hasTaxonomy = Boolean(findTaxonomy(sub.slug));
                       return (
                         <Link

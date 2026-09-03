@@ -27,6 +27,7 @@ import { Route as OpenNowRouteImport } from './routes/open-now'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as HullFairRouteImport } from './routes/hull-fair'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AreasRouteImport } from './routes/areas'
@@ -181,6 +182,11 @@ const NewsletterRoute = NewsletterRouteImport.update({
 const ListingsRoute = ListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HullFairRoute = HullFairRouteImport.update({
+  id: '/hull-fair',
+  path: '/hull-fair',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -519,6 +525,7 @@ export interface FileRoutesByFullPath {
   '/areas': typeof AreasRouteWithChildren
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/hull-fair': typeof HullFairRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
@@ -603,6 +610,7 @@ export interface FileRoutesByTo {
   '/areas': typeof AreasRouteWithChildren
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/hull-fair': typeof HullFairRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
@@ -689,6 +697,7 @@ export interface FileRoutesById {
   '/areas': typeof AreasRouteWithChildren
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/hull-fair': typeof HullFairRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
@@ -776,6 +785,7 @@ export interface FileRouteTypes {
     | '/areas'
     | '/contact'
     | '/forgot-password'
+    | '/hull-fair'
     | '/listings'
     | '/newsletter'
     | '/offers'
@@ -860,6 +870,7 @@ export interface FileRouteTypes {
     | '/areas'
     | '/contact'
     | '/forgot-password'
+    | '/hull-fair'
     | '/listings'
     | '/newsletter'
     | '/offers'
@@ -945,6 +956,7 @@ export interface FileRouteTypes {
     | '/areas'
     | '/contact'
     | '/forgot-password'
+    | '/hull-fair'
     | '/listings'
     | '/newsletter'
     | '/offers'
@@ -1031,6 +1043,7 @@ export interface RootRouteChildren {
   AreasRoute: typeof AreasRouteWithChildren
   ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  HullFairRoute: typeof HullFairRoute
   ListingsRoute: typeof ListingsRoute
   NewsletterRoute: typeof NewsletterRoute
   OffersRoute: typeof OffersRoute
@@ -1196,6 +1209,13 @@ declare module '@tanstack/react-router' {
       path: '/listings'
       fullPath: '/listings'
       preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hull-fair': {
+      id: '/hull-fair'
+      path: '/hull-fair'
+      fullPath: '/hull-fair'
+      preLoaderRoute: typeof HullFairRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1832,6 +1852,7 @@ const rootRouteChildren: RootRouteChildren = {
   AreasRoute: AreasRouteWithChildren,
   ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  HullFairRoute: HullFairRoute,
   ListingsRoute: ListingsRoute,
   NewsletterRoute: NewsletterRoute,
   OffersRoute: OffersRoute,

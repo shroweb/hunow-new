@@ -17,6 +17,7 @@ export const NAV_SECTIONS: NavSection[] = [
     blurb: "Live events, gigs, shows and happenings across the city.",
     subs: [
       { slug: "events", label: "Events" },
+      { slug: "hull-fair", label: "🎪 Hull Fair 2026" },
       { slug: "arts", label: "Arts" },
       { slug: "music", label: "Music" },
       { slug: "sport", label: "Sport" },
