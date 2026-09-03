@@ -10,6 +10,7 @@ import { ResponsiveImage } from "@/components/ResponsiveImage";
 import { useStore } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
 import { img } from "@/data/seed";
+import { formatFullDate, formatEventDate, formatWeekday } from "@/lib/dates";
 import { subscribeNewsletter } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/")({
@@ -112,12 +113,7 @@ function Index() {
   ).slice(0, 3);
 
   // [3] Live date string for the hero masthead
-  const liveDate = new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  const liveDate = formatFullDate();
 
   return (
     <PublicLayout>
@@ -146,7 +142,7 @@ function Index() {
               className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40"
               suppressHydrationWarning
             >
-              Hull · {liveDate}
+              {`Hull · ${liveDate}`}
             </span>
             <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40">
               Independent City Guide
@@ -293,10 +289,11 @@ function Index() {
                   className={`group border-2 border-foreground p-5 hover:bg-foreground hover:text-background transition-colors ${i === 0 ? "md:row-span-1" : ""}`}
                 >
                   {/* [10] Prominent day of week */}
-                  <div className="font-display text-5xl uppercase leading-none mb-3 text-foreground/10 group-hover:text-background/10 transition-colors select-none">
-                    {new Date(`${event.startDate}T12:00:00`)
-                      .toLocaleDateString("en-GB", { weekday: "short" })
-                      .toUpperCase()}
+                  <div
+                    className="font-display text-5xl uppercase leading-none mb-3 text-foreground/10 group-hover:text-background/10 transition-colors select-none"
+                    suppressHydrationWarning
+                  >
+                    {formatWeekday(event.startDate)}
                   </div>
                   <div
                     className="mb-2 font-mono text-[10px] uppercase"
@@ -406,7 +403,7 @@ function Index() {
                 <h3 className="text-2xl md:text-3xl font-display uppercase leading-none group-hover:underline mb-2">
                   {events[0].title}
                 </h3>
-                <div className="text-[10px] font-mono uppercase text-muted-foreground">
+                <div className="text-[10px] font-mono uppercase text-muted-foreground" suppressHydrationWarning>
                   {formatHomeDate(events[0].startDate)} · {events[0].startTime} ·{" "}
                   {events[0].locationName}
                 </div>
@@ -438,6 +435,7 @@ function Index() {
                   <div
                     className="font-mono text-[9px] font-bold uppercase mb-1"
                     style={{ color: categoryColor(e.category) }}
+                    suppressHydrationWarning
                   >
                     {e.category} · {formatHomeDate(e.startDate)}
                   </div>
@@ -909,32 +907,35 @@ function todayIso() {
 }
 
 function isThisWeek(date: string) {
+  if (!date) return false;
   const today = todayIso();
   const d = new Date();
-  d.setDate(d.getDate() + 6);
+  d.setUTCDate(d.getUTCDate() + 6);
   const weekEnd = d.toISOString().slice(0, 10);
   return date >= today && date <= weekEnd;
 }
 
 function isThisWeekend(date: string) {
-  const eventDate = new Date(`${date}T12:00:00`);
-  const now = new Date();
-  const day = now.getDay();
-  const daysUntilSaturday = (6 - day + 7) % 7;
-  const saturday = new Date(now);
-  saturday.setDate(now.getDate() + daysUntilSaturday);
-  const sunday = new Date(saturday);
-  sunday.setDate(saturday.getDate() + 1);
-  const start = saturday.toISOString().slice(0, 10);
-  const end = sunday.toISOString().slice(0, 10);
-  const eventIso = eventDate.toISOString().slice(0, 10);
-  return eventIso >= start && eventIso <= end;
+  if (!date) return false;
+  try {
+    const eventDate = new Date(`${date}T12:00:00Z`);
+    if (isNaN(eventDate.getTime())) return false;
+    const now = new Date();
+    const day = now.getUTCDay();
+    const daysUntilSaturday = (6 - day + 7) % 7;
+    const saturday = new Date(now);
+    saturday.setUTCDate(now.getUTCDate() + daysUntilSaturday);
+    const sunday = new Date(saturday);
+    sunday.setUTCDate(saturday.getUTCDate() + 1);
+    const start = saturday.toISOString().slice(0, 10);
+    const end = sunday.toISOString().slice(0, 10);
+    const eventIso = eventDate.toISOString().slice(0, 10);
+    return eventIso >= start && eventIso <= end;
+  } catch {
+    return false;
+  }
 }
 
 function formatHomeDate(date: string) {
-  return new Date(`${date}T12:00:00`).toLocaleDateString("en-GB", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  });
+  return formatEventDate(date);
 }

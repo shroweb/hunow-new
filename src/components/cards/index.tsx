@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { img, getCategoryFallback } from "@/data/seed";
+import { formatEventDate, formatShortDate } from "@/lib/dates";
 import type { Article, EventItem, Listing, Offer } from "@/types";
 import { useIsSaved, toggleSaved } from "@/lib/bookmarks";
 import { articlePath } from "@/lib/taxonomy";
@@ -38,10 +39,7 @@ function catColor(category: string): string {
 }
 
 export function EventCard({ event }: { event: EventItem }) {
-  const date = new Date(event.startDate);
-  const dateLabel = date
-    .toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })
-    .toUpperCase();
+  const dateLabel = formatEventDate(event.startDate).toUpperCase();
   const saved = useIsSaved("event", event.id);
   const fallback = getCategoryFallback(event.category, event.title);
   return (
@@ -82,7 +80,7 @@ export function EventCard({ event }: { event: EventItem }) {
       >
         <span>{event.category}</span>
         <span className="text-foreground/30">•</span>
-        <span className="text-foreground">
+        <span className="text-foreground" suppressHydrationWarning>
           {dateLabel} / {event.startTime}
         </span>
       </div>
@@ -226,8 +224,8 @@ export function OfferCard({ offer }: { offer: Offer }) {
       <div className="flex-1 min-w-0">
         <div className="text-[10px] font-bold uppercase text-accent">{offer.businessName}</div>
         <div className="font-bold truncate">{offer.title}</div>
-        <div className="text-[10px] font-mono uppercase text-muted-foreground mt-1">
-          Ends {new Date(offer.endDate).toLocaleDateString("en-GB")}
+        <div className="text-[10px] font-mono uppercase text-muted-foreground mt-1" suppressHydrationWarning>
+          Ends {formatShortDate(offer.endDate)}
         </div>
       </div>
     </div>

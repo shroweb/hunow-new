@@ -177,7 +177,7 @@ function EventDetail() {
           <div className="grid grid-cols-3 gap-4 border-y-2 border-foreground py-5 mb-8 font-mono text-xs uppercase">
             <div>
               <div className="text-muted-foreground mb-1">Date</div>
-              <div className="font-bold">
+              <div className="font-bold" suppressHydrationWarning>
                 {event.endDate ? (
                   <>
                     {new Date(`${event.startDate}T12:00:00`).toLocaleDateString("en-GB", {
