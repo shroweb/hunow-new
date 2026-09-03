@@ -31,6 +31,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         // Static pages
         entries.push({ path: "/", changefreq: "weekly", priority: "1.0", lastmod: today() });
         entries.push({ path: "/hull-fair", changefreq: "daily", priority: "1.0", lastmod: today() });
+        entries.push({ path: "/humber-street-sesh", changefreq: "weekly", priority: "0.9", lastmod: today() });
+        entries.push({ path: "/freedom-festival", changefreq: "weekly", priority: "0.9", lastmod: today() });
+        entries.push({ path: "/christmas-lights-switch-on", changefreq: "weekly", priority: "0.9", lastmod: today() });
+        entries.push({ path: "/hull-pride", changefreq: "weekly", priority: "0.9", lastmod: today() });
         entries.push({ path: "/whats-on", changefreq: "daily", priority: "0.9", lastmod: today() });
         entries.push({ path: "/stories", changefreq: "daily", priority: "0.9", lastmod: today() });
         entries.push({ path: "/places", changefreq: "weekly", priority: "0.9", lastmod: today() });

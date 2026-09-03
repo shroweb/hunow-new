@@ -33,10 +33,14 @@ export const NAV_SECTIONS: NavSection[] = [
     label: "Things to Do",
     blurb: "Days out, shopping trips and adventures around Hull.",
     subs: [
+      { slug: "days-out", label: "Days Out" },
+      { slug: "humber-street-sesh", label: "🎸 Humber Street Sesh" },
+      { slug: "freedom-festival", label: "🎭 Freedom Festival" },
+      { slug: "christmas-lights-switch-on", label: "✨ Christmas Lights" },
+      { slug: "hull-pride", label: "🏳️‍🌈 Pride in Hull" },
       { slug: "shopping", label: "Shopping" },
       { slug: "fun", label: "Fun" },
       { slug: "outdoors", label: "Outdoors" },
-      { slug: "days-out", label: "Days Out" },
     ],
   },
   {

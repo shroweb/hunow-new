@@ -23,6 +23,18 @@ export const Route = createFileRoute("/$taxonomy")({
     if (params.taxonomy === "events") {
       throw redirect({ href: "/whats-on", statusCode: 301 });
     }
+    if (params.taxonomy === "freedom-fest") {
+      throw redirect({ href: "/freedom-festival", statusCode: 301 });
+    }
+    if (params.taxonomy === "pride-in-hull") {
+      throw redirect({ href: "/hull-pride", statusCode: 301 });
+    }
+    if (params.taxonomy === "humber-sesh") {
+      throw redirect({ href: "/humber-street-sesh", statusCode: 301 });
+    }
+    if (params.taxonomy === "christmas-lights") {
+      throw redirect({ href: "/christmas-lights-switch-on", statusCode: 301 });
+    }
     const taxonomy = findTaxonomy(params.taxonomy);
     if (!taxonomy) {
       // 1. Check if there is an explicit redirect configured (e.g. /hull-fair-2025...)

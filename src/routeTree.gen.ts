@@ -27,9 +27,13 @@ import { Route as OpenNowRouteImport } from './routes/open-now'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as HumberStreetSeshRouteImport } from './routes/humber-street-sesh'
+import { Route as HullPrideRouteImport } from './routes/hull-pride'
 import { Route as HullFairRouteImport } from './routes/hull-fair'
+import { Route as FreedomFestivalRouteImport } from './routes/freedom-festival'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ChristmasLightsSwitchOnRouteImport } from './routes/christmas-lights-switch-on'
 import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -184,9 +188,24 @@ const ListingsRoute = ListingsRouteImport.update({
   path: '/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HumberStreetSeshRoute = HumberStreetSeshRouteImport.update({
+  id: '/humber-street-sesh',
+  path: '/humber-street-sesh',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HullPrideRoute = HullPrideRouteImport.update({
+  id: '/hull-pride',
+  path: '/hull-pride',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HullFairRoute = HullFairRouteImport.update({
   id: '/hull-fair',
   path: '/hull-fair',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreedomFestivalRoute = FreedomFestivalRouteImport.update({
+  id: '/freedom-festival',
+  path: '/freedom-festival',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -197,6 +216,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChristmasLightsSwitchOnRoute = ChristmasLightsSwitchOnRouteImport.update({
+  id: '/christmas-lights-switch-on',
+  path: '/christmas-lights-switch-on',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AreasRoute = AreasRouteImport.update({
@@ -523,9 +547,13 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
+  '/christmas-lights-switch-on': typeof ChristmasLightsSwitchOnRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/freedom-festival': typeof FreedomFestivalRoute
   '/hull-fair': typeof HullFairRoute
+  '/hull-pride': typeof HullPrideRoute
+  '/humber-street-sesh': typeof HumberStreetSeshRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
@@ -608,9 +636,13 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
+  '/christmas-lights-switch-on': typeof ChristmasLightsSwitchOnRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/freedom-festival': typeof FreedomFestivalRoute
   '/hull-fair': typeof HullFairRoute
+  '/hull-pride': typeof HullPrideRoute
+  '/humber-street-sesh': typeof HumberStreetSeshRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
@@ -695,9 +727,13 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
+  '/christmas-lights-switch-on': typeof ChristmasLightsSwitchOnRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/freedom-festival': typeof FreedomFestivalRoute
   '/hull-fair': typeof HullFairRoute
+  '/hull-pride': typeof HullPrideRoute
+  '/humber-street-sesh': typeof HumberStreetSeshRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
   '/offers': typeof OffersRoute
@@ -783,9 +819,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/advertise'
     | '/areas'
+    | '/christmas-lights-switch-on'
     | '/contact'
     | '/forgot-password'
+    | '/freedom-festival'
     | '/hull-fair'
+    | '/hull-pride'
+    | '/humber-street-sesh'
     | '/listings'
     | '/newsletter'
     | '/offers'
@@ -868,9 +908,13 @@ export interface FileRouteTypes {
     | '/account'
     | '/advertise'
     | '/areas'
+    | '/christmas-lights-switch-on'
     | '/contact'
     | '/forgot-password'
+    | '/freedom-festival'
     | '/hull-fair'
+    | '/hull-pride'
+    | '/humber-street-sesh'
     | '/listings'
     | '/newsletter'
     | '/offers'
@@ -954,9 +998,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/advertise'
     | '/areas'
+    | '/christmas-lights-switch-on'
     | '/contact'
     | '/forgot-password'
+    | '/freedom-festival'
     | '/hull-fair'
+    | '/hull-pride'
+    | '/humber-street-sesh'
     | '/listings'
     | '/newsletter'
     | '/offers'
@@ -1041,9 +1089,13 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AdvertiseRoute: typeof AdvertiseRoute
   AreasRoute: typeof AreasRouteWithChildren
+  ChristmasLightsSwitchOnRoute: typeof ChristmasLightsSwitchOnRoute
   ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  FreedomFestivalRoute: typeof FreedomFestivalRoute
   HullFairRoute: typeof HullFairRoute
+  HullPrideRoute: typeof HullPrideRoute
+  HumberStreetSeshRoute: typeof HumberStreetSeshRoute
   ListingsRoute: typeof ListingsRoute
   NewsletterRoute: typeof NewsletterRoute
   OffersRoute: typeof OffersRoute
@@ -1211,11 +1263,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/humber-street-sesh': {
+      id: '/humber-street-sesh'
+      path: '/humber-street-sesh'
+      fullPath: '/humber-street-sesh'
+      preLoaderRoute: typeof HumberStreetSeshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hull-pride': {
+      id: '/hull-pride'
+      path: '/hull-pride'
+      fullPath: '/hull-pride'
+      preLoaderRoute: typeof HullPrideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hull-fair': {
       id: '/hull-fair'
       path: '/hull-fair'
       fullPath: '/hull-fair'
       preLoaderRoute: typeof HullFairRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/freedom-festival': {
+      id: '/freedom-festival'
+      path: '/freedom-festival'
+      fullPath: '/freedom-festival'
+      preLoaderRoute: typeof FreedomFestivalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1230,6 +1303,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/christmas-lights-switch-on': {
+      id: '/christmas-lights-switch-on'
+      path: '/christmas-lights-switch-on'
+      fullPath: '/christmas-lights-switch-on'
+      preLoaderRoute: typeof ChristmasLightsSwitchOnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/areas': {
@@ -1850,9 +1930,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AdvertiseRoute: AdvertiseRoute,
   AreasRoute: AreasRouteWithChildren,
+  ChristmasLightsSwitchOnRoute: ChristmasLightsSwitchOnRoute,
   ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  FreedomFestivalRoute: FreedomFestivalRoute,
   HullFairRoute: HullFairRoute,
+  HullPrideRoute: HullPrideRoute,
+  HumberStreetSeshRoute: HumberStreetSeshRoute,
   ListingsRoute: ListingsRoute,
   NewsletterRoute: NewsletterRoute,
   OffersRoute: OffersRoute,

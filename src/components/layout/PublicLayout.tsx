@@ -12,6 +12,14 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { PwaEnhancements } from "@/components/PwaEnhancements";
 import { LocalStatusTicker } from "@/components/LocalStatusTicker";
 
+const FESTIVAL_PATHS: Record<string, string> = {
+  "hull-fair": "/hull-fair",
+  "humber-street-sesh": "/humber-street-sesh",
+  "freedom-festival": "/freedom-festival",
+  "christmas-lights-switch-on": "/christmas-lights-switch-on",
+  "hull-pride": "/hull-pride",
+};
+
 export function PublicLayout({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState<string | null>(null);
@@ -252,11 +260,12 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
                     <div className="col-span-8 grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3">
                       {section.subs.map((sub) => {
-                        if (sub.slug === "hull-fair") {
+                        const customPath = FESTIVAL_PATHS[sub.slug];
+                        if (customPath) {
                           return (
                             <Link
                               key={sub.slug}
-                              to="/hull-fair"
+                              to={customPath}
                               onClick={() => setOpen(null)}
                               className="group flex items-baseline justify-between border-b border-accent/40 py-2 text-accent font-bold hover:border-accent"
                             >
@@ -317,11 +326,12 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                   </a>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 pl-2">
                     {s.subs.map((sub) => {
-                      if (sub.slug === "hull-fair") {
+                      const customPath = FESTIVAL_PATHS[sub.slug];
+                      if (customPath) {
                         return (
                           <Link
                             key={sub.slug}
-                            to="/hull-fair"
+                            to={customPath}
                             onClick={() => setMobileOpen(false)}
                             className="text-sm py-1 font-bold text-accent"
                           >
