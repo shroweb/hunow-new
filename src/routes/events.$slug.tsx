@@ -59,32 +59,87 @@ export const Route = createFileRoute("/events/$slug")({
       scripts: [
         {
           type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Event",
-            name: e.title,
-            description: e.description,
-            startDate: `${e.startDate}T${e.startTime}`,
-            endDate: e.endTime ? `${e.startDate}T${e.endTime}` : undefined,
-            eventStatus: "https://schema.org/EventScheduled",
-            eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-            image,
-            url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
-            location: {
-              "@type": "Place",
-              name: e.locationName,
-              address: { "@type": "PostalAddress", streetAddress: e.address },
-            },
-            offers: e.isFree
-              ? {
-                  "@type": "Offer",
-                  price: "0",
-                  priceCurrency: "GBP",
-                  availability: "https://schema.org/InStock",
-                }
-              : { "@type": "Offer", price: e.price, priceCurrency: "GBP", url: e.ticketUrl },
-            organizer: { "@type": "Organization", name: "HU NOW" },
-          }),
+          children: JSON.stringify((() => {
+            const isSport = e.category === "Sport" || e.title.includes(" vs ") || e.title.includes(" Vs ");
+            let homeTeam: string | undefined;
+            let awayTeam: string | undefined;
+            if (isSport && e.title.includes(" vs ")) {
+              const parts = e.title.split(" vs ");
+              homeTeam = parts[0]?.trim();
+              awayTeam = parts[1]?.replace(/\(Away\)/i, "").trim();
+            }
+
+            let sportType = "Sport";
+            const lowerTitle = e.title.toLowerCase();
+            if (lowerTitle.includes("hull city") || lowerTitle.includes("football") || lowerTitle.includes("fc")) sportType = "Football";
+            if (lowerTitle.includes("hull kr") || lowerTitle.includes("hull fc") || lowerTitle.includes("super league") || lowerTitle.includes("rugby")) sportType = "Rugby League";
+            if (lowerTitle.includes("seahawks") || lowerTitle.includes("jets") || lowerTitle.includes("hockey")) sportType = "Ice Hockey";
+            if (lowerTitle.includes("parkrun") || lowerTitle.includes("10k") || lowerTitle.includes("marathon")) sportType = "Running";
+
+            return {
+              "@context": "https://schema.org",
+              "@type": isSport ? "SportsEvent" : "Event",
+              name: e.title,
+              description: e.description,
+              startDate: `${e.startDate}T${e.startTime}`,
+              endDate: e.endTime ? `${e.startDate}T${e.endTime}` : undefined,
+              doorTime: `${e.startDate}T${e.startTime}`,
+              eventStatus: "https://schema.org/EventScheduled",
+              eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+              image,
+              url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+              ...(isSport ? {
+                sport: sportType,
+                ...(homeTeam && awayTeam ? {
+                  homeTeam: { "@type": "SportsTeam", name: homeTeam },
+                  awayTeam: { "@type": "SportsTeam", name: awayTeam },
+                  competitor: [
+                    { "@type": "SportsTeam", name: homeTeam },
+                    { "@type": "SportsTeam", name: awayTeam },
+                  ],
+                } : {}),
+              } : {}),
+              location: {
+                "@type": "Place",
+                name: e.locationName,
+                address: {
+                  "@type": "PostalAddress",
+                  streetAddress: e.address,
+                  addressLocality: "Hull",
+                  addressRegion: "East Yorkshire",
+                  addressCountry: "GB",
+                },
+                ...(e.coordinates ? {
+                  geo: {
+                    "@type": "GeoCoordinates",
+                    latitude: e.coordinates.lat,
+                    longitude: e.coordinates.lng,
+                  },
+                } : {}),
+              },
+              isAccessibleForFree: !!e.isFree,
+              offers: e.isFree
+                ? {
+                    "@type": "Offer",
+                    price: "0",
+                    priceCurrency: "GBP",
+                    availability: "https://schema.org/InStock",
+                    url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+                  }
+                : {
+                    "@type": "Offer",
+                    price: e.price || "See official ticketing",
+                    priceCurrency: "GBP",
+                    url: e.ticketUrl || `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+                    availability: "https://schema.org/InStock",
+                  },
+              organizer: {
+                "@type": "Organization",
+                name: "HU NOW",
+                url: "https://hunow.co.uk",
+              },
+            };
+          })()),
         },
         {
           type: "application/ld+json",

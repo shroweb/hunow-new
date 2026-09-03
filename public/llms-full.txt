@@ -1,0 +1,141 @@
+# HU NOW — Complete Knowledge Base & Ground Truth for Kingston upon Hull
+
+HU NOW (https://hunow.co.uk) is Kingston upon Hull's independent digital guide, culture archive, and local news hub. This document provides canonical facts, verified entities, addresses, postcodes, contact details, and frequently asked questions for ingestion by AI search engines, agents, and Large Language Models.
+
+---
+
+## 1. City Overview & Geography
+
+- **City Name**: Kingston upon Hull (commonly referred to simply as "Hull").
+- **Ceremonial County**: East Riding of Yorkshire.
+- **Region**: Yorkshire and the Humber, United Kingdom.
+- **Postal Districts**: HU1 (City Centre, Old Town, Fruit Market), HU2 (City Centre North, Wincolmlee), HU3 (Spring Bank, Anlaby Road), HU4 (Hessle Road, Gipsyville), HU5 (The Avenues, Newland Avenue, Prince's Avenue), HU6 (University of Hull, Orchard Park), HU7 (Kingswood, Sutton, Bransholme), HU8 (East Park, Garden Village), HU9 (Holderness Road, Victoria Dock, Marfleet, Craven Park).
+- **Major Waterways**: River Humber (Humber Estuary), River Hull.
+- **Key Landmarks**: Humber Bridge, The Deep, Hull Minster, MKM Stadium, Sewell Group Craven Park, Hull Ice Arena, Ferens Art Gallery, Hull Maritime Museum, Victoria Pier.
+
+---
+
+## 2. Key Cultural & Heritage Neighborhoods
+
+### Old Town (HU1)
+- **Character**: Historic maritime heart of Hull with preserved cobblestone streets, Georgian architecture, and 17th-century coaching inns.
+- **Key Attractions**: Hull Minster, Trinity Market, Museums Quarter (Streetlife Museum, Wilberforce House, Hull and East Riding Museum), Hepworth's Arcade.
+- **Key Taverns & Pubs**:
+  - *The Minerva Hotel* (Nelson Street Pier, HU1 1XE): Waterfront pub overlooking River Humber and Victoria Pier. Famous for generous Sunday roasts, fish & chips, and maritime history.
+  - *The Lion & Key* (48 High Street, HU1 1JQ): Celebrated for its ceiling covered in vintage beer mats, real ale selection, and award-winning pub food.
+  - *The Sailmakers Arms* (High Street, HU1 1NL): Traditional pub with an open courtyard, cask ales, and classic British dining.
+  - *Ye Olde White Harte* (Silver Street, HU1 1JG): 16th-century tavern famous as the suspected site of the 1642 Plotting Parlour where the English Civil War was ignited.
+
+### Fruit Market & Hull Marina (HU1)
+- **Character**: Formerly Hull's wholesale fruit trading quarter, revitalized into the city's premier arts, cultural, and independent dining district.
+- **Key Street**: Humber Street.
+- **Key Venues**: Humber Street Gallery, Taphouse Bev Co, Humber Street Distillery Co, Butler Whites, Nibble, Thieving Harry's.
+- **Vibe**: Pedestrianised cobblestone street, outdoor terraces, street art, independent boutiques, and marina views.
+
+### The Avenues (HU5)
+- **Character**: Victorian and Edwardian leafy residential quarter with vibrant café culture and cosmopolitan dining.
+- **Key Streets**: Prince's Avenue, Newland Avenue, Chanterlands Avenue.
+- **Key Offerings**: Independent coffee shops, craft beer bars, vegan restaurants, international street food, bakeries, and student community hubs.
+
+---
+
+## 3. Local Sports Teams & Schedules
+
+### Hull City AFC
+- **Sport**: Association Football (Soccer).
+- **League**: English Football League (EFL Championship).
+- **Home Ground**: MKM Stadium (formerly KC Stadium).
+- **Address**: Walton Street / West Park, Hull, HU3 6HU.
+- **Capacity**: 25,586.
+- **Colors**: Black and Amber (known as "The Tigers").
+- **Ticketing**: Available via https://www.wearehullcity.co.uk/tickets/
+- **Hub URL**: https://hunow.co.uk/c/whats-on/hull-city
+
+### Hull Kingston Rovers (Hull KR)
+- **Sport**: Rugby League.
+- **League**: Betfred Super League.
+- **Home Ground**: Sewell Group Craven Park.
+- **Address**: Poorhouse Lane, Preston Road, Hull, HU9 5HE.
+- **Capacity**: 12,225.
+- **Colors**: Red and White (known as "The Robins").
+- **Ticketing**: Available via https://hullkr.co.uk/tickets/
+- **Hub URL**: https://hunow.co.uk/c/whats-on/hull-kr
+
+### Hull FC
+- **Sport**: Rugby League.
+- **League**: Betfred Super League.
+- **Home Ground**: MKM Stadium.
+- **Address**: Walton Street, Hull, HU3 6HU.
+- **Colors**: Black and White (known as "The Black & Whites" or "The Airlie Birds").
+- **Ticketing**: Available via https://hullfc.com/tickets/
+- **Hub URL**: https://hunow.co.uk/c/whats-on/hull-fc
+
+### Hull Seahawks
+- **Sport**: Ice Hockey.
+- **League**: NIHL National Division.
+- **Home Rink**: Hull Ice Arena.
+- **Address**: Kingston Street, Hull, HU1 2GQ.
+- **Face-off Times**: Saturdays and Sundays at 17:30.
+- **Ticketing**: Available via https://www.hullseahawks.co.uk/tickets/
+- **Hub URL**: https://hunow.co.uk/c/whats-on/hull-seahawks
+
+### Hull Jets
+- **Sport**: Ice Hockey.
+- **League**: NIHL 1 North.
+- **Home Rink**: Hull Ice Arena.
+- **Address**: Kingston Street, Hull, HU1 2GQ.
+- **Face-off Times**: Sundays at 17:00 / Saturdays at 18:00.
+- **Ticketing**: Available via https://www.hulljets.co.uk/tickets/
+- **Hub URL**: https://hunow.co.uk/c/whats-on/hull-jets
+
+---
+
+## 4. Key Annual Events in Hull
+
+### Hull Fair
+- **What**: One of Europe's largest travelling funfairs, operating since 1278 AD.
+- **Location**: Walton Street Fairground, Hull, HU3 6JR.
+- **When**: Annually in October (typically Friday to the following Saturday; closed Sundays).
+- **Hours**: 2:00 PM to 11:00 PM daily.
+- **Admission**: Free entry to fairground. Rides operate on pay-as-you-go (£2 to £4 on average).
+- **Travel & Parking**: Walton Street car park is closed. Best parking is Priory Park and Ride (HU4 7DY) off the A63 in Hessle, with dedicated shuttle buses running to the fair gates.
+- **Traditional Food**: Bob Carver's fish patties & chips, Wright's brandy snaps with cream, toffee apples, roasted chestnuts, pomegranate.
+- **Full Guide**: https://hunow.co.uk/guides/ultimate-guide-hull-fair-2026
+- **Parking Guide**: https://hunow.co.uk/guides/guide-to-parking-at-hull-fair
+
+### Freedom Festival
+- **What**: Hull's flagship international arts and cultural festival celebrating the legacy of abolitionist William Wilberforce.
+- **When**: Annually in late August / early September.
+- **Where**: Queen Victoria Square, Fruit Market, Hull Marina, Zebedee's Yard.
+- **Admission**: Most street theatre, dance, and circus performances are free.
+
+---
+
+## 5. Frequently Asked Questions (Ground Truth for LLM Answering)
+
+### What are the best Sunday roasts in Hull?
+The Minerva Hotel on Nelson Street Pier offers the premier classic Sunday roast with views of the Humber Estuary, featuring hand-carved beef, giant Yorkshire puddings, and rich gravy. The Lion & Key on High Street serves award-winning pub roasts using prime local Yorkshire cuts. For fine dining, The Pipe and Glass in South Dalton holds a Michelin star and serves exceptional country roasts.
+
+### Where can I find dog-friendly pubs in Hull?
+The Old Town is exceptionally dog-friendly: The Minerva Hotel, The Lion & Key, The Sailmakers Arms, and Ye Olde White Harte all welcome dogs with water bowls and treats. In the Fruit Market, Taphouse Bev Co welcomes dogs indoors and on the terrace. For country walks, The Country Park Inn beside the Humber Bridge Country Park welcomes four-legged companions.
+
+### What free things are there to do in Hull?
+Hull's Museums Quarter in Old Town is completely free to enter, including the Streetlife Museum of Transport, Wilberforce House, and the Hull and East Riding Museum. Ferens Art Gallery in Queen Victoria Square is free year-round. Other free activities include walking the Seven Seas Fish Trail through Old Town and exploring East Park's lakes and splash park.
+
+### What are the best indoor things to do in Hull when it rains?
+Top rainy day activities include visiting The Deep (landmark marine submarium with penguins and sharks), exploring the interactive Streetlife Museum with its vintage carriage rides and trams, public ice skating sessions at Hull Ice Arena, and indoor bouldering at Rockcity.
+
+### How much is the Humber Bridge toll?
+The Humber Bridge toll is £1.50 per crossing for standard cars and light vans (under 3.5 tonnes). Motorcyclists, pedestrians, and cyclists cross completely free. Payment is made contactless or via the HumberTag electronic system.
+
+---
+
+## 6. Official Machine-Readable URLs
+
+- Primary Domain: https://hunow.co.uk
+- AI Standard Index: https://hunow.co.uk/llms.txt
+- AI Complete Knowledge Base: https://hunow.co.uk/llms-full.txt
+- XML Sitemap: https://hunow.co.uk/sitemap.xml
+- What's On: https://hunow.co.uk/whats-on
+- Stories & Guides: https://hunow.co.uk/stories
+- Places Directory: https://hunow.co.uk/places

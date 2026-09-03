@@ -12,6 +12,7 @@ import { ArticleContent, TableOfContents } from "@/components/ArticleContent";
 import { ArticleComments } from "@/components/ArticleComments";
 import { img } from "@/data/seed";
 import { subscribeNewsletter } from "@/lib/public.functions";
+import { getArticleFaqs } from "@/lib/seo-faqs";
 
 export const Route = createFileRoute("/stories/$slug")({
   component: StoryDetail,
@@ -76,6 +77,27 @@ export const Route = createFileRoute("/stories/$slug")({
             url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
           }),
         },
+        ...(() => {
+          const faqs = (a as any).faqs ?? getArticleFaqs(a.slug);
+          if (!faqs || faqs.length === 0) return [];
+          return [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: faqs.map((f: any) => ({
+                  "@type": "Question",
+                  name: f.question,
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: f.answer,
+                  },
+                })),
+              }),
+            },
+          ];
+        })(),
       ],
     };
   },
@@ -172,6 +194,35 @@ function StoryDetail() {
               Sponsored by {article.sponsorName}
             </div>
           )}
+          {(() => {
+            const faqs = (article as any).faqs ?? getArticleFaqs(article.slug);
+            if (!faqs || faqs.length === 0) return null;
+            return (
+              <div className="my-12 border-t-2 border-foreground pt-8">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-accent mb-2">
+                  Quick Answers & FAQs
+                </div>
+                <h3 className="font-display text-2xl md:text-3xl uppercase mb-6">
+                  Frequently Asked Questions
+                </h3>
+                <div className="divide-y divide-border border-b border-border">
+                  {faqs.map((f: any, i: number) => (
+                    <details key={i} className="py-4 group" open={i === 0}>
+                      <summary className="font-bold text-base md:text-lg cursor-pointer flex items-center justify-between list-none text-foreground group-hover:text-accent transition-colors">
+                        <span>{f.question}</span>
+                        <span className="text-xl font-mono ml-4 text-muted-foreground group-open:rotate-45 transition-transform">
+                          +
+                        </span>
+                      </summary>
+                      <p className="mt-3 text-sm md:text-base text-muted-foreground leading-relaxed">
+                        {f.answer}
+                      </p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
           <ArticleComments articleId={article.id} />
         </div>
       </article>

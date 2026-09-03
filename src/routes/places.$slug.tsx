@@ -77,27 +77,44 @@ export const Route = createFileRoute("/places/$slug")({
       scripts: [
         {
           type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            name: l.name,
-            description: l.description,
-            image,
-            url: l.website ?? `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
-            sameAs: l.website,
-            telephone: l.phone,
-            address: {
-              "@type": "PostalAddress",
-              streetAddress: l.address,
-              addressLocality: "Hull",
-              addressCountry: "GB",
-            },
-            geo:
-              l.latitude != null
-                ? { "@type": "GeoCoordinates", latitude: l.latitude, longitude: l.longitude }
-                : undefined,
-            openingHours: l.openingHours,
-          }),
+          children: JSON.stringify((() => {
+            const lowerCat = (l.category || "").toLowerCase();
+            let businessType = "LocalBusiness";
+            if (lowerCat.includes("restaurant") || lowerCat.includes("dining")) businessType = "Restaurant";
+            else if (lowerCat.includes("pub") || lowerCat.includes("bar") || lowerCat.includes("brewery") || lowerCat.includes("tavern")) businessType = "BarOrPub";
+            else if (lowerCat.includes("cafe") || lowerCat.includes("coffee")) businessType = "CafeOrCoffeeShop";
+            else if (lowerCat.includes("attraction") || lowerCat.includes("museum") || lowerCat.includes("gallery")) businessType = "TouristAttraction";
+            else if (lowerCat.includes("venue") || lowerCat.includes("music") || lowerCat.includes("theatre")) businessType = "MusicVenue";
+
+            return {
+              "@context": "https://schema.org",
+              "@type": businessType,
+              name: l.name,
+              description: l.description,
+              image,
+              url: l.website ?? `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+              sameAs: l.website,
+              telephone: l.phone,
+              priceRange: l.priceRange ?? "££",
+              currenciesAccepted: "GBP",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: l.address,
+                addressLocality: "Hull",
+                addressRegion: "East Riding of Yorkshire",
+                addressCountry: "GB",
+              },
+              areaServed: {
+                "@type": "AdministrativeArea",
+                name: "Kingston upon Hull",
+              },
+              geo:
+                l.latitude != null
+                  ? { "@type": "GeoCoordinates", latitude: l.latitude, longitude: l.longitude }
+                  : undefined,
+              openingHours: l.openingHours,
+            };
+          })()),
         },
         {
           type: "application/ld+json",

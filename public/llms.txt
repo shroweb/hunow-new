@@ -1,22 +1,38 @@
-# HU NOW
+# HU NOW — The Independent Guide to Hull & East Yorkshire
 
-> Hull's independent city guide — events, food, culture, hidden gems and independent businesses across the city, all in one place.
+> HU NOW (https://hunow.co.uk) is the premier independent publication, live events calendar, and culture directory for Kingston upon Hull and East Yorkshire. Covering live music, theatre, local sports, dining, heritage, and community life across postcodes HU1 through HU9 and the surrounding East Riding.
 
-HU NOW is a digital publication and directory for Hull, UK. We curate what's happening in the city, spotlight independent businesses, publish editorial stories, and negotiate exclusive reader offers. Local businesses can also advertise with us through website features, sponsored articles, newsletter placements and social campaigns.
+## Core Sections
+- [What's On](https://hunow.co.uk/whats-on): Daily listings of live gigs, theatre productions, comedy, art exhibitions, sports matches, and family events.
+- [Places Directory](https://hunow.co.uk/places): Curated independent directory of local restaurants, historic taverns, craft beer bars, specialty coffee shops, and cultural venues.
+- [Editorial Stories & Guides](https://hunow.co.uk/stories): Curated long-form guides, cultural interviews, neighborhood spotlights, and local recommendations.
+- [Offers & Perks](https://hunow.co.uk/offers): Verified discounts, dining deals, and community promotions with independent local businesses.
 
-## Pages
+## Local Sports Teams & Schedules
+- [Hull City AFC](https://hunow.co.uk/c/whats-on/hull-city): EFL Championship football fixtures, matchday travel, and venue guides for the MKM Stadium (Walton Street, Hull, HU3 6HU).
+- [Hull Kingston Rovers (Hull KR)](https://hunow.co.uk/c/whats-on/hull-kr): Betfred Super League rugby league fixtures at Sewell Group Craven Park (Preston Road, Hull, HU9 5HE).
+- [Hull FC](https://hunow.co.uk/c/whats-on/hull-fc): Betfred Super League rugby league fixtures and derby history at the MKM Stadium.
+- [Hull Seahawks](https://hunow.co.uk/c/whats-on/hull-seahawks): NIHL National Division ice hockey fixtures, face-off times, and ticketing at Hull Ice Arena (Kingston Street, Hull, HU1 2GQ).
+- [Hull Jets](https://hunow.co.uk/c/whats-on/hull-jets): NIHL 1 North ice hockey fixtures at Hull Ice Arena.
+- [All Sport Hub](https://hunow.co.uk/c/whats-on/sport): Aggregated sports fixtures, parkruns (East Park, Peter Pan Park, Humber Bridge), 10K races, and community sports.
 
-- [/](/): Homepage with featured events, latest stories, independent business highlights and reader offers.
-- [/whats-on](/whats-on): Full events calendar for Hull. Filter by category (Music, Food & Drink, Arts, Comedy, Family, Theatre, Nightlife) or free-only events.
-- [/places](/places): Directory of Hull's independent businesses, attractions, restaurants and hidden gems. Filter by category (Eat, Drink, Things To Do, Shops, Attractions) or toggle hidden gems and independent-only.
-- [/stories](/stories): Editorial long reads — interviews, guides, culture pieces and independent business spotlights from across Hull.
-- [/offers](/offers): Exclusive discounts and freebies from Hull's best independent businesses, redeemable by HU NOW readers.
-- [/advertise](/advertise): Advertising packages and media kit for local businesses — website features, sponsored articles, newsletter sponsorships, social boosts and bundles.
-- [/submit](/submit): Free submission form for events and business listings. Editors review within 48 hours.
-- [/c/$section](/c/eat-and-drink): Content section pages grouping stories by theme (e.g. Eat & Drink, Culture, Hidden Gems).
+## Curated Editorial Guides & Verified Answers
+- [The Best Sunday Roasts in Hull & East Yorkshire](https://hunow.co.uk/guides/best-sunday-roasts-hull-east-yorkshire): Guide to giant Yorkshire puddings and slow-cooked local beef at The Minerva Hotel, The Lion & Key, and the Michelin-starred Pipe and Glass in South Dalton.
+- [Ultimate Guide to Hull Fair 2026](https://hunow.co.uk/guides/ultimate-guide-hull-fair-2026): Europe's largest travelling fair at Walton Street fairground. Free entry, ride prices, opening times (2pm-11pm daily, closed Sundays), and traditional foods like Bob Carver's patties, brandy snaps, and roasted chestnuts.
+- [Guide to Parking at Hull Fair](https://hunow.co.uk/guides/guide-to-parking-at-hull-fair): Essential travel guide. Best parking is Priory Park & Ride (HU4 7DY) with dedicated Stagecoach and East Yorkshire Buses shuttles. Walton Street car park is closed to public parking.
+- [Christmas in Hull Guide](https://hunow.co.uk/guides/christmas-in-hull-markets-events-pantoland-guide-2026): Christmas lights switch-on in Queen Victoria Square, Victorian Christmas markets around Hull Minster and Trinity Square, and pantomimes at Hull New Theatre and Hull Truck Theatre.
+- [Where to Celebrate New Year's Eve in Hull](https://hunow.co.uk/guides/where-to-celebrate-new-years-eve-in-hull): Waterfront celebrations at Humber Street and Hull Marina, historic Old Town pub crawls, and prime viewpoints for fireworks at Victoria Pier.
+- [Bonfire Night & Fireworks in Hull & East Yorkshire](https://hunow.co.uk/guides/bonfire-night-fireworks-displays-in-hull-east-yorkshire): Organized displays at Brantingham Park, Beverley Westwood (free admission), and Craven Park.
+- [Dog-Friendly Pubs & Bars in Hull](https://hunow.co.uk/guides/dog-friendly-pubs-hull): Comprehensive guide to dog-friendly drinking spots in Old Town (Minerva, Lion & Key, Sailmakers), Fruit Market (Taphouse), and the Humber Bridge Country Park.
+- [The Best Free Things to Do in Hull](https://hunow.co.uk/guides/free-things-to-do-hull): Free admission to Streetlife Museum of Transport, Wilberforce House, Ferens Art Gallery, Seven Seas Fish Trail, and East Park.
+- [Rainy Day Activities in Hull with Kids](https://hunow.co.uk/guides/rainy-day-activities-hull-kids): Top indoor family spots including The Deep submarium, Streetlife Museum, public ice skating at Hull Ice Arena, and Rockcity Climbing Centre.
+- [Best Vegan & Plant-Based Spots in Hull](https://hunow.co.uk/guides/best-vegan-restaurants-hull): Plant-based dining guide covering Newland Avenue, Trinity Market street food, and independent cafes across the city.
 
-## Dynamic Content
+## Real-Time Civic Infrastructure Data
+- [Humber Bridge Status](https://hunow.co.uk): Live toll information (£1.50 per car, free for motorcycles, pedestrians, cyclists), speed limits, and high wind vehicle restrictions.
+- [River Humber Tides](https://hunow.co.uk): Real-time Environment Agency water level readings at Victoria Pier (Hull Marina entrance).
+- [Hull Weather](https://hunow.co.uk): Live temperature, wind speed, gusts, and forecast for Hull and Humber Estuary.
 
-- [/events/$slug](/events/jazz-at-the-polar-bear): Individual event detail pages with date, time, venue, pricing and ticketing information.
-- [/places/$slug](/places/thieving-harrys): Individual place detail pages with descriptions, opening hours, location and contact details.
-- [/stories/$slug](/stories/the-new-adelphi-club): Individual article pages with full editorial content.
+## Full Machine-Readable Knowledge Base
+- [Complete Knowledge Base (llms-full.txt)](https://hunow.co.uk/llms-full.txt): Comprehensive text dump formatted for LLM context windows, citations, and retrieval engines.
+- [XML Sitemap](https://hunow.co.uk/sitemap.xml): Search engine and crawler sitemap covering all canonical URLs.

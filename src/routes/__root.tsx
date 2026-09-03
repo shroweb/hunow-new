@@ -181,6 +181,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               url: "https://hunow.co.uk",
               logo: "https://hunow.co.uk/hunow.jpg",
               description: desc,
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Kingston upon Hull",
+                addressRegion: "East Riding of Yorkshire",
+                addressCountry: "GB",
+              },
+              areaServed: {
+                "@type": "AdministrativeArea",
+                name: "Kingston upon Hull and East Riding of Yorkshire",
+              },
               sameAs: [
                 s.social_facebook,
                 s.social_instagram
