@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { img } from "@/data/seed";
+import { img, getCategoryFallback } from "@/data/seed";
 import type { Article, EventItem, Listing, Offer } from "@/types";
 import { useIsSaved, toggleSaved } from "@/lib/bookmarks";
 import { articlePath } from "@/lib/taxonomy";
@@ -43,16 +43,23 @@ export function EventCard({ event }: { event: EventItem }) {
     .toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })
     .toUpperCase();
   const saved = useIsSaved("event", event.id);
+  const fallback = getCategoryFallback(event.category, event.title);
   return (
     <Link to="/events/$slug" params={{ slug: event.slug }} className="group block">
       <div className="w-full aspect-video bg-stone-200 mb-4 overflow-hidden border border-foreground/5 relative">
         <img
-          src={img(event.featuredImage, 800, 500)}
+          src={img(event.featuredImage, 800, 500, fallback)}
           alt={`${event.title} at ${event.locationName}`}
           width={800}
           height={500}
           loading="lazy"
           decoding="async"
+          onError={(e) => {
+            if (e.currentTarget.src !== fallback) {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = fallback;
+            }
+          }}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {event.isSponsored && (
@@ -87,16 +94,23 @@ export function EventCard({ event }: { event: EventItem }) {
 
 export function ArticleCard({ article }: { article: Article }) {
   const saved = useIsSaved("story", article.id);
+  const fallback = getCategoryFallback(article.category, article.title);
   return (
     <a href={articlePath(article)} className="group block space-y-4">
       <div className="w-full aspect-square bg-stone-200 overflow-hidden relative">
         <img
-          src={img(article.featuredImage, 800, 800)}
+          src={img(article.featuredImage, 800, 800, fallback)}
           alt={`${article.title} — illustration`}
           width={800}
           height={800}
           loading="lazy"
           decoding="async"
+          onError={(e) => {
+            if (e.currentTarget.src !== fallback) {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = fallback;
+            }
+          }}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <HeartButton
@@ -140,16 +154,23 @@ export function ArticleCard({ article }: { article: Article }) {
 export function ListingCard({ listing }: { listing: Listing }) {
   const saved = useIsSaved("place", listing.id);
   const status = listing.hours ? openStatus(listing.hours) : null;
+  const fallback = getCategoryFallback(listing.category, listing.name);
   return (
     <Link to="/places/$slug" params={{ slug: listing.slug }} className="group block">
       <div className="w-full aspect-[4/3] bg-stone-200 mb-3 overflow-hidden relative">
         <img
-          src={img(listing.featuredImage, 600, 450)}
+          src={img(listing.featuredImage, 600, 450, fallback)}
           alt={`${listing.name} — ${listing.category} in ${listing.area}`}
           width={600}
           height={450}
           loading="lazy"
           decoding="async"
+          onError={(e) => {
+            if (e.currentTarget.src !== fallback) {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = fallback;
+            }
+          }}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {listing.isHiddenGem && (

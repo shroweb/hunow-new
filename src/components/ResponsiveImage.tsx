@@ -1,4 +1,4 @@
-import { img, imgWebp, imgSrcSet } from "@/data/seed";
+import { img, imgWebp, imgSrcSet, DEFAULT_FALLBACK_IMAGE } from "@/data/seed";
 
 interface ResponsiveImageProps {
   id: string;
@@ -39,6 +39,12 @@ export function ResponsiveImage({
         loading={loading}
         fetchPriority={fetchPriority}
         decoding="async"
+        onError={(e) => {
+          if (e.currentTarget.src !== DEFAULT_FALLBACK_IMAGE) {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
+          }
+        }}
         className={className}
       />
     );
@@ -55,6 +61,12 @@ export function ResponsiveImage({
         loading={loading}
         fetchPriority={fetchPriority}
         decoding="async"
+        onError={(e) => {
+          if (e.currentTarget.src !== DEFAULT_FALLBACK_IMAGE) {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
+          }
+        }}
         className={className}
         {...(srcSet ? { srcSet } : {})}
         sizes={sizes}

@@ -8,19 +8,52 @@ import type {
   Submission,
 } from "@/types";
 
-export const img = (id: string, w = 1200, h = 800) => {
-  if (!id) return "";
+export const DEFAULT_FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&h=800&q=80";
+
+export const CATEGORY_FALLBACKS: Record<string, string> = {
+  sport: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=800&q=80",
+  rugby: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&h=800&q=80",
+  football: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=800&q=80",
+  music: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&h=800&q=80",
+  "food & drink": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&h=800&q=80",
+  food: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&h=800&q=80",
+  arts: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=1200&h=800&q=80",
+  comedy: "https://images.unsplash.com/photo-1527224857830-43a7acc85260?auto=format&fit=crop&w=1200&h=800&q=80",
+  family: "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=1200&h=800&q=80",
+  theatre: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1200&h=800&q=80",
+  nightlife: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&h=800&q=80",
+};
+
+export const getCategoryFallback = (category?: string, title?: string): string => {
+  const cat = (category || "").toLowerCase();
+  const t = (title || "").toLowerCase();
+  if (t.includes("hull kr") || t.includes("rugby") || t.includes("hull fc")) return CATEGORY_FALLBACKS.rugby;
+  if (t.includes("hull city") || t.includes("football")) return CATEGORY_FALLBACKS.football;
+  for (const [key, url] of Object.entries(CATEGORY_FALLBACKS)) {
+    if (cat.includes(key)) return url;
+  }
+  return DEFAULT_FALLBACK_IMAGE;
+};
+
+export const img = (id?: string | null, w = 1200, h = 800, fallback?: string) => {
+  const fallbackUrl = fallback || DEFAULT_FALLBACK_IMAGE;
+  if (!id || typeof id !== "string" || !id.trim()) return fallbackUrl;
+  const clean = id.trim();
   // Pass through uploaded data URLs and absolute URLs
   if (
-    id.startsWith("data:") ||
-    id.startsWith("http://") ||
-    id.startsWith("https://") ||
-    id.startsWith("blob:") ||
-    id.startsWith("/")
+    clean.startsWith("data:") ||
+    clean.startsWith("http://") ||
+    clean.startsWith("https://") ||
+    clean.startsWith("blob:") ||
+    clean.startsWith("/")
   ) {
-    return id;
+    if (clean.includes("wikimedia.org") && clean.endsWith(".svg")) {
+      return fallbackUrl;
+    }
+    return clean;
   }
-  return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
+  return `https://images.unsplash.com/${clean}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
 };
 
 /** Generate a WebP URL for an Unsplash image */

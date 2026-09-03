@@ -98,8 +98,8 @@ export async function fetchHullCityFixtures(): Promise<EventItem[]> {
           isFree: false,
           ticketUrl: "https://www.wearehullcity.co.uk/tickets/",
           featuredImage: isHome
-            ? "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&h=800&q=80"
-            : "https://upload.wikimedia.org/wikipedia/en/5/54/Hull_City_A.F.C._logo.svg",
+            ? "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=800&q=80"
+            : "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=1200&h=800&q=80",
           status: "published",
           isFeatured: isHome,
           isSponsored: false,
@@ -174,7 +174,7 @@ export async function fetchHullKrFixtures(): Promise<EventItem[]> {
           ticketUrl: "https://hullkr.co.uk/tickets/",
           featuredImage: isHome
             ? "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&h=800&q=80"
-            : "https://upload.wikimedia.org/wikipedia/en/9/90/Hull_Kingston_Rovers_logo.svg",
+            : "https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=1200&h=800&q=80",
           status: "published",
           isFeatured: isHome,
           isSponsored: false,
@@ -250,7 +250,7 @@ export async function fetchHullFcFixtures(): Promise<EventItem[]> {
           ticketUrl: "https://hullfc.com/tickets/",
           featuredImage: isHome
             ? "https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=1200&h=800&q=80"
-            : "https://upload.wikimedia.org/wikipedia/en/b/b3/Hull_FC_crest.svg",
+            : "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&h=800&q=80",
           status: "published",
           isFeatured: isHome,
           isSponsored: false,
