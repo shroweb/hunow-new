@@ -143,6 +143,9 @@ function EventDetail() {
       ])
     : undefined;
 
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const isPast = (event.endDate || event.startDate) < todayIso;
+
   return (
     <PublicLayout>
       <Breadcrumbs
@@ -156,7 +159,7 @@ function EventDetail() {
       <article className="min-h-screen">
         <div className="relative h-[45vh] md:h-[65vh] w-full overflow-hidden bg-foreground">
           <img
-            src={event.featuredImage}
+            src={img(event.featuredImage, 1600, 900)}
             alt={event.title}
             className="w-full h-full object-cover"
           />
