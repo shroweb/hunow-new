@@ -65,8 +65,8 @@ const TABS = [
     ),
   },
   {
-    to: "/offers",
-    label: "Offers",
+    to: "/stories",
+    label: "Stories",
     icon: (
       <svg
         width="20"
@@ -79,8 +79,8 @@ const TABS = [
         strokeLinejoin="round"
         aria-hidden="true"
       >
-        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-        <line x1="7" y1="7" x2="7.01" y2="7" />
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
       </svg>
     ),
   },

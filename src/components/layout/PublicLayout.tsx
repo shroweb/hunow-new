@@ -10,6 +10,7 @@ import { getSettings } from "@/lib/settings.functions";
 import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 import { CommandPalette } from "@/components/CommandPalette";
 import { PwaEnhancements } from "@/components/PwaEnhancements";
+import { LocalStatusTicker } from "@/components/LocalStatusTicker";
 
 export function PublicLayout({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -54,6 +55,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       >
         Skip to content
       </a>
+      <LocalStatusTicker />
       <nav
         className="pwa-nav sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b-2 border-foreground"
         onMouseLeave={() => setOpen(null)}

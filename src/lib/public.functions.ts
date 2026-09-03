@@ -106,3 +106,9 @@ export const redeemOffer = createServerFn({ method: "POST" })
     const offer = await incrementOfferRedemption(data.offerId);
     return { ok: true, offer };
   });
+
+export const getLocalStatusFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { getLiveLocalStatus } = await import("./local-status.server");
+    return getLiveLocalStatus();
+  });

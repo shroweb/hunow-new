@@ -44,7 +44,13 @@ export function EventCard({ event }: { event: EventItem }) {
   const fallback = getCategoryFallback(event.category, event.title);
   return (
     <Link to="/events/$slug" params={{ slug: event.slug }} className="group block">
-      <div className="w-full aspect-video bg-stone-200 mb-4 overflow-hidden border border-foreground/5 relative">
+      <div className="w-full aspect-video bg-gradient-to-br from-stone-900 via-neutral-900 to-stone-800 mb-4 overflow-hidden border border-foreground/10 relative">
+        <div className="absolute inset-0 flex flex-col justify-end p-4 pointer-events-none text-white/70">
+          <div className="text-[9px] font-mono uppercase tracking-widest text-accent mb-0.5">
+            {event.category}
+          </div>
+          <div className="text-xs font-bold font-sans line-clamp-1">{event.locationName}</div>
+        </div>
         <img
           src={img(event.featuredImage, 800, 500, fallback)}
           alt={`${event.title} at ${event.locationName}`}
@@ -58,7 +64,7 @@ export function EventCard({ event }: { event: EventItem }) {
               e.currentTarget.src = fallback;
             }
           }}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {event.isSponsored && (
           <span className="absolute top-3 left-3 bg-accent text-background text-[9px] font-bold uppercase px-2 py-0.5">

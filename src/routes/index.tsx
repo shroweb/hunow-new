@@ -142,30 +142,30 @@ function Index() {
         <div className="relative border-b border-background/10">
           <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
             <span
-              className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40"
+              className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40 truncate max-w-[240px] sm:max-w-none"
               suppressHydrationWarning
             >
               {`Hull · ${liveDate}`}
             </span>
-            <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40">
+            <span className="hidden sm:inline text-[9px] font-mono uppercase tracking-[0.2em] text-background/40">
               Independent City Guide
             </span>
           </div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 py-14 md:py-20 min-h-[calc(100vh-132px)] flex items-center">
+        <div className="relative max-w-7xl mx-auto px-4 py-8 md:py-20 min-h-[60vh] md:min-h-[calc(100vh-132px)] flex items-center">
           <div className="max-w-5xl">
             {/* [5] Section label */}
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center gap-3 mb-3 md:mb-5">
               <span className="w-6 h-[2px] bg-accent" />
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-accent">
                 Hull's independent city guide
               </span>
             </div>
-            <h1 className="text-6xl md:text-9xl font-display leading-[0.9] text-balance mb-8">
+            <h1 className="text-4xl sm:text-6xl md:text-9xl font-display leading-[0.95] text-balance mb-4 md:mb-8">
               DISCOVER WHAT&apos;S <span className="text-accent">HAPPENING</span> IN HULL
             </h1>
-            <p className="text-xl md:text-2xl font-medium max-w-2xl mb-10 text-pretty text-background/80">
+            <p className="text-sm md:text-2xl font-medium max-w-2xl mb-6 md:mb-10 text-pretty text-background/80">
               Events, food, culture, hidden gems and independent businesses — all in one place.
             </p>
             <form
