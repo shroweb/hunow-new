@@ -27,7 +27,7 @@ interface Store {
 
 export type AppStore = Store;
 
-const STORAGE_KEY = "hunow:store:v3";
+const STORAGE_KEY = "hunow:store:v4";
 
 const initial: Store = {
   articles: [],

@@ -49,8 +49,8 @@ function TagPage() {
   // useStore provides reactivity; fall back to loader data on initial render
   const storeArticles = useStore((s) => s.articles);
   const storeEvents = useStore((s) => s.events);
-  const allArticles = storeArticles.length > 0 ? storeArticles : loaderArticles;
-  const allEvents = storeEvents.length > 0 ? storeEvents : loaderEvents;
+  const allArticles = loaderArticles?.length ? loaderArticles : storeArticles;
+  const allEvents = loaderEvents?.length ? loaderEvents : storeEvents;
 
   const matchTag = (tags: string[]) => tags.some((t) => t.toLowerCase() === tag);
   const matchAlso = (tags: string[]) =>

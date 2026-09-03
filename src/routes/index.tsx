@@ -80,11 +80,11 @@ function Index() {
   const storeListings = useStore((s) => s.listings);
   const storeOffers = useStore((s) => s.offers);
 
-  // Use store data when hydrated, fall back to loader data for SSR
-  const allEvents = storeEvents.length > 0 ? storeEvents : loaderEvents;
-  const allArticles = storeArticles.length > 0 ? storeArticles : loaderArticles;
-  const allListingsData = storeListings.length > 0 ? storeListings : loaderListings;
-  const allOffers = storeOffers.length > 0 ? storeOffers : loaderOffers;
+  // Prioritize canonical server loader data for SSR and client hydration
+  const allEvents = loaderEvents?.length ? loaderEvents : storeEvents;
+  const allArticles = loaderArticles?.length ? loaderArticles : storeArticles;
+  const allListingsData = loaderListings?.length ? loaderListings : storeListings;
+  const allOffers = loaderOffers?.length ? loaderOffers : storeOffers;
 
   const publishedEvents = allEvents.filter((e) => e.status === "published");
   const events = publishedEvents.slice(0, 4);
@@ -142,7 +142,10 @@ function Index() {
         {/* [4] Newspaper masthead strip */}
         <div className="relative border-b border-background/10">
           <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
-            <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40">
+            <span
+              className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40"
+              suppressHydrationWarning
+            >
               Hull · {liveDate}
             </span>
             <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40">

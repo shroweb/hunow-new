@@ -43,7 +43,7 @@ function AuthorPage() {
   const storeArticles = useStore((s) => s.articles).filter(
     (a) => a.author === author.name && a.status === "published",
   );
-  const articles = storeArticles.length > 0 ? storeArticles : loaderArticles;
+  const articles = loaderArticles?.length ? loaderArticles : storeArticles;
 
   return (
     <PublicLayout>
