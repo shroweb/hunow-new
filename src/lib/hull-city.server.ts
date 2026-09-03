@@ -264,8 +264,123 @@ export async function fetchHullFcFixtures(): Promise<EventItem[]> {
   return events;
 }
 
+// 4. Hull Seahawks (NIHL National Division Ice Hockey at Hull Ice Arena)
+export async function fetchHullSeahawksFixtures(): Promise<EventItem[]> {
+  const schedule = [
+    { date: "2026-09-19", time: "17:30", opponent: "Leeds Knights", isHome: true },
+    { date: "2026-09-26", time: "17:30", opponent: "Sheffield Steeldogs", isHome: true },
+    { date: "2026-10-03", time: "19:00", opponent: "Peterborough Phantoms", isHome: false },
+    { date: "2026-10-10", time: "17:30", opponent: "Milton Keynes Lightning", isHome: true },
+    { date: "2026-10-17", time: "18:30", opponent: "Swindon Wildcats", isHome: false },
+    { date: "2026-10-24", time: "17:30", opponent: "Telford Tigers", isHome: true },
+    { date: "2026-10-31", time: "17:15", opponent: "Romford Raiders", isHome: false },
+    { date: "2026-11-07", time: "17:30", opponent: "Berkshire Bees", isHome: true },
+    { date: "2026-11-14", time: "19:00", opponent: "Bristol Pitbulls", isHome: false },
+    { date: "2026-11-21", time: "17:30", opponent: "Solway Sharks", isHome: true },
+    { date: "2026-11-28", time: "17:30", opponent: "Leeds Knights", isHome: true },
+    { date: "2026-12-05", time: "19:30", opponent: "Sheffield Steeldogs", isHome: false },
+    { date: "2026-12-12", time: "17:30", opponent: "Peterborough Phantoms", isHome: true },
+    { date: "2026-12-19", time: "17:30", opponent: "Milton Keynes Lightning", isHome: true },
+    { date: "2026-12-26", time: "17:30", opponent: "Leeds Knights (Boxing Day Derby)", isHome: true },
+    { date: "2027-01-02", time: "17:30", opponent: "Swindon Wildcats", isHome: true },
+    { date: "2027-01-09", time: "18:00", opponent: "Telford Tigers", isHome: false },
+    { date: "2027-01-16", time: "17:30", opponent: "Romford Raiders", isHome: true },
+    { date: "2027-01-23", time: "18:30", opponent: "Berkshire Bees", isHome: false },
+    { date: "2027-01-30", time: "17:30", opponent: "Bristol Pitbulls", isHome: true },
+    { date: "2027-02-06", time: "19:00", opponent: "Solway Sharks", isHome: false },
+    { date: "2027-02-13", time: "17:30", opponent: "Sheffield Steeldogs", isHome: true },
+    { date: "2027-02-20", time: "17:30", opponent: "Leeds Knights", isHome: false },
+    { date: "2027-02-27", time: "17:30", opponent: "Peterborough Phantoms", isHome: true },
+    { date: "2027-03-06", time: "19:00", opponent: "Milton Keynes Lightning", isHome: false },
+    { date: "2027-03-13", time: "17:30", opponent: "Swindon Wildcats", isHome: true },
+    { date: "2027-03-20", time: "18:00", opponent: "Telford Tigers", isHome: false },
+  ];
+
+  return schedule.map((item) => {
+    const title = item.isHome ? `Hull Seahawks vs ${item.opponent}` : `${item.opponent} vs Hull Seahawks (Away)`;
+    const dedupeKey = `seahawks-${slugify(title)}-${item.date}`;
+    return {
+      id: dedupeKey,
+      title,
+      slug: slugify(`hull-seahawks-${item.isHome ? "vs" : "at"}-${item.opponent}-${item.date}`),
+      description: `NIHL National Division Ice Hockey. ${
+        item.isHome
+          ? `Hull Seahawks host ${item.opponent} at the Hull Ice Arena. Face-off at ${item.time}. Fast-paced, hard-hitting national league ice hockey in the heart of Hull.`
+          : `Hull Seahawks travel to face ${item.opponent}. Face-off at ${item.time}.`
+      }`,
+      category: "Sport",
+      area: item.isHome ? "City Centre" : undefined,
+      startDate: item.date,
+      startTime: item.time,
+      locationName: item.isHome ? "Hull Ice Arena, Hull" : `${item.opponent} Arena (Away)`,
+      address: item.isHome ? "Kingston Street, Hull, HU1 2GQ" : "",
+      coordinates: item.isHome ? { lat: 53.7389, lng: -0.3475 } : undefined,
+      price: "Adults from £14, Concessions £11, Kids £8",
+      isFree: false,
+      ticketUrl: "https://www.hullseahawks.co.uk/tickets/",
+      featuredImage: "https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?auto=format&fit=crop&w=1200&h=800&q=80",
+      status: "published",
+      isFeatured: item.isHome && item.opponent.includes("Leeds"),
+      isSponsored: false,
+    };
+  });
+}
+
+// 5. Hull Jets (NIHL 1 North Ice Hockey at Hull Ice Arena)
+export async function fetchHullJetsFixtures(): Promise<EventItem[]> {
+  const schedule = [
+    { date: "2026-09-20", time: "17:30", opponent: "Billingham Stars", isHome: true },
+    { date: "2026-09-27", time: "17:00", opponent: "Whitley Warriors", isHome: false },
+    { date: "2026-10-04", time: "17:30", opponent: "Blackburn Hawks", isHome: true },
+    { date: "2026-10-11", time: "17:30", opponent: "Solihull Barons", isHome: false },
+    { date: "2026-10-18", time: "17:30", opponent: "Deeside Dragons", isHome: true },
+    { date: "2026-10-25", time: "16:30", opponent: "Nottingham Lions", isHome: false },
+    { date: "2026-11-01", time: "17:30", opponent: "Sheffield Scimitars", isHome: true },
+    { date: "2026-11-08", time: "17:30", opponent: "Widnes Wild", isHome: false },
+    { date: "2026-11-15", time: "17:30", opponent: "Billingham Stars", isHome: true },
+    { date: "2026-11-22", time: "17:00", opponent: "Whitley Warriors", isHome: true },
+    { date: "2026-12-06", time: "17:30", opponent: "Blackburn Hawks", isHome: false },
+    { date: "2026-12-13", time: "17:30", opponent: "Solihull Barons", isHome: true },
+    { date: "2027-01-10", time: "17:30", opponent: "Deeside Dragons", isHome: false },
+    { date: "2027-01-17", time: "17:30", opponent: "Nottingham Lions", isHome: true },
+    { date: "2027-01-24", time: "17:30", opponent: "Sheffield Scimitars", isHome: false },
+    { date: "2027-01-31", time: "17:30", opponent: "Widnes Wild", isHome: true },
+    { date: "2027-02-14", time: "17:30", opponent: "Whitley Warriors", isHome: false },
+    { date: "2027-02-21", time: "17:30", opponent: "Billingham Stars", isHome: true },
+  ];
+
+  return schedule.map((item) => {
+    const title = item.isHome ? `Hull Jets vs ${item.opponent}` : `${item.opponent} vs Hull Jets (Away)`;
+    const dedupeKey = `jets-${slugify(title)}-${item.date}`;
+    return {
+      id: dedupeKey,
+      title,
+      slug: slugify(`hull-jets-${item.isHome ? "vs" : "at"}-${item.opponent}-${item.date}`),
+      description: `NIHL 1 North Ice Hockey. ${
+        item.isHome
+          ? `Hull Jets host ${item.opponent} at the Hull Ice Arena. Face-off at ${item.time}. Passionate, grassroots competitive ice hockey in Hull.`
+          : `Hull Jets travel to face ${item.opponent}. Face-off at ${item.time}.`
+      }`,
+      category: "Sport",
+      area: item.isHome ? "City Centre" : undefined,
+      startDate: item.date,
+      startTime: item.time,
+      locationName: item.isHome ? "Hull Ice Arena, Hull" : `${item.opponent} Rink (Away)`,
+      address: item.isHome ? "Kingston Street, Hull, HU1 2GQ" : "",
+      coordinates: item.isHome ? { lat: 53.7389, lng: -0.3475 } : undefined,
+      price: "Adults £10, Concessions £7, Kids £5",
+      isFree: false,
+      ticketUrl: "https://www.hulljets.co.uk/tickets/",
+      featuredImage: "https://images.unsplash.com/photo-1515703407324-5f753eed2411?auto=format&fit=crop&w=1200&h=800&q=80",
+      status: "published",
+      isFeatured: false,
+      isSponsored: false,
+    };
+  });
+}
+
 export async function syncHullSportsFixtures(
-  target: "hull-city" | "hull-kr" | "hull-fc" | "all" = "all",
+  target: "hull-city" | "hull-kr" | "hull-fc" | "hull-seahawks" | "hull-jets" | "all" = "all",
 ): Promise<{
   imported: number;
   skipped: number;
@@ -287,6 +402,16 @@ export async function syncHullSportsFixtures(
   if (target === "hull-fc" || target === "all") {
     const fcEvents = await fetchHullFcFixtures();
     pendingEvents.push(...fcEvents);
+  }
+
+  if (target === "hull-seahawks" || target === "all") {
+    const seahawksEvents = await fetchHullSeahawksFixtures();
+    pendingEvents.push(...seahawksEvents);
+  }
+
+  if (target === "hull-jets" || target === "all") {
+    const jetsEvents = await fetchHullJetsFixtures();
+    pendingEvents.push(...jetsEvents);
   }
 
   if (pendingEvents.length === 0) {

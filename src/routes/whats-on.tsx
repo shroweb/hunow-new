@@ -31,6 +31,7 @@ export const Route = createFileRoute("/whats-on")({
 
 const CATEGORIES = [
   "All",
+  "Sport",
   "Music",
   "Food & Drink",
   "Arts",
