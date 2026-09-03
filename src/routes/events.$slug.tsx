@@ -534,7 +534,20 @@ function EventHighlights({ event }: { event: import("@/types").EventItem }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {highlights.map((h, i) => (
           <div key={i} className="flex gap-3.5 items-start">
-            <span className="text-accent text-lg leading-none shrink-0 mt-0.5">✦</span>
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="shrink-0 text-accent mt-0.5"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
             <div>
               <div className="font-bold text-sm leading-snug">{h.title}</div>
               <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{h.desc}</div>
@@ -556,26 +569,92 @@ function VisitorGuide({ event }: { event: import("@/types").EventItem }) {
       </div>
       <div className="p-6 md:p-8 divide-y divide-foreground/10">
         <div className="pb-5">
-          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-1.5">
-            <span>⏱</span> Timings & Recommended Arrival
+          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-2">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            Timings & Recommended Arrival
           </div>
           <p className="text-sm text-foreground/80 leading-relaxed">{guide.timings}</p>
         </div>
         <div className="py-5">
-          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-1.5">
-            <span>🚆</span> Public Transit & Getting Here
+          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-2">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <rect x="3" y="3" width="18" height="14" rx="2" />
+              <path d="M7 17v4" />
+              <path d="M17 17v4" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <circle cx="7.5" cy="13.5" r="1" />
+              <circle cx="16.5" cy="13.5" r="1" />
+            </svg>
+            Public Transit & Getting Here
           </div>
           <p className="text-sm text-foreground/80 leading-relaxed">{guide.transit}</p>
         </div>
         <div className="py-5">
-          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-1.5">
-            <span>🅿️</span> Parking & Drop-Off
+          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-2">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <rect x="4" y="4" width="16" height="16" rx="2" />
+              <path d="M9 16V8h4a2 2 0 0 1 0 4H9" />
+            </svg>
+            Parking & Drop-Off
           </div>
           <p className="text-sm text-foreground/80 leading-relaxed">{guide.parking}</p>
         </div>
         <div className="pt-5">
-          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-1.5">
-            <span>♿</span> Accessibility & Facilities
+          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-2">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <circle cx="12" cy="4" r="2" />
+              <path d="M10 20l4-7-3-3v-4" />
+              <path d="M7 13l5-2 3 3" />
+              <path d="M17 17a5 5 0 1 1-10 0" />
+            </svg>
+            Accessibility & Facilities
           </div>
           <p className="text-sm text-foreground/80 leading-relaxed">{guide.accessibility}</p>
         </div>

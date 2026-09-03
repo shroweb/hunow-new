@@ -1,8 +1,8 @@
 import type { EventItem } from "@/types";
 import { slugify } from "./dedupe.server";
 
-// Get next N upcoming Saturdays
-function getNextSaturdays(count = 6): string[] {
+// Get next N upcoming Saturdays (default 2 so feeds stay fresh without repeating duplicates)
+function getNextSaturdays(count = 2): string[] {
   const dates: string[] = [];
   const d = new Date();
   while (dates.length < count) {
@@ -16,7 +16,7 @@ function getNextSaturdays(count = 6): string[] {
 
 export async function generateHullCommunityEvents(): Promise<EventItem[]> {
   const events: EventItem[] = [];
-  const saturdays = getNextSaturdays(6);
+  const saturdays = getNextSaturdays(2);
 
   for (const date of saturdays) {
     // 1. East Park Parkrun
@@ -35,7 +35,7 @@ export async function generateHullCommunityEvents(): Promise<EventItem[]> {
       price: "Free",
       isFree: true,
       ticketUrl: "https://www.parkrun.org.uk/hull/",
-      featuredImage: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&h=800&q=80",
+      featuredImage: "https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=1200&h=800&q=80",
       status: "published",
       isFeatured: false,
       isSponsored: false,
@@ -57,7 +57,7 @@ export async function generateHullCommunityEvents(): Promise<EventItem[]> {
       price: "Free",
       isFree: true,
       ticketUrl: "https://www.parkrun.org.uk/peterpan/",
-      featuredImage: "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=1200&h=800&q=80",
+      featuredImage: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&h=800&q=80",
       status: "published",
       isFeatured: false,
       isSponsored: false,
@@ -79,7 +79,7 @@ export async function generateHullCommunityEvents(): Promise<EventItem[]> {
       price: "Free",
       isFree: true,
       ticketUrl: "https://www.parkrun.org.uk/humberbridge/",
-      featuredImage: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&h=800&q=80",
+      featuredImage: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=1200&h=800&q=80",
       status: "published",
       isFeatured: false,
       isSponsored: false,
