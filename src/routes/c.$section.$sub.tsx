@@ -10,8 +10,8 @@ export const Route = createFileRoute("/c/$section/$sub")({
     const section = findSection(params.section);
     const sub = findSub(params.section, params.sub);
     if (!section || !sub) throw notFound();
-    const { getDatabaseStore } = await import("@/lib/db.server");
-    const store = await getDatabaseStore().catch(() => null);
+    const { getStoreFromDatabase } = await import("@/lib/store.functions");
+    const store = await getStoreFromDatabase().catch(() => null);
     return {
       section,
       sub,
@@ -58,20 +58,19 @@ function SubPage() {
     articles: loaderArticles,
     events: loaderEvents,
   } = Route.useLoaderData();
-  const storeArticles = useStore((s) => s.articles);
-  const storeEvents = useStore((s) => s.events);
 
-  const allArticles = loaderArticles?.length ? loaderArticles : storeArticles;
-  const allEvents = loaderEvents?.length ? loaderEvents : storeEvents;
-
-  const articles = allArticles.filter(
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const articles = (loaderArticles ?? []).filter(
     (a) =>
       a.status === "published" &&
       ((a.section === section.slug && a.subcategory === sub.slug) ||
         a.tags.some((t) => t.toLowerCase() === sub.slug)),
   );
-  const events = allEvents.filter(
-    (e) => e.status === "published" && e.category.toLowerCase() === sub.slug,
+  const events = (loaderEvents ?? []).filter(
+    (e) =>
+      e.status === "published" &&
+      e.category.toLowerCase() === sub.slug &&
+      (e.endDate || e.startDate) >= todayIso,
   );
 
   const hasContent = articles.length > 0 || events.length > 0;

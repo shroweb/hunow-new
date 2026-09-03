@@ -41,15 +41,57 @@ function mapBusinessTypeToCategory(type = "", name = ""): string {
   return "Restaurants";
 }
 
-function getFoodImage(category: string): string {
+const PUB_IMAGES = [
+  "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1583241800698-e8ab01830a07?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1538488881522-4328fb77821c?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1575444758702-4a6b9222336e?auto=format&fit=crop&w=1200&h=800&q=80",
+];
+
+const CAFE_IMAGES = [
+  "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=1200&h=800&q=80",
+];
+
+const RESTAURANT_IMAGES = [
+  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&h=800&q=80",
+  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&h=800&q=80",
+];
+
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+export function getFoodImage(category: string, seed = ""): string {
+  const hash = hashString(seed || category);
   if (category === "Bars & Pubs") {
-    return "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&h=800&q=80";
+    return PUB_IMAGES[hash % PUB_IMAGES.length];
   }
   if (category === "Cafes") {
-    return "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&h=800&q=80";
+    return CAFE_IMAGES[hash % CAFE_IMAGES.length];
   }
-  return "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&h=800&q=80";
+  return RESTAURANT_IMAGES[hash % RESTAURANT_IMAGES.length];
 }
+
+const NON_FOOD_TERMS = [
+  "play town", "play centre", "soft play", "nursery", "school", "academy", "care home",
+  "residential", "hospital", "medical", "prison", "canteen", "ltd c/o", "sports centre", "active+",
+];
 
 export async function fetchHullFoodEstablishments(pageSize = 40, pageNumber = 1): Promise<Listing[]> {
   const listings: Listing[] = [];
@@ -73,6 +115,9 @@ export async function fetchHullFoodEstablishments(pageSize = 40, pageNumber = 1)
 
       const name = (est.BusinessName || "").trim();
       if (!name || name.length < 2) continue;
+
+      const normName = name.toLowerCase();
+      if (NON_FOOD_TERMS.some((term) => normName.includes(term))) continue;
 
       const addressParts = [
         est.AddressLine1,
@@ -105,7 +150,7 @@ export async function fetchHullFoodEstablishments(pageSize = 40, pageNumber = 1)
         area,
         address: fullAddress,
         coordinates,
-        featuredImage: getFoodImage(category),
+        featuredImage: getFoodImage(category, name),
         status: "published",
         isFeatured: false,
         isSponsored: false,

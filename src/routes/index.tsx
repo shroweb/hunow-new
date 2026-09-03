@@ -15,8 +15,8 @@ import { subscribeNewsletter } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const { getDatabaseStore } = await import("@/lib/db.server");
-    const store = await getDatabaseStore();
+    const { getStoreFromDatabase } = await import("@/lib/store.functions");
+    const store = await getStoreFromDatabase();
     return {
       articles: store.articles,
       events: store.events,
@@ -87,7 +87,10 @@ function Index() {
   const allListingsData = loaderListings?.length ? loaderListings : storeListings;
   const allOffers = loaderOffers?.length ? loaderOffers : storeOffers;
 
-  const publishedEvents = allEvents.filter((e) => e.status === "published");
+  const today = todayIso();
+  const publishedEvents = allEvents.filter(
+    (e) => e.status === "published" && (e.endDate || e.startDate) >= today,
+  );
   const events = publishedEvents.slice(0, 4);
   const articles = allArticles.filter((a) => a.status === "published").slice(0, 4);
   const offers = allOffers.filter((o) => o.status === "active").slice(0, 3);

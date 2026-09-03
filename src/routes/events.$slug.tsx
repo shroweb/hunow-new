@@ -153,19 +153,46 @@ function EventDetail() {
           { label: event.title },
         ]}
       />
-      <article>
-        <div className="w-full h-[56vw] max-h-[520px] min-h-[240px] bg-stone-200 overflow-hidden relative">
+      <article className="min-h-screen">
+        <div className="relative h-[45vh] md:h-[65vh] w-full overflow-hidden bg-foreground">
           <img
-            src={img(event.featuredImage, 1600, 700)}
-            alt={`${event.title} at ${event.locationName}`}
-            width={1600}
-            height={700}
-            decoding="async"
+            src={event.featuredImage}
+            alt={event.title}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-transparent" />
         </div>
         <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
+          {isPast && (
+            <div className="border-2 border-foreground bg-foreground/[0.04] p-4 md:p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-2.5 h-2.5 rounded-full bg-foreground/40 shrink-0" />
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+                    Past Event
+                  </div>
+                  <p className="text-sm font-medium mt-0.5">
+                    This event took place on{" "}
+                    <span className="font-bold">
+                      {new Date(`${event.startDate}T12:00:00`).toLocaleDateString("en-GB", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                    .
+                  </p>
+                </div>
+              </div>
+              <Link
+                to="/whats-on"
+                className="shrink-0 text-xs font-bold uppercase tracking-wider px-4 py-2 border-2 border-foreground hover:bg-foreground hover:text-background transition-colors"
+              >
+                Browse Upcoming Events →
+              </Link>
+            </div>
+          )}
           {event.isSponsored && (
             <div className="inline-block bg-accent text-background text-[10px] font-bold uppercase px-3 py-1 mb-4">
               Sponsored
@@ -302,17 +329,28 @@ function EventDetail() {
           </div>
           {/* Primary CTAs */}
           <div className="flex flex-wrap gap-3 mb-6">
-            {event.ticketUrl && (
-              <a
-                href={event.ticketUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-block bg-accent text-background px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-foreground transition-colors"
+            {isPast ? (
+              <Link
+                to="/whats-on"
+                className="inline-flex items-center gap-2 bg-foreground/10 text-foreground px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors"
               >
-                Get Tickets →
-              </a>
+                Event Ended — Browse What's On →
+              </Link>
+            ) : (
+              <>
+                {event.ticketUrl && (
+                  <a
+                    href={event.ticketUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block bg-accent text-background px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-foreground transition-colors"
+                  >
+                    Get Tickets →
+                  </a>
+                )}
+                <RsvpButton eventId={event.id} />
+              </>
             )}
-            <RsvpButton eventId={event.id} />
           </div>
 
           {/* Secondary actions */}

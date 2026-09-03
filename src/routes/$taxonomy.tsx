@@ -36,8 +36,8 @@ export const Route = createFileRoute("/$taxonomy")({
       }
       throw notFound();
     }
-    const { getDatabaseStore } = await import("@/lib/db.server");
-    const store = await getDatabaseStore().catch(() => null);
+    const { getStoreFromDatabase } = await import("@/lib/store.functions");
+    const store = await getStoreFromDatabase().catch(() => null);
     return {
       taxonomy,
       articles: store?.articles ?? [],
@@ -78,12 +78,14 @@ function TaxonomyPage() {
   } = Route.useLoaderData();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  const todayIso = new Date().toISOString().slice(0, 10);
   const articles = (loaderArticles ?? [])
     .filter((article) => article.status === "published")
     .filter((article) => articleMatchesTaxonomy(article, taxonomy));
   const events = (loaderEvents ?? [])
     .filter((event) => event.status === "published")
-    .filter((event) => eventMatchesTaxonomy(event, taxonomy));
+    .filter((event) => eventMatchesTaxonomy(event, taxonomy))
+    .filter((event) => (event.endDate || event.startDate) >= todayIso);
   const listings = (loaderListings ?? []).filter((listing) =>
     listingMatchesTaxonomy(listing, taxonomy),
   );

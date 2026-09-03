@@ -1006,6 +1006,11 @@ export async function getPagedEvents(options: {
     countQuery += ` and (data->>'startDate' = $${paramIndex} or data->>'startDate' = $${paramIndex + 1})`;
     params.push(satStr, sunStr);
     paramIndex += 2;
+  } else {
+    query += ` and coalesce(nullif(data->>'endDate', ''), data->>'startDate') >= $${paramIndex}`;
+    countQuery += ` and coalesce(nullif(data->>'endDate', ''), data->>'startDate') >= $${paramIndex}`;
+    params.push(today);
+    paramIndex++;
   }
 
   if (q) {
