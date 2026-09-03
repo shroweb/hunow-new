@@ -194,20 +194,20 @@ function HullPridePage() {
           <h2 className="text-3xl md:text-4xl font-display uppercase mb-6">Parade & Stage Highlights</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎉 The Vibrant City Parade</h3>
-              <p className="text-sm text-muted-foreground">Gathering at Hull Paragon Interchange, a dazzling sea of rainbow flags, marching bands, floats, and community groups winds through the city center.</p>
+              <h3 className="font-display text-xl uppercase mb-2">👑 Zebedee's Yard (Main Stage)</h3>
+              <p className="text-sm text-muted-foreground">The beating heart of musical performances, hosting chart-topping pop headliners, drag icons from RuPaul's Drag Race UK, and electric live bands.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">👑 Main Festival Stage</h3>
-              <p className="text-sm text-muted-foreground">Featuring chart-topping British pop artists, stars from RuPaul’s Drag Race UK, tribute acts, and renowned LGBTQ+ DJs.</p>
+              <h3 className="font-display text-xl uppercase mb-2">🏛️ Queen Victoria Square (Trans Square)</h3>
+              <p className="text-sm text-muted-foreground">A dedicated, welcoming celebration hub featuring trans-led panel discussions, acoustic stages, spoken word, and creative showcases.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎪 Community & Wellbeing Tent</h3>
-              <p className="text-sm text-muted-foreground">Healthcare providers, mental wellbeing advice, youth LGBTQ+ groups, and community outreach stalls offering support and guidance.</p>
+              <h3 className="font-display text-xl uppercase mb-2">🎨 Ferens Art Gallery (Family Area)</h3>
+              <p className="text-sm text-muted-foreground">A calm, inclusive space for LGBTQ+ families and young people featuring craft workshops, quiet sensory zones, and story sessions.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🍹 Afterparties & Nightlife</h3>
-              <p className="text-sm text-muted-foreground">The celebrations continue late into the night across Hull's top venues and bars including Fuel, Propaganda, and Humber Street bars.</p>
+              <h3 className="font-display text-xl uppercase mb-2">🎪 King Edward & Paragon St (Community Market)</h3>
+              <p className="text-sm text-muted-foreground">Dozens of vibrant stalls representing local charities, NHS wellbeing teams, independent makers, craft traders, and street food vendors.</p>
             </div>
           </div>
         </section>

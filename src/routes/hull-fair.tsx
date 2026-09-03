@@ -339,9 +339,9 @@ function HullFairPage() {
               <tbody className="divide-y divide-border">
                 <tr>
                   <td className="p-3 font-bold">Friday 9 Oct</td>
-                  <td className="p-3">2:00 PM</td>
+                  <td className="p-3">4:00 PM</td>
                   <td className="p-3">11:00 PM</td>
-                  <td className="p-3 text-muted-foreground">Opening Bell & Evening Carnival</td>
+                  <td className="p-3 text-muted-foreground">Official Opening Bell & Carnival</td>
                 </tr>
                 <tr>
                   <td className="p-3 font-bold">Saturday 10 Oct</td>

@@ -42,8 +42,8 @@ export const Route = createFileRoute("/freedom-festival")({
           name: "Freedom Festival Hull",
           description:
             "Hull's premier international arts festival celebrating heritage, freedom of expression, and performance art across Hull city centre.",
-          startDate: "2027-08-27T10:00:00+01:00",
-          endDate: "2027-08-31T22:00:00+01:00",
+          startDate: "2026-09-04T10:00:00+01:00",
+          endDate: "2026-09-06T22:00:00+01:00",
           eventStatus: "https://schema.org/EventScheduled",
           isAccessibleForFree: true,
           url: "https://hunow.co.uk/freedom-festival",
@@ -129,12 +129,12 @@ function FreedomFestivalPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-6 border-t border-white/20">
             <div className="bg-white/5 backdrop-blur p-3 border border-white/10">
-              <div className="text-[10px] font-mono uppercase text-white/50">Timing</div>
-              <div className="font-bold text-sm text-white">Late August</div>
+              <div className="text-[10px] font-mono uppercase text-white/50">2026 Dates</div>
+              <div className="font-bold text-sm text-white">4–6 Sept 2026</div>
             </div>
             <div className="bg-white/5 backdrop-blur p-3 border border-white/10">
-              <div className="text-[10px] font-mono uppercase text-white/50">Duration</div>
-              <div className="font-bold text-sm text-white">5 Full Days</div>
+              <div className="text-[10px] font-mono uppercase text-white/50">2026 Theme</div>
+              <div className="font-bold text-sm text-accent">Peace</div>
             </div>
             <div className="bg-white/5 backdrop-blur p-3 border border-white/10">
               <div className="text-[10px] font-mono uppercase text-white/50">Admission</div>
