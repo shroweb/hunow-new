@@ -12,6 +12,7 @@ import { addToHistory } from "@/lib/reading-history";
 import { autoLink } from "@/lib/autolink";
 import { sanitizeHtml, escapeAttr } from "@/lib/sanitize";
 import { img } from "@/data/seed";
+import { getEventHighlights, getEventVisitorGuide } from "@/lib/event-enrichment";
 
 export const Route = createFileRoute("/events/$slug")({
   component: EventDetail,
@@ -211,7 +212,15 @@ function EventDetail() {
               <div className="font-bold">{event.isFree ? "FREE" : event.price}</div>
             </div>
           </div>
-          {!event.content && <p className="text-xl leading-relaxed mb-8">{event.description}</p>}
+          {!event.content && (
+            <div className="space-y-5 text-lg md:text-xl leading-relaxed mb-10 text-foreground/90 font-sans">
+              {event.description.split(/\n\n+/).map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
+            </div>
+          )}
+          <EventHighlights event={event} />
+          <VisitorGuide event={event} />
           {event.gallery && event.gallery.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10">
               {event.gallery.map((src: string, i: number) => (
@@ -366,6 +375,11 @@ function EventDetail() {
               className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
             />
           </div>
+
+          <MakeADayOfIt
+            event={event}
+            listings={relatedVenues.filter((l) => l.name.toLowerCase() !== event.locationName.toLowerCase())}
+          />
         </div>
       </article>
 
@@ -507,4 +521,113 @@ function EventMap({
   if (!resolved) return null;
 
   return <div ref={mapRef} className="w-full h-48 border-t border-foreground/20" />;
+}
+
+function EventHighlights({ event }: { event: import("@/types").EventItem }) {
+  const highlights = getEventHighlights(event);
+  return (
+    <div className="border-2 border-foreground p-6 md:p-8 mb-8 bg-foreground/[0.03]">
+      <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-accent mb-2">
+        At a Glance
+      </div>
+      <h2 className="text-2xl md:text-3xl font-display uppercase mb-6">What to Expect</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {highlights.map((h, i) => (
+          <div key={i} className="flex gap-3.5 items-start">
+            <span className="text-accent text-lg leading-none shrink-0 mt-0.5">✦</span>
+            <div>
+              <div className="font-bold text-sm leading-snug">{h.title}</div>
+              <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{h.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function VisitorGuide({ event }: { event: import("@/types").EventItem }) {
+  const guide = getEventVisitorGuide(event);
+  return (
+    <div className="border-2 border-foreground mb-8 overflow-hidden">
+      <div className="bg-foreground text-background px-6 py-4 flex items-center justify-between">
+        <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide">Visitor Guide & Essentials</h2>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-accent">Good to Know</span>
+      </div>
+      <div className="p-6 md:p-8 divide-y divide-foreground/10">
+        <div className="pb-5">
+          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-1.5">
+            <span>⏱</span> Timings & Recommended Arrival
+          </div>
+          <p className="text-sm text-foreground/80 leading-relaxed">{guide.timings}</p>
+        </div>
+        <div className="py-5">
+          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-1.5">
+            <span>🚆</span> Public Transit & Getting Here
+          </div>
+          <p className="text-sm text-foreground/80 leading-relaxed">{guide.transit}</p>
+        </div>
+        <div className="py-5">
+          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-1.5">
+            <span>🅿️</span> Parking & Drop-Off
+          </div>
+          <p className="text-sm text-foreground/80 leading-relaxed">{guide.parking}</p>
+        </div>
+        <div className="pt-5">
+          <div className="font-bold text-xs uppercase font-mono text-accent mb-1.5 flex items-center gap-1.5">
+            <span>♿</span> Accessibility & Facilities
+          </div>
+          <p className="text-sm text-foreground/80 leading-relaxed">{guide.accessibility}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MakeADayOfIt({
+  event,
+  listings,
+}: {
+  event: import("@/types").EventItem;
+  listings: import("@/types").Listing[];
+}) {
+  if (!listings || listings.length === 0) return null;
+  return (
+    <div className="border-2 border-foreground p-6 md:p-8 mt-12 mb-8">
+      <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-accent mb-2">
+        Make a Day of It
+      </div>
+      <h2 className="text-2xl md:text-3xl font-display uppercase mb-2">Eat & Drink Nearby in Hull</h2>
+      <p className="text-sm text-muted-foreground mb-6 max-w-xl">
+        Heading to {event.locationName}? Pair your visit with these top-rated independent local spots:
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        {listings.slice(0, 3).map((place) => (
+          <Link
+            key={place.id}
+            to="/places/$slug"
+            params={{ slug: place.slug }}
+            className="group block border border-foreground/15 p-3.5 hover:border-foreground hover:bg-foreground/5 transition-colors"
+          >
+            <div className="aspect-[4/3] bg-stone-200 overflow-hidden mb-3">
+              <img
+                src={img(place.featuredImage, 400, 300)}
+                alt={place.name}
+                width={400}
+                height={300}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <div className="text-[9px] font-mono font-bold uppercase text-accent mb-1">
+              {place.category} · {place.area}
+            </div>
+            <div className="font-bold text-base leading-snug group-hover:underline line-clamp-1">{place.name}</div>
+            <p className="text-xs text-muted-foreground line-clamp-2 mt-1.5 leading-relaxed">{place.description}</p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
 }

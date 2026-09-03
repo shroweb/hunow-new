@@ -2194,7 +2194,7 @@ export async function getRelatedForEvent(eventId: string, category: string, loca
   const pool = getPool();
   const lowerLoc = `%${locationName.toLowerCase().trim()}%`;
 
-  const [eventsRes, listingsRes] = await Promise.all([
+  const [eventsRes, venueRes, nearbyRes] = await Promise.all([
     pool.query<{ data: unknown }>(
       `select data from events
        where id != $1 and data->>'status' = 'published'
@@ -2208,11 +2208,21 @@ export async function getRelatedForEvent(eventId: string, category: string, loca
        order by created_at desc limit 1`,
       [lowerLoc],
     ),
+    pool.query<{ data: unknown }>(
+      `select data from listings
+       where data->>'status' = 'published'
+         and lower(data->>'name') not ilike $1
+       order by created_at desc limit 4`,
+      [lowerLoc],
+    ),
   ]);
+
+  const venue = venueRes.rows[0]?.data as import("@/types").Listing | undefined;
+  const nearby = nearbyRes.rows.map((r) => r.data) as import("@/types").Listing[];
 
   return {
     events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
-    listings: listingsRes.rows.map((r) => r.data) as import("@/types").Listing[],
+    listings: venue ? [venue, ...nearby] : nearby,
   };
 }
 
