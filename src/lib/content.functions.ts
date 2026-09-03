@@ -355,7 +355,9 @@ export const importEventbriteUrlFn = createServerFn({ method: "POST" })
 // ---- Hull Sports fixtures (Hull City, Hull KR, Hull FC) ----
 
 export const syncHullSportsFixturesFn = createServerFn({ method: "POST" })
-  .validator((d: { team?: "hull-city" | "hull-kr" | "hull-fc" | "all" } | undefined) => d)
+  .inputValidator(
+    z.object({ team: z.enum(["hull-city", "hull-kr", "hull-fc", "all"]).optional() }).optional(),
+  )
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();
