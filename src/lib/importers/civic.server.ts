@@ -56,20 +56,61 @@ export async function fetchVisitHullEvents(limit = 25): Promise<EventItem[]> {
               ? { lat: Number(data.location.geo.latitude), lng: Number(data.location.geo.longitude) }
               : undefined;
 
+            // Parse actual start time from Visit Hull JSON-LD / HTML / title
+            let startTime = "10:00";
+            const timeopenMatch = html.match(/"timeopen":"[^"]*?T(\d{2}:\d{2})/);
+            if (timeopenMatch) {
+              startTime = timeopenMatch[1];
+            } else {
+              const textTime = title.match(/\b([0-1]?[0-9]|2[0-3])(?::([0-5][0-9]))?\s*(am|pm)\b/i);
+              if (textTime) {
+                let h = parseInt(textTime[1], 10);
+                const min = textTime[2] || "00";
+                const ampm = textTime[3].toLowerCase();
+                if (ampm === "pm" && h < 12) h += 12;
+                if (ampm === "am" && h === 12) h = 0;
+                startTime = `${String(h).padStart(2, "0")}:${min}`;
+              }
+            }
+
+            // Parse price
+            let price = "See event details";
+            const priceMatch = html.match(/"price":"([\d\.]+)"/);
+            if (priceMatch && Number(priceMatch[1]) > 0) {
+              price = `£${priceMatch[1]}`;
+            }
+
+            // Location name enrichment
+            let locationName = data.location?.name || "Hull City Centre";
+            const venueMatch = html.match(/(?:Waterfront Bar|Bonus Arena|Connexin Live|Hull City Hall|Hull New Theatre|Ferens Art Gallery|Streetlife Museum|Trinity Market|Minerva Pier|Hull Minster|KCOM Craven Park|MKM Stadium|The Deep)[^"<]*/i);
+            if (venueMatch && (!data.location?.name || data.location?.name === "Hull")) {
+              locationName = venueMatch[0].trim();
+            }
+
+            // Clean emoji and html from description
+            const cleanDesc = data.description
+              ? String(data.description)
+                  .replace(/&nbsp;/g, " ")
+                  .replace(/<[^>]+>/g, "")
+                  .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "")
+                  .trim()
+                  .slice(0, 300)
+              : `Event in Hull: ${title}`;
+
             const id = `visithull-${slugify(title)}-${startDate}`;
             const event: EventItem = {
               id,
               title,
               slug: slugify(`visithull-${title}-${startDate}`),
-              description: data.description ? String(data.description).replace(/&nbsp;/g, " ").replace(/<[^>]+>/g, "").slice(0, 300) : `Event in Hull: ${title}`,
+              description: cleanDesc,
               category,
               area: "Old Town",
               startDate,
-              startTime: "10:00",
-              locationName: data.location?.name || "Hull City Centre",
+              startTime,
+              locationName,
               address: data.location?.address?.streetAddress || "Hull, HU1",
               coordinates: coords,
-              price: "See event details",
+              price,
               isFree: titleLower.includes("free") || (data.description || "").toLowerCase().includes("free admission"),
               ticketUrl: data.url || url,
               featuredImage: data.image || "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&h=800&q=80",
