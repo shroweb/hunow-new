@@ -24,15 +24,26 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
   loader: async ({ params }) => {
     const article = await fetchArticleBySlug({ data: { slug: params.slug } });
     if (!article) {
-      // Old site used /category/slug for listings (e.g. /eat/thieving-harrys) — try listing lookup
+      // 1. Check if there is an explicit redirect configured (e.g. /guides/the-essential-food-guide... or /eat/loaded-by-grubb)
+      const { resolveRedirect } = await import("@/lib/redirects.functions");
+      const fullPath = `/${params.taxonomy}/${params.slug}`;
+      const match = (await resolveRedirect({ data: { path: fullPath } }).catch(() => null)) ||
+                    (await resolveRedirect({ data: { path: `/${params.slug}` } }).catch(() => null));
+      if (match) {
+        throw redirect({ href: match.to_path, statusCode: match.permanent ? 301 : 302 });
+      }
+
+      // 2. Old site used /category/slug for listings (e.g. /eat/thieving-harrys) — try listing lookup
       const { fetchListingBySlug } = await import("@/lib/content-read.functions");
       const listing = await fetchListingBySlug({ data: { slug: params.slug } }).catch(() => null);
       if (listing) throw redirect({ href: `/places/${listing.slug}`, statusCode: 301 });
-      // Also try event lookup (e.g. /events/hull-fair-2026)
+
+      // 3. Also try event lookup (e.g. /events/hull-fair-2026)
       const { fetchEventBySlug } = await import("@/lib/content-read.functions");
       const event = await fetchEventBySlug({ data: { slug: params.slug } }).catch(() => null);
       if (event?.status === "published")
         throw redirect({ href: `/events/${event.slug}`, statusCode: 301 });
+
       throw notFound();
     }
 

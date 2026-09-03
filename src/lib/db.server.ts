@@ -1224,9 +1224,12 @@ export async function deleteRedirect(id: string) {
 
 export async function checkRedirect(path: string) {
   await ensureSchema();
+  const cleanPath = `/${path.replace(/^\//, "").replace(/\/$/, "")}`;
   const result = await getPool().query<{ to_path: string; permanent: boolean }>(
-    "select to_path, permanent from redirects where from_path = $1 limit 1",
-    [path],
+    `select to_path, permanent from redirects 
+     where rtrim(from_path, '/') = $1 or from_path = $1 or from_path = $2
+     limit 1`,
+    [cleanPath, `${cleanPath}/`],
   );
   return result.rows[0] ?? null;
 }

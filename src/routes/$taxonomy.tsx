@@ -25,7 +25,14 @@ export const Route = createFileRoute("/$taxonomy")({
     }
     const taxonomy = findTaxonomy(params.taxonomy);
     if (!taxonomy) {
-      // Old site used bare top-level slugs (e.g. /hull-secret-history) — try article lookup
+      // 1. Check if there is an explicit redirect configured (e.g. /hull-fair-2025...)
+      const { resolveRedirect } = await import("@/lib/redirects.functions");
+      const match = await resolveRedirect({ data: { path: `/${params.taxonomy}` } }).catch(() => null);
+      if (match) {
+        throw redirect({ href: match.to_path, statusCode: match.permanent ? 301 : 302 });
+      }
+
+      // 2. Old site used bare top-level slugs (e.g. /hull-secret-history) — try article lookup
       const { fetchArticleBySlug } = await import("@/lib/content-read.functions");
       const article = await fetchArticleBySlug({ data: { slug: params.taxonomy } }).catch(
         () => null,
@@ -34,6 +41,21 @@ export const Route = createFileRoute("/$taxonomy")({
         const { articlePath } = await import("@/lib/taxonomy");
         throw redirect({ href: articlePath(article), statusCode: 301 });
       }
+
+      // 3. Try event lookup (e.g. /hull-fair-2026)
+      const { fetchEventBySlug } = await import("@/lib/content-read.functions");
+      const event = await fetchEventBySlug({ data: { slug: params.taxonomy } }).catch(() => null);
+      if (event?.status === "published") {
+        throw redirect({ href: `/events/${event.slug}`, statusCode: 301 });
+      }
+
+      // 4. Try listing lookup
+      const { fetchListingBySlug } = await import("@/lib/content-read.functions");
+      const listing = await fetchListingBySlug({ data: { slug: params.taxonomy } }).catch(() => null);
+      if (listing) {
+        throw redirect({ href: `/places/${listing.slug}`, statusCode: 301 });
+      }
+
       throw notFound();
     }
     const { getStoreFromDatabase } = await import("@/lib/store.functions");
