@@ -1,39 +1,45 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard } from "@/components/cards";
-import { useStore, getState } from "@/lib/store";
+import { useStore } from "@/lib/store";
 import { getAuthor, authorSlug, AUTHORS } from "@/lib/authors";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/authors/$author")({
-  loader: ({ params }) => {
-    const name = Object.keys(AUTHORS).find((n) => authorSlug(n) === params.author);
-    if (!name) throw notFound();
-    const author = getAuthor(name);
-    const articles = getState()
-      .articles.filter((a) => a.author === author.name && a.status === "published")
-      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
-    return { author, articles };
+  loader: async ({ params }) => {
+    const rawSlug = decodeURIComponent(params.author).toLowerCase();
+    const matchedName = Object.keys(AUTHORS).find((n) => authorSlug(n) === rawSlug);
+    const author = matchedName
+      ? getAuthor(matchedName)
+      : {
+          name: rawSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+          role: "Contributing Writer",
+          bio: "Contributing writer for HU NOW covering Hull and East Yorkshire.",
+          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+        };
+
+    const { getStoreFromDatabase } = await import("@/lib/store.functions");
+    const store = await getStoreFromDatabase().catch(() => null);
+    const articles = (store?.articles ?? [])
+      .filter((a) => {
+        if (a.status !== "published") return false;
+        const aSlug = authorSlug(a.author);
+        return aSlug === rawSlug || a.author.toLowerCase() === author.name.toLowerCase();
+      })
+      .sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""));
+
+    return { author, articles, slug: rawSlug };
   },
   head: ({ loaderData }) => {
     const a = loaderData?.author;
-    if (!a) return {};
-    return {
-      meta: [
-        { title: `${a.name} — HU NOW` },
-        { name: "description", content: a.bio || `Articles by ${a.name} on HU NOW.` },
-      ],
-    };
+    const name = a?.name || "Author";
+    return buildSeoMeta({
+      title: `${name} — HU NOW Contributing Writer`,
+      description:
+        a?.bio || `Read articles, culture guides, and local stories by ${name} on HU NOW in Kingston upon Hull.`,
+      path: `/authors/${loaderData?.slug || ""}`,
+    });
   },
-  notFoundComponent: () => (
-    <PublicLayout>
-      <div className="max-w-3xl mx-auto px-4 py-32 text-center">
-        <h1 className="font-display text-6xl mb-4">AUTHOR NOT FOUND</h1>
-        <Link to="/" className="underline">
-          Back to home
-        </Link>
-      </div>
-    </PublicLayout>
-  ),
   component: AuthorPage,
 });
 

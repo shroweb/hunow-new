@@ -3,7 +3,7 @@ import type {} from "@tanstack/react-start";
 import { NAV_SECTIONS } from "@/lib/nav";
 import { TAXONOMIES, articlePath } from "@/lib/taxonomy";
 
-const BASE_URL = (process.env.SITE_URL ?? "https://www.hunow.co.uk").replace(/\/$/, "");
+const BASE_URL = "https://www.hunow.co.uk";
 
 interface SitemapEntry {
   path: string;

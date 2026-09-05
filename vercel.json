@@ -15,8 +15,6 @@
     { "source": "/news", "destination": "/stories", "permanent": true },
     { "source": "/news/:path*", "destination": "/stories", "permanent": true },
     { "source": "/cuisine/:path*", "destination": "/c/food-and-drink", "permanent": true },
-    { "source": "/category/:path*", "destination": "/stories", "permanent": true },
-    { "source": "/about", "destination": "/stories", "permanent": true },
     { "source": "/ads", "destination": "/advertise", "permanent": true },
     { "source": "/pdfviewer/:path*", "destination": "/", "permanent": true },
     {

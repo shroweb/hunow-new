@@ -6,6 +6,8 @@ import { articlePath } from "@/lib/taxonomy";
 import { useHistory } from "@/lib/reading-history";
 import { img } from "@/data/seed";
 
+import { buildSeoMeta } from "@/lib/seo-meta";
+
 function seriesSlug(name: string) {
   return name
     .toLowerCase()
@@ -18,41 +20,34 @@ export function seriesPath(name: string) {
 }
 
 export const Route = createFileRoute("/series/$series")({
-  loader: ({ params }) => {
-    const all = getState().articles.filter((a) => a.status === "published" && a.series);
+  loader: async ({ params }) => {
+    const rawSlug = params.series.toLowerCase();
+    const { getStoreFromDatabase } = await import("@/lib/store.functions");
+    const store = await getStoreFromDatabase().catch(() => null);
+    const all = (store?.articles ?? []).filter((a) => a.status === "published" && a.series);
     const series = Array.from(new Set(all.map((a) => a.series!))).find(
-      (s) => seriesSlug(s) === params.series,
-    );
-    if (!series) throw notFound();
-    return { series };
+      (s) => seriesSlug(s) === rawSlug,
+    ) ?? rawSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const articles = all.filter((a) => a.series === series);
+    return { series, articles, slug: rawSlug };
   },
   head: ({ loaderData }) => {
-    const s = loaderData?.series ?? "";
-    return {
-      meta: [
-        { title: `${s} — Series — HU NOW` },
-        { name: "description", content: `All articles in the "${s}" series on HU NOW.` },
-      ],
-    };
+    const s = loaderData?.series ?? "Series";
+    return buildSeoMeta({
+      title: `${s} — Special Editorial Series — HU NOW`,
+      description: `Read all investigative articles, essays, and stories in the "${s}" series on HU NOW in Kingston upon Hull.`,
+      path: `/series/${loaderData?.slug || ""}`,
+    });
   },
-  notFoundComponent: () => (
-    <PublicLayout>
-      <div className="max-w-3xl mx-auto px-4 py-32 text-center">
-        <h1 className="font-display text-6xl mb-4">SERIES NOT FOUND</h1>
-        <Link to="/" className="underline">
-          Back to home
-        </Link>
-      </div>
-    </PublicLayout>
-  ),
   component: SeriesPage,
 });
 
 function SeriesPage() {
-  const { series } = Route.useLoaderData();
-  const articles = useStore((s) => s.articles)
+  const { series, articles: loaderArticles } = Route.useLoaderData();
+  const storeArticles = useStore((s) => s.articles)
     .filter((a) => a.status === "published" && a.series === series)
     .sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0));
+  const articles = loaderArticles?.length ? loaderArticles : storeArticles;
   const history = useHistory();
 
   const readIds = new Set(history.filter((h) => h.kind === "article").map((h) => h.id));

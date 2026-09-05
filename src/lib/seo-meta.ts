@@ -1,4 +1,4 @@
-export const CANONICAL_BASE = (process.env.SITE_URL ?? "https://www.hunow.co.uk").replace(/\/$/, "");
+export const CANONICAL_BASE = "https://www.hunow.co.uk";
 export const DEFAULT_OG_IMAGE = `${CANONICAL_BASE}/hunow.jpg`;
 
 export function clampDescription(raw: string | undefined | null, fallbackTopic = "Hull events, food and culture"): string {

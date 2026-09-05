@@ -1,32 +1,33 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
-import { getState } from "@/lib/store";
+import { buildSeoMeta } from "@/lib/seo-meta";
 import { z } from "zod";
 
 export const Route = createFileRoute("/tag/$tag")({
   validateSearch: z.object({ also: z.string().optional() }),
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     const tag = decodeURIComponent(params.tag).toLowerCase();
-    const state = getState();
-    const articles = state.articles.filter(
-      (a) => a.status === "published" && a.tags.some((t) => t.toLowerCase() === tag),
+    const { getStoreFromDatabase } = await import("@/lib/store.functions");
+    const store = await getStoreFromDatabase().catch(() => null);
+    const articles = (store?.articles ?? []).filter(
+      (a) => a.status === "published" && a.tags?.some((t) => t.toLowerCase() === tag),
     );
-    const events = state.events.filter(
-      (e) => e.status === "published" && e.category.toLowerCase() === tag,
+    const events = (store?.events ?? []).filter(
+      (e) =>
+        e.status === "published" &&
+        (e.category?.toLowerCase() === tag || e.tags?.some((t: string) => t.toLowerCase() === tag)),
     );
-    if (articles.length === 0 && events.length === 0) throw notFound();
     return { tag, articles, events };
   },
   head: ({ loaderData }) => {
     const tag = loaderData?.tag ?? "";
-    return {
-      meta: [
-        { title: `#${tag} — HU NOW` },
-        { name: "description", content: `HU NOW content tagged with ${tag}.` },
-      ],
-    };
+    return buildSeoMeta({
+      title: `#${tag} — Hull & East Yorkshire Guide`,
+      description: `Explore all HU NOW articles, culture guides, and upcoming events tagged with #${tag} across Kingston upon Hull.`,
+      path: `/tag/${encodeURIComponent(tag)}`,
+    });
   },
   notFoundComponent: () => (
     <PublicLayout>
