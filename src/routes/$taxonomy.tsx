@@ -21,6 +21,9 @@ import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/$taxonomy")({
   loader: async ({ params }) => {
+    if (params.taxonomy === "feed") {
+      throw redirect({ href: "/feed.articles.rss", statusCode: 301 });
+    }
     if (params.taxonomy === "events") {
       throw redirect({ href: "/whats-on", statusCode: 301 });
     }
