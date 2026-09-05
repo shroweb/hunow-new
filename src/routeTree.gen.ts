@@ -83,8 +83,6 @@ import { Route as AdminAreasRouteImport } from './routes/admin.areas'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminAdsRouteImport } from './routes/admin.ads'
 import { Route as TaxonomySlugRouteImport } from './routes/$taxonomy.$slug'
-import { Route as TagRouteImport } from './routes/tag.'
-import { Route as AuthorsRouteImport } from './routes/authors.'
 import { Route as CSectionSubRouteImport } from './routes/c.$section.$sub'
 import { Route as ApiV1RedeemRouteImport } from './routes/api.v1.redeem'
 import { Route as ApiV1OffersRouteImport } from './routes/api.v1.offers'
@@ -472,16 +470,6 @@ const TaxonomySlugRoute = TaxonomySlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => TaxonomyRoute,
 } as any)
-const TagRoute = TagRouteImport.update({
-  id: '/tag/',
-  path: '/tag/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthorsRoute = AuthorsRouteImport.update({
-  id: '/authors/',
-  path: '/authors/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CSectionSubRoute = CSectionSubRouteImport.update({
   id: '/$sub',
   path: '/$sub',
@@ -597,8 +585,6 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
-  '/authors/': typeof AuthorsRoute
-  '/tag/': typeof TagRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -690,8 +676,6 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
-  '/authors': typeof AuthorsRoute
-  '/tag': typeof TagRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -785,8 +769,6 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
-  '/authors/': typeof AuthorsRoute
-  '/tag/': typeof TagRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -881,8 +863,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/whats-on'
-    | '/authors/'
-    | '/tag/'
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
@@ -974,8 +954,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/whats-on'
-    | '/authors'
-    | '/tag'
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
@@ -1068,8 +1046,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/whats-on'
-    | '/authors/'
-    | '/tag/'
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
@@ -1163,8 +1139,6 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   WhatsOnRoute: typeof WhatsOnRoute
-  AuthorsRoute: typeof AuthorsRoute
-  TagRoute: typeof TagRoute
   ApiImageProxyRoute: typeof ApiImageProxyRoute
   ApiIndexnowRoute: typeof ApiIndexnowRoute
   AuthorsAuthorRoute: typeof AuthorsAuthorRoute
@@ -1707,20 +1681,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TaxonomySlugRouteImport
       parentRoute: typeof TaxonomyRoute
     }
-    '/tag/': {
-      id: '/tag/'
-      path: '/tag'
-      fullPath: '/tag/'
-      preLoaderRoute: typeof TagRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/authors/': {
-      id: '/authors/'
-      path: '/authors'
-      fullPath: '/authors/'
-      preLoaderRoute: typeof AuthorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/c/$section/$sub': {
       id: '/c/$section/$sub'
       path: '/$sub'
@@ -2036,8 +1996,6 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   WhatsOnRoute: WhatsOnRoute,
-  AuthorsRoute: AuthorsRoute,
-  TagRoute: TagRoute,
   ApiImageProxyRoute: ApiImageProxyRoute,
   ApiIndexnowRoute: ApiIndexnowRoute,
   AuthorsAuthorRoute: AuthorsAuthorRoute,
