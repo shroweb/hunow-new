@@ -4,14 +4,16 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ListingCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
 import { openStatus } from "@/lib/hours";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/open-now")({
-  head: () => ({
-    meta: [
-      { title: "Open Now in Hull — HU NOW" },
-      { name: "description", content: "Places open right now in Hull." },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Open Now in Hull — Real-Time Directory Guide",
+      description:
+        "Find restaurants, cafes, pubs, takeaways and attractions open right now across Kingston upon Hull, complete with live opening hours.",
+      path: "/open-now",
+    }),
   component: OpenNow,
 });
 

@@ -53,7 +53,7 @@ export const Route = createFileRoute("/events/$slug")({
         { name: "twitter:image", content: image },
       ],
       links: [
-        { rel: "canonical", href: e.seo?.canonicalUrl ?? url },
+        { rel: "canonical", href: e.seo?.canonicalUrl ?? `https://www.hunow.co.uk${url}` },
         { rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" },
       ],
       scripts: [
@@ -76,6 +76,9 @@ export const Route = createFileRoute("/events/$slug")({
             if (lowerTitle.includes("seahawks") || lowerTitle.includes("jets") || lowerTitle.includes("hockey")) sportType = "Ice Hockey";
             if (lowerTitle.includes("parkrun") || lowerTitle.includes("10k") || lowerTitle.includes("marathon")) sportType = "Running";
 
+            const numPriceMatch = e.price ? e.price.replace(/,/g, "").match(/(\d+(\.\d+)?)/) : null;
+            const parsedPrice = numPriceMatch ? numPriceMatch[1] : null;
+
             return {
               "@context": "https://schema.org",
               "@type": isSport ? "SportsEvent" : "Event",
@@ -87,7 +90,7 @@ export const Route = createFileRoute("/events/$slug")({
               eventStatus: "https://schema.org/EventScheduled",
               eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
               image,
-              url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+              url: `https://www.hunow.co.uk${url}`,
               ...(isSport ? {
                 sport: sportType,
                 ...(homeTeam && awayTeam ? {
@@ -104,7 +107,7 @@ export const Route = createFileRoute("/events/$slug")({
                 name: e.locationName,
                 address: {
                   "@type": "PostalAddress",
-                  streetAddress: e.address,
+                  streetAddress: e.address || "Kingston upon Hull",
                   addressLocality: "Hull",
                   addressRegion: "East Yorkshire",
                   addressCountry: "GB",
@@ -124,19 +127,18 @@ export const Route = createFileRoute("/events/$slug")({
                     price: "0",
                     priceCurrency: "GBP",
                     availability: "https://schema.org/InStock",
-                    url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+                    url: `https://www.hunow.co.uk${url}`,
                   }
                 : {
                     "@type": "Offer",
-                    price: e.price || "See official ticketing",
-                    priceCurrency: "GBP",
-                    url: e.ticketUrl || `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+                    ...(parsedPrice ? { price: parsedPrice, priceCurrency: "GBP" } : { description: e.price || "See official ticketing" }),
+                    url: e.ticketUrl || `https://www.hunow.co.uk${url}`,
                     availability: "https://schema.org/InStock",
                   },
               organizer: {
                 "@type": "Organization",
                 name: "HU NOW",
-                url: "https://hunow.co.uk",
+                url: "https://www.hunow.co.uk",
               },
             };
           })()),

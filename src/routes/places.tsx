@@ -3,17 +3,16 @@ import { useState, useMemo } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ListingCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/places")({
-  head: () => ({
-    meta: [
-      { title: "Places — Hull Directory — HU NOW" },
-      {
-        name: "description",
-        content: "Browse Hull's independent businesses, attractions, restaurants and hidden gems.",
-      },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Places in Hull — Independent Business & Venues Directory",
+      description:
+        "Browse Kingston upon Hull's finest independent businesses, restaurants, cafes, pubs, cultural attractions and hidden gems across East Yorkshire.",
+      path: "/places",
+    }),
   component: Places,
 });
 

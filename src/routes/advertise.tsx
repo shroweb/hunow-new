@@ -2,17 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { submitContact } from "@/lib/public.functions";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/advertise")({
-  head: () => ({
-    meta: [
-      { title: "Advertise with HU NOW" },
-      {
-        name: "description",
-        content: "Reach Hull's most engaged locals — website, newsletter and social packages.",
-      },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Advertise with HU NOW — Reach Hull's Local Audience",
+      description:
+        "Promote your business to tens of thousands of active Hull residents with sponsored articles, newsletter sponsorships, and directory spotlight packages.",
+      path: "/advertise",
+    }),
   component: Advertise,
 });
 

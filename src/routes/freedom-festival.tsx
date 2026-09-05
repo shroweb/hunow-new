@@ -29,10 +29,10 @@ export const Route = createFileRoute("/freedom-festival")({
         content: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&h=800&q=80",
       },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: "https://hunow.co.uk/freedom-festival" },
+      { property: "og:url", content: "https://www.hunow.co.uk/freedom-festival" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://hunow.co.uk/freedom-festival" }],
+    links: [{ rel: "canonical", href: "https://www.hunow.co.uk/freedom-festival" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/freedom-festival")({
           endDate: "2026-09-06T22:00:00+01:00",
           eventStatus: "https://schema.org/EventScheduled",
           isAccessibleForFree: true,
-          url: "https://hunow.co.uk/freedom-festival",
+          url: "https://www.hunow.co.uk/freedom-festival",
           location: {
             "@type": "Place",
             name: "Hull City Centre & Old Town",

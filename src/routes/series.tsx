@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { useStore } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 function seriesSlug(name: string) {
   return name
@@ -11,12 +12,13 @@ function seriesSlug(name: string) {
 }
 
 export const Route = createFileRoute("/series")({
-  head: () => ({
-    meta: [
-      { title: "Series — HU NOW" },
-      { name: "description", content: "Multi-part editorial series from HU NOW." },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Editorial Series & Investigative Reports — HU NOW",
+      description:
+        "Explore multi-part editorial series, deep dives, cultural essays, and investigative reporting on Kingston upon Hull and East Yorkshire.",
+      path: "/series",
+    }),
   component: SeriesIndex,
 });
 

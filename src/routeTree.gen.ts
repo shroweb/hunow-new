@@ -38,6 +38,7 @@ import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as TaxonomyRouteImport } from './routes/$taxonomy'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
@@ -55,6 +56,7 @@ import { Route as CSectionRouteImport } from './routes/c.$section'
 import { Route as BusinessListingsRouteImport } from './routes/business.listings'
 import { Route as AuthorsAuthorRouteImport } from './routes/authors.$author'
 import { Route as AreasAreaRouteImport } from './routes/areas.$area'
+import { Route as ApiIndexnowRouteImport } from './routes/api.indexnow'
 import { Route as ApiImageProxyRouteImport } from './routes/api.image-proxy'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTaxonomyRouteImport } from './routes/admin.taxonomy'
@@ -81,6 +83,8 @@ import { Route as AdminAreasRouteImport } from './routes/admin.areas'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminAdsRouteImport } from './routes/admin.ads'
 import { Route as TaxonomySlugRouteImport } from './routes/$taxonomy.$slug'
+import { Route as TagRouteImport } from './routes/tag.'
+import { Route as AuthorsRouteImport } from './routes/authors.'
 import { Route as CSectionSubRouteImport } from './routes/c.$section.$sub'
 import { Route as ApiV1RedeemRouteImport } from './routes/api.v1.redeem'
 import { Route as ApiV1OffersRouteImport } from './routes/api.v1.offers'
@@ -243,6 +247,11 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TaxonomyRoute = TaxonomyRouteImport.update({
   id: '/$taxonomy',
   path: '/$taxonomy',
@@ -327,6 +336,11 @@ const AreasAreaRoute = AreasAreaRouteImport.update({
   id: '/$area',
   path: '/$area',
   getParentRoute: () => AreasRoute,
+} as any)
+const ApiIndexnowRoute = ApiIndexnowRouteImport.update({
+  id: '/api/indexnow',
+  path: '/api/indexnow',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiImageProxyRoute = ApiImageProxyRouteImport.update({
   id: '/api/image-proxy',
@@ -458,6 +472,16 @@ const TaxonomySlugRoute = TaxonomySlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => TaxonomyRoute,
 } as any)
+const TagRoute = TagRouteImport.update({
+  id: '/tag/',
+  path: '/tag/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthorsRoute = AuthorsRouteImport.update({
+  id: '/authors/',
+  path: '/authors/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CSectionSubRoute = CSectionSubRouteImport.update({
   id: '/$sub',
   path: '/$sub',
@@ -543,6 +567,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/$taxonomy': typeof TaxonomyRouteWithChildren
+  '/about': typeof AboutRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
   '/advertise': typeof AdvertiseRoute
@@ -572,6 +597,8 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
+  '/authors/': typeof AuthorsRoute
+  '/tag/': typeof TagRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -598,6 +625,7 @@ export interface FileRoutesByFullPath {
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/image-proxy': typeof ApiImageProxyRoute
+  '/api/indexnow': typeof ApiIndexnowRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
@@ -633,6 +661,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/$taxonomy': typeof TaxonomyRouteWithChildren
+  '/about': typeof AboutRoute
   '/account': typeof AccountRoute
   '/advertise': typeof AdvertiseRoute
   '/areas': typeof AreasRouteWithChildren
@@ -661,6 +690,8 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
+  '/authors': typeof AuthorsRoute
+  '/tag': typeof TagRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -687,6 +718,7 @@ export interface FileRoutesByTo {
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/image-proxy': typeof ApiImageProxyRoute
+  '/api/indexnow': typeof ApiIndexnowRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
@@ -723,6 +755,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/$taxonomy': typeof TaxonomyRouteWithChildren
+  '/about': typeof AboutRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
   '/advertise': typeof AdvertiseRoute
@@ -752,6 +785,8 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/whats-on': typeof WhatsOnRoute
+  '/authors/': typeof AuthorsRoute
+  '/tag/': typeof TagRoute
   '/$taxonomy/$slug': typeof TaxonomySlugRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -778,6 +813,7 @@ export interface FileRoutesById {
   '/admin/taxonomy': typeof AdminTaxonomyRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/image-proxy': typeof ApiImageProxyRoute
+  '/api/indexnow': typeof ApiIndexnowRoute
   '/areas/$area': typeof AreasAreaRoute
   '/authors/$author': typeof AuthorsAuthorRoute
   '/business/listings': typeof BusinessListingsRoute
@@ -815,6 +851,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/$taxonomy'
+    | '/about'
     | '/account'
     | '/admin'
     | '/advertise'
@@ -844,6 +881,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/whats-on'
+    | '/authors/'
+    | '/tag/'
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
@@ -870,6 +909,7 @@ export interface FileRouteTypes {
     | '/admin/taxonomy'
     | '/admin/users'
     | '/api/image-proxy'
+    | '/api/indexnow'
     | '/areas/$area'
     | '/authors/$author'
     | '/business/listings'
@@ -905,6 +945,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/$taxonomy'
+    | '/about'
     | '/account'
     | '/advertise'
     | '/areas'
@@ -933,6 +974,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/whats-on'
+    | '/authors'
+    | '/tag'
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
@@ -959,6 +1002,7 @@ export interface FileRouteTypes {
     | '/admin/taxonomy'
     | '/admin/users'
     | '/api/image-proxy'
+    | '/api/indexnow'
     | '/areas/$area'
     | '/authors/$author'
     | '/business/listings'
@@ -994,6 +1038,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/$taxonomy'
+    | '/about'
     | '/account'
     | '/admin'
     | '/advertise'
@@ -1023,6 +1068,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/whats-on'
+    | '/authors/'
+    | '/tag/'
     | '/$taxonomy/$slug'
     | '/admin/ads'
     | '/admin/analytics'
@@ -1049,6 +1096,7 @@ export interface FileRouteTypes {
     | '/admin/taxonomy'
     | '/admin/users'
     | '/api/image-proxy'
+    | '/api/indexnow'
     | '/areas/$area'
     | '/authors/$author'
     | '/business/listings'
@@ -1085,6 +1133,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   TaxonomyRoute: typeof TaxonomyRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRouteWithChildren
   AdvertiseRoute: typeof AdvertiseRoute
@@ -1114,7 +1163,10 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   WhatsOnRoute: typeof WhatsOnRoute
+  AuthorsRoute: typeof AuthorsRoute
+  TagRoute: typeof TagRoute
   ApiImageProxyRoute: typeof ApiImageProxyRoute
+  ApiIndexnowRoute: typeof ApiIndexnowRoute
   AuthorsAuthorRoute: typeof AuthorsAuthorRoute
   BusinessListingsRoute: typeof BusinessListingsRoute
   CSectionRoute: typeof CSectionRouteWithChildren
@@ -1340,6 +1392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/$taxonomy': {
       id: '/$taxonomy'
       path: '/$taxonomy'
@@ -1458,6 +1517,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/areas/$area'
       preLoaderRoute: typeof AreasAreaRouteImport
       parentRoute: typeof AreasRoute
+    }
+    '/api/indexnow': {
+      id: '/api/indexnow'
+      path: '/api/indexnow'
+      fullPath: '/api/indexnow'
+      preLoaderRoute: typeof ApiIndexnowRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/image-proxy': {
       id: '/api/image-proxy'
@@ -1640,6 +1706,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/$taxonomy/$slug'
       preLoaderRoute: typeof TaxonomySlugRouteImport
       parentRoute: typeof TaxonomyRoute
+    }
+    '/tag/': {
+      id: '/tag/'
+      path: '/tag'
+      fullPath: '/tag/'
+      preLoaderRoute: typeof TagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/authors/': {
+      id: '/authors/'
+      path: '/authors'
+      fullPath: '/authors/'
+      preLoaderRoute: typeof AuthorsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/c/$section/$sub': {
       id: '/c/$section/$sub'
@@ -1926,6 +2006,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   TaxonomyRoute: TaxonomyRouteWithChildren,
+  AboutRoute: AboutRoute,
   AccountRoute: AccountRoute,
   AdminRoute: AdminRouteWithChildren,
   AdvertiseRoute: AdvertiseRoute,
@@ -1955,7 +2036,10 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   WhatsOnRoute: WhatsOnRoute,
+  AuthorsRoute: AuthorsRoute,
+  TagRoute: TagRoute,
   ApiImageProxyRoute: ApiImageProxyRoute,
+  ApiIndexnowRoute: ApiIndexnowRoute,
   AuthorsAuthorRoute: AuthorsAuthorRoute,
   BusinessListingsRoute: BusinessListingsRoute,
   CSectionRoute: CSectionRouteWithChildren,

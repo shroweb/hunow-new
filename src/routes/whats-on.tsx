@@ -15,17 +15,17 @@ const searchSchema = z.object({
   when: z.enum(["today", "weekend"]).optional(),
 });
 
+import { buildSeoMeta } from "@/lib/seo-meta";
+
 export const Route = createFileRoute("/whats-on")({
   validateSearch: searchSchema,
-  head: () => ({
-    meta: [
-      { title: "What's On in Hull — HU NOW" },
-      {
-        name: "description",
-        content: "Every event happening in Hull this week. Music, food, arts, family and more.",
-      },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "What's On in Hull — Gigs, Shows & Events Guide",
+      description:
+        "Every live event happening in Hull and East Yorkshire this week. Discover gigs, theatre, comedy, stadium sports, family days out, and weekend markets.",
+      path: "/whats-on",
+    }),
   component: WhatsOn,
 });
 

@@ -2,17 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { subscribeNewsletter } from "@/lib/public.functions";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/newsletter")({
-  head: () => ({
-    meta: [
-      { title: "Newsletter — HU NOW" },
-      {
-        name: "description",
-        content: "Get Hull's best events, food guides and hidden gems every Thursday.",
-      },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "HU NOW Weekly Newsletter — Hull Events & Food Dispatch",
+      description:
+        "Join thousands of locals who receive HU NOW's curated guide to Hull every Thursday morning. Upcoming gigs, dining reviews, and weekend ideas.",
+      path: "/newsletter",
+    }),
   component: Newsletter,
 });
 

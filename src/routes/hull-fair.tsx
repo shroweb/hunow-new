@@ -78,7 +78,7 @@ export const Route = createFileRoute("/hull-fair")({
         content: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&h=800&q=80",
       },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: "https://hunow.co.uk/hull-fair" },
+      { property: "og:url", content: "https://www.hunow.co.uk/hull-fair" },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
@@ -89,7 +89,7 @@ export const Route = createFileRoute("/hull-fair")({
         content: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&h=800&q=80",
       },
     ],
-    links: [{ rel: "canonical", href: "https://hunow.co.uk/hull-fair" }],
+    links: [{ rel: "canonical", href: "https://www.hunow.co.uk/hull-fair" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -104,7 +104,7 @@ export const Route = createFileRoute("/hull-fair")({
           eventStatus: "https://schema.org/EventScheduled",
           eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
           isAccessibleForFree: true,
-          url: "https://hunow.co.uk/hull-fair",
+          url: "https://www.hunow.co.uk/hull-fair",
           image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&h=800&q=80",
           location: {
             "@type": "Place",
@@ -128,12 +128,12 @@ export const Route = createFileRoute("/hull-fair")({
             price: "0",
             priceCurrency: "GBP",
             availability: "https://schema.org/InStock",
-            url: "https://hunow.co.uk/hull-fair",
+            url: "https://www.hunow.co.uk/hull-fair",
           },
           organizer: {
             "@type": "Organization",
             name: "Showmen's Guild of Great Britain & Hull City Council",
-            url: "https://hunow.co.uk",
+            url: "https://www.hunow.co.uk",
           },
         }),
       },
@@ -158,9 +158,9 @@ export const Route = createFileRoute("/hull-fair")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://hunow.co.uk" },
-            { "@type": "ListItem", position: 2, name: "Guides", item: "https://hunow.co.uk/guides" },
-            { "@type": "ListItem", position: 3, name: "Hull Fair", item: "https://hunow.co.uk/hull-fair" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.hunow.co.uk" },
+            { "@type": "ListItem", position: 2, name: "Guides", item: "https://www.hunow.co.uk/guides" },
+            { "@type": "ListItem", position: 3, name: "Hull Fair", item: "https://www.hunow.co.uk/hull-fair" },
           ],
         }),
       },

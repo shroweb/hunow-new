@@ -1,17 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Policy — HU NOW" },
-      {
-        name: "description",
-        content: "How HU NOW collects, uses, and protects your personal data.",
-      },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Privacy Policy — HU NOW Data & Cookie Protection",
+      description:
+        "Learn how HU NOW collects, uses, and safeguards personal data, cookies, and reader information in accordance with UK GDPR standards.",
+      path: "/privacy",
+    }),
   component: Privacy,
 });
 

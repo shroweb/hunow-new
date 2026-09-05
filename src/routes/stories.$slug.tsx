@@ -49,14 +49,14 @@ export const Route = createFileRoute("/stories/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
-        { property: "og:url", content: url },
+        { property: "og:url", content: `https://www.hunow.co.uk${url}` },
         { property: "og:image", content: image },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: description },
         { name: "twitter:image", content: image },
       ],
-      links: [{ rel: "canonical", href: a.seo?.canonicalUrl ?? url }],
+      links: [{ rel: "canonical", href: a.seo?.canonicalUrl ?? `https://www.hunow.co.uk${url}` }],
       scripts: [
         {
           type: "application/ld+json",
@@ -72,9 +72,9 @@ export const Route = createFileRoute("/stories/$slug")({
             publisher: {
               "@type": "Organization",
               name: "HU NOW",
-              url: process.env.SITE_URL ?? "https://hunow.co.uk",
+              url: "https://www.hunow.co.uk",
             },
-            url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+            url: `https://www.hunow.co.uk${url}`,
           }),
         },
         ...(() => {

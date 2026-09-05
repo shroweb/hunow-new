@@ -5,20 +5,19 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard } from "@/components/cards";
 import { PaginationControls } from "@/components/PaginationControls";
 import { fetchPagedArticles } from "@/lib/content-read.functions";
+import { buildSeoMeta } from "@/lib/seo-meta";
 import type { Article } from "@/types";
 
 const PER_PAGE = 12;
 
 export const Route = createFileRoute("/stories")({
-  head: () => ({
-    meta: [
-      { title: "Stories — HU NOW" },
-      {
-        name: "description",
-        content: "Editorial stories, interviews, guides and reviews from across Hull.",
-      },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Stories & Culture in Hull — HU NOW Magazine",
+      description:
+        "Editorial stories, food reviews, artist interviews, and independent business features from across Kingston upon Hull and East Yorkshire.",
+      path: "/stories",
+    }),
   component: Stories,
 });
 

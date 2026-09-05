@@ -5,15 +5,63 @@ import { resolveRedirect } from "@/lib/redirects.functions";
 export const Route = createFileRoute("/$")({
   loader: async ({ location }) => {
     const path = `/${location.pathname.replace(/^\//, "")}`.replace(/\/$/, "") || "/";
-    if (path.startsWith("/wp-content") || path.startsWith("/pdfviewer")) {
+
+    // Legacy WordPress asset & admin URLs
+    if (
+      path.startsWith("/wp-content") ||
+      path.startsWith("/wp-includes") ||
+      path.startsWith("/wp-json") ||
+      path.startsWith("/wp-admin") ||
+      path.startsWith("/pdfviewer")
+    ) {
       throw redirect({ href: "/", statusCode: 301 });
     }
-    const match = await resolveRedirect({ data: { path } });
-    if (match) {
+
+    // Legacy RSS feeds
+    if (path === "/feed" || path.startsWith("/feed/")) {
+      throw redirect({ href: "/feed.articles.rss", statusCode: 301 });
+    }
+
+    // Legacy singular /author/:slug -> plural /authors/:slug
+    if (path.startsWith("/author/")) {
+      const author = path.replace("/author/", "");
+      throw redirect({ href: `/authors/${author}`, statusCode: 301 });
+    }
+
+    // Legacy /category/:slug -> smart redirect
+    if (path.startsWith("/category/")) {
+      const cat = path.replace("/category/", "").split("/")[0].toLowerCase();
+      if (cat === "food" || cat === "restaurants" || cat === "drink" || cat === "eat") {
+        throw redirect({ href: "/eat", statusCode: 301 });
+      }
+      if (cat === "events" || cat === "music" || cat === "gigs") {
+        throw redirect({ href: "/whats-on", statusCode: 301 });
+      }
+      if (cat === "arts" || cat === "culture") {
+        throw redirect({ href: "/arts", statusCode: 301 });
+      }
+      throw redirect({ href: "/stories", statusCode: 301 });
+    }
+
+    // Legacy pagination /page/:num
+    if (path.startsWith("/page/")) {
+      throw redirect({ href: "/stories", statusCode: 301 });
+    }
+
+    // Explicit database redirects
+    const match = await resolveRedirect({ data: { path } }).catch(() => null);
+    if (match && match.to_path !== path) {
       throw redirect({ href: match.to_path, statusCode: match.permanent ? 301 : 302 });
     }
+
     throw notFound();
   },
+  head: () => ({
+    meta: [
+      { title: "Page Not Found (404) — HU NOW" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: NotFound,
 });
 

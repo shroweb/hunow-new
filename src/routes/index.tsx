@@ -12,6 +12,7 @@ import { articlePath } from "@/lib/taxonomy";
 import { img } from "@/data/seed";
 import { formatFullDate, formatEventDate, formatWeekday } from "@/lib/dates";
 import { subscribeNewsletter } from "@/lib/public.functions";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -24,21 +25,13 @@ export const Route = createFileRoute("/")({
       offers: store.offers,
     };
   },
-  head: () => ({
-    meta: [
-      { title: "HU NOW — Your Guide to What's Happening in Hull" },
-      {
-        name: "description",
-        content:
-          "Events, food, culture, hidden gems and independent businesses across Hull — all in one place.",
-      },
-      { property: "og:title", content: "HU NOW — Hull's Independent City Guide" },
-      {
-        property: "og:description",
-        content: "Find what's on, where to eat, and the city's best-kept secrets.",
-      },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "HU NOW — Hull's Independent Guide to Events, Food & Culture",
+      description:
+        "The independent guide to Kingston upon Hull and East Yorkshire. Live music, food and drink, cultural events, hidden gems, and local directories.",
+      path: "/",
+    }),
   component: Index,
 });
 

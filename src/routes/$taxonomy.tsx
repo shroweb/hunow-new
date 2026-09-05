@@ -17,6 +17,7 @@ import {
 } from "@/lib/taxonomy";
 import { useStore } from "@/lib/store";
 import { AdSlot } from "@/components/AdSlot";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/$taxonomy")({
   loader: async ({ params }) => {
@@ -34,6 +35,9 @@ export const Route = createFileRoute("/$taxonomy")({
     }
     if (params.taxonomy === "christmas-lights") {
       throw redirect({ href: "/christmas-lights-switch-on", statusCode: 301 });
+    }
+    if (params.taxonomy === "food-and-drink") {
+      throw redirect({ href: "/eat", statusCode: 301 });
     }
     const taxonomy = findTaxonomy(params.taxonomy);
     if (!taxonomy) {
@@ -82,13 +86,11 @@ export const Route = createFileRoute("/$taxonomy")({
   head: ({ loaderData }) => {
     const taxonomy = loaderData?.taxonomy;
     if (!taxonomy) return {};
-    return {
-      meta: [
-        { title: `${taxonomy.label} — HU NOW` },
-        { name: "description", content: taxonomy.description },
-      ],
-      links: [{ rel: "canonical", href: `/${taxonomy.slug}` }],
-    };
+    return buildSeoMeta({
+      title: `${taxonomy.label} in Hull & East Yorkshire`,
+      description: taxonomy.description,
+      path: `/${taxonomy.slug}`,
+    });
   },
   component: TaxonomyPage,
   notFoundComponent: () => (

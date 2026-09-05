@@ -82,7 +82,7 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
         { name: "twitter:description", content: description },
         { name: "twitter:image", content: image },
       ],
-      links: [{ rel: "canonical", href: a.seo?.canonicalUrl ?? url }],
+      links: [{ rel: "canonical", href: a.seo?.canonicalUrl ?? `https://www.hunow.co.uk${url}` }],
       scripts: [
         {
           type: "application/ld+json",
@@ -99,14 +99,14 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
             publisher: {
               "@type": "Organization",
               name: "HU NOW",
-              url: process.env.SITE_URL ?? "https://hunow.co.uk",
-              logo: { "@type": "ImageObject", url: "https://hunow.co.uk/hunow.jpg" },
+              url: "https://www.hunow.co.uk",
+              logo: { "@type": "ImageObject", url: "https://www.hunow.co.uk/hunow.jpg" },
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+              "@id": `https://www.hunow.co.uk${url}`,
             },
-            url: `${process.env.SITE_URL ?? "https://hunow.co.uk"}${url}`,
+            url: `https://www.hunow.co.uk${url}`,
           }),
         },
         {
@@ -115,18 +115,18 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: "https://hunow.co.uk" },
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.hunow.co.uk" },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Stories",
-                item: "https://hunow.co.uk/stories",
+                item: "https://www.hunow.co.uk/stories",
               },
               {
                 "@type": "ListItem",
                 position: 3,
                 name: a.title,
-                item: `https://hunow.co.uk${url}`,
+                item: `https://www.hunow.co.uk${url}`,
               },
             ],
           }),

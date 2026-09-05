@@ -2,17 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { getCurrentUser } from "@/lib/auth.functions";
 import { ShareMenu } from "@/components/ShareMenu";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/offers")({
-  head: () => ({
-    meta: [
-      { title: "Reader Offers — HU NOW" },
-      {
-        name: "description",
-        content: "Exclusive discounts and offers from Hull's best independent businesses.",
-      },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Reader Offers & Discounts in Hull — HU NOW Perks",
+      description:
+        "Exclusive reader discounts, dining deals, and promotional vouchers from independent restaurants, bars and shops across Kingston upon Hull.",
+      path: "/offers",
+    }),
   loader: async () => {
     const { fetchActiveOffers } = await import("@/lib/content-read.functions");
     const [user, offers] = await Promise.all([

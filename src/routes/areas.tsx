@@ -2,15 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { getAreasIndexData } from "@/lib/area-guides.functions";
 import { img } from "@/data/seed";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/areas")({
   loader: async () => ({ areas: await getAreasIndexData() }),
-  head: () => ({
-    meta: [
-      { title: "Hull Areas — HU NOW" },
-      { name: "description", content: "Explore Hull neighbourhood by neighbourhood." },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Hull Neighbourhoods & Area Guides — HU NOW",
+      description:
+        "Explore Kingston upon Hull neighbourhood by neighbourhood: Old Town, Fruit Market, Marina, The Avenues, Hessle Road, and East Park.",
+      path: "/areas",
+    }),
   component: AreasIndex,
 });
 

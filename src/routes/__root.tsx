@@ -178,8 +178,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@context": "https://schema.org",
               "@type": "Organization",
               name: siteName,
-              url: "https://hunow.co.uk",
-              logo: "https://hunow.co.uk/hunow.jpg",
+              url: "https://www.hunow.co.uk",
+              logo: "https://www.hunow.co.uk/hunow.jpg",
               description: desc,
               address: {
                 "@type": "PostalAddress",
@@ -207,12 +207,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: siteName,
-              url: "https://hunow.co.uk",
+              url: "https://www.hunow.co.uk",
               potentialAction: {
                 "@type": "SearchAction",
                 target: {
                   "@type": "EntryPoint",
-                  urlTemplate: "https://hunow.co.uk/search?q={search_term_string}",
+                  urlTemplate: "https://www.hunow.co.uk/search?q={search_term_string}",
                 },
                 "query-input": "required name=search_term_string",
               },

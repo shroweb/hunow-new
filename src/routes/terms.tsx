@@ -1,14 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
+import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "Terms & Conditions — HU NOW" },
-      { name: "description", content: "Terms and conditions for using HU NOW." },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Terms & Conditions — HU NOW Reader & Advertiser Agreement",
+      description:
+        "Read the terms, guidelines, reader rights, and advertising conditions for using HU NOW's website, community services, and digital products.",
+      path: "/terms",
+    }),
   component: Terms,
 });
 

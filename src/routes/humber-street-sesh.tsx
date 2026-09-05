@@ -30,10 +30,10 @@ export const Route = createFileRoute("/humber-street-sesh")({
         content: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&h=800&q=80",
       },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: "https://hunow.co.uk/humber-street-sesh" },
+      { property: "og:url", content: "https://www.hunow.co.uk/humber-street-sesh" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://hunow.co.uk/humber-street-sesh" }],
+    links: [{ rel: "canonical", href: "https://www.hunow.co.uk/humber-street-sesh" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/humber-street-sesh")({
           eventStatus: "https://schema.org/EventScheduled",
           eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
           isAccessibleForFree: false,
-          url: "https://hunow.co.uk/humber-street-sesh",
+          url: "https://www.hunow.co.uk/humber-street-sesh",
           location: {
             "@type": "Place",
             name: "Fruit Market & Hull Marina",

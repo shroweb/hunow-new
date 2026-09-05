@@ -29,10 +29,10 @@ export const Route = createFileRoute("/christmas-lights-switch-on")({
         content: "https://images.unsplash.com/photo-1543589077-47d81606c1bf?auto=format&fit=crop&w=1200&h=800&q=80",
       },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: "https://hunow.co.uk/christmas-lights-switch-on" },
+      { property: "og:url", content: "https://www.hunow.co.uk/christmas-lights-switch-on" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://hunow.co.uk/christmas-lights-switch-on" }],
+    links: [{ rel: "canonical", href: "https://www.hunow.co.uk/christmas-lights-switch-on" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/christmas-lights-switch-on")({
           endDate: "2026-11-19T19:30:00+00:00",
           eventStatus: "https://schema.org/EventScheduled",
           isAccessibleForFree: true,
-          url: "https://hunow.co.uk/christmas-lights-switch-on",
+          url: "https://www.hunow.co.uk/christmas-lights-switch-on",
           location: {
             "@type": "Place",
             name: "Queen Victoria Square",

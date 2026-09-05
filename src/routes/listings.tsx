@@ -6,6 +6,7 @@ import { PaginationControls } from "@/components/PaginationControls";
 import { fetchPagedListings } from "@/lib/content-read.functions";
 import { openStatus } from "@/lib/hours";
 import { escapeAttr } from "@/lib/sanitize";
+import { buildSeoMeta } from "@/lib/seo-meta";
 import type { Listing } from "@/types";
 
 const PER_PAGE = 12;
@@ -21,16 +22,21 @@ export const Route = createFileRoute("/listings")({
       areas: ["All", ...(taxonomy.areas ?? [])],
     };
   },
-  head: () => ({
-    meta: [
-      { title: "Business Listings — HU NOW" },
-      {
-        name: "description",
-        content: "Browse independent businesses, shops, restaurants and venues across Hull.",
-      },
-    ],
-    links: [{ rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" }],
-  }),
+  head: () => {
+    const base = buildSeoMeta({
+      title: "Business Directory & Listings in Hull — HU NOW",
+      description:
+        "Comprehensive directory of independent businesses, cafes, restaurants, shops, and cultural venues across Kingston upon Hull and East Yorkshire.",
+      path: "/listings",
+    });
+    return {
+      ...base,
+      links: [
+        ...base.links,
+        { rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" },
+      ],
+    };
+  },
   component: ListingsPage,
 });
 

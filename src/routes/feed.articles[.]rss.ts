@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { articlePath } from "@/lib/taxonomy";
 
-const BASE = (process.env.SITE_URL ?? "https://hunow.co.uk").replace(/\/$/, "");
+const BASE = (process.env.SITE_URL ?? "https://www.hunow.co.uk").replace(/\/$/, "");
 
 function escape(s: string) {
   return s

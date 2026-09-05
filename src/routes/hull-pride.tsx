@@ -29,10 +29,10 @@ export const Route = createFileRoute("/hull-pride")({
         content: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&h=800&q=80",
       },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: "https://hunow.co.uk/hull-pride" },
+      { property: "og:url", content: "https://www.hunow.co.uk/hull-pride" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://hunow.co.uk/hull-pride" }],
+    links: [{ rel: "canonical", href: "https://www.hunow.co.uk/hull-pride" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/hull-pride")({
           endDate: "2027-07-24T22:00:00+01:00",
           eventStatus: "https://schema.org/EventScheduled",
           isAccessibleForFree: true,
-          url: "https://hunow.co.uk/hull-pride",
+          url: "https://www.hunow.co.uk/hull-pride",
           location: {
             "@type": "Place",
             name: "Hull City Centre & Queens Gardens",

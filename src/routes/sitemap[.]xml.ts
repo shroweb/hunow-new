@@ -3,7 +3,7 @@ import type {} from "@tanstack/react-start";
 import { NAV_SECTIONS } from "@/lib/nav";
 import { TAXONOMIES, articlePath } from "@/lib/taxonomy";
 
-const BASE_URL = (process.env.SITE_URL ?? "https://hunow.co.uk").replace(/\/$/, "");
+const BASE_URL = (process.env.SITE_URL ?? "https://www.hunow.co.uk").replace(/\/$/, "");
 
 interface SitemapEntry {
   path: string;
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           lastmod: today(),
         });
         entries.push({ path: "/submit", changefreq: "monthly", priority: "0.6", lastmod: today() });
-        entries.push({ path: "/saved", changefreq: "weekly", priority: "0.5", lastmod: today() });
+        entries.push({ path: "/about", changefreq: "monthly", priority: "0.7", lastmod: today() });
         entries.push({ path: "/open-now", changefreq: "daily", priority: "0.8", lastmod: today() });
         entries.push({ path: "/areas", changefreq: "weekly", priority: "0.7", lastmod: today() });
         entries.push({ path: "/series", changefreq: "weekly", priority: "0.6", lastmod: today() });
