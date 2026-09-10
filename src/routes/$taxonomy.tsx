@@ -87,10 +87,10 @@ export const Route = createFileRoute("/$taxonomy")({
     };
   },
   head: ({ loaderData, params }) => {
-    const taxonomy = loaderData?.taxonomy;
-    if (!taxonomy) return {};
     // If on a child story route (params has slug), let the child route provide head metadata
     if ((params as { slug?: string })?.slug) return {};
+    const taxonomy = loaderData?.taxonomy ?? findTaxonomy(params.taxonomy);
+    if (!taxonomy) return {};
     return buildSeoMeta({
       title: `${taxonomy.label} in Hull & East Yorkshire`,
       description: taxonomy.description,
