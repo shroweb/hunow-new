@@ -58,6 +58,13 @@ function categoryColor(cat: string): string {
   return map[cat] ?? "var(--color-accent)";
 }
 
+// Clean and truncate scraped event locations (e.g. removes scraped description paragraphs)
+function cleanLocation(val?: string | null): string {
+  if (!val) return "";
+  const first = val.split(/[.\n]/)[0].trim();
+  return first.length > 45 ? first.slice(0, 45) + "…" : first;
+}
+
 function Index() {
   const {
     articles: loaderArticles,
@@ -343,7 +350,7 @@ function Index() {
                   <h3 className="font-display text-2xl uppercase leading-none mb-2 group-hover:text-accent transition-colors">
                     {event.title}
                   </h3>
-                  <p className="text-xs font-mono uppercase opacity-60">{event.locationName}</p>
+                  <p className="text-xs font-mono uppercase opacity-60">{cleanLocation(event.locationName)}</p>
                 </Link>
               ))}
             </div>
@@ -444,7 +451,7 @@ function Index() {
                 </h3>
                 <div className="text-[10px] font-mono uppercase text-muted-foreground" suppressHydrationWarning>
                   {formatHomeDate(events[0].startDate)} · {events[0].startTime} ·{" "}
-                  {events[0].locationName}
+                  {cleanLocation(events[0].locationName)}
                 </div>
               </div>
             </Link>
@@ -482,7 +489,7 @@ function Index() {
                     {e.title}
                   </h3>
                   <div className="text-[9px] font-mono uppercase text-muted-foreground">
-                    {e.locationName}
+                    {cleanLocation(e.locationName)}
                   </div>
                 </div>
                 <svg
