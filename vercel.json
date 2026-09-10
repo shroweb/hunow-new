@@ -91,6 +91,15 @@
       "source": "/major-improvements-coming-to-hull-docks",
       "destination": "/stories",
       "permanent": true
-    }
+    },
+    { "source": "/c/whats-on", "destination": "/whats-on", "permanent": true },
+    { "source": "/c/food-and-drink", "destination": "/eat", "permanent": true },
+    { "source": "/c/things-to-do", "destination": "/things-to-do", "permanent": true },
+    { "source": "/c/community", "destination": "/community", "permanent": true },
+    { "source": "/c/:section/hull-fair", "destination": "/hull-fair", "permanent": true },
+    { "source": "/c/:section/humber-street-sesh", "destination": "/humber-street-sesh", "permanent": true },
+    { "source": "/c/:section/freedom-festival", "destination": "/freedom-festival", "permanent": true },
+    { "source": "/c/:section/christmas-lights-switch-on", "destination": "/christmas-lights-switch-on", "permanent": true },
+    { "source": "/c/:section/hull-pride", "destination": "/hull-pride", "permanent": true }
   ]
 }
