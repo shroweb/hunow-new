@@ -130,6 +130,48 @@ function StoriesIndex() {
           </>
         )}
       </section>
+
+      {/* Evergreen Editorial Mission & City Dispatch Overview */}
+      <section className="border-t border-border bg-card/40 py-16 px-4">
+        <div className="max-w-4xl mx-auto space-y-10">
+          <div>
+            <div className="text-[10px] font-mono uppercase text-accent mb-2">Independent Journalism</div>
+            <h2 className="text-3xl md:text-5xl font-display uppercase tracking-tight mb-4">
+              Long-Form Journalism, Hidden Corners & Honest Hull Culture
+            </h2>
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+              HU NOW is built on independent, boots-on-the-ground storytelling. From the historic cobbles of
+              the Old Town and the maritime heritage of the docks to the bustling indie eateries along Newland
+              Avenue and Princes Avenue, our writers dig beneath the press releases to profile the makers,
+              chefs, artists, and grassroots communities shaping contemporary Hull and East Yorkshire.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-y border-border py-8">
+            <div>
+              <h3 className="text-base font-bold uppercase mb-2">Food & Drink Dispatches</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                In-depth chef interviews, bakery spotlights, and no-nonsense reviews exploring the city's
+                street food markets, independent roasteries, and dockside seafood spots.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-base font-bold uppercase mb-2">Creative & Cultural Voices</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Studio visits with regional painters, printmakers, musicians, and theatre producers documenting
+                Hull's fiercely independent creative energy.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-base font-bold uppercase mb-2">Neighbourhood Guides</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Curated walking guides, architectural secrets, and historical essays uncovering the hidden
+                stories behind Hull’s landmark buildings and public spaces.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </PublicLayout>
   );
 }

@@ -58,15 +58,15 @@ export const Route = createFileRoute("/hull-fair")({
   component: HullFairPage,
   head: () => ({
     meta: [
-      { title: "Hull Fair 2026: Official Dates, Opening Times, Parking & Ride Guide — HU NOW" },
+      { title: "Hull Fair 2026: Dates, Times, Parking & Prices | HU NOW" },
       {
         name: "description",
         content:
-          "The definitive guide to Hull Fair 2026 at Walton Street. Official dates (9–17 Oct), daily opening times, Priory Park & Ride details, ride prices, food stalls, and visitor tips.",
+          "The definitive guide to Hull Fair 2026 at Walton Street. Dates (9–17 Oct), daily opening times, Priory Park & Ride details, ride prices, food stalls, and visitor tips.",
       },
       {
         property: "og:title",
-        content: "Hull Fair 2026: Official Dates, Opening Times, Parking & Ride Guide",
+        content: "Hull Fair 2026: Dates, Times, Parking & Prices | HU NOW",
       },
       {
         property: "og:description",
@@ -82,7 +82,7 @@ export const Route = createFileRoute("/hull-fair")({
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
-        content: "Hull Fair 2026: Official Dates, Parking & Ride Guide",
+        content: "Hull Fair 2026: Dates, Times, Parking & Prices | HU NOW",
       },
       {
         name: "twitter:image",
