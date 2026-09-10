@@ -50,10 +50,6 @@ function Privacy() {
                 choose to add them.
               </li>
               <li>
-                <strong>Loyalty card data</strong> — a unique card token, points balance, and
-                redemption history tied to your account.
-              </li>
-              <li>
                 <strong>Usage data</strong> — pages viewed, search terms entered, and saved items.
                 This is stored in our own database and is not shared with third-party analytics
                 services unless you have consented.
@@ -75,7 +71,7 @@ function Privacy() {
               How we use your data
             </h2>
             <ul className="list-disc pl-5 space-y-2">
-              <li>To provide and maintain your account and loyalty card.</li>
+              <li>To provide and maintain your user account.</li>
               <li>To send transactional emails such as password resets (via Resend).</li>
               <li>To send push notifications you have opted in to.</li>
               <li>
@@ -86,7 +82,7 @@ function Privacy() {
               <li>To improve the site based on aggregated, anonymised usage patterns.</li>
             </ul>
             <p className="mt-4">
-              Our legal basis is <strong>contract</strong> (account and loyalty card),{" "}
+              Our legal basis is <strong>contract</strong> (user account),{" "}
               <strong>legitimate interests</strong> (usage analytics, moderation), and{" "}
               <strong>consent</strong> (newsletter, push notifications).
             </p>

@@ -130,19 +130,15 @@ function Offers() {
                   {/* CTA */}
                   <div className="flex gap-2">
                     {user ? (
-                      <Link
-                        to="/account"
-                        search={{ tab: "card" }}
-                        className="flex-1 block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors text-center"
-                      >
-                        Redeem with HU NOW card
-                      </Link>
+                      <div className="flex-1 block bg-foreground text-background px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-center select-none">
+                        Quote &ldquo;HU NOW&rdquo; in venue
+                      </div>
                     ) : (
                       <a
                         href="/sign-in"
                         className="flex-1 block border-2 border-foreground px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors text-center"
                       >
-                        Sign in to redeem
+                        Sign in to claim
                       </a>
                     )}
                     <ShareMenu

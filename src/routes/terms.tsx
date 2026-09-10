@@ -55,29 +55,7 @@ function Terms() {
 
           <section>
             <h2 className="font-display text-2xl uppercase text-foreground mb-3">
-              3. Loyalty programme
-            </h2>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>The HU NOW loyalty card is issued free of charge and has no monetary value.</li>
-              <li>
-                Points are awarded when you redeem an offer from a participating business. Points
-                balances are indicative and may be adjusted in cases of suspected fraud or technical
-                error.
-              </li>
-              <li>
-                Tier benefits (Bronze, Silver, Gold) are for illustrative purposes during the
-                current phase; specific perks may change as the programme develops.
-              </li>
-              <li>
-                HU NOW reserves the right to modify, suspend, or terminate the loyalty programme at
-                any time with reasonable notice.
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="font-display text-2xl uppercase text-foreground mb-3">
-              4. Business listings &amp; offers
+              3. Business listings &amp; offers
             </h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
@@ -98,7 +76,7 @@ function Terms() {
 
           <section>
             <h2 className="font-display text-2xl uppercase text-foreground mb-3">
-              5. User-generated content
+              4. User-generated content
             </h2>
             <p>
               When you submit a review, comment, or any other content (&ldquo;UGC&rdquo;) to the
@@ -119,7 +97,7 @@ function Terms() {
 
           <section>
             <h2 className="font-display text-2xl uppercase text-foreground mb-3">
-              6. Intellectual property
+              5. Intellectual property
             </h2>
             <p>
               All editorial content, branding, and original design elements on the Service are owned
@@ -130,7 +108,7 @@ function Terms() {
 
           <section>
             <h2 className="font-display text-2xl uppercase text-foreground mb-3">
-              7. Disclaimer of warranties
+              6. Disclaimer of warranties
             </h2>
             <p>
               The Service is provided &ldquo;as is&rdquo; without warranties of any kind, express or
@@ -141,7 +119,7 @@ function Terms() {
 
           <section>
             <h2 className="font-display text-2xl uppercase text-foreground mb-3">
-              8. Limitation of liability
+              7. Limitation of liability
             </h2>
             <p>
               To the fullest extent permitted by law, HU NOW shall not be liable for any indirect,
@@ -152,7 +130,7 @@ function Terms() {
 
           <section>
             <h2 className="font-display text-2xl uppercase text-foreground mb-3">
-              9. Governing law
+              8. Governing law
             </h2>
             <p>
               These terms are governed by the laws of England and Wales. Any disputes shall be
@@ -162,7 +140,7 @@ function Terms() {
 
           <section>
             <h2 className="font-display text-2xl uppercase text-foreground mb-3">
-              10. Changes to these terms
+              9. Changes to these terms
             </h2>
             <p>
               We may update these terms from time to time. Material changes will be communicated by
@@ -172,7 +150,7 @@ function Terms() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl uppercase text-foreground mb-3">11. Contact</h2>
+            <h2 className="font-display text-2xl uppercase text-foreground mb-3">10. Contact</h2>
             <p>
               Questions about these terms?{" "}
               <a href="mailto:hello@hunow.co.uk" className="underline">

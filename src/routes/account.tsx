@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import QRCode from "qrcode";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import {
   getCurrentUser,
@@ -12,14 +11,11 @@ import {
   getNewsletterPrefsFn,
   updateNewsletterPrefsFn,
   getActivityFeedFn,
-  getLoyaltyCardFn,
-  getMyRedemptionsFn,
 } from "@/lib/auth.functions";
 import { getVapidPublicKeyFn, saveWebPushSubscriptionFn } from "@/lib/content.functions";
 import type { AuthUser } from "@/lib/auth.server";
-import { useStore } from "@/lib/store";
 
-type Tab = "card" | "profile" | "security" | "newsletter" | "activity" | "danger";
+type Tab = "profile" | "security" | "newsletter" | "activity" | "danger";
 
 const btn =
   "inline-flex items-center bg-foreground text-background px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-accent transition-colors";
@@ -39,11 +35,11 @@ function readDataUrl(file: File): Promise<string> {
 
 export const Route = createFileRoute("/account")({
   validateSearch: (search: Record<string, unknown>) => ({
-    tab: (["card", "profile", "security", "newsletter", "activity", "danger"].includes(
+    tab: (["profile", "security", "newsletter", "activity", "danger"].includes(
       search.tab as string,
     )
       ? search.tab
-      : "card") as Tab,
+      : "profile") as Tab,
   }),
   head: () => ({
     meta: [
@@ -98,10 +94,9 @@ function Account() {
   }
 
   const TABS: { id: Tab; label: string }[] = [
-    { id: "card", label: "HU NOW Card" },
     { id: "profile", label: "Profile" },
     { id: "security", label: "Security" },
-    { id: "newsletter", label: "Newsletter" },
+    { id: "newsletter", label: "Newsletter & Alerts" },
     { id: "activity", label: "Activity" },
     { id: "danger", label: "Danger Zone" },
   ];
@@ -206,7 +201,6 @@ function Account() {
           ))}
         </div>
 
-        {tab === "card" && <CardTab userName={user.name} />}
         {tab === "profile" && (
           <ProfileTab
             user={user}
@@ -509,6 +503,10 @@ function NewsletterTab({ userEmail }: { userEmail: string }) {
         </Link>
         .
       </p>
+
+      <div className="pt-8 border-t border-foreground/10">
+        <PushSubscribeButton />
+      </div>
     </form>
   );
 }
@@ -695,376 +693,6 @@ function Field({
       {children}
       {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
     </label>
-  );
-}
-
-function CardTab({ userName }: { userName?: string }) {
-  const allOffers = useStore((s) => s.offers ?? []);
-  const offers = useMemo(
-    () => (allOffers || []).filter((o) => o && o.status === "active"),
-    [allOffers],
-  );
-  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
-  const [cardToken, setCardToken] = useState<string | null>(null);
-  const [tier, setTier] = useState("Member");
-  const [points, setPoints] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-
-  // One-time code state
-  const [selectedOfferId, setSelectedOfferId] = useState("");
-  const [code, setCode] = useState<string | null>(null);
-  const [codeExpiry, setCodeExpiry] = useState<Date | null>(null);
-  const [codeSecondsLeft, setCodeSecondsLeft] = useState(0);
-  const [generatingCode, setGeneratingCode] = useState(false);
-  const [codeError, setCodeError] = useState("");
-
-  // History
-  const [history, setHistory] = useState<
-    {
-      id: string;
-      offer_title: string | null;
-      listing_name: string | null;
-      redeemed_at: string;
-      method: string;
-    }[]
-  >([]);
-  const [historyLoaded, setHistoryLoaded] = useState(false);
-
-  useEffect(() => {
-    getLoyaltyCardFn()
-      .then((data) => {
-        if (!data.card_token) return;
-        setCardToken(data.card_token);
-        setTier(data.tier ?? "Member");
-        setPoints(Number(data.points ?? 0));
-        QRCode.toDataURL(`https://hunow.co.uk/c/${data.card_token}`, {
-          width: 200,
-          margin: 1,
-          color: { dark: "#080d2d", light: "#f5efe6" },
-        })
-          .then(setQrDataUrl)
-          .catch(() => {});
-      })
-      .catch(() => {});
-    getMyRedemptionsFn()
-      .then(setHistory)
-      .catch(() => {})
-      .finally(() => setHistoryLoaded(true));
-  }, []);
-
-  // Countdown timer for active code
-  useEffect(() => {
-    if (!codeExpiry) return;
-    const tick = () => {
-      const secs = Math.max(0, Math.floor((codeExpiry.getTime() - Date.now()) / 1000));
-      setCodeSecondsLeft(secs);
-      if (secs === 0) setCode(null);
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [codeExpiry]);
-
-  const generateCode = async () => {
-    if (!selectedOfferId) return;
-    setGeneratingCode(true);
-    setCodeError("");
-    try {
-      const res = await fetch("/api/v1/generate-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ offer_id: selectedOfferId }),
-      });
-      const data = (await res.json()) as { code?: string; expires_at?: string; error?: string };
-      if (!res.ok || !data.code) throw new Error(data.error ?? "Failed to generate code");
-      setCode(data.code);
-      setCodeExpiry(new Date(data.expires_at!));
-    } catch (err) {
-      setCodeError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setGeneratingCode(false);
-    }
-  };
-
-  const selectedOffer = offers.find((o) => o.id === selectedOfferId);
-  const mm = String(Math.floor(codeSecondsLeft / 60)).padStart(2, "0");
-  const ss = String(codeSecondsLeft % 60).padStart(2, "0");
-
-  // Tier-specific card colours
-  const tierPalette: Record<string, { from: string; to: string; accent: string; chip: string }> = {
-    gold: { from: "#1a1200", to: "#3a2c00", accent: "#f0c040", chip: "#c8960a" },
-    silver: { from: "#0e1520", to: "#1c2a3e", accent: "#c0ccd8", chip: "#7a8fa0" },
-    bronze: { from: "#1c0e06", to: "#3a1e0c", accent: "#d08040", chip: "#a05820" },
-    standard: { from: "#06102a", to: "#0e1e48", accent: "#6090e0", chip: "#3a5898" },
-  };
-  const pal = tierPalette[(tier || "").toLowerCase()] ?? tierPalette.standard;
-  const cardNum = cardToken
-    ? `•••• •••• ${cardToken.replace(/-/g, "").slice(0, 4).toUpperCase()}`
-    : "•••• •••• ••••";
-  const pointsNumber = Number(points ?? 0) || 0;
-
-  return (
-    <div className="max-w-sm mx-auto pt-6 pb-12 px-4 space-y-5">
-      {/* ─── Flip card ─── */}
-      <div
-        className="relative aspect-[1.586/1] cursor-pointer select-none"
-        style={{ perspective: "1200px" }}
-        onClick={() => setFlipped((f) => !f)}
-        role="button"
-        aria-label={flipped ? "Show card details" : "Show QR code"}
-      >
-        <div
-          className="relative w-full h-full transition-transform duration-500"
-          style={{
-            transformStyle: "preserve-3d",
-            transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-          }}
-        >
-          {/* ── FRONT ── */}
-          <div
-            className="absolute inset-0 overflow-hidden rounded-[18px] shadow-[0_24px_64px_-8px_rgba(0,0,0,0.55)]"
-            style={{
-              backfaceVisibility: "hidden",
-              background: `linear-gradient(140deg, ${pal.from} 0%, ${pal.to} 100%)`,
-            }}
-          >
-            <div className="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-white/[0.07] blur-3xl pointer-events-none" />
-            <svg
-              className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none"
-              aria-hidden="true"
-            >
-              <defs>
-                <pattern
-                  id="card-lines"
-                  width="18"
-                  height="18"
-                  patternUnits="userSpaceOnUse"
-                  patternTransform="rotate(40)"
-                >
-                  <line x1="0" y1="0" x2="0" y2="18" stroke="white" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect fill="url(#card-lines)" width="100%" height="100%" />
-            </svg>
-            <div className="absolute -right-3 -bottom-5 font-display text-[72px] leading-none uppercase text-white/[0.05] pointer-events-none tracking-tight">
-              HU NOW
-            </div>
-            <div className="relative h-full flex flex-col justify-between p-5">
-              <div className="flex items-start justify-between">
-                <div className="font-display text-[22px] uppercase leading-none tracking-widest text-white">
-                  HU NOW
-                </div>
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  fill="none"
-                  aria-hidden="true"
-                  className="opacity-50 mt-0.5"
-                >
-                  <path
-                    d="M11 4a7 7 0 0 1 0 14"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                  <path
-                    d="M11 7a4 4 0 0 1 0 8"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                  <path
-                    d="M11 10a1 1 0 0 1 0 2"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                </svg>
-              </div>
-              <div className="flex items-center gap-3">
-                <svg width="34" height="26" viewBox="0 0 34 26" className="shrink-0">
-                  <rect width="34" height="26" rx="4" fill={pal.chip} />
-                  <rect x="1" y="8.5" width="32" height="9" fill={pal.chip} opacity="0.55" />
-                  <rect x="11" y="1" width="12" height="24" fill={pal.chip} opacity="0.55" />
-                  <rect x="11" y="8.5" width="12" height="9" fill={pal.chip} opacity="0.9" />
-                </svg>
-                <span className="font-mono text-[13px] tracking-[0.18em] text-white/40">
-                  {cardNum}
-                </span>
-              </div>
-              <div className="flex items-end justify-between">
-                <div>
-                  <div className="text-[8px] font-mono uppercase tracking-[0.18em] text-white/40 mb-0.5">
-                    Member
-                  </div>
-                  <div className="font-bold text-[15px] uppercase tracking-wider leading-none text-white">
-                    {userName}
-                  </div>
-                  <div className="mt-1.5 flex items-center gap-1.5">
-                    <span
-                      className="size-1.5 rounded-full"
-                      style={{ backgroundColor: pal.accent }}
-                    />
-                    <span
-                      className="text-[8px] font-mono uppercase tracking-[0.15em]"
-                      style={{ color: pal.accent }}
-                    >
-                      {tier}
-                    </span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-[8px] font-mono uppercase tracking-[0.18em] text-white/40 mb-0.5">
-                    Points
-                  </div>
-                  <div className="text-[26px] font-bold leading-none" style={{ color: pal.accent }}>
-                    {pointsNumber.toLocaleString()}
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Tap hint */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[7px] font-mono uppercase tracking-widest text-white/60">
-              tap to flip
-            </div>
-          </div>
-
-          {/* ── BACK (QR) ── */}
-          <div
-            className="absolute inset-0 overflow-hidden rounded-[18px] shadow-[0_24px_64px_-8px_rgba(0,0,0,0.55)] flex flex-col items-center justify-between py-4 px-6"
-            style={{
-              backfaceVisibility: "hidden",
-              transform: "rotateY(180deg)",
-              background: `linear-gradient(140deg, ${pal.from} 0%, ${pal.to} 100%)`,
-            }}
-          >
-            <div className="font-display text-base uppercase tracking-widest text-white/70">
-              HU NOW
-            </div>
-            {qrDataUrl ? (
-              <img
-                src={qrDataUrl}
-                alt="Your HU NOW card QR code"
-                width={148}
-                height={148}
-                className="rounded-sm"
-              />
-            ) : (
-              <div className="w-36 h-36 bg-white/10 rounded-sm flex items-center justify-center">
-                <span className="font-mono text-[10px] text-white/40">Loading…</span>
-              </div>
-            )}
-            <div className="text-[7px] font-mono uppercase tracking-widest text-white/30">
-              scan at business to redeem
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* One-time redemption code */}
-      {offers.length > 0 && (
-        <div className="border-2 border-foreground overflow-hidden">
-          <div className="px-5 pt-5 pb-4 space-y-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-              One-time code
-            </div>
-            <select
-              value={selectedOfferId}
-              onChange={(e) => {
-                setSelectedOfferId(e.target.value);
-                setCode(null);
-                setCodeError("");
-              }}
-              className="w-full bg-background border-2 border-foreground px-3 py-2.5 font-mono text-xs focus:outline-none"
-            >
-              <option value="">Select an offer…</option>
-              {offers.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.title} — {o.businessName}
-                </option>
-              ))}
-            </select>
-
-            {code && codeSecondsLeft > 0 ? (
-              <div className="text-center py-4 space-y-2">
-                <div className="font-display text-7xl tracking-[0.35em] text-foreground leading-none">
-                  {code}
-                </div>
-                {selectedOffer && (
-                  <div className="font-mono text-[10px] text-accent uppercase">
-                    {selectedOffer.title}
-                  </div>
-                )}
-                <div className="font-mono text-xs text-muted-foreground">
-                  Show to staff · expires {mm}:{ss}
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={generateCode}
-                disabled={!selectedOfferId || generatingCode}
-                className="w-full bg-foreground text-background py-3 font-bold uppercase tracking-widest text-xs hover:bg-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                {generatingCode ? "Generating…" : "Get Code"}
-              </button>
-            )}
-            {codeError && <p className="text-xs text-red-600 font-mono">{codeError}</p>}
-          </div>
-        </div>
-      )}
-
-      <PushSubscribeButton />
-
-      {/* Redemption history */}
-      <div>
-        <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
-          Redemption history
-        </div>
-        {!historyLoaded ? (
-          <p className="font-mono text-xs text-muted-foreground">Loading…</p>
-        ) : history.length === 0 ? (
-          <p className="font-mono text-xs text-muted-foreground">No redemptions yet.</p>
-        ) : (
-          <div className="space-y-2">
-            {history.map((r) => {
-              let dateStr = "";
-              try {
-                dateStr = r.redeemed_at
-                  ? new Date(r.redeemed_at).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })
-                  : "";
-              } catch {
-                dateStr = "";
-              }
-              return (
-                <div
-                  key={r.id}
-                  className="border border-foreground/15 p-3 flex justify-between gap-3"
-                >
-                  <div>
-                    <p className="text-sm font-bold">{r.offer_title ?? "Offer"}</p>
-                    {r.listing_name && (
-                      <p className="font-mono text-[10px] text-muted-foreground">{r.listing_name}</p>
-                    )}
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-mono text-[10px] text-muted-foreground">{dateStr}</p>
-                    <p className="font-mono text-[9px] text-accent uppercase">{r.method || "qr"}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 
