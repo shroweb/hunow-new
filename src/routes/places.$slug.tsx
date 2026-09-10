@@ -58,8 +58,8 @@ export const Route = createFileRoute("/places/$slug")({
     return {
       meta: [
         { title },
-        { name: "description", content: description },
-        ...(l.seo?.noIndex ? [{ name: "robots", content: "noindex,nofollow" }] : []),
+        // Directory paused for SEO recovery: exclude thin place cards from indexation while following internal links
+        { name: "robots", content: "noindex, follow" },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "place" },

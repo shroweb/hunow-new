@@ -207,11 +207,12 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 );
               })}
               <Link
-                to="/listings"
-                className={`whitespace-nowrap px-4 py-3 border-b-2 transition-colors ${pathname.startsWith("/listings") ? "border-accent text-accent" : "border-transparent hover:text-accent"}`}
+                to="/$taxonomy"
+                params={{ taxonomy: "guides" }}
+                className={`whitespace-nowrap px-4 py-3 border-b-2 transition-colors ${pathname === "/guides" ? "border-accent text-accent" : "border-transparent hover:text-accent"}`}
                 onMouseEnter={() => setOpen(null)}
               >
-                Listings
+                Guides
               </Link>
               <Link
                 to="/stories"
@@ -360,11 +361,12 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 </div>
               ))}
               <Link
-                to="/listings"
+                to="/$taxonomy"
+                params={{ taxonomy: "guides" }}
                 onClick={() => setMobileOpen(false)}
                 className="block text-xs font-bold uppercase tracking-widest border-t border-foreground/10 pt-3"
               >
-                Listings
+                Guides
               </Link>
               <Link
                 to="/account"
@@ -477,8 +479,8 @@ function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/places" className="hover:text-white transition-colors">
-                Places
+              <Link to="/$taxonomy" params={{ taxonomy: "guides" }} className="hover:text-white transition-colors">
+                Guides
               </Link>
             </li>
             <li>

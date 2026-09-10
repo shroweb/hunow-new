@@ -28,6 +28,7 @@ export const Route = createFileRoute("/listings")({
       description:
         "Comprehensive directory of independent businesses, cafes, restaurants, shops, and cultural venues across Kingston upon Hull and East Yorkshire.",
       path: "/listings",
+      robots: "noindex, follow",
     });
     return {
       ...base,

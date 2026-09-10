@@ -172,13 +172,27 @@ function StoryDetail() {
             <span className="text-muted-foreground">·</span>
             <span>{article.readingMinutes} min read</span>
             <span className="text-muted-foreground ml-auto hidden sm:inline">·</span>
-            <div className="ml-auto flex gap-2">
+            <div className="ml-auto flex items-center gap-2">
               <SaveButton
                 kind="story"
                 id={article.id}
                 slug={article.slug}
                 title={article.title}
-                className="px-3 py-1.5 border border-foreground text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+                className="px-3 py-1.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
+              />
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(`${article.title} https://www.hunow.co.uk/stories/${article.slug}`)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#1EBE5D] transition-colors rounded-sm"
+                title="Share via WhatsApp"
+              >
+                WhatsApp
+              </a>
+              <ShareMenu
+                title={article.title}
+                text={article.excerpt}
+                className="px-3 py-1.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
               />
             </div>
           </div>

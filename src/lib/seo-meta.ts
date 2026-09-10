@@ -52,6 +52,7 @@ export interface SeoMetaOptions {
   publishedTime?: string;
   author?: string;
   noIndex?: boolean;
+  robots?: string;
 }
 
 export function buildSeoMeta(opts: SeoMetaOptions) {
@@ -76,7 +77,9 @@ export function buildSeoMeta(opts: SeoMetaOptions) {
     { name: "twitter:image", content: image },
   ];
 
-  if (opts.noIndex) {
+  if (opts.robots) {
+    meta.push({ name: "robots", content: opts.robots });
+  } else if (opts.noIndex) {
     meta.push({ name: "robots", content: "noindex, nofollow" });
   }
 

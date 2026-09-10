@@ -37,14 +37,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         entries.push({ path: "/hull-pride", changefreq: "weekly", priority: "0.9", lastmod: today() });
         entries.push({ path: "/whats-on", changefreq: "daily", priority: "0.9", lastmod: today() });
         entries.push({ path: "/stories", changefreq: "daily", priority: "0.9", lastmod: today() });
-        entries.push({ path: "/places", changefreq: "weekly", priority: "0.9", lastmod: today() });
         entries.push({ path: "/offers", changefreq: "weekly", priority: "0.8", lastmod: today() });
-        entries.push({
-          path: "/listings",
-          changefreq: "weekly",
-          priority: "0.8",
-          lastmod: today(),
-        });
         entries.push({
           path: "/advertise",
           changefreq: "monthly",
@@ -120,15 +113,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           }
         }
 
-        // Listings / places (live from DB)
-        for (const listing of listings) {
-          entries.push({
-            path: `/places/${listing.slug}`,
-            changefreq: "weekly",
-            priority: "0.8",
-            lastmod: today(),
-          });
-        }
+        // Listings / places are paused for SEO recovery to focus crawl equity on editorial stories and guides
 
         // Area pages
         const areas = [...new Set(listings.map((l) => l.area).filter(Boolean))];

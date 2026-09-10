@@ -75,7 +75,7 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
-        { property: "og:url", content: url },
+        { property: "og:url", content: `https://www.hunow.co.uk${url}` },
         { property: "og:image", content: image },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
@@ -278,7 +278,7 @@ function ArticleDetail() {
                 className="px-3 py-1.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
               />
               <a
-                href={`https://wa.me/?text=${encodeURIComponent(`${article.title} https://hunow.co.uk${articlePath(article)}`)}`}
+                href={`https://wa.me/?text=${encodeURIComponent(`${article.title} https://www.hunow.co.uk${articlePath(article)}`)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#1EBE5D] transition-colors rounded-sm"

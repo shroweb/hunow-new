@@ -12,6 +12,7 @@ export const Route = createFileRoute("/places")({
       description:
         "Browse Kingston upon Hull's finest independent businesses, restaurants, cafes, pubs, cultural attractions and hidden gems across East Yorkshire.",
       path: "/places",
+      robots: "noindex, follow",
     }),
   component: Places,
 });
