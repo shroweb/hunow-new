@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { NAV_SECTIONS } from "@/lib/nav";
-import { TAXONOMIES, articlePath } from "@/lib/taxonomy";
+import { TAXONOMIES, articlePath, sectionHref } from "@/lib/taxonomy";
 
 const BASE_URL = "https://www.hunow.co.uk";
 
@@ -62,30 +62,57 @@ export const Route = createFileRoute("/sitemap.xml")({
           lastmod: today(),
         });
 
-        // Section pages
+        // Section pages (clean, deduplicated non-redirect canonical paths)
+        const addedPaths = new Set<string>();
+        for (const e of entries) {
+          addedPaths.add(e.path);
+        }
+
+        const FESTIVAL_PATHS: Record<string, string> = {
+          "hull-fair": "/hull-fair",
+          "humber-street-sesh": "/humber-street-sesh",
+          "freedom-festival": "/freedom-festival",
+          "christmas-lights-switch-on": "/christmas-lights-switch-on",
+          "hull-pride": "/hull-pride",
+        };
+
         for (const taxonomy of TAXONOMIES) {
-          entries.push({
-            path: `/${taxonomy.slug}`,
-            changefreq: "weekly",
-            priority: "0.8",
-            lastmod: today(),
-          });
+          // /events redirects with 301 to /whats-on
+          if (taxonomy.slug === "events") continue;
+          const p = `/${taxonomy.slug}`;
+          if (!addedPaths.has(p)) {
+            addedPaths.add(p);
+            entries.push({
+              path: p,
+              changefreq: "weekly",
+              priority: "0.8",
+              lastmod: today(),
+            });
+          }
         }
 
         for (const section of NAV_SECTIONS) {
-          entries.push({
-            path: `/c/${section.slug}`,
-            changefreq: "weekly",
-            priority: "0.8",
-            lastmod: today(),
-          });
-          for (const sub of section.subs) {
+          const canonicalSection = sectionHref(section.slug);
+          if (!addedPaths.has(canonicalSection)) {
+            addedPaths.add(canonicalSection);
             entries.push({
-              path: `/c/${section.slug}/${sub.slug}`,
+              path: canonicalSection,
               changefreq: "weekly",
-              priority: "0.7",
+              priority: "0.8",
               lastmod: today(),
             });
+          }
+          for (const sub of section.subs) {
+            const canonicalSub = FESTIVAL_PATHS[sub.slug] ?? `/c/${section.slug}/${sub.slug}`;
+            if (!addedPaths.has(canonicalSub)) {
+              addedPaths.add(canonicalSub);
+              entries.push({
+                path: canonicalSub,
+                changefreq: "weekly",
+                priority: "0.7",
+                lastmod: today(),
+              });
+            }
           }
         }
 

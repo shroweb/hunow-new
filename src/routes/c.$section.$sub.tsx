@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
@@ -6,8 +6,20 @@ import { findSection, findSub, type NavSection, type NavSub } from "@/lib/nav";
 import { AdSlot } from "@/components/AdSlot";
 import type { Article, EventItem } from "@/types";
 
+const FESTIVAL_PATHS: Record<string, string> = {
+  "hull-fair": "/hull-fair",
+  "humber-street-sesh": "/humber-street-sesh",
+  "freedom-festival": "/freedom-festival",
+  "christmas-lights-switch-on": "/christmas-lights-switch-on",
+  "hull-pride": "/hull-pride",
+};
+
 export const Route = createFileRoute("/c/$section/$sub")({
   loader: async ({ params }) => {
+    const festivalRedirect = FESTIVAL_PATHS[params.sub];
+    if (festivalRedirect) {
+      throw redirect({ href: festivalRedirect, statusCode: 301 });
+    }
     const section = findSection(params.section);
     const sub = findSub(params.section, params.sub);
     if (!section || !sub) throw notFound();

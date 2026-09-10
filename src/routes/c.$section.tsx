@@ -1,14 +1,19 @@
-import { createFileRoute, Link, Outlet, notFound, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, notFound, redirect, useRouterState } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard } from "@/components/cards";
 import { useStore } from "@/lib/store";
 import { findSection, NAV_SECTIONS, type NavSub } from "@/lib/nav";
 import { AdSlot } from "@/components/AdSlot";
+import { sectionHref } from "@/lib/taxonomy";
 
 export const Route = createFileRoute("/c/$section")({
   loader: ({ params }) => {
     const section = findSection(params.section);
     if (!section) throw notFound();
+    const target = sectionHref(section.slug);
+    if (target !== `/c/${section.slug}`) {
+      throw redirect({ href: target, statusCode: 301 });
+    }
     return { section };
   },
   head: ({ loaderData }) => ({
