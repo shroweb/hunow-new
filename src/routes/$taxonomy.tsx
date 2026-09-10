@@ -86,12 +86,11 @@ export const Route = createFileRoute("/$taxonomy")({
       listings: store?.listings ?? [],
     };
   },
-  head: ({ loaderData, location }) => {
+  head: ({ loaderData, params }) => {
     const taxonomy = loaderData?.taxonomy;
     if (!taxonomy) return {};
-    // If navigating to a child story (e.g. /guides/guide-to-parking-at-hull-fair), let the child route handle head
-    const cleanPath = `/${location.pathname.replace(/^\//, "").replace(/\/$/, "")}`;
-    if (cleanPath !== `/${taxonomy.slug}`) return {};
+    // If on a child story route (params has slug), let the child route provide head metadata
+    if ((params as { slug?: string })?.slug) return {};
     return buildSeoMeta({
       title: `${taxonomy.label} in Hull & East Yorkshire`,
       description: taxonomy.description,

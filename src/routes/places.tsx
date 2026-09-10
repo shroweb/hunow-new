@@ -6,9 +6,8 @@ import { useStore } from "@/lib/store";
 import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/places")({
-  head: ({ location }) => {
-    const cleanPath = `/${location.pathname.replace(/^\//, "").replace(/\/$/, "")}`;
-    if (cleanPath !== "/places") return {};
+  head: ({ params }) => {
+    if ((params as { slug?: string })?.slug) return {};
     return buildSeoMeta({
       title: "Places in Hull — Independent Business & Venues Directory",
       description:

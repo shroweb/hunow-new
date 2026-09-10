@@ -11,9 +11,8 @@ import type { Article } from "@/types";
 const PER_PAGE = 12;
 
 export const Route = createFileRoute("/stories")({
-  head: ({ location }) => {
-    const cleanPath = `/${location.pathname.replace(/^\//, "").replace(/\/$/, "")}`;
-    if (cleanPath !== "/stories") return {};
+  head: ({ params }) => {
+    if ((params as { slug?: string })?.slug) return {};
     return buildSeoMeta({
       title: "Stories & Culture in Hull — HU NOW Magazine",
       description:
