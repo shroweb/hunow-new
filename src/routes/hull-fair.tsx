@@ -208,7 +208,7 @@ function HullFairPage() {
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 border border-accent/40 text-accent font-mono text-xs uppercase tracking-widest mb-4">
-            <span>🎪 Official 2026 Guide</span>
+            <span>Official 2026 Guide</span>
             <span>•</span>
             <span>Europe's Largest Travelling Fair</span>
           </div>
@@ -317,7 +317,7 @@ function HullFairPage() {
 
           <div className="bg-amber-500/10 border-l-4 border-amber-500 p-4 mb-8">
             <div className="font-bold text-amber-900 dark:text-amber-200">
-              ⚠️ The Sunday Closure Rule (Sunday 11 October 2026)
+              The Sunday Closure Rule (Sunday 11 October 2026)
             </div>
             <div className="text-sm text-amber-800/90 dark:text-amber-300/90 mt-1">
               By royal charter and city bylaw, <strong>Hull Fair does not open on Sundays</strong>.
@@ -444,7 +444,7 @@ function HullFairPage() {
 
           <div className="border-2 border-dashed border-rose-500/40 bg-rose-500/5 p-6 mb-6">
             <h4 className="font-bold text-rose-600 uppercase text-sm mb-1">
-              ⚠️ Strict Street Permit Zones: Avoid Parking Fines
+              Strict Street Permit Zones: Avoid Parking Fines
             </h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
               All streets within a one-mile radius of Walton Street (including Anlaby Road terraces,

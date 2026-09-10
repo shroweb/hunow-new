@@ -117,7 +117,7 @@ function HumberStreetSeshPage() {
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 border border-accent/40 text-accent font-mono text-xs uppercase tracking-widest mb-4">
-            <span>🎸 Grassroots Music Festival</span>
+            <span>Grassroots Music Festival</span>
             <span>•</span>
             <span>30,000+ Attendees · 200+ Bands</span>
           </div>
@@ -170,19 +170,19 @@ function HumberStreetSeshPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center gap-2 whitespace-nowrap text-xs font-bold uppercase">
           <span className="text-muted-foreground font-mono text-[10px] mr-2">Jump to:</span>
           <a href="#about" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            ℹ️ About Sesh
+            About Sesh
           </a>
           <a href="#stages" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🎸 Stages & Lineup
+            Stages & Lineup
           </a>
           <a href="#tickets" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🎟️ Wristbands & Entry
+            Wristbands & Entry
           </a>
           <a href="#food" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🍔 Food & Craft Beer
+            Food & Craft Beer
           </a>
           <a href="#faqs" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            ❓ FAQs
+            FAQs
           </a>
         </div>
       </div>

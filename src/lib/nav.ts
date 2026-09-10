@@ -17,7 +17,7 @@ export const NAV_SECTIONS: NavSection[] = [
     blurb: "Live events, gigs, shows and happenings across the city.",
     subs: [
       { slug: "events", label: "Events" },
-      { slug: "hull-fair", label: "🎪 Hull Fair 2026" },
+      { slug: "hull-fair", label: "Hull Fair 2026" },
       { slug: "arts", label: "Arts" },
       { slug: "music", label: "Music" },
       { slug: "sport", label: "Sport" },
@@ -34,10 +34,10 @@ export const NAV_SECTIONS: NavSection[] = [
     blurb: "Days out, shopping trips and adventures around Hull.",
     subs: [
       { slug: "days-out", label: "Days Out" },
-      { slug: "humber-street-sesh", label: "🎸 Humber Street Sesh" },
-      { slug: "freedom-festival", label: "🎭 Freedom Festival" },
-      { slug: "christmas-lights-switch-on", label: "✨ Christmas Lights" },
-      { slug: "hull-pride", label: "🏳️‍🌈 Pride in Hull" },
+      { slug: "humber-street-sesh", label: "Humber Street Sesh" },
+      { slug: "freedom-festival", label: "Freedom Festival" },
+      { slug: "christmas-lights-switch-on", label: "Christmas Lights" },
+      { slug: "hull-pride", label: "Pride in Hull" },
       { slug: "shopping", label: "Shopping" },
       { slug: "fun", label: "Fun" },
       { slug: "outdoors", label: "Outdoors" },

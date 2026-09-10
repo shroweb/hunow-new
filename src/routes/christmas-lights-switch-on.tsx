@@ -114,7 +114,7 @@ function ChristmasLightsPage() {
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 border border-accent/40 text-accent font-mono text-xs uppercase tracking-widest mb-4">
-            <span>✨ Festive Kickoff 2026</span>
+            <span>Festive Kickoff 2026</span>
             <span>•</span>
             <span>Free Community Spectacle</span>
           </div>
@@ -167,16 +167,16 @@ function ChristmasLightsPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center gap-2 whitespace-nowrap text-xs font-bold uppercase">
           <span className="text-muted-foreground font-mono text-[10px] mr-2">Jump to:</span>
           <a href="#times" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            ⏰ Timings & Schedule
+            Timings & Schedule
           </a>
           <a href="#entertainment" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🎭 Entertainment
+            Entertainment
           </a>
           <a href="#shopping" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🛍️ Late Night Shopping
+            Late Night Shopping
           </a>
           <a href="#faqs" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            ❓ FAQs
+            FAQs
           </a>
         </div>
       </div>
@@ -196,19 +196,19 @@ function ChristmasLightsPage() {
           <h2 className="text-3xl md:text-4xl font-display uppercase mb-6">What to Expect on the Night</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎄 The 50ft Norwegian Spruce</h3>
+              <h3 className="font-display text-xl uppercase mb-2">The 50ft Norwegian Spruce</h3>
               <p className="text-sm text-muted-foreground">Adorned with thousands of sparkling energy-efficient LED lights, gifts, and glowing decorations right in the center of Queen Victoria Square.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎆 Rooftop Fireworks Finale</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Rooftop Fireworks Finale</h3>
               <p className="text-sm text-muted-foreground">The moment the countdown reaches zero, the skies above Hull City Hall light up with a spectacular choreographed pyrotechnic fireworks display.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎭 Star Pantomime Casts</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Star Pantomime Casts</h3>
               <p className="text-sm text-muted-foreground">Appearances and sing-alongs with the celebrity casts of Hull New Theatre’s flagship family panto and Hull Truck Theatre’s festive production.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎶 Choirs & Local Musicians</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Choirs & Local Musicians</h3>
               <p className="text-sm text-muted-foreground">Heartwarming carols performed by Hull Community Choirs, brass bands, and local emerging youth vocalists.</p>
             </div>
           </div>

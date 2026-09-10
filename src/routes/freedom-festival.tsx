@@ -113,7 +113,7 @@ function FreedomFestivalPage() {
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 border border-accent/40 text-accent font-mono text-xs uppercase tracking-widest mb-4">
-            <span>🎭 International Arts Festival</span>
+            <span>International Arts Festival</span>
             <span>•</span>
             <span>Over 100,000 Visitors · 90% Free</span>
           </div>
@@ -166,16 +166,16 @@ function FreedomFestivalPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center gap-2 whitespace-nowrap text-xs font-bold uppercase">
           <span className="text-muted-foreground font-mono text-[10px] mr-2">Jump to:</span>
           <a href="#about" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🕊️ The Legacy
+            The Legacy
           </a>
           <a href="#zones" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            📍 Festival Zones
+            Festival Zones
           </a>
           <a href="#highlights" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🎪 What to Expect
+            What to Expect
           </a>
           <a href="#faqs" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            ❓ FAQs
+            FAQs
           </a>
         </div>
       </div>
@@ -194,19 +194,19 @@ function FreedomFestivalPage() {
           <h2 className="text-3xl md:text-4xl font-display uppercase mb-6">Key Performance Hubs</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🏛️ Queen Victoria Square</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Queen Victoria Square</h3>
               <p className="text-sm text-muted-foreground">The focal point for high-flying aerial acrobatics, kinetic sculptures, and dazzling night-time spectacles framed by Hull City Hall and Ferens Art Gallery.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">⛪ Trinity Square & Hull Minster</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Trinity Square & Hull Minster</h3>
               <p className="text-sm text-muted-foreground">Immersive contemporary dance, interactive audio installations inside the ancient Minster, and community poetry circles.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎪 Zebedee's Yard</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Zebedee's Yard</h3>
               <p className="text-sm text-muted-foreground">A sheltered open-air courtyard in Old Town featuring intimate circus tents, physical comedy, and boundary-pushing performance art.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🌊 Hull Marina Promenade</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Hull Marina Promenade</h3>
               <p className="text-sm text-muted-foreground">Waterfront sound installations, mobile brass bands, visual street artists, and artisan food stalls running all the way to Victoria Pier.</p>
             </div>
           </div>

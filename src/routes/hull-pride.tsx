@@ -113,7 +113,7 @@ function HullPridePage() {
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 border border-accent/40 text-accent font-mono text-xs uppercase tracking-widest mb-4">
-            <span>🏳️‍🌈 Annual Celebration</span>
+            <span>Annual Celebration</span>
             <span>•</span>
             <span>50,000+ Attendees · Free Entry</span>
           </div>
@@ -166,16 +166,16 @@ function HullPridePage() {
         <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center gap-2 whitespace-nowrap text-xs font-bold uppercase">
           <span className="text-muted-foreground font-mono text-[10px] mr-2">Jump to:</span>
           <a href="#parade" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🏳️‍🌈 The Parade
+            The Parade
           </a>
           <a href="#stages" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            🎤 Main Stage & Lineup
+            Main Stage & Lineup
           </a>
           <a href="#zones" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            👨‍👩‍👧 Community & Family
+            Community & Family
           </a>
           <a href="#faqs" className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors">
-            ❓ FAQs
+            FAQs
           </a>
         </div>
       </div>
@@ -194,19 +194,19 @@ function HullPridePage() {
           <h2 className="text-3xl md:text-4xl font-display uppercase mb-6">Parade & Stage Highlights</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">👑 Zebedee's Yard (Main Stage)</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Zebedee's Yard (Main Stage)</h3>
               <p className="text-sm text-muted-foreground">The beating heart of musical performances, hosting chart-topping pop headliners, drag icons from RuPaul's Drag Race UK, and electric live bands.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🏛️ Queen Victoria Square (Trans Square)</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Queen Victoria Square (Trans Square)</h3>
               <p className="text-sm text-muted-foreground">A dedicated, welcoming celebration hub featuring trans-led panel discussions, acoustic stages, spoken word, and creative showcases.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎨 Ferens Art Gallery (Family Area)</h3>
+              <h3 className="font-display text-xl uppercase mb-2">Ferens Art Gallery (Family Area)</h3>
               <p className="text-sm text-muted-foreground">A calm, inclusive space for LGBTQ+ families and young people featuring craft workshops, quiet sensory zones, and story sessions.</p>
             </div>
             <div className="border border-border p-6">
-              <h3 className="font-display text-xl uppercase mb-2">🎪 King Edward & Paragon St (Community Market)</h3>
+              <h3 className="font-display text-xl uppercase mb-2">King Edward & Paragon St (Community Market)</h3>
               <p className="text-sm text-muted-foreground">Dozens of vibrant stalls representing local charities, NHS wellbeing teams, independent makers, craft traders, and street food vendors.</p>
             </div>
           </div>

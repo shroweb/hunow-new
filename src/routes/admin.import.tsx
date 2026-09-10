@@ -210,7 +210,7 @@ function AdminImport() {
                 <span className="text-[10px] font-mono uppercase text-accent font-bold">Source 1</span>
                 <span className="text-[10px] font-mono bg-stone-200 px-1.5 py-0.5">Free Web Schema</span>
               </div>
-              <h3 className="font-display text-lg uppercase">🎭 Entertainment & Arena Shows</h3>
+              <h3 className="font-display text-lg uppercase">Entertainment & Arena Shows</h3>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 Scrapes upcoming arena tours, comedy headliners, boxing, and stage productions from <strong>Connexin Live Hull</strong> and <strong>Hull Theatres</strong> (Hull New Theatre & Hull City Hall).
               </p>
@@ -232,7 +232,7 @@ function AdminImport() {
                 <span className="text-[10px] font-mono uppercase text-accent font-bold">Source 2</span>
                 <span className="text-[10px] font-mono bg-stone-200 px-1.5 py-0.5">Public JSON-LD</span>
               </div>
-              <h3 className="font-display text-lg uppercase">🏛️ Visit Hull & Civic Festivals</h3>
+              <h3 className="font-display text-lg uppercase">Visit Hull & Civic Festivals</h3>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 Crawls official tourism listings from <strong>visithull.org</strong> including civic street festivals, Trinity Market pop-ups, museum exhibitions, and family heritage trails.
               </p>
@@ -254,7 +254,7 @@ function AdminImport() {
                 <span className="text-[10px] font-mono uppercase text-accent font-bold">Source 3</span>
                 <span className="text-[10px] font-mono bg-stone-200 px-1.5 py-0.5">Gov UK Open API</span>
               </div>
-              <h3 className="font-display text-lg uppercase">🍽️ Food Hygiene Agency (FSA)</h3>
+              <h3 className="font-display text-lg uppercase">Food Hygiene Agency (FSA)</h3>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 Connects directly to the UK Food Standards Agency for <strong>Hull City Council (ID 405)</strong>. Pulls verified restaurants, pubs, and cafes with official hygiene scores and GPS coordinates.
               </p>
@@ -276,7 +276,7 @@ function AdminImport() {
                 <span className="text-[10px] font-mono uppercase text-accent font-bold">Source 4</span>
                 <span className="text-[10px] font-mono bg-stone-200 px-1.5 py-0.5">Weekly Recurring</span>
               </div>
-              <h3 className="font-display text-lg uppercase">🏃 Parkrun & Community Weekends</h3>
+              <h3 className="font-display text-lg uppercase">Parkrun & Community Weekends</h3>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 Ingests weekly recurring 5k Saturday morning community events for <strong>East Park</strong>, <strong>Peter Pan Park</strong>, and <strong>Humber Bridge Country Park</strong>, plus Trinity Market street food dates.
               </p>
