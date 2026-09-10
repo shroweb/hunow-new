@@ -11,13 +11,16 @@ import type { Article } from "@/types";
 const PER_PAGE = 12;
 
 export const Route = createFileRoute("/stories")({
-  head: () =>
-    buildSeoMeta({
+  head: ({ location }) => {
+    const cleanPath = `/${location.pathname.replace(/^\//, "").replace(/\/$/, "")}`;
+    if (cleanPath !== "/stories") return {};
+    return buildSeoMeta({
       title: "Stories & Culture in Hull — HU NOW Magazine",
       description:
         "Editorial stories, food reviews, artist interviews, and independent business features from across Kingston upon Hull and East Yorkshire.",
       path: "/stories",
-    }),
+    });
+  },
   component: Stories,
 });
 

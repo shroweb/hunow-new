@@ -6,14 +6,17 @@ import { useStore } from "@/lib/store";
 import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/places")({
-  head: () =>
-    buildSeoMeta({
+  head: ({ location }) => {
+    const cleanPath = `/${location.pathname.replace(/^\//, "").replace(/\/$/, "")}`;
+    if (cleanPath !== "/places") return {};
+    return buildSeoMeta({
       title: "Places in Hull — Independent Business & Venues Directory",
       description:
         "Browse Kingston upon Hull's finest independent businesses, restaurants, cafes, pubs, cultural attractions and hidden gems across East Yorkshire.",
       path: "/places",
       robots: "noindex, follow",
-    }),
+    });
+  },
   component: Places,
 });
 
