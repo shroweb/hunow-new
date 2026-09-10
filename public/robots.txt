@@ -50,6 +50,6 @@ Disallow: /unsubscribe
 Disallow: /admin/
 
 # Sitemaps and LLM-friendly index
-Sitemap: https://hunow.co.uk/sitemap.xml
-# LLM Knowledge Standard: https://hunow.co.uk/llms.txt
-# Full LLM Knowledge Base: https://hunow.co.uk/llms-full.txt
+Sitemap: https://www.hunow.co.uk/sitemap.xml
+# LLM Knowledge Standard: https://www.hunow.co.uk/llms.txt
+# Full LLM Knowledge Base: https://www.hunow.co.uk/llms-full.txt
