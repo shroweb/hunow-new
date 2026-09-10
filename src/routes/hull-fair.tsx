@@ -133,7 +133,16 @@ export const Route = createFileRoute("/hull-fair")({
           organizer: {
             "@type": "Organization",
             name: "Showmen's Guild of Great Britain & Hull City Council",
+            url: "https://www.showmensguild.co.uk",
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "HU NOW",
             url: "https://www.hunow.co.uk",
+            logo: {
+              "@type": "ImageObject",
+              url: "https://www.hunow.co.uk/hunow.jpg",
+            },
           },
         }),
       },

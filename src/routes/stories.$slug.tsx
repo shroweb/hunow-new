@@ -73,6 +73,10 @@ export const Route = createFileRoute("/stories/$slug")({
               "@type": "Organization",
               name: "HU NOW",
               url: "https://www.hunow.co.uk",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://www.hunow.co.uk/hunow.jpg",
+              },
             },
             url: `https://www.hunow.co.uk${url}`,
           }),

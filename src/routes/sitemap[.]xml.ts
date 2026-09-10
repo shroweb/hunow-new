@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { NAV_SECTIONS } from "@/lib/nav";
 import { TAXONOMIES, articlePath, sectionHref } from "@/lib/taxonomy";
+import { AUTHORS, authorSlug } from "@/lib/authors";
 
 const BASE_URL = "https://www.hunow.co.uk";
 
@@ -129,14 +130,20 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
 
         // Published events (live from DB)
+        // Keep upcoming events or featured/major recurring events to protect crawl equity
+        const todayStr = today();
         for (const event of events) {
           if (event.status === "published") {
-            entries.push({
-              path: `/events/${event.slug}`,
-              changefreq: "weekly",
-              priority: "0.8",
-              lastmod: event.startDate,
-            });
+            const isUpcoming = (event.endDate || event.startDate) >= todayStr;
+            const isFeaturedOrMajor = event.isFeatured || event.slug.includes("hull-fair") || event.slug.includes("sesh") || event.slug.includes("freedom");
+            if (isUpcoming || isFeaturedOrMajor) {
+              entries.push({
+                path: `/events/${event.slug}`,
+                changefreq: "weekly",
+                priority: "0.8",
+                lastmod: event.startDate,
+              });
+            }
           }
         }
 
@@ -153,24 +160,36 @@ export const Route = createFileRoute("/sitemap.xml")({
           });
         }
 
-        // Author pages
-        const authors = [...new Set(articles.map((a) => a.author).filter(Boolean))];
-        for (const author of authors) {
-          entries.push({
-            path: `/authors/${encodeURIComponent(author.toLowerCase().replace(/\s+/g, "-"))}`,
-            changefreq: "weekly",
-            priority: "0.6",
-          });
+        // Author pages - only index genuine editorial staff with full biographies in AUTHORS registry
+        const articleAuthors = [...new Set(articles.map((a) => a.author).filter(Boolean))];
+        for (const author of articleAuthors) {
+          const registered = AUTHORS[author];
+          // Only include genuine human staff writers with biographical depth (exclude anonymous/placeholder "HU NOW" or ad-hoc authors)
+          if (registered && registered.name !== "HU NOW" && registered.bio.length > 30) {
+            entries.push({
+              path: `/authors/${encodeURIComponent(authorSlug(author))}`,
+              changefreq: "weekly",
+              priority: "0.6",
+            });
+          }
         }
 
-        // Tag pages
-        const tags = [...new Set(articles.flatMap((a) => a.tags ?? []).filter(Boolean))];
-        for (const tag of tags) {
-          entries.push({
-            path: `/tag/${encodeURIComponent(tag.toLowerCase().replace(/\s+/g, "-"))}`,
-            changefreq: "weekly",
-            priority: "0.5",
-          });
+        // Tag pages - only index robust tags associated with 2 or more articles to avoid thin content soft 404s
+        const tagArticleCounts: Record<string, number> = {};
+        for (const a of articles) {
+          for (const t of a.tags ?? []) {
+            const cleanTag = t.trim().toLowerCase();
+            tagArticleCounts[cleanTag] = (tagArticleCounts[cleanTag] || 0) + 1;
+          }
+        }
+        for (const [tag, count] of Object.entries(tagArticleCounts)) {
+          if (count >= 2) {
+            entries.push({
+              path: `/tag/${encodeURIComponent(tag.replace(/\s+/g, "-"))}`,
+              changefreq: "weekly",
+              priority: "0.5",
+            });
+          }
         }
 
         // Series pages

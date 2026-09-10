@@ -19,13 +19,60 @@ import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/whats-on")({
   validateSearch: searchSchema,
-  head: () =>
-    buildSeoMeta({
+  head: () => {
+    const seo = buildSeoMeta({
       title: "What's On in Hull — Gigs, Shows & Events Guide",
       description:
         "Every live event happening in Hull and East Yorkshire this week. Discover gigs, theatre, comedy, stadium sports, family days out, and weekend markets.",
       path: "/whats-on",
-    }),
+    });
+    return {
+      ...seo,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Where are the best live music and entertainment venues in Hull?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Major touring acts and arena shows head to Connexin Live (Hull Arena) near the marina. For independent, grassroots, and alternative music, The New Adelphi Club on De Grey Street, The Polar Bear on Spring Bank, and Social on Humber Street are legendary local hubs.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What theatres operate in Hull for touring plays and comedy?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Hull New Theatre in Kingston Square hosts major West End touring productions, ballet, and opera. Hull Truck Theatre on Ferensway is renowned for producing groundbreaking homegrown drama, independent productions, and stand-up comedy.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What are the biggest annual festivals in Hull?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Hull hosts several major festivals throughout the year: Hull Fair in October (Europe's largest travelling fair), Humber Street Sesh in August (celebrating hundreds of regional musicians), Freedom Festival in late summer (international arts and street theatre), and Pride in Hull.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "How can event organizers list an upcoming event on HU NOW?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Organisers, venues, and promoters can submit events directly through HU NOW's submission portal at hunow.co.uk/submit for review and inclusion in our city calendar.",
+                },
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: WhatsOn,
 });
 
@@ -256,6 +303,130 @@ function WhatsOn() {
             />
           </>
         )}
+      </section>
+
+      {/* Evergreen Editorial City Guide & FAQ Hub (Crawlable SEO Depth) */}
+      <section className="border-t border-border bg-card/40 py-16 px-4">
+        <div className="max-w-4xl mx-auto space-y-12">
+          <div>
+            <div className="text-[10px] font-mono uppercase text-accent mb-2">City Event Guide</div>
+            <h2 className="text-3xl md:text-5xl font-display uppercase tracking-tight mb-4">
+              Your Guide to Live Entertainment Across Hull & East Yorkshire
+            </h2>
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+              From packed arena tours on Myton Street to independent grassroots gigs in historic pubs,
+              Kingston upon Hull is one of northern England's most vibrant, distinctive cultural centres.
+              Whether you are planning a weekend visit, tracking upcoming comedy dates, or scouting free
+              family activities during the school holidays, our weekly-updated listings cover every corner of the city.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-y border-border py-8">
+            <div>
+              <h3 className="text-xl font-bold uppercase mb-2">Major Arenas & Theatres</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                <strong>Connexin Live Hull</strong> (the 3,500-capacity arena near Hull Marina) hosts global touring rock bands,
+                stand-up comedians, and major sporting bouts. For theatre lovers, <strong>Hull New Theatre</strong> in Kingston
+                Square welcomes national West End musicals, opera, and family pantomimes, while <strong>Hull Truck Theatre</strong> on
+                Ferensway champions groundbreaking regional drama and intimate new writing.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold uppercase mb-2">Grassroots Venues & Nightlife</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                Hull's live music heritage runs deep. The legendary <strong>New Adelphi Club</strong> on De Grey Street has launched
+                breakout bands for over four decades. Along Spring Bank, <strong>The Polar Bear Music Club</strong> offers late-night
+                live sets and showcase nights, while the converted warehouses along <strong>Humber Street</strong> host acoustic sessions,
+                DJ sets, and contemporary art exhibitions.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-2xl md:text-3xl font-display uppercase mb-6">
+              Major Annual Festivals & Celebrations
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Link
+                to="/hull-fair"
+                className="p-5 border border-border bg-background hover:border-accent transition-colors block group"
+              >
+                <div className="text-xs font-mono uppercase text-accent mb-1">October Tradition</div>
+                <div className="font-bold text-lg group-hover:text-accent transition-colors">Hull Fair</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Europe’s largest travelling fair featuring over 250 spectacular rides and attractions along Walton Street.
+                </p>
+              </Link>
+              <Link
+                to="/humber-street-sesh"
+                className="p-5 border border-border bg-background hover:border-accent transition-colors block group"
+              >
+                <div className="text-xs font-mono uppercase text-accent mb-1">August Music Festival</div>
+                <div className="font-bold text-lg group-hover:text-accent transition-colors">Humber Street Sesh</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  The UK’s premier grassroots festival showcasing over 200 homegrown artists across Marina and Old Town stages.
+                </p>
+              </Link>
+              <Link
+                to="/freedom-festival"
+                className="p-5 border border-border bg-background hover:border-accent transition-colors block group"
+              >
+                <div className="text-xs font-mono uppercase text-accent mb-1">International Arts</div>
+                <div className="font-bold text-lg group-hover:text-accent transition-colors">Freedom Festival</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  World-class street theatre, acrobatic spectacles, outdoor dance, and community exhibitions celebrating civil liberties.
+                </p>
+              </Link>
+              <Link
+                to="/christmas-lights-switch-on"
+                className="p-5 border border-border bg-background hover:border-accent transition-colors block group"
+              >
+                <div className="text-xs font-mono uppercase text-accent mb-1">Winter Highlight</div>
+                <div className="font-bold text-lg group-hover:text-accent transition-colors">Christmas Lights Switch-On</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Queen Victoria Square illuminations, festive markets, and live stage entertainment inaugurating the winter season.
+                </p>
+              </Link>
+            </div>
+          </div>
+
+          <div className="pt-6">
+            <h3 className="text-2xl md:text-3xl font-display uppercase mb-4">Frequently Asked Questions</h3>
+            <div className="divide-y divide-border">
+              <div className="py-4">
+                <h4 className="font-bold text-base mb-1">Where do the biggest touring bands play in Hull?</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Connexin Live (Hull Arena) near the marina hosts major arena tours, rock bands, and stadium comedy.
+                  For intimate touring acts, The New Adelphi Club, Polar Bear, and Social on Humber Street are the go-to independent music rooms.
+                </p>
+              </div>
+              <div className="py-4">
+                <h4 className="font-bold text-base mb-1">What theatres operate in Hull for touring plays and comedy?</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Hull New Theatre in Kingston Square stages large West End touring musicals, ballet, and opera.
+                  Hull Truck Theatre on Ferensway produces original regional drama, award-winning plays, and regular comedy circuit nights.
+                </p>
+              </div>
+              <div className="py-4">
+                <h4 className="font-bold text-base mb-1">Are there free events and community festivals in Hull?</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Yes. Most outdoor programming during Freedom Festival, the Queen Victoria Square Christmas Lights Switch-On,
+                  and Pride in Hull are free to attend. You can also filter our calendar using the "Free" toggle above to discover no-cost community activities.
+                </p>
+              </div>
+              <div className="py-4">
+                <h4 className="font-bold text-base mb-1">How can event organisers list an event on HU NOW?</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Organisers, promoters, and local venues can submit their event details via our simple{" "}
+                  <Link to="/submit" className="underline font-medium hover:text-accent">
+                    event submission form
+                  </Link>
+                  . Submissions are reviewed by our editorial team and published to the live city diary.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </PublicLayout>
   );

@@ -137,8 +137,16 @@ export const Route = createFileRoute("/events/$slug")({
                   },
               organizer: {
                 "@type": "Organization",
+                name: e.locationName || "Event Organiser",
+              },
+              publisher: {
+                "@type": "Organization",
                 name: "HU NOW",
                 url: "https://www.hunow.co.uk",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://www.hunow.co.uk/hunow.jpg",
+                },
               },
             };
           })()),

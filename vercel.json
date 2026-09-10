@@ -1,105 +1,85 @@
 {
   "crons": [{ "path": "/api/cron/publish", "schedule": "0 9 * * *" }],
   "redirects": [
-    {
-      "source": "/events",
-      "destination": "/whats-on",
-      "permanent": true
-    },
-    {
-      "source": "/events/hull-fair-2025",
-      "destination": "/events/hull-fair-2026",
-      "permanent": true
-    },
-    { "source": "/events/humber-street-sesh-2025", "destination": "/whats-on", "permanent": true },
-    { "source": "/news", "destination": "/stories", "permanent": true },
-    { "source": "/feed", "destination": "/feed.articles.rss", "permanent": true },
-    { "source": "/feed/:path*", "destination": "/feed.articles.rss", "permanent": true },
-    { "source": "/author/:slug", "destination": "/authors/:slug", "permanent": true },
-    { "source": "/category/food", "destination": "/eat", "permanent": true },
-    { "source": "/category/restaurants", "destination": "/eat", "permanent": true },
-    { "source": "/category/drink", "destination": "/eat", "permanent": true },
-    { "source": "/category/events", "destination": "/whats-on", "permanent": true },
-    { "source": "/category/music", "destination": "/whats-on", "permanent": true },
-    { "source": "/category/arts", "destination": "/arts", "permanent": true },
-    { "source": "/category/culture", "destination": "/arts", "permanent": true },
-    { "source": "/category/:path*", "destination": "/stories", "permanent": true },
-    { "source": "/cuisine/:path*", "destination": "/c/food-and-drink", "permanent": true },
-    { "source": "/ads", "destination": "/advertise", "permanent": true },
-    { "source": "/pdfviewer/:path*", "destination": "/", "permanent": true },
-    {
-      "source": "/articles",
-      "destination": "/stories",
-      "permanent": true
-    },
-    {
-      "source": "/articles/:slug",
-      "destination": "/stories/:slug",
-      "permanent": true
-    },
-    {
-      "source": "/article/:slug",
-      "destination": "/stories/:slug",
-      "permanent": true
-    },
-    {
-      "source": "/place/:slug",
-      "destination": "/places/:slug",
-      "permanent": true
-    },
-    {
-      "source": "/event/:slug",
-      "destination": "/events/:slug",
-      "permanent": true
-    },
-    {
-      "source": "/directory",
-      "destination": "/listings",
-      "permanent": true
-    },
-    {
-      "source": "/whatson",
-      "destination": "/whats-on",
-      "permanent": true
-    },
-    {
-      "source": "/what-on",
-      "destination": "/whats-on",
-      "permanent": true
-    },
-    {
-      "source": "/deals",
-      "destination": "/offers",
-      "permanent": true
-    },
-    {
-      "source": "/deal",
-      "destination": "/offers",
-      "permanent": true
-    },
-    {
-      "source": "/neighbourhoods",
-      "destination": "/areas",
-      "permanent": true
-    },
-    {
-      "source": "/neighbourhood",
-      "destination": "/areas",
-      "permanent": true
-    },
-    {
-      "source": "/major-improvements-coming-to-hull-docks",
-      "destination": "/stories",
-      "permanent": true
-    },
-    { "source": "/c/whats-on", "destination": "/whats-on", "permanent": true },
-    { "source": "/c/food-and-drink", "destination": "/eat", "permanent": true },
-    { "source": "/c/things-to-do", "destination": "/things-to-do", "permanent": true },
-    { "source": "/c/community", "destination": "/community", "permanent": true },
-    { "source": "/c/:section/hull-fair", "destination": "/hull-fair", "permanent": true },
-    { "source": "/c/:section/humber-street-sesh", "destination": "/humber-street-sesh", "permanent": true },
-    { "source": "/c/:section/freedom-festival", "destination": "/freedom-festival", "permanent": true },
-    { "source": "/c/:section/christmas-lights-switch-on", "destination": "/christmas-lights-switch-on", "permanent": true },
-    { "source": "/c/:section/hull-pride", "destination": "/hull-pride", "permanent": true }
+    { "source": "/events", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/events/", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/events/hull-fair-2025", "destination": "https://www.hunow.co.uk/hull-fair", "permanent": true },
+    { "source": "/events/hull-fair-2025/", "destination": "https://www.hunow.co.uk/hull-fair", "permanent": true },
+    { "source": "/events/hull-fair-2026", "destination": "https://www.hunow.co.uk/hull-fair", "permanent": true },
+    { "source": "/events/hull-fair-2026/", "destination": "https://www.hunow.co.uk/hull-fair", "permanent": true },
+    { "source": "/events/humber-street-sesh-2025", "destination": "https://www.hunow.co.uk/humber-street-sesh", "permanent": true },
+    { "source": "/events/humber-street-sesh-2025/", "destination": "https://www.hunow.co.uk/humber-street-sesh", "permanent": true },
+    { "source": "/news", "destination": "https://www.hunow.co.uk/stories", "permanent": true },
+    { "source": "/news/", "destination": "https://www.hunow.co.uk/stories", "permanent": true },
+    { "source": "/feed", "destination": "https://www.hunow.co.uk/feed.articles.rss", "permanent": true },
+    { "source": "/feed/", "destination": "https://www.hunow.co.uk/feed.articles.rss", "permanent": true },
+    { "source": "/feed/:path*", "destination": "https://www.hunow.co.uk/feed.articles.rss", "permanent": true },
+    { "source": "/author/:slug", "destination": "https://www.hunow.co.uk/authors/:slug", "permanent": true },
+    { "source": "/author/:slug/", "destination": "https://www.hunow.co.uk/authors/:slug", "permanent": true },
+    { "source": "/category/food", "destination": "https://www.hunow.co.uk/eat", "permanent": true },
+    { "source": "/category/food/", "destination": "https://www.hunow.co.uk/eat", "permanent": true },
+    { "source": "/category/restaurants", "destination": "https://www.hunow.co.uk/eat", "permanent": true },
+    { "source": "/category/restaurants/", "destination": "https://www.hunow.co.uk/eat", "permanent": true },
+    { "source": "/category/drink", "destination": "https://www.hunow.co.uk/eat", "permanent": true },
+    { "source": "/category/drink/", "destination": "https://www.hunow.co.uk/eat", "permanent": true },
+    { "source": "/category/events", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/category/events/", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/category/music", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/category/music/", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/category/arts", "destination": "https://www.hunow.co.uk/arts", "permanent": true },
+    { "source": "/category/arts/", "destination": "https://www.hunow.co.uk/arts", "permanent": true },
+    { "source": "/category/culture", "destination": "https://www.hunow.co.uk/arts", "permanent": true },
+    { "source": "/category/culture/", "destination": "https://www.hunow.co.uk/arts", "permanent": true },
+    { "source": "/category/:path*", "destination": "https://www.hunow.co.uk/stories", "permanent": true },
+    { "source": "/cuisine/:path*", "destination": "https://www.hunow.co.uk/c/food-and-drink", "permanent": true },
+    { "source": "/ads", "destination": "https://www.hunow.co.uk/advertise", "permanent": true },
+    { "source": "/ads/", "destination": "https://www.hunow.co.uk/advertise", "permanent": true },
+    { "source": "/pdfviewer/:path*", "destination": "https://www.hunow.co.uk/", "permanent": true },
+    { "source": "/articles", "destination": "https://www.hunow.co.uk/stories", "permanent": true },
+    { "source": "/articles/", "destination": "https://www.hunow.co.uk/stories", "permanent": true },
+    { "source": "/articles/:slug", "destination": "https://www.hunow.co.uk/stories/:slug", "permanent": true },
+    { "source": "/articles/:slug/", "destination": "https://www.hunow.co.uk/stories/:slug", "permanent": true },
+    { "source": "/article/:slug", "destination": "https://www.hunow.co.uk/stories/:slug", "permanent": true },
+    { "source": "/article/:slug/", "destination": "https://www.hunow.co.uk/stories/:slug", "permanent": true },
+    { "source": "/place/:slug", "destination": "https://www.hunow.co.uk/places/:slug", "permanent": true },
+    { "source": "/place/:slug/", "destination": "https://www.hunow.co.uk/places/:slug", "permanent": true },
+    { "source": "/event/:slug", "destination": "https://www.hunow.co.uk/events/:slug", "permanent": true },
+    { "source": "/event/:slug/", "destination": "https://www.hunow.co.uk/events/:slug", "permanent": true },
+    { "source": "/directory", "destination": "https://www.hunow.co.uk/listings", "permanent": true },
+    { "source": "/directory/", "destination": "https://www.hunow.co.uk/listings", "permanent": true },
+    { "source": "/whatson", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/whatson/", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/what-on", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/what-on/", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/deals", "destination": "https://www.hunow.co.uk/offers", "permanent": true },
+    { "source": "/deals/", "destination": "https://www.hunow.co.uk/offers", "permanent": true },
+    { "source": "/deal", "destination": "https://www.hunow.co.uk/offers", "permanent": true },
+    { "source": "/deal/", "destination": "https://www.hunow.co.uk/offers", "permanent": true },
+    { "source": "/deal/:path*", "destination": "https://www.hunow.co.uk/offers", "permanent": true },
+    { "source": "/deals/:path*", "destination": "https://www.hunow.co.uk/offers", "permanent": true },
+    { "source": "/neighbourhoods", "destination": "https://www.hunow.co.uk/areas", "permanent": true },
+    { "source": "/neighbourhoods/", "destination": "https://www.hunow.co.uk/areas", "permanent": true },
+    { "source": "/neighbourhood", "destination": "https://www.hunow.co.uk/areas", "permanent": true },
+    { "source": "/neighbourhood/", "destination": "https://www.hunow.co.uk/areas", "permanent": true },
+    { "source": "/major-improvements-coming-to-hull-docks", "destination": "https://www.hunow.co.uk/stories", "permanent": true },
+    { "source": "/major-improvements-coming-to-hull-docks/", "destination": "https://www.hunow.co.uk/stories", "permanent": true },
+    { "source": "/c/whats-on", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/c/whats-on/", "destination": "https://www.hunow.co.uk/whats-on", "permanent": true },
+    { "source": "/c/food-and-drink", "destination": "https://www.hunow.co.uk/eat", "permanent": true },
+    { "source": "/c/food-and-drink/", "destination": "https://www.hunow.co.uk/eat", "permanent": true },
+    { "source": "/c/things-to-do", "destination": "https://www.hunow.co.uk/things-to-do", "permanent": true },
+    { "source": "/c/things-to-do/", "destination": "https://www.hunow.co.uk/things-to-do", "permanent": true },
+    { "source": "/c/community", "destination": "https://www.hunow.co.uk/community", "permanent": true },
+    { "source": "/c/community/", "destination": "https://www.hunow.co.uk/community", "permanent": true },
+    { "source": "/c/:section/hull-fair", "destination": "https://www.hunow.co.uk/hull-fair", "permanent": true },
+    { "source": "/c/:section/hull-fair/", "destination": "https://www.hunow.co.uk/hull-fair", "permanent": true },
+    { "source": "/c/:section/humber-street-sesh", "destination": "https://www.hunow.co.uk/humber-street-sesh", "permanent": true },
+    { "source": "/c/:section/humber-street-sesh/", "destination": "https://www.hunow.co.uk/humber-street-sesh", "permanent": true },
+    { "source": "/c/:section/freedom-festival", "destination": "https://www.hunow.co.uk/freedom-festival", "permanent": true },
+    { "source": "/c/:section/freedom-festival/", "destination": "https://www.hunow.co.uk/freedom-festival", "permanent": true },
+    { "source": "/c/:section/christmas-lights-switch-on", "destination": "https://www.hunow.co.uk/christmas-lights-switch-on", "permanent": true },
+    { "source": "/c/:section/christmas-lights-switch-on/", "destination": "https://www.hunow.co.uk/christmas-lights-switch-on", "permanent": true },
+    { "source": "/c/:section/hull-pride", "destination": "https://www.hunow.co.uk/hull-pride", "permanent": true },
+    { "source": "/c/:section/hull-pride/", "destination": "https://www.hunow.co.uk/hull-pride", "permanent": true }
   ]
 }
