@@ -14,6 +14,9 @@ import { LocalStatusTicker } from "@/components/LocalStatusTicker";
 
 const FESTIVAL_PATHS: Record<string, string> = {
   "hull-fair": "/hull-fair",
+  "hull-city": "/hull-city-fixtures",
+  "hull-fc": "/hull-fc-fixtures",
+  "hull-kr": "/hull-kr-fixtures",
   "humber-street-sesh": "/humber-street-sesh",
   "freedom-festival": "/freedom-festival",
   "christmas-lights-switch-on": "/christmas-lights-switch-on",
@@ -181,11 +184,16 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 const href = sectionHref(s.slug);
                 const active =
                   pathname === href || pathname.startsWith(`/c/${s.slug}`) || open === s.slug;
+                const fixtureActive =
+                  s.slug === "whats-on" &&
+                  ["/hull-city-fixtures", "/hull-fc-fixtures", "/hull-kr-fixtures"].includes(
+                    pathname,
+                  );
                 return (
                   <div key={s.slug} onMouseEnter={() => setOpen(s.slug)} className="relative">
                     <a
                       href={href}
-                      className={`whitespace-nowrap flex items-center gap-1.5 px-4 py-3 border-b-2 transition-colors ${active ? "border-accent text-accent" : "border-transparent hover:text-accent"}`}
+                      className={`whitespace-nowrap flex items-center gap-1.5 px-4 py-3 border-b-2 transition-colors ${active || fixtureActive ? "border-accent text-accent" : "border-transparent hover:text-accent"}`}
                     >
                       {s.label}
                       <svg
@@ -477,7 +485,11 @@ function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/$taxonomy" params={{ taxonomy: "guides" }} className="hover:text-white transition-colors">
+              <Link
+                to="/$taxonomy"
+                params={{ taxonomy: "guides" }}
+                className="hover:text-white transition-colors"
+              >
                 Guides
               </Link>
             </li>
