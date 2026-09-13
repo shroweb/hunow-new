@@ -118,7 +118,7 @@ export const Route = createFileRoute("/hull-fair")({
             name: event?.title || "Hull Fair 2026",
             description:
               event?.description ||
-              "One of Europe's largest travelling fairs, held annually at Walton Street, Hull, with over 250 rides and an array of attractions.",
+              "One of Europe's largest travelling fairs, held annually at Walton Street, Hull, with more than 250 rides and an array of attractions.",
             startDate: `${event?.startDate || "2026-10-09"}T${event?.startTime || "16:00"}:00+01:00`,
             endDate: `${event?.endDate || "2026-10-17"}T${event?.endTime || "23:00"}:00+01:00`,
             eventStatus: "https://schema.org/EventScheduled",
@@ -397,7 +397,8 @@ function HullFairPage() {
           </h2>
           <p className="text-muted-foreground mb-6">
             Hull Fair 2026 runs from <strong>Friday 9 October to Saturday 17 October 2026</strong>.
-            Gates open at 2:00 PM daily (and from 12:00 PM on Saturdays), operating until 11:00 PM.
+            Gates open at 4:00 PM on Friday 9 October, 12:00 PM on Saturdays, and 2:00 PM Monday to
+            Friday, operating until 11:00 PM. The fair is closed on Sunday 11 October.
           </p>
 
           <div className="bg-amber-500/10 border-l-4 border-amber-500 p-4 mb-8">
