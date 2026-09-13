@@ -3,6 +3,7 @@ import type {} from "@tanstack/react-start";
 import { NAV_SECTIONS } from "@/lib/nav";
 import { TAXONOMIES, articlePath, sectionHref } from "@/lib/taxonomy";
 import { AUTHORS, authorSlug } from "@/lib/authors";
+import { AREA_IMAGES } from "@/lib/area-images";
 
 const BASE_URL = "https://www.hunow.co.uk";
 
@@ -25,7 +26,6 @@ export const Route = createFileRoute("/sitemap.xml")({
         const store = await getDatabaseStore().catch(() => null);
         const articles = (store?.articles ?? []).filter((a) => !a.seo?.noIndex);
         const events = store?.events ?? [];
-        const listings = store?.listings ?? [];
         const collections = store?.collections ?? [];
         const entries: SitemapEntry[] = [];
 
@@ -184,15 +184,18 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         // Listings / places are paused for SEO recovery to focus crawl equity on editorial stories and guides
 
-        // Area pages
-        const areas = [...new Set(listings.map((l) => l.area).filter(Boolean))];
-        for (const area of areas) {
-          entries.push({
-            path: `/areas/${encodeURIComponent(area.toLowerCase().replace(/\s+/g, "-"))}`,
-            changefreq: "weekly",
-            priority: "0.7",
-            lastmod: today(),
-          });
+        // Area pages use canonical taxonomy slugs rather than inconsistent listing labels.
+        for (const areaSlug of Object.keys(AREA_IMAGES)) {
+          const path = `/areas/${areaSlug}`;
+          if (!addedPaths.has(path)) {
+            addedPaths.add(path);
+            entries.push({
+              path,
+              changefreq: "weekly",
+              priority: "0.7",
+              lastmod: today(),
+            });
+          }
         }
 
         // Author pages - only index genuine editorial staff with full biographies in AUTHORS registry
