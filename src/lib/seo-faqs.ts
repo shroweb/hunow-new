@@ -31,22 +31,22 @@ export const ARTICLE_FAQS: Record<string, FAQItem[]> = {
     {
       question: "Where is the best place to park for Hull Fair 2026?",
       answer:
-        "The official Priory Park and Ride (HU4 7DY) off the A63 in Hessle is the easiest and most convenient parking location. It provides over 650 secure spaces and fast, dedicated shuttle buses running directly to the Walton Street gates every few minutes.",
+        "Hull City Council lists two Hull Fair park-and-ride locations: Priory Park, Henry Boot Way (HU4 7DY), and Humber Bridge, Ferriby Road, Hessle (HU13 0JG). Buses run every 10 to 15 minutes and both sites are open until 11:00 PM each day.",
     },
     {
       question: "Is there parking available at Walton Street car park during Hull Fair?",
       answer:
-        "No. The Walton Street car park is completely taken over by fair attractions, rides, and showmen caravans. Surrounding residential streets have strict resident-only parking permits (controlled zones) with heavy civil enforcement fines.",
+        "Walton Street hosts the fair and is subject to a temporary road closure. Permit-only parking restrictions also apply on specified surrounding roads, so check Hull City Council's current restriction list before travelling.",
     },
     {
       question: "Can you park at the MKM Stadium (KC Stadium) for Hull Fair?",
       answer:
-        "Yes, on non-match days, car parking is available on the Walton Street / MKM Stadium complex for a small charge (£5–£6 per vehicle), accessible via the Walton Street entrance before roads are closed to general traffic.",
+        "Hull City Council lists public parking at MKM Stadium for Hull Fair. Check the council's current event information for access, availability and any applicable charge before travelling.",
     },
     {
       question: "Which buses run to Hull Fair from Hull Paragon Interchange?",
       answer:
-        "Stagecoach and East Yorkshire Buses run dedicated fair shuttles (Service 56, 63, and special Hull Fair express services) connecting Hull Paragon Interchange directly to Anlaby Road and Chanterlands Avenue.",
+        "Additional bus services operate during Hull Fair, but routes and service numbers can change. Check current Stagecoach and East Yorkshire Buses information before travelling.",
     },
   ],
 
@@ -54,12 +54,12 @@ export const ARTICLE_FAQS: Record<string, FAQItem[]> = {
     {
       question: "When is Hull Fair 2026?",
       answer:
-        "Hull Fair 2026 runs from Friday 9 October to Saturday 17 October 2026 at the Walton Street fairground. It operates daily from 2:00 PM to 11:00 PM (opening at 12:00 PM on Saturdays), except on Sunday 11 October when the fair is strictly closed.",
+        "Hull Fair 2026 runs from Friday 9 October to Saturday 17 October at Walton Street. It opens at 4:00 PM on the first Friday, 12 noon on both Saturdays, and 2:00 PM Monday to Friday, closing at 11:00 PM each night. It is closed on Sunday 11 October.",
     },
     {
-      question: "Why is Hull Fair closed on Sunday?",
+      question: "Is Hull Fair open on Sunday?",
       answer:
-        "By historic royal charter dating back to 1278 AD and local council bylaws, Hull Fair does not operate on Sundays. The fairground reopens on Monday 12 October at 2:00 PM.",
+        "No. Hull City Council's official 2026 schedule lists Sunday 11 October as closed. The fair reopens at 2:00 PM on Monday 12 October.",
     },
     {
       question: "Is admission to Hull Fair free?",
@@ -69,12 +69,12 @@ export const ARTICLE_FAQS: Record<string, FAQItem[]> = {
     {
       question: "How much are rides at Hull Fair 2026?",
       answer:
-        "Children's rides typically cost £1.50 to £2.50. Classic family rides (such as Dodgems, Waltzers, and the Giant Wheel) cost between £2.50 and £3.50. Headline extreme thrill rides (such as Air, Reverse Bungee, and Bomber) cost between £3.50 and £5.00.",
+        "Admission is free, but rides and games are priced individually by their operators. Official 2026 ride prices have not been published, so check the displayed price before joining a queue.",
     },
     {
       question: "Where is the best place to park for Hull Fair?",
       answer:
-        "The official Priory Park and Ride (HU4 7DY) off the A63 in Hessle is the easiest and most convenient option. It provides over 650 secure spaces and direct, frequent shuttle buses that drop you right outside the Walton Street gates.",
+        "Hull City Council lists Priory Park (HU4 7DY) and Humber Bridge (HU13 0JG) as the two Hull Fair park-and-ride sites, with buses every 10 to 15 minutes and both sites open until 11:00 PM each day.",
     },
   ],
 

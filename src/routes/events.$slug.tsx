@@ -202,7 +202,7 @@ export const Route = createFileRoute("/events/$slug")({
                       name: "How much are rides at Hull Fair?",
                       acceptedAnswer: {
                         "@type": "Answer",
-                        text: "Rides are individually priced: children's rides typically cost £2.00–£3.00, family rides cost £3.00–£4.00, and major thrill rides cost £4.00–£5.00+ each.",
+                        text: "Admission is free, but rides and games are priced individually by their operators. Official 2026 ride prices have not been published, so visitors should check the displayed price before joining a queue.",
                       },
                     },
                     {
@@ -210,7 +210,7 @@ export const Route = createFileRoute("/events/$slug")({
                       name: "Where can you park for Hull Fair?",
                       acceptedAnswer: {
                         "@type": "Answer",
-                        text: "Official Park and Ride services operate from Priory Park (HU4 7DY) in West Hull and Craven Park (HU9 5DX) in East Hull. Stadium parking is available at the MKM Stadium (£5–£6). Surrounding streets are strict residents-only permit zones.",
+                        text: "Hull City Council lists Hull Fair park-and-ride services from Priory Park (HU4 7DY) and Humber Bridge (HU13 0JG), plus public parking at MKM Stadium. Temporary road and permit-parking restrictions apply on specified nearby streets.",
                       },
                     },
                   ],

@@ -13,12 +13,12 @@ const HULL_FAIR_FAQS = [
   {
     question: "When is Hull Fair 2026?",
     answer:
-      "Hull Fair 2026 opens on Friday 9 October and runs through Saturday 17 October 2026 at the Walton Street fairground. It operates daily from 2:00 PM to 11:00 PM (opening at 12:00 PM on Saturdays), except on Sunday 11 October when the fair is strictly closed.",
+      "Hull Fair 2026 opens on Friday 9 October and runs through Saturday 17 October at Walton Street. It opens from 4:00 PM on the first Friday, 12 noon on both Saturdays, and 2:00 PM Monday to Friday, closing at 11:00 PM each night. It is closed on Sunday 11 October.",
   },
   {
-    question: "Why is Hull Fair closed on Sunday?",
+    question: "Is Hull Fair open on Sunday?",
     answer:
-      "By historic royal charter dating back to 1278 AD and local council bylaws, Hull Fair does not operate on Sundays. The fairground reopens on Monday 12 October at 2:00 PM.",
+      "No. Hull City Council's official 2026 schedule lists Sunday 11 October as closed. The fair reopens at 2:00 PM on Monday 12 October.",
   },
   {
     question: "Is admission to Hull Fair free?",
@@ -28,22 +28,22 @@ const HULL_FAIR_FAQS = [
   {
     question: "How much are rides at Hull Fair 2026?",
     answer:
-      "Children's rides typically cost £1.50 to £2.50. Classic family rides (such as Dodgems, Waltzers, and the Giant Wheel) cost between £2.50 and £3.50. Headline extreme thrill rides (such as Air, Reverse Bungee, and Bomber) cost between £3.50 and £5.00.",
+      "Admission is free, but rides and games are priced individually by their operators. Official 2026 ride prices have not been published, so check the displayed price before joining a queue and budget for each attraction separately.",
   },
   {
     question: "Where is the best place to park for Hull Fair?",
     answer:
-      "The official Priory Park and Ride (HU4 7DY) off the A63 in Hessle is the easiest and most convenient option. It provides over 650 secure spaces and direct, frequent shuttle buses that drop you right outside the Walton Street gates.",
+      "Hull City Council lists two park-and-ride sites for Hull Fair: Priory Park, Henry Boot Way (HU4 7DY), and Humber Bridge, Ferriby Road, Hessle (HU13 0JG). Buses are scheduled every 10 to 15 minutes, with both sites open until 11:00 PM each day.",
   },
   {
     question: "Can I park on streets near Walton Street?",
     answer:
-      "No. All residential streets within a 1-mile radius of Walton Street have strict residents-only parking permit restrictions enforced by civil parking officers. Unauthorised vehicles face immediate penalty charge notices (PCNs) and towing.",
+      "Parking and access restrictions apply on Walton Street and a number of surrounding roads during the fair. Check Hull City Council's current road-closure and parking-restriction list before travelling rather than relying on normal street parking.",
   },
   {
     question: "Can you pay by card at Hull Fair, or is it cash only?",
     answer:
-      "Most major rides, food trucks, and stalls accept contactless and card payments. However, mobile phone network signals can get congested during busy evening crowds, so carrying £20–£30 in cash is strongly recommended for smaller game stalls and backup.",
+      "Payment methods are set by individual ride and stall operators and may vary. Check before buying and consider carrying both a payment card and some cash so you have an alternative.",
   },
   {
     question: "What are the must-eat traditional foods at Hull Fair?",
@@ -53,7 +53,7 @@ const HULL_FAIR_FAQS = [
   {
     question: "What are the quietest times to visit Hull Fair with toddlers?",
     answer:
-      "The quietest, most family-friendly times are weekday afternoons between 2:00 PM and 5:00 PM (Monday to Thursday). The aisles are spacious, queues are minimal, and the atmosphere is relaxed for prams and toddlers.",
+      "Weekday afternoons are generally a better choice than Friday and Saturday evenings for families hoping to avoid the busiest periods, although crowd and queue levels cannot be guaranteed.",
   },
 ];
 
@@ -61,20 +61,20 @@ export const Route = createFileRoute("/hull-fair")({
   component: HullFairPage,
   head: () => ({
     meta: [
-      { title: "Hull Fair 2026: Dates, Times, Parking & Prices | HU NOW" },
+      { title: "Hull Fair 2026: Dates, Times & Parking | HU NOW" },
       {
         name: "description",
         content:
-          "The definitive guide to Hull Fair 2026 at Walton Street. Dates (9–17 Oct), daily opening times, Priory Park & Ride details, ride prices, food stalls, and visitor tips.",
+          "A practical guide to Hull Fair 2026 at Walton Street, with confirmed dates and opening times, official park-and-ride locations, travel information and visitor tips.",
       },
       {
         property: "og:title",
-        content: "Hull Fair 2026: Dates, Times, Parking & Prices | HU NOW",
+        content: "Hull Fair 2026: Dates, Times & Parking | HU NOW",
       },
       {
         property: "og:description",
         content:
-          "Everything you need to know for visiting Europe's largest travelling fair at Walton Street, Hull. Dates, ride prices, parking shuttles, and legendary food stalls.",
+          "Everything you need to know about visiting one of Europe's largest travelling fairs at Walton Street, Hull, including dates, opening times and parking options.",
       },
       {
         property: "og:image",
@@ -85,7 +85,7 @@ export const Route = createFileRoute("/hull-fair")({
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
-        content: "Hull Fair 2026: Dates, Times, Parking & Prices | HU NOW",
+        content: "Hull Fair 2026: Dates, Times & Parking | HU NOW",
       },
       {
         name: "twitter:image",
@@ -101,7 +101,7 @@ export const Route = createFileRoute("/hull-fair")({
           "@type": "Event",
           name: "Hull Fair 2026",
           description:
-            "Europe's largest travelling fair, held annually at Walton Street, Hull. Over 250 rides, food stalls, and attractions attracting over 800,000 visitors.",
+            "One of Europe's largest travelling fairs, held annually at Walton Street, Hull, with over 250 rides and an array of attractions.",
           startDate: "2026-10-09T14:00:00+01:00",
           endDate: "2026-10-17T23:00:00+01:00",
           eventStatus: "https://schema.org/EventScheduled",
@@ -116,7 +116,7 @@ export const Route = createFileRoute("/hull-fair")({
               "@type": "PostalAddress",
               streetAddress: "Walton Street",
               addressLocality: "Kingston upon Hull",
-              postalCode: "HU3 6JR",
+              postalCode: "HU3 6JU",
               addressRegion: "East Yorkshire",
               addressCountry: "GB",
             },
@@ -219,9 +219,9 @@ function HullFairPage() {
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 border border-accent/40 text-accent font-mono text-xs uppercase tracking-widest mb-4">
-            <span>Official 2026 Guide</span>
+            <span>Complete 2026 Guide</span>
             <span>•</span>
-            <span>Europe's Largest Travelling Fair</span>
+            <span>One of Europe's Largest Travelling Fairs</span>
           </div>
 
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-display uppercase tracking-tight leading-none mb-6">
@@ -230,7 +230,7 @@ function HullFairPage() {
 
           <p className="text-lg md:text-2xl text-white/80 max-w-3xl leading-relaxed mb-8">
             The definitive, evergreen guide to Europe’s premier travelling fair at Walton Street.
-            Official dates, daily opening hours, ride prices, parking and shuttle buses, and the
+            Confirmed dates, daily opening hours, parking and shuttle buses, ride guidance, and the
             legendary food bucket list.
           </p>
 
@@ -242,7 +242,7 @@ function HullFairPage() {
             </div>
             <div className="bg-white/5 backdrop-blur p-3 border border-white/10">
               <div className="text-[10px] font-mono uppercase text-white/50">Hours</div>
-              <div className="font-bold text-sm text-white">2pm – 11pm Daily</div>
+              <div className="font-bold text-sm text-white">Times Vary · Until 11pm</div>
             </div>
             <div className="bg-white/5 backdrop-blur p-3 border border-white/10">
               <div className="text-[10px] font-mono uppercase text-white/50">Sunday Rule</div>
@@ -254,7 +254,7 @@ function HullFairPage() {
             </div>
             <div className="bg-white/5 backdrop-blur p-3 border border-white/10">
               <div className="text-[10px] font-mono uppercase text-white/50">Location</div>
-              <div className="font-bold text-sm text-white">Walton St, HU3 6JR</div>
+              <div className="font-bold text-sm text-white">Walton St, HU3 6JU</div>
             </div>
             <div className="bg-white/5 backdrop-blur p-3 border border-white/10">
               <div className="text-[10px] font-mono uppercase text-white/50">Best Parking</div>
@@ -305,9 +305,9 @@ function HullFairPage() {
         {/* Intro */}
         <section className="prose prose-lg max-w-none">
           <p className="text-xl md:text-2xl text-foreground font-serif leading-relaxed">
-            With over <strong>800,000 visitors</strong>, 250 thrilling rides, and stalls stretching
-            as far as the eye can see, <strong>Hull Fair</strong> is Europe’s largest travelling funfair.
-            Tracing its royal charter back over seven centuries to 1278 AD, this week-long spectacle
+            With over <strong>250 rides</strong> and an array of stalls and attractions, Hull City
+            Council describes <strong>Hull Fair</strong> as one of Europe’s largest travelling funfairs.
+            With a history stretching back more than 700 years, this annual spectacle
             transforms West Hull into an electric carnival of neon, laughter, screams, and the aroma
             of hot patties, roasted nuts, and spun sugar.
           </p>
@@ -331,7 +331,7 @@ function HullFairPage() {
               The Sunday Closure Rule (Sunday 11 October 2026)
             </div>
             <div className="text-sm text-amber-800/90 dark:text-amber-300/90 mt-1">
-              By royal charter and city bylaw, <strong>Hull Fair does not open on Sundays</strong>.
+              The official schedule confirms that <strong>Hull Fair does not open on Sunday</strong>.
               All rides, game stalls, and food vendors remain closed all day on Sunday 11 October.
               Trading resumes promptly at 2:00 PM on Monday 12 October.
             </div>
@@ -427,12 +427,12 @@ function HullFairPage() {
               </div>
               <h3 className="font-display text-2xl uppercase mb-2">Priory Park & Ride</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Located just off the A63 Clive Sullivan Way in Hessle (<strong>HU4 7DY</strong>).
-                Over 650 free parking spaces with high-frequency direct shuttle buses dropping right at the Walton Street gates.
+                Located off the A63 at Henry Boot Way (<strong>HU4 7DY</strong>), with more than
+                650 free parking spaces and frequent Hull Fair bus services.
               </p>
               <ul className="text-xs space-y-1.5 font-mono text-muted-foreground">
                 <li>• <strong>Frequency:</strong> Buses every 10–15 mins</li>
-                <li>• <strong>Fare:</strong> Low-cost return bus fare (parking free)</li>
+                <li>• <strong>Fare:</strong> Parking is free; bus fares apply</li>
                 <li>• <strong>Postcode:</strong> HU4 7DY</li>
               </ul>
             </div>
@@ -443,11 +443,12 @@ function HullFairPage() {
               </div>
               <h3 className="font-display text-2xl uppercase mb-2">MKM Stadium Parking</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                On non-match days, paid parking is operated inside West Park via the Walton Street / Anlaby Road entrance for £5.00–£6.00 per vehicle.
+                Hull City Council lists public parking at MKM Stadium. Availability and charges can
+                change, so check the official travel information before setting off.
               </p>
               <ul className="text-xs space-y-1.5 font-mono text-muted-foreground">
-                <li>• <strong>Cost:</strong> Approx £5–£6 per vehicle</li>
-                <li>• <strong>Tip:</strong> Arrive before 4:30 PM to secure a bay</li>
+                <li>• <strong>Cost:</strong> Check the current event-day charge</li>
+                <li>• <strong>Tip:</strong> Allow extra time during busy periods</li>
                 <li>• <strong>Postcode:</strong> HU3 6HU</li>
               </ul>
             </div>
@@ -458,10 +459,10 @@ function HullFairPage() {
               Strict Street Permit Zones: Avoid Parking Fines
             </h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              All streets within a one-mile radius of Walton Street (including Anlaby Road terraces,
-              Chanterlands Avenue side streets, and Spring Bank West) are strictly controlled
-              residents-only permit zones. Civil enforcement officers patrol continuously and issue
-              instant penalty charge notices (PCNs) or tow unauthorised vehicles.
+              Road closures and permit-only parking apply on Walton Street and specified nearby roads,
+              including parts of Lowther Street, Walliker Street, Paisley Street, Lonsdale Street,
+              Sandringham Street, Granville Street, Perry Street, Ruskin Street, Arthur Street and
+              Little Anlaby Road. Check Hull City Council's current list before travelling.
             </p>
           </div>
 
@@ -484,18 +485,19 @@ function HullFairPage() {
             Attractions & Costs
           </div>
           <h2 className="text-3xl md:text-4xl font-display uppercase mb-6">
-            Hull Fair 2026 Ride Prices
+            Hull Fair 2026 Ride Costs
           </h2>
           <p className="text-muted-foreground mb-6">
-            Because admission to the fairground is free, visitors pay per ride. Prices are set
-            individually by each showman operator, but follow these typical price brackets:
+            Admission to the fairground is free, while rides and games are priced individually by
+            their operators. Official 2026 prices have not been published, so treat prices seen in
+            older guides as historic and check the displayed cost before joining a queue.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
             <div className="border border-border p-5">
               <div className="text-2xl mb-1">🧸</div>
               <h3 className="font-display text-xl uppercase mb-1">Children's Rides</h3>
-              <div className="text-accent font-mono font-bold text-lg mb-3">£1.50 – £2.50</div>
+              <div className="text-accent font-mono font-bold text-lg mb-3">Priced Individually</div>
               <p className="text-xs text-muted-foreground">
                 Teacups, mini roller coasters, funhouses, toy carousels, inflatables, and gentle train rides.
               </p>
@@ -504,7 +506,7 @@ function HullFairPage() {
             <div className="border border-border p-5">
               <div className="text-2xl mb-1">🎡</div>
               <h3 className="font-display text-xl uppercase mb-1">Family Classics</h3>
-              <div className="text-accent font-mono font-bold text-lg mb-3">£2.50 – £3.50</div>
+              <div className="text-accent font-mono font-bold text-lg mb-3">Check On Site</div>
               <p className="text-xs text-muted-foreground">
                 Dodgems (bumper cars), Waltzers, Giant Observation Wheel, Ghost Train, Sizzler, and Helter Skelter.
               </p>
@@ -513,7 +515,7 @@ function HullFairPage() {
             <div className="border border-border p-5">
               <div className="text-2xl mb-1">🚀</div>
               <h3 className="font-display text-xl uppercase mb-1">Extreme Thrill Rides</h3>
-              <div className="text-accent font-mono font-bold text-lg mb-3">£3.50 – £5.00</div>
+              <div className="text-accent font-mono font-bold text-lg mb-3">Check On Site</div>
               <p className="text-xs text-muted-foreground">
                 Air, Reverse Bungee, Giant Booster, XXL Speed, AtmosFear, and 50-metre drop towers.
               </p>
@@ -604,33 +606,32 @@ function HullFairPage() {
             <div className="border border-border p-6">
               <h3 className="font-bold uppercase text-sm mb-2">🕒 Quiet Times for Families</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Visiting with toddlers or pushchairs? Come between <strong>2:00 PM and 5:00 PM on Monday through Thursday</strong>.
-                The aisles are calm, noise levels are moderate, and ride queues are virtually non-existent.
+                Weekday afternoons are generally less busy than Friday and Saturday evenings, making
+                them a sensible choice for families. Crowd and queue levels can still vary.
               </p>
             </div>
 
             <div className="border border-border p-6">
-              <h3 className="font-bold uppercase text-sm mb-2">🪪 Lost Children Wristbands</h3>
+              <h3 className="font-bold uppercase text-sm mb-2">🪪 Plan for Separation</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Humberside Police and Hull City Council staff operate the lost children marquee on
-                Walton Street. Pick up a free waterproof wristband upon arrival to write your mobile
-                number on your child's wrist.
+                Agree a meeting point, make sure children know which adults to approach for help, and
+                keep a current photo of them on your phone. Follow instructions from event staff.
               </p>
             </div>
 
             <div className="border border-border p-6">
               <h3 className="font-bold uppercase text-sm mb-2">💳 Cash vs Contactless Cards</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Most rides and food vendors have card readers, but 4G/5G mobile signal frequently drops
-                due to 50,000+ people packing Walton Street simultaneously. <strong>Carry £20–£30 in cash</strong> as a backup.
+                Payment methods vary by operator. Check before ordering or joining a ride queue and
+                consider carrying both a payment card and some cash as alternatives.
               </p>
             </div>
 
             <div className="border border-border p-6">
               <h3 className="font-bold uppercase text-sm mb-2">♿ Accessibility & Blue Badges</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Walton Street fairground has flat tarmac pathways accessible for wheelchairs and mobility
-                scooters. Accessible toilets are stationed near the police marquee and entrance points.
+                Walton Street is largely paved, but temporary fairground layouts and individual ride
+                access vary. Check current accessibility arrangements with the council or ride operator.
               </p>
             </div>
           </div>
@@ -669,11 +670,11 @@ function HullFairPage() {
               Stay In The Loop
             </div>
             <h3 className="font-display text-3xl md:text-4xl uppercase mb-3 text-background">
-              Get the Hull Fair Pocket Map & Discounts
+              Get Hull Fair Updates
             </h3>
             <p className="text-background/70 text-sm mb-6">
-              Subscribe to the free HU NOW weekly digest for ride updates, exclusive local food vouchers,
-              and what's on across Hull and East Yorkshire.
+              Subscribe to the free HU NOW weekly digest for Hull Fair updates and what's on across
+              Hull and East Yorkshire.
             </p>
 
             {submitted ? (

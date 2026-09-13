@@ -119,63 +119,62 @@ export const seedArticles: Article[] = [
     title: "Guide to Parking at Hull Fair 2026: Park & Ride, Stadium Parking & Restrictions",
     slug: "guide-to-parking-at-hull-fair",
     excerpt:
-      "Everything you need to know about parking for Hull Fair 2026 at Walton Street. Official park and ride routes, MKM stadium parking prices, disabled bays, and residential permit restriction zones to avoid fines.",
+      "Everything you need to know about parking for Hull Fair 2026 at Walton Street, including official park-and-ride locations, MKM Stadium parking and temporary road restrictions.",
     content: `<h2>The Essential Guide to Parking at Hull Fair 2026</h2>
-<p>Hull Fair is Europe’s largest travelling fair, attracting over 800,000 visitors across its nine-day run along Walton Street. Because Walton Street and the surrounding residential terraces are completely closed to non-resident vehicles, parking near the fairground requires planning ahead.</p>
+<p>Hull Fair is one of Europe’s largest travelling fairs, bringing more than 250 rides and an array of attractions to Walton Street. Road closures and parking restrictions apply around the site, so travelling to the fair requires some advance planning.</p>
 <p>Here is your complete guide to where to park, official park and ride services, matchday parking at the MKM Stadium, and council parking restrictions for Hull Fair 2026.</p>
 
 <h2>Option 1: Official Hull Fair Park & Ride Services (Recommended)</h2>
-<p>The most convenient, stress-free way to reach Hull Fair is using the official dedicated <strong>Park & Ride services</strong>. Hull City Council and Stagecoach/East Yorkshire Buses operate high-frequency direct shuttle buses that drop you right outside the fairground gates.</p>
+<p>Hull City Council lists two dedicated <strong>Park & Ride services</strong> for Hull Fair, with buses running every 10–15 minutes and both sites open until 11:00 PM each day.</p>
 
 <h3>1. Priory Park & Ride (West Hull / Hessle)</h3>
 <ul>
   <li><strong>Postcode:</strong> HU4 7DY (Just off the A63 Clive Sullivan Way / Henry Boot Way)</li>
-  <li><strong>Capacity:</strong> Over 650 secure parking spaces.</li>
-  <li><strong>Buses:</strong> Depart every 10–15 minutes directly to Walton Street. Return buses run continuously until after the fair closes each night.</li>
-  <li><strong>Ideal for:</strong> Visitors driving in via the M62, A63, Humber Bridge, Beverley, or West Hull villages.</li>
+  <li><strong>Capacity:</strong> More than 650 parking spaces.</li>
+  <li><strong>Buses:</strong> Hull City Council says Hull Fair park-and-ride buses run every 10–15 minutes and the site is open until 11:00 PM each day.</li>
   <li><strong>Parking Cost:</strong> Free to park; you only pay the bus fare.</li>
 </ul>
 
-<h3>2. Craven Park Park & Ride (East Hull)</h3>
+<h3>2. Humber Bridge Park & Ride</h3>
 <ul>
-  <li><strong>Postcode:</strong> HU9 5DX (Preston Road, East Hull)</li>
-  <li><strong>Buses:</strong> Special direct fair shuttle services run in the late afternoon and evening throughout fair week.</li>
-  <li><strong>Ideal for:</strong> Visitors travelling from East Hull, Holderness, Hedon, and Withernsea.</li>
+  <li><strong>Address:</strong> Ferriby Road, Hessle</li>
+  <li><strong>Postcode:</strong> HU13 0JG</li>
+  <li><strong>Buses:</strong> Hull City Council says services run every 10–15 minutes and the site is open until 11:00 PM each day.</li>
 </ul>
 
 <h2>Option 2: MKM Stadium Parking (5-Minute Walk)</h2>
 <p>The <strong>MKM Stadium (formerly KC Stadium)</strong>, situated directly adjacent to Walton Street Fairground inside West Park, provides dedicated parking for fairgoers on non-match days.</p>
 <ul>
   <li><strong>Access:</strong> Entry is via the Walton Street / Anlaby Road entrance.</li>
-  <li><strong>Cost:</strong> Typically £5 to £6 per vehicle (cash and contactless accepted at the gate).</li>
-  <li><strong>Availability:</strong> The car park opens daily at 11:30 AM. It fills up extremely quickly on Friday and Saturday evenings, so plan to arrive before 5:00 PM if aiming to park here.</li>
-  <li><strong>Matchday Warning:</strong> If Hull City AFC or Hull FC have a home fixture during fair week, stadium parking will be reserved strictly for match ticket holders and stadium pass holders.</li>
+  <li><strong>Cost:</strong> Check Hull City Council’s current event information for the applicable charge.</li>
+  <li><strong>Availability:</strong> Spaces may be limited at busy times, so allow extra time and keep a park-and-ride option in reserve.</li>
+  <li><strong>Matchday Warning:</strong> Check the stadium fixture list and official traffic information before travelling.</li>
 </ul>
 
 <h2>Option 3: City Centre Multi-Storeys + Walk or Bus</h2>
-<p>If you prefer to avoid the Walton Street traffic entirely, parking in Hull City Centre and taking a quick bus or 20-minute walk down Anlaby Road is an excellent alternative:</p>
+<p>If you prefer to avoid the Walton Street traffic, city-centre parking followed by a walk or bus may be an alternative. Check each car park's current opening times, prices and availability before travelling.</p>
 <ul>
-  <li><strong>St Stephen’s Shopping Centre Car Park (HU2 8LN):</strong> Over 800 spaces, open 24/7, covered and secure. Located directly beside Hull Paragon Interchange.</li>
-  <li><strong>Osborne Street Multi-Storey (HU1 2NW):</strong> Just off Ferensway and Carr Lane.</li>
-  <li><strong>Pryme Street Multi-Storey (HU2 8HR):</strong> City centre multi-storey with evening flat rates.</li>
+  <li><strong>St Stephen’s Shopping Centre Car Park (HU2 8LN):</strong> Beside Hull Paragon Interchange.</li>
+  <li><strong>Osborne Street Multi-Storey (HU1 2NW):</strong> Near Ferensway and Carr Lane.</li>
+  <li><strong>Pryme Street Multi-Storey (HU2 8HR):</strong> A city-centre parking option.</li>
 </ul>
-<p>From Hull Paragon Interchange, East Yorkshire buses (services 3, 4, 57, 66, and dedicated fair specials) run down Anlaby Road every few minutes to the fairground.</p>
+<p>Additional bus services operate during Hull Fair. Check current operator timetables before travelling because routes and service numbers can change.</p>
 
 <h2>Disabled & Blue Badge Parking</h2>
-<p>Dedicated accessible parking for <strong>Blue Badge holders</strong> is located inside the MKM Stadium car park via the Walton Street entrance. Spaces are allocated on a first-come, first-served basis. Make sure your valid Blue Badge is clearly displayed on your dashboard upon arrival.</p>
+<p>Check Hull City Council’s current event information for accessible parking arrangements and follow the on-site signage. Display a valid Blue Badge wherever the applicable restrictions require it.</p>
 
 <h2>Strict Enforcement: Residential Permit Zones (Avoid Costly Fines)</h2>
-<p>During Hull Fair, Hull City Council enforces <strong>strict residents-only parking zones</strong> covering all streets within a 1-mile radius of Walton Street, including:</p>
+<p>During Hull Fair, Hull City Council publishes temporary road closures and permit-only parking restrictions on specified nearby roads, including:</p>
 <ul>
-  <li>Walton Street and all adjoining residential terraces</li>
-  <li>Lowther Street, Paisley Street, Perry Street, and Sandringham Street</li>
-  <li>Walliker Street, St George’s Road, and Arthur Street</li>
-  <li>West Park groves and avenues</li>
+  <li>Walton Street, Lowther Street, and Walliker Street</li>
+  <li>Paisley Street, Lonsdale Street, and Sandringham Street</li>
+  <li>Granville Street, Perry Street, Ruskin Street, and Arthur Street</li>
+  <li>Little Anlaby Road between Perry Street and the West Park access gates</li>
 </ul>
-<p>Civil enforcement officers patrol these streets continuously throughout the day and night. Any vehicles parked without a valid resident parking permit will receive an immediate penalty charge notice (PCN) and risk being towed away. <strong>Please respect local residents and use the official park and ride or stadium car parks instead.</strong></p>
+<p>Restrictions and timings can change, so check Hull City Council’s current Hull Fair road-closure page before travelling. <strong>Please respect local residents and use the official park-and-ride or stadium parking instead.</strong></p>
 
 <h2>Plan Your Visit to Hull Fair 2026</h2>
-<p>Hull Fair 2026 runs from <strong>Friday 9 October through Saturday 17 October 2026</strong> (closed Sunday 11 October). The fair opens at 12:00 PM (noon) daily and closes at 11:00 PM.</p>
+<p>Hull Fair 2026 runs from <strong>Friday 9 October through Saturday 17 October 2026</strong> (closed Sunday 11 October). It opens at 4:00 PM on the first Friday, 12 noon on both Saturdays, and 2:00 PM Monday to Friday, closing at 11:00 PM each night.</p>
 <p>For full event details, opening times, ride lists, and historical background, see our dedicated <a href="/events/hull-fair-2026">Hull Fair 2026 What’s On Guide</a>.</p>`,
     category: "Guides",
     subcategory: "guides",
@@ -191,7 +190,7 @@ export const seedArticles: Article[] = [
     seo: {
       title: "Guide to Parking at Hull Fair 2026: Park & Ride, Stadium & Restrictions",
       description:
-        "Complete guide to parking at Hull Fair 2026. Official Priory and Craven Park and ride buses, MKM Stadium car parking, disabled bays, and residential permit zones to avoid fines.",
+        "Complete guide to parking at Hull Fair 2026, including Priory Park and Humber Bridge park-and-ride services, MKM Stadium parking and temporary road restrictions.",
     },
   },
   {
@@ -969,64 +968,56 @@ export const seedEvents: EventItem[] = [
     title: "Hull Fair 2026",
     slug: "hull-fair-2026",
     description:
-      "Europe's largest travelling fair returns to Walton Street for its 134th year — nine nights of rides, lights, and brandy snap from 9–17 October. Entry to the fairground is free; rides and stalls are individually priced.",
+      "One of Europe's largest travelling fairs returns to Walton Street from 9–17 October, with more than 250 rides and an array of attractions. Entry is free; rides and stalls are individually priced.",
     content: `
 <h2>Hull Fair 2026 Dates & Opening Times</h2>
-<p>Hull Fair 2026 officially runs from <strong>Friday 9 October to Saturday 17 October 2026</strong>. Please note that by royal charter tradition, <strong>the fair is closed on Sunday 11 October</strong>.</p>
+<p>Hull Fair 2026 officially runs from <strong>Friday 9 October to Saturday 17 October 2026</strong>. The official schedule lists <strong>Sunday 11 October as closed</strong>.</p>
 <ul>
-  <li><strong>Opening Day (Friday 9 October):</strong> 5:00 PM – 11:00 PM</li>
+  <li><strong>Opening Day (Friday 9 October):</strong> 4:00 PM – 11:00 PM</li>
   <li><strong>Saturdays (10 & 17 October):</strong> 12:00 PM (Noon) – 11:00 PM</li>
   <li><strong>Sunday 11 October:</strong> CLOSED ALL DAY</li>
   <li><strong>Monday 12 October – Friday 16 October:</strong> 2:00 PM – 11:00 PM daily</li>
 </ul>
 
-<h2>Hull Fair 2026 Tickets & Prices: Do You Need a Ticket?</h2>
+<h2>Hull Fair 2026 Admission and Ride Costs</h2>
 <p><strong>Entry to Hull Fair is 100% FREE.</strong> You do not need to buy an admission ticket or book in advance — you can simply walk straight onto the Walton Street fairground site.</p>
-<p>All rides, food stalls, and games are individually priced:</p>
-<ul>
-  <li><strong>Children's Rides:</strong> Typically £2.00 to £3.00 per ride.</li>
-  <li><strong>Family & Classic Rides (Ferris Wheel, Gallopers, Dodgems):</strong> Typically £3.00 to £4.00.</li>
-  <li><strong>Major Thrill & White-Knuckle Rides:</strong> Typically £4.00 to £5.00+ each.</li>
-  <li><strong>Side Stalls & Games (Hook-a-Duck, Darts, Rifle Range):</strong> Typically £2.00 to £3.00 per turn.</li>
-  <li><strong>Food & Sweets:</strong> Brandy snap from £2, nougat, candy floss, hot roast chestnuts, and loaded chips £3 to £7.</li>
-</ul>
+<p>Rides, games, and food stalls are priced individually by their operators. Official 2026 prices have not been published, so check the displayed cost before buying or joining a queue.</p>
 
 <h2>Payment: Cash vs. Card</h2>
-<p>While an increasing number of showmen now have contactless card machines, <strong>many stalls and smaller children's rides remain strictly cash-only</strong> due to mobile network congestion on site.</p>
-<p>There are mobile cash ATMs situated at the north and south gates of Walton Street, but they charge withdrawal transaction fees and develop long queues during peak hours. <strong>We strongly recommend bringing £20 to £30 in cash per person</strong> before you arrive.</p>
+<p>Payment methods vary between individual operators. Check before ordering or joining a ride queue and consider carrying both a payment card and some cash as alternatives.</p>
 
 <h2>Parking & Getting to Walton Street</h2>
 <p>Parking in the immediate Walton Street area is strictly restricted with residents-only permit zones. We strongly advise using the council-run Park & Ride services or stadium parking.</p>
-<p>👉 <strong>For complete parking details, shuttle buses, and map locations, see our <a href="/guides/guide-to-parking-at-hull-fair">Full Guide to Parking at Hull Fair 2026</a>.</strong></p>
+<p>Hull City Council lists park-and-ride services from Priory Park (HU4 7DY) and Humber Bridge, Ferriby Road (HU13 0JG), as well as public parking at MKM Stadium. 👉 <strong>For complete parking details and map locations, see our <a href="/guides/guide-to-parking-at-hull-fair">Full Guide to Parking at Hull Fair 2026</a>.</strong></p>
 
-<h2>What to Expect at Europe's Largest Travelling Fair</h2>
-<p>Hull Fair occupies 16 acres of Walton Street and the neighbouring parkland with more than <strong>250 rides, 80+ side stalls, and dozens of international food trucks</strong>. From 50-metre observation wheels giving panoramic views across the Humber to high-intensity reverse bungees and historic steam-driven carousels, there is entertainment for all generations.</p>
+<h2>What to Expect at One of Europe's Largest Travelling Fairs</h2>
+<p>Hull City Council says Hull Fair brings more than <strong>250 rides</strong> and an array of attractions to Walton Street. The precise lineup changes each year.</p>
 
 <h2>Tips for Visiting in 2026</h2>
 <ul>
-  <li><strong>Quietest Times:</strong> Monday to Thursday afternoons (2 PM – 5 PM) are ideal for families with young children and prams.</li>
-  <li><strong>Busiest Times:</strong> Friday evenings and Saturday nights attract peak crowds; expect queues for headline rides.</li>
+  <li><strong>Less Busy Times:</strong> Weekday afternoons are generally a better choice than Friday and Saturday evenings for families hoping to avoid peak periods, although crowd levels vary.</li>
+  <li><strong>Busy Times:</strong> Friday evenings and Saturdays are likely to be popular, so allow extra time and expect queues.</li>
   <li><strong>Clothing:</strong> Walton Street is open to the elements — wear warm, waterproof layers and sturdy shoes for walking on asphalt and gravel.</li>
-  <li><strong>Brandy Snap:</strong> Wright's Brandy Snap stalls have traded at Hull Fair for over a century — don't leave without a bag of freshly rolled brandy snaps!</li>
+  <li><strong>Traditional Food:</strong> Brandy snap is closely associated with Hull Fair and is sold by multiple vendors.</li>
 </ul>
     `.trim(),
     category: "Family",
     startDate: "2026-10-09",
     endDate: "2026-10-17",
-    startTime: "12:00",
+    startTime: "16:00",
     endTime: "23:00",
     locationName: "Walton Street Fairground",
-    address: "Walton Street, Hull HU3 6HR",
-    price: "Free entry · rides £2–5 each",
+    address: "Walton Street, Hull HU3 6JU",
+    price: "Free entry · rides priced individually",
     isFree: true,
     featuredImage: "/hull-fair-hero.jpg",
     status: "published",
     isFeatured: true,
     isSponsored: false,
     seo: {
-      title: "Hull Fair 2026 Dates, Prices, Tickets & Times — Walton Street",
+      title: "Hull Fair 2026 Dates, Opening Times & Parking — Walton Street",
       description:
-        "Everything you need to know about Hull Fair 2026 (9–17 October). Free entry, ticket prices, ride costs, daily opening times, cash tips and parking details.",
+        "Everything you need to know about Hull Fair 2026 (9–17 October), including confirmed opening times, free admission, park-and-ride locations and visitor guidance.",
     },
   },
   {
