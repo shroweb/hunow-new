@@ -20,6 +20,12 @@ type Tab = "details" | "offers" | "redeem" | "updates" | "reviews";
 
 export const Route = createFileRoute("/business/listings")({
   loader: async () => ({ listings: await getBusinessListings() }),
+  head: () => ({
+    meta: [
+      { title: "Business dashboard — HU NOW" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: BusinessListings,
 });
 

@@ -15,6 +15,7 @@ import { img } from "@/data/seed";
 import { getFixtureMatchup } from "@/lib/fixture-artwork";
 import { FixtureArtwork } from "@/components/fixtures/FixtureArtwork";
 import { getEventHighlights, getEventVisitorGuide } from "@/lib/event-enrichment";
+import { clampDescription, formatTitle } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/events/$slug")({
   component: EventDetail,
@@ -35,8 +36,8 @@ export const Route = createFileRoute("/events/$slug")({
   head: ({ loaderData, params }) => {
     const e = loaderData?.event;
     if (!e) return {};
-    const title = e.seo?.title ?? `${e.title} — HU NOW`;
-    const description = e.seo?.description ?? e.description;
+    const title = formatTitle(e.seo?.title ?? e.title);
+    const description = clampDescription(e.seo?.description ?? e.description, e.title);
     const image = e.seo?.ogImage ?? img(e.featuredImage, 1200, 630);
     const url = `/events/${params.slug}`;
     return {
