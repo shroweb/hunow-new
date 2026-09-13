@@ -1,0 +1,79 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { PublicLayout } from "@/components/layout/PublicLayout";
+import { getAreasIndexData } from "@/lib/area-guides.functions";
+import { img } from "@/data/seed";
+import { buildSeoMeta } from "@/lib/seo-meta";
+
+export const Route = createFileRoute("/areas/")({
+  loader: async () => ({ areas: await getAreasIndexData() }),
+  head: () =>
+    buildSeoMeta({
+      title: "Hull Neighbourhoods & Area Guides — HU NOW",
+      description:
+        "Explore Kingston upon Hull neighbourhood by neighbourhood: Old Town, Fruit Market, Marina, The Avenues, Hessle Road, and East Park.",
+      path: "/areas",
+    }),
+  component: AreasIndex,
+});
+
+function AreasIndex() {
+  const { areas } = Route.useLoaderData();
+
+  return (
+    <PublicLayout>
+      <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
+        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Neighbourhood Guide</div>
+        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
+          Hull Areas
+        </h1>
+        <p className="text-xl max-w-2xl text-muted-foreground">
+          Explore Hull neighbourhood by neighbourhood.
+        </p>
+      </section>
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {areas.map(
+            ({ area, slug, listingCount, intro, featuredImage, imageCredit, imageAlt }) => (
+              <Link
+                key={slug}
+                to="/areas/$area"
+                params={{ area: slug }}
+                className="group border-2 border-foreground bg-white overflow-hidden hover:border-accent transition-colors"
+              >
+                {featuredImage ? (
+                  <figure className="relative h-36 overflow-hidden">
+                    <img
+                      src={img(featuredImage, 600, 400)}
+                      alt={imageAlt || area}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {imageCredit && (
+                      <figcaption className="absolute bottom-1 right-1 bg-foreground/80 px-1.5 py-0.5 text-[8px] text-background">
+                        Photo: {imageCredit}
+                      </figcaption>
+                    )}
+                  </figure>
+                ) : (
+                  <div className="h-36 bg-foreground/5 flex items-center justify-center">
+                    <span className="font-display text-5xl uppercase text-foreground/15">
+                      {area[0]}
+                    </span>
+                  </div>
+                )}
+                <div className="p-5">
+                  <div className="font-display text-3xl uppercase leading-none mb-2">{area}</div>
+                  {intro && (
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{intro}</p>
+                  )}
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground group-hover:text-accent transition-colors">
+                    {listingCount} {listingCount === 1 ? "listing" : "listings"} →
+                  </div>
+                </div>
+              </Link>
+            ),
+          )}
+        </div>
+      </section>
+    </PublicLayout>
+  );
+}

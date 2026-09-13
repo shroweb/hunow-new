@@ -45,6 +45,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as TaxonomyRouteImport } from './routes/$taxonomy'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AreasIndexRouteImport } from './routes/areas.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
@@ -282,6 +283,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AreasIndexRoute = AreasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AreasRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -647,6 +653,7 @@ export interface FileRoutesByFullPath {
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/admin/': typeof AdminIndexRoute
+  '/areas/': typeof AreasIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
   '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
@@ -671,7 +678,6 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/account': typeof AccountRoute
   '/advertise': typeof AdvertiseRoute
-  '/areas': typeof AreasRouteWithChildren
   '/christmas-lights-switch-on': typeof ChristmasLightsSwitchOnRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -741,6 +747,7 @@ export interface FileRoutesByTo {
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/admin': typeof AdminIndexRoute
+  '/areas': typeof AreasIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
   '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
@@ -837,6 +844,7 @@ export interface FileRoutesById {
   '/stories/$slug': typeof StoriesSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/admin/': typeof AdminIndexRoute
+  '/areas/': typeof AreasIndexRoute
   '/api/cron/publish': typeof ApiCronPublishRoute
   '/api/v1/generate-code': typeof ApiV1GenerateCodeRoute
   '/api/v1/listings': typeof ApiV1ListingsRouteWithChildren
@@ -934,6 +942,7 @@ export interface FileRouteTypes {
     | '/stories/$slug'
     | '/tag/$tag'
     | '/admin/'
+    | '/areas/'
     | '/api/cron/publish'
     | '/api/v1/generate-code'
     | '/api/v1/listings'
@@ -958,7 +967,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/account'
     | '/advertise'
-    | '/areas'
     | '/christmas-lights-switch-on'
     | '/contact'
     | '/forgot-password'
@@ -1028,6 +1036,7 @@ export interface FileRouteTypes {
     | '/stories/$slug'
     | '/tag/$tag'
     | '/admin'
+    | '/areas'
     | '/api/cron/publish'
     | '/api/v1/generate-code'
     | '/api/v1/listings'
@@ -1123,6 +1132,7 @@ export interface FileRouteTypes {
     | '/stories/$slug'
     | '/tag/$tag'
     | '/admin/'
+    | '/areas/'
     | '/api/cron/publish'
     | '/api/v1/generate-code'
     | '/api/v1/listings'
@@ -1453,6 +1463,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/areas/': {
+      id: '/areas/'
+      path: '/'
+      fullPath: '/areas/'
+      preLoaderRoute: typeof AreasIndexRouteImport
+      parentRoute: typeof AreasRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -1928,10 +1945,12 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AreasRouteChildren {
   AreasAreaRoute: typeof AreasAreaRoute
+  AreasIndexRoute: typeof AreasIndexRoute
 }
 
 const AreasRouteChildren: AreasRouteChildren = {
   AreasAreaRoute: AreasAreaRoute,
+  AreasIndexRoute: AreasIndexRoute,
 }
 
 const AreasRouteWithChildren = AreasRoute._addFileChildren(AreasRouteChildren)
