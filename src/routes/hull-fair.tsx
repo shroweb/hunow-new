@@ -61,15 +61,15 @@ export const Route = createFileRoute("/hull-fair")({
   component: HullFairPage,
   head: () => ({
     meta: [
-      { title: "Hull Fair 2026: Dates, Times & Parking | HU NOW" },
+      { title: "Hull Fair 2026 Dates & Opening Times: 9–17 October" },
       {
         name: "description",
         content:
-          "A practical guide to Hull Fair 2026 at Walton Street, with confirmed dates and opening times, official park-and-ride locations, travel information and visitor tips.",
+          "Hull Fair 2026 runs 9–17 October at Walton Street. See confirmed opening times, Sunday closure, park-and-ride locations and visitor advice.",
       },
       {
         property: "og:title",
-        content: "Hull Fair 2026: Dates, Times & Parking | HU NOW",
+        content: "Hull Fair 2026 Dates & Opening Times: 9–17 October",
       },
       {
         property: "og:description",
@@ -85,7 +85,7 @@ export const Route = createFileRoute("/hull-fair")({
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
-        content: "Hull Fair 2026: Dates, Times & Parking | HU NOW",
+        content: "Hull Fair 2026 Dates & Opening Times: 9–17 October",
       },
       {
         name: "twitter:image",
@@ -102,7 +102,7 @@ export const Route = createFileRoute("/hull-fair")({
           name: "Hull Fair 2026",
           description:
             "One of Europe's largest travelling fairs, held annually at Walton Street, Hull, with over 250 rides and an array of attractions.",
-          startDate: "2026-10-09T14:00:00+01:00",
+          startDate: "2026-10-09T16:00:00+01:00",
           endDate: "2026-10-17T23:00:00+01:00",
           eventStatus: "https://schema.org/EventScheduled",
           eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
@@ -132,11 +132,6 @@ export const Route = createFileRoute("/hull-fair")({
             priceCurrency: "GBP",
             availability: "https://schema.org/InStock",
             url: "https://www.hunow.co.uk/hull-fair",
-          },
-          organizer: {
-            "@type": "Organization",
-            name: "Showmen's Guild of Great Britain & Hull City Council",
-            url: "https://www.showmensguild.co.uk",
           },
           publisher: {
             "@type": "Organization",

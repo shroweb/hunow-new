@@ -188,9 +188,9 @@ export const seedArticles: Article[] = [
     isFeatured: true,
     isSponsored: false,
     seo: {
-      title: "Guide to Parking at Hull Fair 2026: Park & Ride, Stadium & Restrictions",
+      title: "Hull Fair 2026 Parking: Park & Ride & Road Closures",
       description:
-        "Complete guide to parking at Hull Fair 2026, including Priory Park and Humber Bridge park-and-ride services, MKM Stadium parking and temporary road restrictions.",
+        "Where to park for Hull Fair 2026: Priory Park and Humber Bridge park-and-ride details, MKM Stadium parking and official road restrictions.",
     },
   },
   {
