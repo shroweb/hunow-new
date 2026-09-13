@@ -64,11 +64,11 @@ function addSecurityHeaders(response: Response): Response {
     "Content-Security-Policy",
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://www.googletagmanager.com",
       "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com",
       "img-src 'self' data: https: blob:",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://nominatim.openstreetmap.org",
+      "connect-src 'self' https://nominatim.openstreetmap.org https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com",
       "frame-ancestors 'none'",
     ].join("; "),
   );
