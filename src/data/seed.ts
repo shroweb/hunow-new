@@ -784,12 +784,77 @@ export const seedArticles: Article[] = [
   },
   {
     id: "a8",
-    title: "Hull's Best Brunches: Where to Go on a Saturday Morning",
+    title: "Best Brunch in Hull: 8 Places for a Saturday Morning",
     slug: "best-brunches-hull-saturday",
     excerpt:
-      "Smashed eggs, sourdough, shakshuka and the full works — our definitive guide to Hull's weekend brunch scene.",
-    content:
-      "Hull's brunch scene has quietly matured into something worth setting an alarm for. The concentration of good options around Humber Street, Princes Avenue and the Old Town means you rarely have to travel more than a few minutes between decent choices, but the quality varies and the queues at the best spots are real.\n\nThieving Harry's on Humber Street is the obvious starting point. The space is small, the menu tight and seasonal, and the coffee — sourced from a local roaster — is consistently the best in the building. Weekend queues form before 10am; the trick is to arrive early or embrace the wait with a flat white.\n\nFor something heartier, the options around Princes Avenue lean towards the full English end of the spectrum, with a few places doing excellent eggs benedict variations that have gathered loyal followings over several years. Princes Avenue is also the right part of town for post-brunch wandering: good charity shops, a bookshop, a record store, and the park if the sun is out.\n\nIn the Old Town, brunch tends to happen inside historic buildings that reward a bit of curiosity — former banks, converted warehouses, courtyard spaces you'd walk past without looking up. If you're coming in from outside the city, the Old Town cluster is probably the most efficient route to a good morning.",
+      "Eight independent Hull brunch spots for Saturday morning, from Humber Street bakeries and big breakfasts to vegan plates and excellent coffee.",
+    content: `<p>Hull has several genuinely different ways to do brunch. You can settle in for eggs and coffee beside the Marina, pick up pastries on Humber Street, order a generous cooked breakfast on Princes Avenue, or build a completely vegan morning around Newland Avenue.</p>
+
+<p>This guide focuses on places that publish enough current information for you to plan a Saturday visit. Menus, prices and opening hours can change, so use the linked venue website for a final check before making a special journey.</p>
+
+<h2>Hull brunch: the quick shortlist</h2>
+<ul>
+  <li><strong>Best all-rounder:</strong> Thieving Harry's, Humber Street</li>
+  <li><strong>Best for fresh baking:</strong> Flour & Feast, Humber Street</li>
+  <li><strong>Best vegan brunch:</strong> Barleys, Newland Avenue</li>
+  <li><strong>Best for a large group:</strong> Garbutts, Princes Avenue</li>
+  <li><strong>Best for speciality coffee:</strong> The Barista, Newland Avenue</li>
+  <li><strong>Best city-centre coffee stop:</strong> Brew, Bond Street</li>
+</ul>
+
+<h2>1. Thieving Harry's, Humber Street</h2>
+<p><a href="https://www.thievingharrys.co.uk/" target="_blank" rel="noopener noreferrer">Thieving Harry's</a> is the clearest choice when you want a full sit-down brunch in Hull's <a href="/areas/fruit-market">Fruit Market</a>. Its own description is refreshingly direct: it specialises in brunch, egg dishes and good coffee. The location at 73 Humber Street also makes it useful for combining breakfast with the Marina, Humber Street Gallery or The Deep.</p>
+<p>The practical catch is demand. The café encourages walk-ins and normally only accepts reservations for groups of eight or more. For a Saturday visit, arrive early, expect a possible wait at peak time and have a second Humber Street option in mind.</p>
+<p><strong>Choose it for:</strong> a proper brunch menu, waterside exploring afterwards and dog-friendly dining.</p>
+
+<h2>2. Flour & Feast, Humber Street</h2>
+<p>A few doors away, <a href="https://www.flourandfeast.com/" target="_blank" rel="noopener noreferrer">Flour & Feast</a> takes a bakery-first approach. Everything sold is made on site, and the counter changes with the seasons. Mornings centre on pastries and coffee; bread begins coming from the oven later, followed by focaccia sandwiches and other lunch options.</p>
+<p>Saturday opening is currently listed from 9:00 AM to 4:00 PM. It is walk-in only, has a maximum table size of five and can become busy. If you have one particular bake in mind, the bakery recommends pre-ordering at least a day ahead. Vegan cinnamon buns are a regular feature, while vegan doughnuts are offered at weekends; gluten-free availability varies.</p>
+<p><strong>Choose it for:</strong> croissants, cinnamon buns, fresh bread and a slower coffee rather than a traditional full English.</p>
+
+<h2>3. The Barista, Newland Avenue</h2>
+<p><a href="https://www.thebaristacafe.co.uk/" target="_blank" rel="noopener noreferrer">The Barista</a> is an independent licensed café serving breakfast, brunch and lunch every day. It puts locally roasted speciality coffee at the centre of the offer, with freshly prepared dishes alongside wine, craft beer and cocktails.</p>
+<p>Its Newland Avenue location works particularly well if your Saturday includes the independent shops and cafés around the <a href="/areas/avenues">Avenues</a>. It is a better fit for diners who want a relaxed café atmosphere than a loud bottomless-brunch session.</p>
+<p><strong>Choose it for:</strong> coffee-led brunch, a catch-up for two and a wander along Newland Avenue.</p>
+
+<h2>4. Barleys, Newland Avenue</h2>
+<p><a href="https://barleys.co/" target="_blank" rel="noopener noreferrer">Barleys</a> is Hull's dedicated all-vegan brunch choice. The independent café began in 2020 and now operates from a larger home at 123 Newland Avenue, where it makes its own plant-based alternatives and serves expanded brunch, lunch and sandwich menus.</p>
+<p>This is not merely the fallback for one vegan member of a group: it is the place to choose when everyone wants a fully plant-based menu without repeatedly checking ingredients. Look at the current menu before visiting because specials and supper-club activity change.</p>
+<p><strong>Choose it for:</strong> an entirely vegan menu and house-made plant-based food.</p>
+
+<h2>5. Garbutts, Princes Avenue</h2>
+<p><a href="https://garbuttshull.co.uk/brunch-in-hull/" target="_blank" rel="noopener noreferrer">Garbutts</a> is the most conventional restaurant-style option in this list. The long-established independent venue at 54 Princes Avenue serves breakfast until 2:00 PM and promotes cooked breakfasts, steak and eggs, coffee and brunch offers.</p>
+<p>Unlike Hull's smallest cafés, it actively takes table bookings, making it a sensible choice for birthdays, larger groups or anyone who does not want to gamble on finding a Saturday table. Check the current offer and menu when booking rather than relying on an old price shared elsewhere.</p>
+<p><strong>Choose it for:</strong> a substantial breakfast, groups and the reassurance of a reservation.</p>
+
+<h2>6. Brew, Bond Street</h2>
+<p><a href="https://www.brewhull.co.uk/" target="_blank" rel="noopener noreferrer">Brew</a> is a flexible city-centre café-bar at 76 Bond Street. It specialises in freshly ground coffee, loose-leaf tea and local craft beer, and currently opens at 9:00 AM on Saturdays before continuing into the evening.</p>
+<p>This is the useful choice when brunch is part of a wider day in the <a href="/areas/city-centre">city centre</a>, especially if different people want coffee, cake or something more relaxed. Check the current food menu before travelling if a full cooked breakfast is essential.</p>
+<p><strong>Choose it for:</strong> central location, coffee and a morning that may turn into afternoon drinks.</p>
+
+<h2>7. Planet Coffee, Newland Avenue</h2>
+<p><a href="https://www.planetcoffeehull.co.uk/" target="_blank" rel="noopener noreferrer">Planet Coffee</a> is an independent, dog-friendly café at 162 Newland Avenue. Its published Saturday hours are 9:00 AM to 5:00 PM, with speciality coffee, homemade cakes, pastries and sandwiches.</p>
+<p>Think of it as a dependable lighter brunch or second-coffee stop rather than the destination for an elaborate plated brunch. Outdoor seating makes it especially appealing in good weather.</p>
+<p><strong>Choose it for:</strong> dogs, outdoor seating, cakes and a relaxed Newland Avenue stop.</p>
+
+<h2>8. Caffè Gelato, Princes Avenue</h2>
+<p><a href="https://caffegelatohull.co.uk/" target="_blank" rel="noopener noreferrer">Caffè Gelato</a> at 73 Princes Avenue is the late-starting option. It currently opens at 11:00 AM daily and advertises an all-day breakfast alongside Mediterranean-inspired food, waffles, pastries, coffee and gelato.</p>
+<p>That makes it useful for families, mixed appetites or anyone whose Saturday morning begins closer to lunchtime. It is also open much later than a traditional bakery or breakfast café.</p>
+<p><strong>Choose it for:</strong> a later brunch, sweet options and groups with very different appetites.</p>
+
+<h2>Which Hull neighbourhood is best for brunch?</h2>
+<p><strong>Humber Street and the Marina</strong> offer the strongest compact route for visitors. Start at Flour & Feast or Thieving Harry's, then walk around the Marina and Fruit Market. <strong>Newland Avenue and Princes Avenue</strong> give you more choice within a neighbourhood, including vegan food, cooked breakfasts and coffee shops. <strong>Hull city centre</strong> is easiest when brunch needs to fit around shopping, a gallery visit or the train.</p>
+
+<h2>Saturday brunch planning tips</h2>
+<ul>
+  <li>Arrive before the late-morning rush at walk-in-only venues.</li>
+  <li>Book where possible if you are bringing a group.</li>
+  <li>Check the venue's own site or social feed for seasonal menus and unexpected closures.</li>
+  <li>Tell the venue about allergies directly; vegan and gluten-free are not interchangeable.</li>
+  <li>Use Hull Paragon Interchange for the city centre and waterfront, or local buses for Princes and Newland avenues.</li>
+</ul>
+
+<p><em>Venue details checked 13 September 2026. HU NOW does not accept payment for inclusion in this guide.</em></p>`,
     category: "Eat & Drink",
     tags: ["brunch", "humber street", "breakfast", "café"],
     featuredImage: "photo-1504674900247-0877df9cc836",
@@ -797,10 +862,15 @@ export const seedArticles: Article[] = [
     status: "published",
     isFeatured: false,
     isSponsored: false,
-    readingMinutes: 5,
+    readingMinutes: 8,
     publishedAt: "2026-05-12",
     section: "food-and-drink",
     subcategory: "lunch",
+    seo: {
+      title: "Best Brunch in Hull: 8 Saturday Brunch Places",
+      description:
+        "Find the best brunch in Hull for Saturday morning, including Humber Street bakeries, vegan brunch, cooked breakfasts and speciality coffee.",
+    },
   },
   {
     id: "a9",

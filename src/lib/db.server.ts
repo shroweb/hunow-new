@@ -537,6 +537,51 @@ async function ensureSeeded() {
   await ensureAnnualEventPages();
   await ensureSundayDinnerSeo();
   await ensureFireworksGuide2026();
+  await ensureBrunchGuideDepth();
+}
+
+async function ensureBrunchGuideDepth() {
+  const article = seedArticles.find((item) => item.slug === "best-brunches-hull-saturday");
+  if (!article) return;
+  const pool = getPool();
+  const marker = await pool.query(
+    `insert into site_settings (key, value)
+     values ('migration:brunch-guide-depth-2026', 'done')
+     on conflict (key) do nothing
+     returning key`,
+  );
+  if (!marker.rowCount) return;
+  await pool.query(
+    `update articles
+     set data = jsonb_set(
+       jsonb_set(
+         jsonb_set(
+           jsonb_set(
+             jsonb_set(
+               jsonb_set(data, '{title}', $1::jsonb),
+               '{excerpt}', $2::jsonb
+             ),
+             '{content}', $3::jsonb
+           ),
+           '{tags}', $4::jsonb
+         ),
+         '{readingMinutes}', $5::jsonb
+       ),
+       '{seo}', $6::jsonb
+     )
+     where slug = $7`,
+    [
+      JSON.stringify(article.title),
+      JSON.stringify(article.excerpt),
+      JSON.stringify(article.content),
+      JSON.stringify(article.tags),
+      JSON.stringify(article.readingMinutes),
+      JSON.stringify(article.seo),
+      article.slug,
+    ],
+  );
+  const { cacheInvalidate } = await import("./cache.server");
+  cacheInvalidate("db:store");
 }
 
 async function ensureFireworksGuide2026() {

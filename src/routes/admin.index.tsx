@@ -69,6 +69,18 @@ function Dashboard() {
       value: offers.filter((o) => o.status === "active" && o.endDate && o.endDate < today).length,
       href: "/admin/offers",
     },
+    {
+      label: "Thin published articles",
+      value: articles.filter(
+        (article) =>
+          article.status === "published" &&
+          article.content
+            .replace(/<[^>]*>/g, " ")
+            .split(/\s+/)
+            .filter(Boolean).length < 500,
+      ).length,
+      href: "/admin/articles",
+    },
   ];
   const qaIssueCount = contentQa.reduce((total, item) => total + item.value, 0);
 

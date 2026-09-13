@@ -4,6 +4,28 @@ export interface FAQItem {
 }
 
 export const ARTICLE_FAQS: Record<string, FAQItem[]> = {
+  "best-brunches-hull-saturday": [
+    {
+      question: "Where is best for brunch in Hull on Saturday?",
+      answer:
+        "For a full brunch menu try Thieving Harry's on Humber Street, The Barista on Newland Avenue or Garbutts on Princes Avenue. Flour & Feast is the bakery-led choice, while Barleys specialises in an entirely vegan menu.",
+    },
+    {
+      question: "Can I book a Saturday brunch table in Hull?",
+      answer:
+        "Garbutts accepts table bookings. Thieving Harry's encourages walk-ins and normally reserves only for groups of eight or more, while Flour & Feast is walk-in only with a maximum table size of five.",
+    },
+    {
+      question: "Where can I get vegan brunch in Hull?",
+      answer:
+        "Barleys at 123 Newland Avenue serves a completely vegan brunch and lunch menu. Flour & Feast also regularly offers vegan cinnamon buns, a daily vegan sandwich and vegan doughnuts at weekends, subject to availability.",
+    },
+    {
+      question: "Which Hull area has the most brunch choices?",
+      answer:
+        "Newland Avenue and Princes Avenue have the broadest neighbourhood selection. Humber Street and the Marina offer the most convenient brunch route for visitors combining food with waterfront attractions.",
+    },
+  ],
   "best-sunday-roasts-hull-east-yorkshire": [
     {
       question: "Where is the best Sunday roast in Hull Old Town?",
