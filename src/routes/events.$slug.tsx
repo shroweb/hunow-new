@@ -12,6 +12,8 @@ import { addToHistory } from "@/lib/reading-history";
 import { autoLink } from "@/lib/autolink";
 import { sanitizeHtml, escapeAttr } from "@/lib/sanitize";
 import { img } from "@/data/seed";
+import { getFixtureMatchup } from "@/lib/fixture-artwork";
+import { FixtureArtwork } from "@/components/fixtures/FixtureArtwork";
 import { getEventHighlights, getEventVisitorGuide } from "@/lib/event-enrichment";
 
 export const Route = createFileRoute("/events/$slug")({
@@ -59,97 +61,131 @@ export const Route = createFileRoute("/events/$slug")({
       scripts: [
         {
           type: "application/ld+json",
-          children: JSON.stringify((() => {
-            const isSport = e.category === "Sport" || e.title.includes(" vs ") || e.title.includes(" Vs ");
-            let homeTeam: string | undefined;
-            let awayTeam: string | undefined;
-            if (isSport && e.title.includes(" vs ")) {
-              const parts = e.title.split(" vs ");
-              homeTeam = parts[0]?.trim();
-              awayTeam = parts[1]?.replace(/\(Away\)/i, "").trim();
-            }
+          children: JSON.stringify(
+            (() => {
+              const isSport =
+                e.category === "Sport" || e.title.includes(" vs ") || e.title.includes(" Vs ");
+              let homeTeam: string | undefined;
+              let awayTeam: string | undefined;
+              if (isSport && e.title.includes(" vs ")) {
+                const parts = e.title.split(" vs ");
+                homeTeam = parts[0]?.trim();
+                awayTeam = parts[1]?.replace(/\(Away\)/i, "").trim();
+              }
 
-            let sportType = "Sport";
-            const lowerTitle = e.title.toLowerCase();
-            if (lowerTitle.includes("hull city") || lowerTitle.includes("football") || lowerTitle.includes("fc")) sportType = "Football";
-            if (lowerTitle.includes("hull kr") || lowerTitle.includes("hull fc") || lowerTitle.includes("super league") || lowerTitle.includes("rugby")) sportType = "Rugby League";
-            if (lowerTitle.includes("seahawks") || lowerTitle.includes("jets") || lowerTitle.includes("hockey")) sportType = "Ice Hockey";
-            if (lowerTitle.includes("parkrun") || lowerTitle.includes("10k") || lowerTitle.includes("marathon")) sportType = "Running";
+              let sportType = "Sport";
+              const lowerTitle = e.title.toLowerCase();
+              if (
+                lowerTitle.includes("hull city") ||
+                lowerTitle.includes("football") ||
+                lowerTitle.includes("fc")
+              )
+                sportType = "Football";
+              if (
+                lowerTitle.includes("hull kr") ||
+                lowerTitle.includes("hull fc") ||
+                lowerTitle.includes("super league") ||
+                lowerTitle.includes("rugby")
+              )
+                sportType = "Rugby League";
+              if (
+                lowerTitle.includes("seahawks") ||
+                lowerTitle.includes("jets") ||
+                lowerTitle.includes("hockey")
+              )
+                sportType = "Ice Hockey";
+              if (
+                lowerTitle.includes("parkrun") ||
+                lowerTitle.includes("10k") ||
+                lowerTitle.includes("marathon")
+              )
+                sportType = "Running";
 
-            const numPriceMatch = e.price ? e.price.replace(/,/g, "").match(/(\d+(\.\d+)?)/) : null;
-            const parsedPrice = numPriceMatch ? numPriceMatch[1] : null;
+              const numPriceMatch = e.price
+                ? e.price.replace(/,/g, "").match(/(\d+(\.\d+)?)/)
+                : null;
+              const parsedPrice = numPriceMatch ? numPriceMatch[1] : null;
 
-            return {
-              "@context": "https://schema.org",
-              "@type": isSport ? "SportsEvent" : "Event",
-              name: e.title,
-              description: e.description,
-              startDate: `${e.startDate}T${e.startTime}`,
-              endDate: e.endTime ? `${e.startDate}T${e.endTime}` : undefined,
-              doorTime: `${e.startDate}T${e.startTime}`,
-              eventStatus: "https://schema.org/EventScheduled",
-              eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-              image,
-              url: `https://www.hunow.co.uk${url}`,
-              ...(isSport ? {
-                sport: sportType,
-                ...(homeTeam && awayTeam ? {
-                  homeTeam: { "@type": "SportsTeam", name: homeTeam },
-                  awayTeam: { "@type": "SportsTeam", name: awayTeam },
-                  competitor: [
-                    { "@type": "SportsTeam", name: homeTeam },
-                    { "@type": "SportsTeam", name: awayTeam },
-                  ],
-                } : {}),
-              } : {}),
-              location: {
-                "@type": "Place",
-                name: e.locationName,
-                address: {
-                  "@type": "PostalAddress",
-                  streetAddress: e.address || "Kingston upon Hull",
-                  addressLocality: "Hull",
-                  addressRegion: "East Yorkshire",
-                  addressCountry: "GB",
-                },
-                ...(e.coordinates ? {
-                  geo: {
-                    "@type": "GeoCoordinates",
-                    latitude: e.coordinates.lat,
-                    longitude: e.coordinates.lng,
+              return {
+                "@context": "https://schema.org",
+                "@type": isSport ? "SportsEvent" : "Event",
+                name: e.title,
+                description: e.description,
+                startDate: `${e.startDate}T${e.startTime}`,
+                endDate: e.endTime ? `${e.startDate}T${e.endTime}` : undefined,
+                doorTime: `${e.startDate}T${e.startTime}`,
+                eventStatus: "https://schema.org/EventScheduled",
+                eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+                image,
+                url: `https://www.hunow.co.uk${url}`,
+                ...(isSport
+                  ? {
+                      sport: sportType,
+                      ...(homeTeam && awayTeam
+                        ? {
+                            homeTeam: { "@type": "SportsTeam", name: homeTeam },
+                            awayTeam: { "@type": "SportsTeam", name: awayTeam },
+                            competitor: [
+                              { "@type": "SportsTeam", name: homeTeam },
+                              { "@type": "SportsTeam", name: awayTeam },
+                            ],
+                          }
+                        : {}),
+                    }
+                  : {}),
+                location: {
+                  "@type": "Place",
+                  name: e.locationName,
+                  address: {
+                    "@type": "PostalAddress",
+                    streetAddress: e.address || "Kingston upon Hull",
+                    addressLocality: "Hull",
+                    addressRegion: "East Yorkshire",
+                    addressCountry: "GB",
                   },
-                } : {}),
-              },
-              isAccessibleForFree: !!e.isFree,
-              offers: e.isFree
-                ? {
-                    "@type": "Offer",
-                    price: "0",
-                    priceCurrency: "GBP",
-                    availability: "https://schema.org/InStock",
-                    url: `https://www.hunow.co.uk${url}`,
-                  }
-                : {
-                    "@type": "Offer",
-                    ...(parsedPrice ? { price: parsedPrice, priceCurrency: "GBP" } : { description: e.price || "See official ticketing" }),
-                    url: e.ticketUrl || `https://www.hunow.co.uk${url}`,
-                    availability: "https://schema.org/InStock",
-                  },
-              organizer: {
-                "@type": "Organization",
-                name: e.locationName || "Event Organiser",
-              },
-              publisher: {
-                "@type": "Organization",
-                name: "HU NOW",
-                url: "https://www.hunow.co.uk",
-                logo: {
-                  "@type": "ImageObject",
-                  url: "https://www.hunow.co.uk/hunow.jpg",
+                  ...(e.coordinates
+                    ? {
+                        geo: {
+                          "@type": "GeoCoordinates",
+                          latitude: e.coordinates.lat,
+                          longitude: e.coordinates.lng,
+                        },
+                      }
+                    : {}),
                 },
-              },
-            };
-          })()),
+                isAccessibleForFree: !!e.isFree,
+                offers: e.isFree
+                  ? {
+                      "@type": "Offer",
+                      price: "0",
+                      priceCurrency: "GBP",
+                      availability: "https://schema.org/InStock",
+                      url: `https://www.hunow.co.uk${url}`,
+                    }
+                  : {
+                      "@type": "Offer",
+                      ...(parsedPrice
+                        ? { price: parsedPrice, priceCurrency: "GBP" }
+                        : { description: e.price || "See official ticketing" }),
+                      url: e.ticketUrl || `https://www.hunow.co.uk${url}`,
+                      availability: "https://schema.org/InStock",
+                    },
+                organizer: {
+                  "@type": "Organization",
+                  name: e.locationName || "Event Organiser",
+                },
+                publisher: {
+                  "@type": "Organization",
+                  name: "HU NOW",
+                  url: "https://www.hunow.co.uk",
+                  logo: {
+                    "@type": "ImageObject",
+                    url: "https://www.hunow.co.uk/hunow.jpg",
+                  },
+                },
+              };
+            })(),
+          ),
         },
         {
           type: "application/ld+json",
@@ -255,6 +291,7 @@ function EventDetail() {
 
   const todayIso = new Date().toISOString().slice(0, 10);
   const isPast = (event.endDate || event.startDate) < todayIso;
+  const fixtureMatchup = getFixtureMatchup(event);
 
   return (
     <PublicLayout>
@@ -268,11 +305,15 @@ function EventDetail() {
       />
       <article className="min-h-screen">
         <div className="relative h-[45vh] md:h-[65vh] w-full overflow-hidden bg-foreground">
-          <img
-            src={img(event.featuredImage, 1600, 900)}
-            alt={event.title}
-            className="w-full h-full object-cover"
-          />
+          {fixtureMatchup ? (
+            <FixtureArtwork event={event} hero />
+          ) : (
+            <img
+              src={img(event.featuredImage, 1600, 900)}
+              alt={event.title}
+              className="w-full h-full object-cover"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-transparent" />
         </div>
         <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
@@ -529,7 +570,9 @@ function EventDetail() {
 
           <MakeADayOfIt
             event={event}
-            listings={relatedVenues.filter((l) => l.name.toLowerCase() !== event.locationName.toLowerCase())}
+            listings={relatedVenues.filter(
+              (l) => l.name.toLowerCase() !== event.locationName.toLowerCase(),
+            )}
           />
         </div>
       </article>
@@ -715,8 +758,12 @@ function VisitorGuide({ event }: { event: import("@/types").EventItem }) {
   return (
     <div className="border-2 border-foreground mb-8 overflow-hidden">
       <div className="bg-foreground text-background px-6 py-4 flex items-center justify-between">
-        <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide">Visitor Guide & Essentials</h2>
-        <span className="text-[10px] font-mono uppercase tracking-widest text-accent">Good to Know</span>
+        <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide">
+          Visitor Guide & Essentials
+        </h2>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-accent">
+          Good to Know
+        </span>
       </div>
       <div className="p-6 md:p-8 divide-y divide-foreground/10">
         <div className="pb-5">
@@ -827,9 +874,12 @@ function MakeADayOfIt({
       <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-accent mb-2">
         Make a Day of It
       </div>
-      <h2 className="text-2xl md:text-3xl font-display uppercase mb-2">Eat & Drink Nearby in Hull</h2>
+      <h2 className="text-2xl md:text-3xl font-display uppercase mb-2">
+        Eat & Drink Nearby in Hull
+      </h2>
       <p className="text-sm text-muted-foreground mb-6 max-w-xl">
-        Heading to {event.locationName}? Pair your visit with these top-rated independent local spots:
+        Heading to {event.locationName}? Pair your visit with these top-rated independent local
+        spots:
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {listings.slice(0, 3).map((place) => (
@@ -853,8 +903,12 @@ function MakeADayOfIt({
             <div className="text-[9px] font-mono font-bold uppercase text-accent mb-1">
               {place.category} · {place.area}
             </div>
-            <div className="font-bold text-base leading-snug group-hover:underline line-clamp-1">{place.name}</div>
-            <p className="text-xs text-muted-foreground line-clamp-2 mt-1.5 leading-relaxed">{place.description}</p>
+            <div className="font-bold text-base leading-snug group-hover:underline line-clamp-1">
+              {place.name}
+            </div>
+            <p className="text-xs text-muted-foreground line-clamp-2 mt-1.5 leading-relaxed">
+              {place.description}
+            </p>
           </Link>
         ))}
       </div>

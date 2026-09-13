@@ -5,6 +5,8 @@ import type { Article, EventItem, Listing, Offer } from "@/types";
 import { useIsSaved, toggleSaved } from "@/lib/bookmarks";
 import { articlePath } from "@/lib/taxonomy";
 import { openStatus } from "@/lib/hours";
+import { getFixtureMatchup } from "@/lib/fixture-artwork";
+import { FixtureArtwork } from "@/components/fixtures/FixtureArtwork";
 
 function HeartButton({
   saved,
@@ -42,6 +44,7 @@ export function EventCard({ event }: { event: EventItem }) {
   const dateLabel = formatEventDate(event.startDate).toUpperCase();
   const saved = useIsSaved("event", event.id);
   const fallback = getCategoryFallback(event.category, event.title);
+  const fixtureMatchup = getFixtureMatchup(event);
   return (
     <Link to="/events/$slug" params={{ slug: event.slug }} className="group block">
       <div className="w-full aspect-video bg-gradient-to-br from-stone-900 via-neutral-900 to-stone-800 mb-4 overflow-hidden border border-foreground/10 relative">
@@ -51,21 +54,25 @@ export function EventCard({ event }: { event: EventItem }) {
           </div>
           <div className="text-xs font-bold font-sans line-clamp-1">{event.locationName}</div>
         </div>
-        <img
-          src={img(event.featuredImage, 800, 500, fallback)}
-          alt={`${event.title} at ${event.locationName}`}
-          width={800}
-          height={500}
-          loading="lazy"
-          decoding="async"
-          onError={(e) => {
-            if (e.currentTarget.src !== fallback) {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = fallback;
-            }
-          }}
-          className="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {fixtureMatchup ? (
+          <FixtureArtwork event={event} />
+        ) : (
+          <img
+            src={img(event.featuredImage, 800, 500, fallback)}
+            alt={`${event.title} at ${event.locationName}`}
+            width={800}
+            height={500}
+            loading="lazy"
+            decoding="async"
+            onError={(e) => {
+              if (e.currentTarget.src !== fallback) {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = fallback;
+              }
+            }}
+            className="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        )}
         {event.isSponsored && (
           <span className="absolute top-3 left-3 bg-accent text-background text-[9px] font-bold uppercase px-2 py-0.5">
             Sponsored
@@ -230,7 +237,10 @@ export function OfferCard({ offer }: { offer: Offer }) {
       <div className="flex-1 min-w-0">
         <div className="text-[10px] font-bold uppercase text-accent">{offer.businessName}</div>
         <div className="font-bold truncate">{offer.title}</div>
-        <div className="text-[10px] font-mono uppercase text-muted-foreground mt-1" suppressHydrationWarning>
+        <div
+          className="text-[10px] font-mono uppercase text-muted-foreground mt-1"
+          suppressHydrationWarning
+        >
           Ends {formatShortDate(offer.endDate)}
         </div>
       </div>
