@@ -200,7 +200,7 @@ function HullFairPage() {
       {/* 1. Hero Banner */}
       <div className="relative bg-black text-white py-16 md:py-24 border-b border-border overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity scale-105"
+          className="absolute inset-0 bg-cover bg-center opacity-50 scale-105"
           style={{
             backgroundImage: `url('${HULL_FAIR_HERO_IMAGE}')`,
           }}
@@ -312,6 +312,24 @@ function HullFairPage() {
             of hot patties, roasted nuts, and spun sugar.
           </p>
         </section>
+
+        <figure className="border-2 border-foreground bg-foreground overflow-hidden">
+          <div className="aspect-[16/10] md:aspect-[16/9] overflow-hidden">
+            <img
+              src={HULL_FAIR_HERO_IMAGE}
+              alt="Illuminated thrill rides at Hull Fair on Walton Street"
+              width={2438}
+              height={1836}
+              loading="eager"
+              decoding="async"
+              className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
+            />
+          </div>
+          <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-[10px] font-mono uppercase tracking-widest text-background/70">
+            <span>Hull Fair · Walton Street</span>
+            <span>Rides, lights and attractions</span>
+          </figcaption>
+        </figure>
 
         {/* Section 1: Dates & Daily Hours */}
         <section id="dates" className="scroll-mt-20 border-t-2 border-foreground pt-10">
