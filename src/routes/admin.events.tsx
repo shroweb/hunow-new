@@ -57,6 +57,7 @@ function AdminEvents() {
   const [slugDraft, setSlugDraft] = useState("");
   const [slugManual, setSlugManual] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
+  const hullFairEvent = events.find((event) => event.slug === "hull-fair-2026");
 
   useEffect(() => {
     setSlugDraft(editing?.slug ?? "");
@@ -178,6 +179,19 @@ function AdminEvents() {
         subtitle={`${events.length} total`}
         action={
           <div className="flex gap-2">
+            {hullFairEvent && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditing(hullFairEvent);
+                  setErrors([]);
+                  setShowForm(true);
+                }}
+                className={adminBtnOutline}
+              >
+                Edit Hull Fair
+              </button>
+            )}
             <button
               onClick={async () => {
                 const today = new Date().toISOString().slice(0, 10);
