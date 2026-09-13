@@ -96,6 +96,7 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         const CANONICAL_SUB_PATHS: Record<string, string> = {
           "hull-fair": "/hull-fair",
+          "hull-fireworks-2026": "/guides/hull-bonfire-night-fireworks-guide-2026",
           "humber-street-sesh": "/humber-street-sesh",
           "freedom-festival": "/freedom-festival",
           "christmas-lights-switch-on": "/christmas-lights-switch-on",
@@ -147,9 +148,11 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         // Published stories (live from DB)
         for (const article of articles) {
-          if (article.status === "published") {
+          const path = articlePath(article);
+          if (article.status === "published" && !addedPaths.has(path)) {
+            addedPaths.add(path);
             entries.push({
-              path: articlePath(article),
+              path,
               changefreq: "weekly",
               priority: "0.8",
               lastmod: article.publishedAt,

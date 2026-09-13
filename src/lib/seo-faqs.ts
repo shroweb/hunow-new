@@ -226,14 +226,24 @@ export const ARTICLE_FAQS: Record<string, FAQItem[]> = {
 
   "hull-bonfire-night-fireworks-guide-2026": [
     {
-      question: "Where are the biggest Bonfire Night fireworks displays in Hull?",
+      question: "Where can I see fireworks near Hull on Bonfire Night 2026?",
       answer:
-        "The largest organized community fireworks displays take place at Brantingham Park (home of Hull Ionians RUFC), Beverley Westwood, and Hull KR's Sewell Group Craven Park, featuring giant bonfires, fair rides, and food stalls.",
+        "Brantingham Park in Elloughton is confirmed for Thursday 5 November 2026. The event runs from 5:00 PM to 9:00 PM, with fireworks at 7:15 PM. Other Hull and East Yorkshire displays will be added when organisers confirm them.",
     },
     {
-      question: "Is the Beverley Westwood bonfire free to attend?",
+      question: "What time are the Brantingham Park fireworks in 2026?",
       answer:
-        "Yes, the historic Beverley Westwood Bonfire and Fireworks is a free community event organized by the Beverley Lions, supported by bucket collections and donations from attendees.",
+        "The fireworks display is scheduled for 7:15 PM prompt on Thursday 5 November 2026. The event opens at 5:00 PM and finishes at 9:00 PM.",
+    },
+    {
+      question: "Can I buy Brantingham Park fireworks tickets on the day?",
+      answer:
+        "No. The organiser states that the 2026 Fireworx Extravaganza is ticket-only with no pay-on-the-day admission, so tickets should be purchased in advance.",
+    },
+    {
+      question: "Are Craven Park or Beverley Westwood fireworks confirmed for 2026?",
+      answer:
+        "No authoritative 2026 announcements had been published at the latest check. HU NOW will add those displays only when their organisers confirm the date, timings and admission details.",
     },
   ],
 

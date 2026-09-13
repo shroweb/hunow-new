@@ -12,23 +12,33 @@ export const DEFAULT_FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&h=800&q=80";
 
 export const CATEGORY_FALLBACKS: Record<string, string> = {
-  sport: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=800&q=80",
-  rugby: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&h=800&q=80",
-  football: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=800&q=80",
-  music: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&h=800&q=80",
-  "food & drink": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&h=800&q=80",
+  sport:
+    "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=800&q=80",
+  rugby:
+    "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&h=800&q=80",
+  football:
+    "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=800&q=80",
+  music:
+    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&h=800&q=80",
+  "food & drink":
+    "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&h=800&q=80",
   food: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&h=800&q=80",
   arts: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=1200&h=800&q=80",
-  comedy: "https://images.unsplash.com/photo-1527224857830-43a7acc85260?auto=format&fit=crop&w=1200&h=800&q=80",
-  family: "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=1200&h=800&q=80",
-  theatre: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1200&h=800&q=80",
-  nightlife: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&h=800&q=80",
+  comedy:
+    "https://images.unsplash.com/photo-1527224857830-43a7acc85260?auto=format&fit=crop&w=1200&h=800&q=80",
+  family:
+    "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=1200&h=800&q=80",
+  theatre:
+    "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1200&h=800&q=80",
+  nightlife:
+    "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&h=800&q=80",
 };
 
 export const getCategoryFallback = (category?: string, title?: string): string => {
   const cat = (category || "").toLowerCase();
   const t = (title || "").toLowerCase();
-  if (t.includes("hull kr") || t.includes("rugby") || t.includes("hull fc")) return CATEGORY_FALLBACKS.rugby;
+  if (t.includes("hull kr") || t.includes("rugby") || t.includes("hull fc"))
+    return CATEGORY_FALLBACKS.rugby;
   if (t.includes("hull city") || t.includes("football")) return CATEGORY_FALLBACKS.football;
   for (const [key, url] of Object.entries(CATEGORY_FALLBACKS)) {
     if (cat.includes(key)) return url;
@@ -314,7 +324,13 @@ export const seedArticles: Article[] = [
     featuredImage: "photo-1543589077-47d81606c1bf",
     status: "published",
     publishedAt: "2026-09-03",
-    tags: ["Christmas", "Hull Christmas Markets", "Beverley Festival of Christmas", "Light Switch On", "Guides"],
+    tags: [
+      "Christmas",
+      "Hull Christmas Markets",
+      "Beverley Festival of Christmas",
+      "Light Switch On",
+      "Guides",
+    ],
     isFeatured: true,
     isSponsored: false,
     seo: {
@@ -325,44 +341,39 @@ export const seedArticles: Article[] = [
   },
   {
     id: "article-hull-bonfire-night-fireworks-guide-2026",
-    title: "Bonfire Night & Fireworks in Hull & East Yorkshire 2026: Dates, Times & Tickets",
+    title: "Hull Fireworks 2026: Bonfire Night Displays, Dates & Tickets",
     slug: "hull-bonfire-night-fireworks-guide-2026",
     excerpt:
-      "Where to watch fireworks in Hull and East Yorkshire for Bonfire Night 2026. Dates, ticket details, food stalls, and timings for Craven Park, Brantingham, Beverley, and community displays.",
-    content: `<h2>Bonfire Night & Fireworks in Hull & East Yorkshire 2026</h2>
-<p>Looking for the best places to watch fireworks across Hull, Beverley, and East Yorkshire this November? Whether you want a massive stadium laser and pyrotechnic musical extravaganza or a traditional village green bonfire with jacket potatoes and sparklers, here is your complete guide to Bonfire Night 2026.</p>
+      "Find confirmed Hull fireworks and Bonfire Night displays for 2026, including dates, start times, tickets, parking and family information across Hull and East Yorkshire.",
+    content: `<h2>Hull Fireworks and Bonfire Night 2026</h2>
+<p>Looking for fireworks in Hull tonight or a Bonfire Night display near you? This guide tracks confirmed organised displays across Hull and East Yorkshire for November 2026. Details are checked against organiser information and updated as tickets and timings are announced.</p>
 
-<h2>1. Craven Park Fireworks Spectacular (East Hull)</h2>
-<p>Hull's largest organised fireworks event takes place at <strong>Sewell Group Craven Park</strong>, home of Hull KR. The evening features an immense musical fireworks display lighting up the night sky above the stadium bowl, accompanied by live DJ entertainment, funfair rides for children, and stadium street food kiosks.</p>
+<h2>Confirmed: Brantingham Park Fireworx Extravaganza 2026</h2>
+<p>Brantingham Park's annual family fireworks event is confirmed for <strong>Thursday 5 November 2026</strong>. It includes indoor areas, catering outlets, a children's disco and free face painting before the main display by Eastern Pyro Ltd.</p>
 <ul>
-  <li><strong>Location:</strong> Sewell Group Craven Park, Preston Road, Hull HU9 5DX</li>
-  <li><strong>Timings:</strong> Gates open at 4:30 PM, display begins at approximately 7:30 PM</li>
-  <li><strong>Tickets:</strong> Advance online booking recommended; early-bird family tickets available.</li>
+  <li><strong>Date:</strong> Thursday 5 November 2026</li>
+  <li><strong>Event time:</strong> 5:00 PM–9:00 PM</li>
+  <li><strong>Fireworks:</strong> 7:15 PM prompt</li>
+  <li><strong>Location:</strong> Brantingham Park, Brantingham Road, Elloughton HU15 1HX</li>
+  <li><strong>Tickets:</strong> Advance ticket required; there is no pay-on-the-day admission</li>
+  <li><strong>Parking:</strong> Free on-site parking</li>
 </ul>
 
-<h2>2. Brantingham Park Big Fireworks Display (Brough / West Hull)</h2>
-<p>Situated in the grounds of Hull Ionians RUFC, <strong>Brantingham Park</strong> hosts one of the most popular community fireworks displays in the East Riding. The event boasts an enormous bonfire, extensive licensed bars, hog roast and burger stalls, and a dedicated low-noise children's display preceding the main musical show.</p>
+<h2>Hull and East Yorkshire Displays Awaiting 2026 Confirmation</h2>
+<p>At the time of our latest check, organisers had not published authoritative 2026 details for the following previous display locations. They are listed as watch points, not confirmed events:</p>
 <ul>
-  <li><strong>Location:</strong> Brantingham Park, Brantingham Road, Brough HU15 1HX</li>
-  <li><strong>Parking:</strong> On-site field parking available (arrive early to avoid queues on Cave Road).</li>
+  <li><strong>Sewell Group Craven Park, East Hull:</strong> no confirmed public 2026 fireworks announcement found yet.</li>
+  <li><strong>Beverley Westwood:</strong> no confirmed 2026 date, admission or organiser announcement found yet.</li>
+  <li><strong>Swanland and West Hull:</strong> no confirmed public 2026 community display details found yet.</li>
 </ul>
+<p>We will add confirmed dates, ticket links and start times here as organisers publish them. Do not travel based on previous years' schedules.</p>
 
-<h2>3. Beverley Westwood & Town Fireworks</h2>
-<p>A classic Guy Fawkes celebration against the atmospheric landscape of the Beverley Westwood pasture. Organised by Beverley Lions and local community partners, it features a traditional wood bonfire built by volunteers and a stunning aerial fireworks display illuminating the Westwood Black Mill.</p>
-<ul>
-  <li><strong>Location:</strong> Beverley Westwood (near the Black Mill), HU17 8RG</li>
-  <li><strong>Admission:</strong> Free entry with voluntary bucket donations supporting local charities.</li>
-</ul>
+<h2>Are There Fireworks in Hull Tonight?</h2>
+<p>On Thursday 5 November 2026, the confirmed nearby event in this guide is Brantingham Park, with the display scheduled for 7:15 PM. On any other date, check the event date above and the organiser's latest ticket information before setting off.</p>
 
-<h2>4. Swanland Playing Fields Community Bonfire</h2>
-<p>A firm favourite with West Hull families, Swanland's annual bonfire night provides a welcoming, community-focused evening with hot food stalls, children's rides, mulled wine, and synchronized fireworks over the playing fields.</p>
+<h2>Bonfire Night Safety and Visiting Tips</h2>
 <ul>
-  <li><strong>Location:</strong> Swanland Playing Fields, West Leys Road, Swanland HU14 3LZ</li>
-</ul>
-
-<h2>Bonfire Night Safety & Visiting Tips</h2>
-<ul>
-  <li><strong>Arrive Early:</strong> Popular displays in Craven Park and Brantingham see heavy traffic on approach roads between 6:00 PM and 7:00 PM.</li>
+  <li><strong>Arrive early:</strong> Allow extra time for queues and local traffic before the display.</li>
   <li><strong>Wrap Up Warm:</strong> November evenings in East Yorkshire can be cold and windy; thermal layers, gloves, and waterproof boots are recommended.</li>
   <li><strong>Pet Welfare:</strong> Keep dogs and cats safely indoors with curtains drawn and soothing music playing during peak fireworks hours (6:00 PM – 9:00 PM).</li>
 </ul>`,
@@ -374,13 +385,19 @@ export const seedArticles: Article[] = [
     featuredImage: "photo-1498931299472-f7a63a5a1cfa",
     status: "published",
     publishedAt: "2026-09-03",
-    tags: ["Bonfire Night", "Fireworks", "Craven Park", "Beverley", "Guides"],
+    tags: [
+      "Bonfire Night",
+      "Hull Fireworks 2026",
+      "Fireworks Near Me",
+      "Brantingham Park",
+      "Guides",
+    ],
     isFeatured: true,
     isSponsored: false,
     seo: {
-      title: "Bonfire Night & Fireworks Displays in Hull & East Yorkshire 2026",
+      title: "Hull Fireworks 2026: Bonfire Night Displays & Tickets",
       description:
-        "Complete guide to Bonfire Night & Fireworks 2026 in Hull and East Yorkshire. Craven Park, Brantingham, Beverley Westwood, dates, tickets, and times.",
+        "Confirmed Hull fireworks and Bonfire Night displays for 2026. Find dates, start times, tickets, parking and updates for Hull and East Yorkshire.",
     },
   },
   {
@@ -503,7 +520,8 @@ export const seedArticles: Article[] = [
   },
   {
     id: "article-dog-friendly-pubs-cafes-hull",
-    title: "Dog-Friendly Pubs and Cafes in Hull & East Yorkshire: Where Four-Legged Friends Are Welcome",
+    title:
+      "Dog-Friendly Pubs and Cafes in Hull & East Yorkshire: Where Four-Legged Friends Are Welcome",
     slug: "dog-friendly-pubs-cafes-hull",
     excerpt:
       "A complete guide to dog-friendly pubs, craft taprooms, and cafes in Hull and East Yorkshire. Free dog treats, sheltered courtyards, and scenic dog walks nearby.",

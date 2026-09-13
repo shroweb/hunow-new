@@ -14,6 +14,7 @@ import { LocalStatusTicker } from "@/components/LocalStatusTicker";
 
 const FESTIVAL_PATHS: Record<string, string> = {
   "hull-fair": "/hull-fair",
+  "hull-fireworks-2026": "/guides/hull-bonfire-night-fireworks-guide-2026",
   "hull-city": "/hull-city-fixtures",
   "hull-fc": "/hull-fc-fixtures",
   "hull-kr": "/hull-kr-fixtures",
