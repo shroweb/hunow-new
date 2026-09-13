@@ -37,7 +37,8 @@ export const Route = createFileRoute("/areas/$area")({
 });
 
 function AreaPage() {
-  const { area, guide, listings, events, articles } = Route.useLoaderData();
+  const { area, guide, imageCredit, imageSource, imageAlt, listings, events, articles } =
+    Route.useLoaderData();
   const featured = listings.filter((l) => l.isFeatured || l.isHiddenGem).slice(0, 3);
   const rest = listings.filter((l) => !featured.find((f) => f.id === l.id));
 
@@ -49,7 +50,7 @@ function AreaPage() {
           <>
             <img
               src={img(guide.featuredImage, 1400, 800)}
-              alt={area}
+              alt={imageAlt || area}
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-foreground/65" />
@@ -67,6 +68,16 @@ function AreaPage() {
                 {articles.length > 0 && <span>{articles.length} stories</span>}
               </div>
             </div>
+            {imageCredit && imageSource && (
+              <a
+                href={imageSource}
+                target="_blank"
+                rel="noreferrer"
+                className="absolute bottom-2 right-3 text-[9px] text-background/70 underline"
+              >
+                Photo: {imageCredit}
+              </a>
+            )}
           </>
         ) : (
           <div className="max-w-7xl mx-auto px-4 py-12 md:py-20">

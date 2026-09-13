@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { resolveAreaImage } from "./area-images";
 
 export const getAreaPageData = createServerFn({ method: "GET" })
   .inputValidator(z.object({ areaSlug: z.string().min(1) }))
@@ -30,9 +31,15 @@ export const getAreaPageData = createServerFn({ method: "GET" })
       ),
     ]);
 
+    const areaImage = resolveAreaImage(data.areaSlug, guide?.featuredImage);
     return {
       area,
-      guide: guide ?? { areaKey: data.areaSlug, intro: "", featuredImage: "", updatedAt: "" },
+      guide: guide
+        ? { ...guide, featuredImage: areaImage.src }
+        : { areaKey: data.areaSlug, intro: "", featuredImage: areaImage.src, updatedAt: "" },
+      imageCredit: areaImage.credit,
+      imageSource: areaImage.source,
+      imageAlt: areaImage.alt,
       listings: listingRows.rows.map((r) => r.data) as import("@/types").Listing[],
       events: eventRows.rows.map((r) => r.data) as import("@/types").EventItem[],
       articles: articleRows.rows.map((r) => r.data) as import("@/types").Article[],
@@ -60,7 +67,10 @@ export const getAreasIndexData = createServerFn({ method: "GET" }).handler(async
       slug,
       listingCount: countMap[area] ?? 0,
       intro: guideMap[slug]?.intro ?? "",
-      featuredImage: guideMap[slug]?.featuredImage ?? "",
+      featuredImage: resolveAreaImage(slug, guideMap[slug]?.featuredImage).src,
+      imageCredit: resolveAreaImage(slug, guideMap[slug]?.featuredImage).credit,
+      imageSource: resolveAreaImage(slug, guideMap[slug]?.featuredImage).source,
+      imageAlt: resolveAreaImage(slug, guideMap[slug]?.featuredImage).alt,
     };
   });
 });
@@ -73,7 +83,13 @@ export const getAllAreaGuidesAdmin = createServerFn({ method: "GET" }).handler(a
   const guideMap = Object.fromEntries(guides.map((g) => [g.areaKey, g]));
   return areas.map((area) => {
     const slug = area.toLowerCase().replace(/\s+/g, "-");
-    return { area, slug, guide: guideMap[slug] ?? null };
+    const guide = guideMap[slug];
+    const areaImage = resolveAreaImage(slug, guide?.featuredImage);
+    return {
+      area,
+      slug,
+      guide: guide ? { ...guide, featuredImage: areaImage.src } : null,
+    };
   });
 });
 

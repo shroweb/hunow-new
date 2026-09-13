@@ -32,39 +32,55 @@ function AreasIndex() {
       </section>
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {areas.map(({ area, slug, listingCount, intro, featuredImage }) => (
-            <Link
-              key={slug}
-              to="/areas/$area"
-              params={{ area: slug }}
-              className="group border-2 border-foreground bg-white overflow-hidden hover:border-accent transition-colors"
-            >
-              {featuredImage ? (
-                <div className="h-36 overflow-hidden">
-                  <img
-                    src={img(featuredImage, 600, 400)}
-                    alt={area}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ) : (
-                <div className="h-36 bg-foreground/5 flex items-center justify-center">
-                  <span className="font-display text-5xl uppercase text-foreground/15">
-                    {area[0]}
-                  </span>
-                </div>
-              )}
-              <div className="p-5">
-                <div className="font-display text-3xl uppercase leading-none mb-2">{area}</div>
-                {intro && (
-                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{intro}</p>
+          {areas.map(
+            ({
+              area,
+              slug,
+              listingCount,
+              intro,
+              featuredImage,
+              imageCredit,
+              imageSource,
+              imageAlt,
+            }) => (
+              <Link
+                key={slug}
+                to="/areas/$area"
+                params={{ area: slug }}
+                className="group border-2 border-foreground bg-white overflow-hidden hover:border-accent transition-colors"
+              >
+                {featuredImage ? (
+                  <figure className="relative h-36 overflow-hidden">
+                    <img
+                      src={img(featuredImage, 600, 400)}
+                      alt={imageAlt || area}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {imageCredit && imageSource && (
+                      <figcaption className="absolute bottom-1 right-1 bg-foreground/80 px-1.5 py-0.5 text-[8px] text-background">
+                        Photo: {imageCredit}
+                      </figcaption>
+                    )}
+                  </figure>
+                ) : (
+                  <div className="h-36 bg-foreground/5 flex items-center justify-center">
+                    <span className="font-display text-5xl uppercase text-foreground/15">
+                      {area[0]}
+                    </span>
+                  </div>
                 )}
-                <div className="text-[10px] font-mono uppercase text-muted-foreground group-hover:text-accent transition-colors">
-                  {listingCount} {listingCount === 1 ? "listing" : "listings"} →
+                <div className="p-5">
+                  <div className="font-display text-3xl uppercase leading-none mb-2">{area}</div>
+                  {intro && (
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{intro}</p>
+                  )}
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground group-hover:text-accent transition-colors">
+                    {listingCount} {listingCount === 1 ? "listing" : "listings"} →
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ),
+          )}
         </div>
       </section>
     </PublicLayout>
