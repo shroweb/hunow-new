@@ -13,6 +13,7 @@ import { img } from "@/data/seed";
 import { formatFullDate, formatEventDate, formatWeekday } from "@/lib/dates";
 import { subscribeNewsletter } from "@/lib/public.functions";
 import { buildSeoMeta } from "@/lib/seo-meta";
+import { formatHullFairDateRange, getHullFairPromotion } from "@/lib/hull-fair-promotion";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -88,6 +89,7 @@ function Index() {
   const allOffers = loaderOffers?.length ? loaderOffers : storeOffers;
 
   const today = todayIso();
+  const hullFairPromotion = getHullFairPromotion(allEvents, today);
   const publishedEvents = allEvents.filter(
     (e) => e.status === "published" && (e.endDate || e.startDate) >= today,
   );
@@ -242,48 +244,64 @@ function Index() {
         </div>
       </section>
 
-      {/* Hull Fair 2026 Superhub Banner Feature */}
-      <section className="border-b-2 border-foreground bg-gradient-to-r from-[#0b0130] via-black to-[#0b0130] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-6 md:py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center shrink-0 text-accent">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-            </div>
-            <div>
-              <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-accent mb-1 font-bold">
-                <span>Annual Tradition</span>
-                <span>•</span>
-                <span>9–17 October 2026</span>
+      {/* Hull Fair superhub banner — visible only while an edition is upcoming or live */}
+      {hullFairPromotion && (
+        <section className="border-b-2 border-foreground bg-gradient-to-r from-[#0b0130] via-black to-[#0b0130] text-white">
+          <div className="max-w-7xl mx-auto px-4 py-6 md:py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center shrink-0 text-accent">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
               </div>
-              <h2 className="text-2xl md:text-3xl font-display uppercase tracking-tight leading-none text-white">
-                Hull Fair 2026 Complete Guide
-              </h2>
-              <p className="text-xs md:text-sm text-white/70 mt-1 max-w-2xl">
-                Official dates, daily opening hours, Priory Park & Ride details, ride prices, and the legendary food bucket list.
-              </p>
+              <div>
+                <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-accent mb-1 font-bold">
+                  <span>{hullFairPromotion.isLive ? "On now" : "Annual Tradition"}</span>
+                  <span>•</span>
+                  <span>{formatHullFairDateRange(hullFairPromotion.event)}</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-display uppercase tracking-tight leading-none text-white">
+                  {hullFairPromotion.event.title} Complete Guide
+                </h2>
+                <p className="text-xs md:text-sm text-white/70 mt-1 max-w-2xl">
+                  {hullFairPromotion.event.description}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
+              <a
+                href={
+                  hullFairPromotion.event.slug === "hull-fair-2026"
+                    ? "/hull-fair"
+                    : `/events/${hullFairPromotion.event.slug}`
+                }
+                className="flex-1 md:flex-initial text-center px-6 py-3 bg-accent text-background font-bold text-xs uppercase tracking-widest hover:bg-accent/90 transition-colors"
+              >
+                Explore Hull Fair Guide →
+              </a>
+              <Link
+                to="/guides/guide-to-parking-at-hull-fair"
+                className="flex-1 md:flex-initial text-center px-4 py-3 border border-white/20 text-white text-xs font-bold uppercase tracking-widest hover:border-white hover:bg-white/10 transition-colors"
+              >
+                Parking Guide
+              </Link>
             </div>
           </div>
-          <div className="flex items-center gap-3 shrink-0 w-full md:w-auto">
-            <Link
-              to="/hull-fair"
-              className="flex-1 md:flex-initial text-center px-6 py-3 bg-accent text-background font-bold text-xs uppercase tracking-widest hover:bg-accent/90 transition-colors"
-            >
-              Explore Hull Fair Hub →
-            </Link>
-            <Link
-              to="/guides/guide-to-parking-at-hull-fair"
-              className="hidden sm:inline-block px-4 py-3 border border-white/20 text-white text-xs font-bold uppercase tracking-widest hover:border-white hover:bg-white/10 transition-colors"
-            >
-              Parking Guide
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* [8] Spotlight — live city picks */}
       <section className="border-b-2 border-foreground bg-background">
@@ -350,7 +368,9 @@ function Index() {
                   <h3 className="font-display text-2xl uppercase leading-none mb-2 group-hover:text-accent transition-colors">
                     {event.title}
                   </h3>
-                  <p className="text-xs font-mono uppercase opacity-60">{cleanLocation(event.locationName)}</p>
+                  <p className="text-xs font-mono uppercase opacity-60">
+                    {cleanLocation(event.locationName)}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -449,7 +469,10 @@ function Index() {
                 <h3 className="text-2xl md:text-3xl font-display uppercase leading-none group-hover:underline mb-2">
                   {events[0].title}
                 </h3>
-                <div className="text-[10px] font-mono uppercase text-muted-foreground" suppressHydrationWarning>
+                <div
+                  className="text-[10px] font-mono uppercase text-muted-foreground"
+                  suppressHydrationWarning
+                >
                   {formatHomeDate(events[0].startDate)} · {events[0].startTime} ·{" "}
                   {cleanLocation(events[0].locationName)}
                 </div>
@@ -734,7 +757,9 @@ function Index() {
                     await subscribeNewsletter({
                       data: { email: nlEmail, segments: ["events", "offers"] },
                     });
-                  } catch {}
+                  } catch {
+                    // Keep the optimistic confirmation used by this lightweight signup form.
+                  }
                   setNlDone(true);
                 }}
               >
