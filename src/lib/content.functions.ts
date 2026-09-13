@@ -74,7 +74,7 @@ const eventSchema = z.object({
   scheduledFor: z.string().optional(),
   recurrence: z
     .object({
-      type: z.enum(["weekly", "biweekly", "monthly"]),
+      type: z.enum(["weekly", "biweekly", "monthly", "annual"]),
       until: z.string().optional(),
     })
     .optional(),

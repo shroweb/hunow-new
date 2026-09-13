@@ -55,7 +55,7 @@ export interface EventItem {
   isFeatured: boolean;
   isSponsored: boolean;
   scheduledFor?: string;
-  recurrence?: { type: "weekly" | "biweekly" | "monthly"; until?: string };
+  recurrence?: { type: "weekly" | "biweekly" | "monthly" | "annual"; until?: string };
   seo?: SeoMeta;
 }
 

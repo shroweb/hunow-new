@@ -13,6 +13,7 @@ import {
 } from "@/data/seed";
 import type { AdPlacement, Submission } from "@/types";
 import type { AppStore } from "./store";
+import { createAnnualSuccessor } from "./annual-events";
 
 type CollectionName = Exclude<keyof AppStore, "newsletter">;
 type StoredRecord = { id: string };
@@ -517,6 +518,116 @@ async function ensureSeeded() {
     seedReady = seedIfEmpty();
   }
   await seedReady;
+  await ensureAdvanceLandingPages();
+  await ensureAnnualEventPages();
+}
+
+let advanceLandingPagesReady = false;
+
+async function ensureAdvanceLandingPages() {
+  if (advanceLandingPagesReady) return;
+
+  const pageIds = ["article-hull-fair-opening-times-2026", "article-hull-fair-buses-2026"];
+  const pages = seedArticles.filter((article) => pageIds.includes(article.id));
+  const client = await getPool().connect();
+  let inserted = false;
+
+  try {
+    await client.query("begin");
+    const migration = await client.query(
+      `insert into site_settings (key, value)
+       values ('migration:advance-landing-pages-2026', 'true'::jsonb)
+       on conflict (key) do nothing
+       returning key`,
+    );
+    if (migration.rowCount) {
+      for (const page of pages) {
+        const result = await client.query(
+          `insert into articles (id, data) values ($1, $2)
+           on conflict (id) do nothing`,
+          [page.id, JSON.stringify(page)],
+        );
+        inserted = inserted || Boolean(result.rowCount);
+      }
+    }
+    await client.query("commit");
+    advanceLandingPagesReady = true;
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
+
+  if (inserted) {
+    const { cacheInvalidate } = await import("./cache.server");
+    cacheInvalidate("db:store");
+  }
+}
+
+let annualEventsCheckedOn: string | undefined;
+
+async function ensureAnnualEventPages(now = new Date()) {
+  const today = now.toISOString().slice(0, 10);
+  if (annualEventsCheckedOn === today) return;
+
+  const pool = getPool();
+  let created = false;
+
+  // Existing databases predate the annual field. Enable it once for the Hull Fair
+  // record without re-enabling it if an editor deliberately turns it off later.
+  const hullFair = await pool.query("select 1 from events where slug = 'hull-fair-2026' limit 1");
+  if (hullFair.rowCount) {
+    const migration = await pool.query(
+      `insert into site_settings (key, value)
+       values ('migration:hull-fair-annual', 'true'::jsonb)
+       on conflict (key) do nothing
+       returning key`,
+    );
+    if (migration.rowCount) {
+      await pool.query(
+        `update events
+         set data = jsonb_set(data, '{recurrence}', '{"type":"annual"}'::jsonb)
+         where slug = 'hull-fair-2026' and data->'recurrence' is null`,
+      );
+    }
+  }
+
+  // Repeat so a dormant site can catch up more than one missed year in one request.
+  for (let pass = 0; pass < 10; pass += 1) {
+    const result = await pool.query<{ data: import("@/types").EventItem }>(
+      "select data from events where data->'recurrence'->>'type' = 'annual'",
+    );
+    let createdThisPass = false;
+
+    for (const row of result.rows) {
+      const successor = createAnnualSuccessor(row.data, now);
+      if (!successor) continue;
+
+      const existing = await pool.query("select 1 from events where slug = $1 limit 1", [
+        successor.slug,
+      ]);
+      if (existing.rowCount) continue;
+
+      const inserted = await pool.query(
+        `insert into events (id, data) values ($1, $2)
+         on conflict (id) do nothing`,
+        [successor.id, JSON.stringify(successor)],
+      );
+      if (inserted.rowCount) {
+        created = true;
+        createdThisPass = true;
+      }
+    }
+
+    if (!createdThisPass) break;
+  }
+
+  annualEventsCheckedOn = today;
+  if (created) {
+    const { cacheInvalidate } = await import("./cache.server");
+    cacheInvalidate("db:store");
+  }
 }
 
 function emptyStore(): AppStore {
@@ -691,6 +802,8 @@ export async function deleteArticle(id: string) {
 
 export async function upsertEvent(event: import("@/types").EventItem) {
   await upsertRecord("events", event.id, event);
+  annualEventsCheckedOn = undefined;
+  await ensureAnnualEventPages();
 }
 export async function deleteEvent(id: string) {
   await ensureSchema();
@@ -1427,7 +1540,7 @@ const SETTING_DEFAULTS: Record<string, string> = {
   meta_description: "Events, places, stories and independent businesses across Hull.",
   meta_description_og: "Find what's on, where to eat and what to explore in Hull.",
   og_image: "",
-  ga_id: "",
+  ga_id: "G-RRCN783REP",
   // Contact
   contact_email: "hello@hunow.co.uk",
   contact_phone: "",
@@ -1446,6 +1559,18 @@ export async function getSiteSettings(): Promise<Record<string, string>> {
     await getPool().query(
       "insert into site_settings (key, value) values ($1, $2) on conflict (key) do nothing",
       [key, value],
+    );
+  }
+  const analyticsMigration = await getPool().query(
+    `insert into site_settings (key, value)
+     values ('migration:google-analytics-rrcn783rep', 'done')
+     on conflict (key) do nothing
+     returning key`,
+  );
+  if (analyticsMigration.rowCount) {
+    await getPool().query(
+      "update site_settings set value = $1 where key = 'ga_id' and value = ''",
+      ["G-RRCN783REP"],
     );
   }
   const r = await getPool().query<{ key: string; value: string }>(

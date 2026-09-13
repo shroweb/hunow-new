@@ -14,8 +14,18 @@ const FESTIVAL_PATHS: Record<string, string> = {
   "hull-pride": "/hull-pride",
 };
 
+const FIXTURE_PATHS: Record<string, string> = {
+  "hull-city": "/hull-city-fixtures",
+  "hull-fc": "/hull-fc-fixtures",
+  "hull-kr": "/hull-kr-fixtures",
+};
+
 export const Route = createFileRoute("/c/$section/$sub")({
   loader: async ({ params }) => {
+    const fixtureRedirect = params.section === "whats-on" ? FIXTURE_PATHS[params.sub] : undefined;
+    if (fixtureRedirect) {
+      throw redirect({ href: fixtureRedirect, statusCode: 301 });
+    }
     const festivalRedirect = FESTIVAL_PATHS[params.sub];
     if (festivalRedirect) {
       throw redirect({ href: festivalRedirect, statusCode: 301 });

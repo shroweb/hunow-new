@@ -93,6 +93,78 @@ export const imgSrcSet = (id: string, widths: number[], h?: number) => {
 
 export const seedArticles: Article[] = [
   {
+    id: "article-hull-fair-opening-times-2026",
+    title: "Hull Fair Opening Times 2026: Full Day-by-Day Schedule",
+    slug: "hull-fair-opening-times-2026",
+    excerpt:
+      "The complete Hull Fair 2026 opening timetable for every day, including the Sunday closure and final Saturday.",
+    content: `<h2>Hull Fair 2026 opening dates</h2>
+<p>Hull Fair runs from <strong>Friday 9 October to Saturday 17 October 2026</strong> at Walton Street, Hull. The fair is closed on Sunday 11 October.</p>
+<h2>Day-by-day opening times</h2>
+<ul>
+  <li><strong>Friday 9 October:</strong> 4:00 PM–11:00 PM</li>
+  <li><strong>Saturday 10 October:</strong> 12:00 PM–11:00 PM</li>
+  <li><strong>Sunday 11 October:</strong> Closed</li>
+  <li><strong>Monday 12 to Friday 16 October:</strong> 2:00 PM–11:00 PM daily</li>
+  <li><strong>Saturday 17 October:</strong> 12:00 PM–11:00 PM</li>
+</ul>
+<p>Individual rides and stalls may stop admitting customers before the site closes. Weather, safety requirements or operational decisions can also affect opening, so check current official announcements before travelling.</p>
+<h2>Plan your visit</h2>
+<p>Entry is free, while rides, games and food are priced individually. See the <a href="/hull-fair">complete Hull Fair guide</a> for parking, food, ride and family information, or read our <a href="/guides/hull-fair-buses-2026">Hull Fair buses guide</a>.</p>`,
+    category: "Guides",
+    tags: ["Hull Fair", "Opening Times", "Family", "What's On"],
+    featuredImage: "/hull-fair-hero.jpg",
+    author: "HU NOW Editorial Team",
+    status: "published",
+    isFeatured: false,
+    isSponsored: false,
+    readingMinutes: 2,
+    publishedAt: "2026-09-13",
+    section: "things-to-do",
+    subcategory: "guides",
+    seo: {
+      title: "Hull Fair Opening Times 2026: Daily Timetable",
+      description:
+        "Hull Fair 2026 opening times for every day from 9–17 October, including the Sunday closure and weekday and Saturday hours.",
+    },
+  },
+  {
+    id: "article-hull-fair-buses-2026",
+    title: "Hull Fair Buses 2026: Park & Ride and Travel Guide",
+    slug: "hull-fair-buses-2026",
+    excerpt:
+      "How to reach Hull Fair by bus, including the two park-and-ride locations, service frequency and late-evening planning.",
+    content: `<h2>Getting to Hull Fair by bus</h2>
+<p>Using a bus or park-and-ride service is one of the simplest ways to avoid the road closures and residential parking restrictions around Walton Street during Hull Fair.</p>
+<h2>Hull Fair park-and-ride buses</h2>
+<p>Hull City Council lists dedicated Hull Fair services from two sites. Services are scheduled every <strong>10–15 minutes</strong>, with both sites open until <strong>11:00 PM</strong> each day of the fair.</p>
+<ul>
+  <li><strong>Priory Park:</strong> Henry Boot Way, Hull HU4 7DY. Parking is free; bus fares apply.</li>
+  <li><strong>Humber Bridge:</strong> Ferriby Road, Hessle HU13 0JG.</li>
+</ul>
+<p>Allow extra time at peak periods and confirm current fares, boarding points and last departures before setting off.</p>
+<h2>Local bus services</h2>
+<p>Additional local services may operate near Walton Street and from Hull Paragon Interchange. Routes and temporary diversions can change during the fair, so use the current operator journey planner on the day rather than relying on an older timetable.</p>
+<h2>More Hull Fair travel information</h2>
+<p>Read our <a href="/guides/guide-to-parking-at-hull-fair">complete Hull Fair parking guide</a> for stadium parking and road restrictions, check the <a href="/guides/hull-fair-opening-times-2026">daily opening timetable</a>, or return to the <a href="/hull-fair">main Hull Fair guide</a>.</p>`,
+    category: "Guides",
+    tags: ["Hull Fair", "Buses", "Park and Ride", "Travel"],
+    featuredImage: "/hull-fair-hero.jpg",
+    author: "HU NOW Editorial Team",
+    status: "published",
+    isFeatured: false,
+    isSponsored: false,
+    readingMinutes: 3,
+    publishedAt: "2026-09-13",
+    section: "community",
+    subcategory: "travel",
+    seo: {
+      title: "Hull Fair Buses 2026: Park & Ride Information",
+      description:
+        "Hull Fair 2026 bus and park-and-ride guide, including Priory Park and Humber Bridge locations, service frequency and travel advice.",
+    },
+  },
+  {
     id: "a1",
     title: "The Secret Garden Cafe Behind Whitefriargate",
     slug: "secret-garden-cafe-whitefriargate",
@@ -1014,6 +1086,7 @@ export const seedEvents: EventItem[] = [
     status: "published",
     isFeatured: true,
     isSponsored: false,
+    recurrence: { type: "annual" },
     seo: {
       title: "Hull Fair 2026 Dates, Opening Times & Parking — Walton Street",
       description:

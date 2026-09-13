@@ -140,7 +140,7 @@ function AdminEvents() {
       recurrence:
         fd.get("recurrenceType") && fd.get("recurrenceType") !== "none"
           ? {
-              type: fd.get("recurrenceType") as "weekly" | "biweekly" | "monthly",
+              type: fd.get("recurrenceType") as "weekly" | "biweekly" | "monthly" | "annual",
               until: String(fd.get("recurrenceUntil") || "") || undefined,
             }
           : undefined,
@@ -614,6 +614,7 @@ function AdminEvents() {
                     <option value="weekly">Weekly</option>
                     <option value="biweekly">Every two weeks</option>
                     <option value="monthly">Monthly</option>
+                    <option value="annual">Annual — create next year 6 months before</option>
                   </select>
                 </AdminField>
                 <AdminField label="Repeat until">
