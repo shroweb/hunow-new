@@ -31,11 +31,36 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         // Static pages
         entries.push({ path: "/", changefreq: "weekly", priority: "1.0", lastmod: today() });
-        entries.push({ path: "/hull-fair", changefreq: "daily", priority: "1.0", lastmod: today() });
-        entries.push({ path: "/humber-street-sesh", changefreq: "weekly", priority: "0.9", lastmod: today() });
-        entries.push({ path: "/freedom-festival", changefreq: "weekly", priority: "0.9", lastmod: today() });
-        entries.push({ path: "/christmas-lights-switch-on", changefreq: "weekly", priority: "0.9", lastmod: today() });
-        entries.push({ path: "/hull-pride", changefreq: "weekly", priority: "0.9", lastmod: today() });
+        entries.push({
+          path: "/hull-fair",
+          changefreq: "daily",
+          priority: "1.0",
+          lastmod: today(),
+        });
+        entries.push({
+          path: "/humber-street-sesh",
+          changefreq: "weekly",
+          priority: "0.9",
+          lastmod: today(),
+        });
+        entries.push({
+          path: "/freedom-festival",
+          changefreq: "weekly",
+          priority: "0.9",
+          lastmod: today(),
+        });
+        entries.push({
+          path: "/christmas-lights-switch-on",
+          changefreq: "weekly",
+          priority: "0.9",
+          lastmod: today(),
+        });
+        entries.push({
+          path: "/hull-pride",
+          changefreq: "weekly",
+          priority: "0.9",
+          lastmod: today(),
+        });
         entries.push({ path: "/whats-on", changefreq: "daily", priority: "0.9", lastmod: today() });
         entries.push({ path: "/stories", changefreq: "daily", priority: "0.9", lastmod: today() });
         entries.push({ path: "/offers", changefreq: "weekly", priority: "0.8", lastmod: today() });
@@ -69,12 +94,15 @@ export const Route = createFileRoute("/sitemap.xml")({
           addedPaths.add(e.path);
         }
 
-        const FESTIVAL_PATHS: Record<string, string> = {
+        const CANONICAL_SUB_PATHS: Record<string, string> = {
           "hull-fair": "/hull-fair",
           "humber-street-sesh": "/humber-street-sesh",
           "freedom-festival": "/freedom-festival",
           "christmas-lights-switch-on": "/christmas-lights-switch-on",
           "hull-pride": "/hull-pride",
+          "hull-city": "/hull-city-fixtures",
+          "hull-fc": "/hull-fc-fixtures",
+          "hull-kr": "/hull-kr-fixtures",
         };
 
         for (const taxonomy of TAXONOMIES) {
@@ -104,7 +132,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             });
           }
           for (const sub of section.subs) {
-            const canonicalSub = FESTIVAL_PATHS[sub.slug] ?? `/c/${section.slug}/${sub.slug}`;
+            const canonicalSub = CANONICAL_SUB_PATHS[sub.slug] ?? `/c/${section.slug}/${sub.slug}`;
             if (!addedPaths.has(canonicalSub)) {
               addedPaths.add(canonicalSub);
               entries.push({
@@ -135,7 +163,11 @@ export const Route = createFileRoute("/sitemap.xml")({
         for (const event of events) {
           if (event.status === "published") {
             const isUpcoming = (event.endDate || event.startDate) >= todayStr;
-            const isFeaturedOrMajor = event.isFeatured || event.slug.includes("hull-fair") || event.slug.includes("sesh") || event.slug.includes("freedom");
+            const isFeaturedOrMajor =
+              event.isFeatured ||
+              event.slug.includes("hull-fair") ||
+              event.slug.includes("sesh") ||
+              event.slug.includes("freedom");
             if (isUpcoming || isFeaturedOrMajor) {
               entries.push({
                 path: `/events/${event.slug}`,
