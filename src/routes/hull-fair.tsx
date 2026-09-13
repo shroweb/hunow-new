@@ -6,6 +6,9 @@ import { SaveButton } from "@/components/SaveButton";
 import { AdSlot } from "@/components/AdSlot";
 import { subscribeNewsletter } from "@/lib/public.functions";
 
+const HULL_FAIR_HERO_IMAGE = "/hull-fair-hero.jpg";
+const HULL_FAIR_HERO_IMAGE_URL = `https://www.hunow.co.uk${HULL_FAIR_HERO_IMAGE}`;
+
 const HULL_FAIR_FAQS = [
   {
     question: "When is Hull Fair 2026?",
@@ -75,7 +78,7 @@ export const Route = createFileRoute("/hull-fair")({
       },
       {
         property: "og:image",
-        content: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&h=800&q=80",
+        content: HULL_FAIR_HERO_IMAGE_URL,
       },
       { property: "og:type", content: "article" },
       { property: "og:url", content: "https://www.hunow.co.uk/hull-fair" },
@@ -86,7 +89,7 @@ export const Route = createFileRoute("/hull-fair")({
       },
       {
         name: "twitter:image",
-        content: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&h=800&q=80",
+        content: HULL_FAIR_HERO_IMAGE_URL,
       },
     ],
     links: [{ rel: "canonical", href: "https://www.hunow.co.uk/hull-fair" }],
@@ -105,7 +108,7 @@ export const Route = createFileRoute("/hull-fair")({
           eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
           isAccessibleForFree: true,
           url: "https://www.hunow.co.uk/hull-fair",
-          image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&h=800&q=80",
+          image: HULL_FAIR_HERO_IMAGE_URL,
           location: {
             "@type": "Place",
             name: "Walton Street Fairground",
@@ -199,8 +202,7 @@ function HullFairPage() {
         <div
           className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity scale-105"
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1600&q=80')",
+            backgroundImage: `url('${HULL_FAIR_HERO_IMAGE}')`,
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
