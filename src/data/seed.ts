@@ -385,10 +385,10 @@ export const seedArticles: Article[] = [
   },
   {
     id: "article-best-sunday-roasts-hull-east-yorkshire",
-    title: "The Best Sunday Roasts in Hull & East Yorkshire: From Old Town Taverns to Country Inns",
+    title: "Best Sunday Dinner in Hull: Sunday Roasts & Pub Lunches 2026",
     slug: "best-sunday-roasts-hull-east-yorkshire",
     excerpt:
-      "Where to get the ultimate Sunday roast in Hull and East Yorkshire. Giant Yorkshire puddings, slow-roasted local beef, crispy roasties, and rich gravy at the best pubs and restaurants.",
+      "Looking for the best Sunday dinner in Hull? Discover Sunday roasts, pub lunches, Yorkshire puddings and country inns to book in Hull and East Yorkshire.",
     content: `<h2>The Quest for the Perfect Sunday Roast</h2>
 <p>In Yorkshire, Sunday lunch is taken seriously. We demand towering, crisp-edged Yorkshire puddings, slow-roasted local meats with serious flavour, roast potatoes that crackle on the outside and fluff up in the centre, and gravy that has simmered for hours. Whether you want a historic wooden-beamed tavern in Hull Old Town or an award-winning country dining pub in the East Riding, here are the finest Sunday roasts to book this weekend.</p>
 
@@ -435,9 +435,9 @@ export const seedArticles: Article[] = [
     isFeatured: true,
     isSponsored: false,
     seo: {
-      title: "The Best Sunday Roasts in Hull & East Yorkshire: Ultimate Guide",
+      title: "Best Sunday Dinner in Hull 2026: Sunday Roast Guide",
       description:
-        "Complete guide to the best Sunday roasts in Hull and East Yorkshire. Giant Yorkshire puddings, local roast beef, country pubs, and booking tips.",
+        "Find the best Sunday dinner in Hull and East Yorkshire, from classic Sunday roasts and pub lunches to vegetarian options and country inns. Includes booking tips.",
     },
   },
   {
