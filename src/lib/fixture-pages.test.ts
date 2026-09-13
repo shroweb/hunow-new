@@ -33,9 +33,24 @@ describe("fixture landing page matching", () => {
     expect(eventMatchesFixtureTeam(fc, "hull-city")).toBe(false);
   });
 
-  test("matches Hull KR home fixtures by venue", () => {
+  test("matches Hull KR fixtures by team name", () => {
     const kr = fixture("Hull Kingston Rovers vs Wigan", "Super League", "Craven Park");
     expect(eventMatchesFixtureTeam(kr, "hull-kr")).toBe(true);
+  });
+
+  test("rejects unrelated events that mention Hull City Council or use a club venue", () => {
+    const councilEvent = fixture(
+      "Hull Card Show",
+      "A community event supported by Hull City Council.",
+      "City Hall",
+    );
+    const stadiumEvent = fixture("Summer Concert", "Live music", "MKM Stadium");
+    const cravenParkEvent = fixture("Fireworks Night", "Family entertainment", "Craven Park");
+
+    expect(eventMatchesFixtureTeam(councilEvent, "hull-city")).toBe(false);
+    expect(eventMatchesFixtureTeam(stadiumEvent, "hull-city")).toBe(false);
+    expect(eventMatchesFixtureTeam(stadiumEvent, "hull-fc")).toBe(false);
+    expect(eventMatchesFixtureTeam(cravenParkEvent, "hull-kr")).toBe(false);
   });
 
   test("excludes drafts", () => {

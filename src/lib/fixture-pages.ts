@@ -30,45 +30,40 @@ export function eventMatchesFixtureTeam(event: EventItem, team: FixtureTeam) {
   if (event.status !== "published") return false;
 
   const title = event.title.toLowerCase();
-  const description = event.description.toLowerCase();
   const category = event.category.toLowerCase();
-  const location = `${event.locationName} ${event.address}`.toLowerCase();
   const tags = (event.tags || []).map((tag) => tag.toLowerCase());
+  const isMatchTitle = title.includes(" vs ") || title.includes(" (away)");
 
   if (team === "hull-city") {
     return (
-      title.includes("hull city") ||
-      description.includes("hull city") ||
-      tags.some((tag) => tag.includes("hull city")) ||
+      event.id.startsWith("hullcity-") ||
+      event.slug.startsWith("hull-city-vs-") ||
+      event.slug.startsWith("hull-city-at-") ||
       category === "hull-city" ||
-      (location.includes("mkm stadium") &&
-        title.includes("vs") &&
-        !description.includes("rugby") &&
-        !title.includes("hull fc"))
+      tags.some((tag) => tag === "hull city" || tag === "hull city afc") ||
+      (isMatchTitle && title.includes("hull city") && !title.includes("hull fc"))
     );
   }
 
   if (team === "hull-fc") {
     return (
-      ((title.includes("hull fc") || title.includes("hull f.c.")) && !title.includes("hull kr")) ||
-      description.includes("hull fc") ||
-      tags.some((tag) => tag.includes("hull fc")) ||
+      event.id.startsWith("hullfc-") ||
+      event.slug.startsWith("hull-fc-vs-") ||
+      event.slug.startsWith("hull-fc-at-") ||
       category === "hull-fc" ||
-      (location.includes("mkm stadium") &&
-        (description.includes("super league") || description.includes("rugby")))
+      tags.some((tag) => tag === "hull fc" || tag === "hull f.c.") ||
+      (isMatchTitle &&
+        (title.includes("hull fc") || title.includes("hull f.c.")) &&
+        !title.includes("hull kr"))
     );
   }
 
   return (
-    title.includes("hull kr") ||
-    title.includes("hull kingston") ||
-    description.includes("hull kr") ||
-    description.includes("hull kingston") ||
-    tags.some(
-      (tag) =>
-        tag.includes("hull kr") || tag.includes("kingston rovers") || tag.includes("craven park"),
-    ) ||
+    event.id.startsWith("hullkr-") ||
+    event.slug.startsWith("hull-kr-vs-") ||
+    event.slug.startsWith("hull-kr-at-") ||
     category === "hull-kr" ||
-    location.includes("craven park")
+    tags.some((tag) => tag === "hull kr" || tag === "hull kingston rovers") ||
+    (isMatchTitle && (title.includes("hull kr") || title.includes("hull kingston rovers")))
   );
 }
