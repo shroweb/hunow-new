@@ -56,6 +56,7 @@ function ListingsPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const [cat, setCat] = useState("All");
   const [area, setArea] = useState("All");
@@ -125,6 +126,7 @@ function ListingsPage() {
   useEffect(() => {
     let active = true;
     setLoading(true);
+    setLoadFailed(false);
     fetchPagedListings({
       data: {
         category: cat === "All" ? undefined : cat,
@@ -142,7 +144,10 @@ function ListingsPage() {
       })
       .catch((err) => {
         console.error(err);
-        if (active) setLoading(false);
+        if (active) {
+          setLoadFailed(true);
+          setLoading(false);
+        }
       });
     return () => {
       active = false;
@@ -176,9 +181,7 @@ function ListingsPage() {
   }, [cat, area, debouncedQ, openNow, userCoords]);
 
   const totalPages = Math.ceil((openNow ? filtered.length : totalCount) / PER_PAGE);
-  const paged = openNow
-    ? filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
-    : filtered;
+  const paged = openNow ? filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE) : filtered;
 
   const distanceFor = (l: Listing) => {
     if (!userCoords || l.latitude == null || l.longitude == null) return null;
@@ -315,12 +318,17 @@ function ListingsPage() {
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         <p className="text-[10px] font-mono uppercase text-muted-foreground mb-6">
-          {openNow ? filtered.length : totalCount} {(openNow ? filtered.length : totalCount) === 1 ? "listing" : "listings"}
+          {openNow ? filtered.length : totalCount}{" "}
+          {(openNow ? filtered.length : totalCount) === 1 ? "listing" : "listings"}
         </p>
         {loading ? (
           <div className="flex justify-center py-20">
             <span className="font-mono text-sm uppercase animate-pulse">Loading listings…</span>
           </div>
+        ) : loadFailed ? (
+          <p className="text-muted-foreground">
+            Listings could not be loaded. Please refresh and try again.
+          </p>
         ) : filtered.length === 0 ? (
           <p className="text-muted-foreground">No listings match your filters.</p>
         ) : view === "map" ? (

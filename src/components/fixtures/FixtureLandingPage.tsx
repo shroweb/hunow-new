@@ -6,7 +6,15 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { FIXTURE_TEAMS, eventMatchesFixtureTeam, type FixtureTeam } from "@/lib/fixture-pages";
 import type { EventItem } from "@/types";
 
-export function FixtureLandingPage({ team, events }: { team: FixtureTeam; events: EventItem[] }) {
+export function FixtureLandingPage({
+  team,
+  events,
+  loadFailed = false,
+}: {
+  team: FixtureTeam;
+  events: EventItem[];
+  loadFailed?: boolean;
+}) {
   const config = FIXTURE_TEAMS[team];
   const today = new Date().toISOString().slice(0, 10);
   const fixtures = events
@@ -57,7 +65,13 @@ export function FixtureLandingPage({ team, events }: { team: FixtureTeam; events
           </span>
         </div>
 
-        {fixtures.length > 0 ? (
+        {loadFailed ? (
+          <div className="border-2 border-dashed border-border py-16 px-6 text-center">
+            <RefreshCw className="size-10 mx-auto mb-4 text-muted-foreground" />
+            <h2 className="font-display text-3xl uppercase mb-2">Fixtures could not be loaded</h2>
+            <p className="text-sm text-muted-foreground">Please refresh and try again.</p>
+          </div>
+        ) : fixtures.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
             {fixtures.map((event) => (
               <EventCard key={event.id} event={event} />

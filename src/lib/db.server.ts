@@ -503,9 +503,24 @@ create index if not exists web_push_subscriptions_user_id_idx on web_push_subscr
 
 export async function ensureSchema() {
   if (!schemaReady) {
-    schemaReady = getPool()
-      .query(SCHEMA_SQL)
-      .then(() => undefined);
+    schemaReady = (async () => {
+      const client = await getPool().connect();
+      try {
+        await client.query("begin");
+        // Vercel can start several function instances at once. PostgreSQL's
+        // IF NOT EXISTS DDL is not safe when those instances alter the same
+        // catalogue tuple concurrently, so serialize schema setup globally.
+        await client.query("select pg_advisory_xact_lock(hashtext('hunow:schema'))");
+        await client.query(SCHEMA_SQL);
+        await client.query("commit");
+      } catch (error) {
+        await client.query("rollback");
+        schemaReady = undefined;
+        throw error;
+      } finally {
+        client.release();
+      }
+    })();
   }
   await schemaReady;
 }
@@ -809,14 +824,17 @@ export async function deleteEvent(id: string) {
   await ensureSchema();
   const pool = getPool();
   try {
-    const evRes = await pool.query<{ data: any }>("SELECT data FROM events WHERE id = $1", [id]);
+    const evRes = await pool.query<{ data: import("@/types").EventItem }>(
+      "SELECT data FROM events WHERE id = $1",
+      [id],
+    );
     if (evRes.rows[0]?.data) {
       const ev = evRes.rows[0].data;
       await pool.query(
         `INSERT INTO deleted_events (id, title, start_date, slug, ticket_url, deleted_at)
          VALUES ($1, $2, $3, $4, $5, NOW())
          ON CONFLICT (id) DO UPDATE SET deleted_at = NOW()`,
-        [id, ev.title || "", ev.startDate || "", ev.slug || "", ev.ticketUrl || ""]
+        [id, ev.title || "", ev.startDate || "", ev.slug || "", ev.ticketUrl || ""],
       );
     }
   } catch (err) {
@@ -2307,7 +2325,12 @@ export async function findUserByEmail(
   return result.rows[0] ?? null;
 }
 
-export async function getRelatedForListing(listingId: string, category: string, area: string, name: string) {
+export async function getRelatedForListing(
+  listingId: string,
+  category: string,
+  area: string,
+  name: string,
+) {
   await ensureSeeded();
   const pool = getPool();
   const lowerName = `%${name.toLowerCase().trim()}%`;
@@ -2346,7 +2369,12 @@ export async function getRelatedForListing(listingId: string, category: string, 
   };
 }
 
-export async function getRelatedForEvent(eventId: string, category: string, locationName: string, address: string) {
+export async function getRelatedForEvent(
+  eventId: string,
+  category: string,
+  locationName: string,
+  address: string,
+) {
   await ensureSeeded();
   const pool = getPool();
   const lowerLoc = `%${locationName.toLowerCase().trim()}%`;
@@ -2383,7 +2411,12 @@ export async function getRelatedForEvent(eventId: string, category: string, loca
   };
 }
 
-export async function getRelatedForArticle(articleId: string, category: string, subcategory: string, title: string) {
+export async function getRelatedForArticle(
+  articleId: string,
+  category: string,
+  subcategory: string,
+  title: string,
+) {
   await ensureSeeded();
   const pool = getPool();
   const lowerTitle = `%${title.toLowerCase().trim()}%`;
@@ -2421,8 +2454,13 @@ export async function getRelatedForArticle(articleId: string, category: string, 
 export async function getOfferById(id: string) {
   await ensureSeeded();
   const r = await getPool().query<{ data: unknown }>(
-    "select data from offers where id = $1 and data->>'status' = 'active' limit 1",
-    [id],
+    `select data from offers
+     where id = $1
+       and data->>'status' = 'active'
+       and data->>'startDate' <= $2
+       and data->>'endDate' >= $2
+     limit 1`,
+    [id, new Date().toISOString().slice(0, 10)],
   );
   return r.rows[0]?.data as import("@/types").Offer | undefined;
 }
@@ -2430,19 +2468,22 @@ export async function getOfferById(id: string) {
 export async function getActiveOffers(excludeListingId?: string, limit = 100) {
   await ensureSeeded();
   const pool = getPool();
+  const today = new Date().toISOString().slice(0, 10);
   const sql = excludeListingId
     ? `select o.data, l.slug as listing_slug
        from offers o
        left join listings l on o.listing_id = l.id
        where o.listing_id != $1 and o.data->>'status' = 'active'
-       order by o.created_at desc limit $2`
+         and o.data->>'startDate' <= $2 and o.data->>'endDate' >= $2
+       order by o.created_at desc limit $3`
     : `select o.data, l.slug as listing_slug
        from offers o
        left join listings l on o.listing_id = l.id
        where o.data->>'status' = 'active'
-       order by o.created_at desc limit $1`;
-  const params = excludeListingId ? [excludeListingId, limit] : [limit];
-  const r = await pool.query<{ data: any; listing_slug?: string }>(sql, params);
+         and o.data->>'startDate' <= $1 and o.data->>'endDate' >= $1
+       order by o.created_at desc limit $2`;
+  const params = excludeListingId ? [excludeListingId, today, limit] : [today, limit];
+  const r = await pool.query<{ data: import("@/types").Offer; listing_slug?: string }>(sql, params);
   return r.rows.map((row) => ({
     ...(row.data as import("@/types").Offer),
     listingSlug: row.listing_slug ?? undefined,

@@ -108,6 +108,7 @@ function WhatsOn() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const [category, setCategory] = useState(search.category ?? "All");
   const [freeOnly, setFreeOnly] = useState(search.free ?? false);
@@ -155,6 +156,7 @@ function WhatsOn() {
   useEffect(() => {
     let active = true;
     setLoading(true);
+    setLoadFailed(false);
     fetchPagedEvents({
       data: {
         category: category === "All" ? undefined : category,
@@ -174,7 +176,10 @@ function WhatsOn() {
       })
       .catch((err) => {
         console.error(err);
-        if (active) setLoading(false);
+        if (active) {
+          setLoadFailed(true);
+          setLoading(false);
+        }
       });
     return () => {
       active = false;
@@ -280,6 +285,10 @@ function WhatsOn() {
           <div className="py-32 text-center font-mono text-sm uppercase text-muted-foreground animate-pulse">
             Loading events…
           </div>
+        ) : loadFailed ? (
+          <div className="py-32 text-center font-mono text-sm uppercase text-muted-foreground">
+            Events could not be loaded. Please refresh and try again.
+          </div>
         ) : events.length === 0 ? (
           <div className="py-32 text-center font-mono text-sm uppercase text-muted-foreground">
             No events match your filters.
@@ -314,10 +323,11 @@ function WhatsOn() {
               Your Guide to Live Entertainment Across Hull & East Yorkshire
             </h2>
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              From packed arena tours on Myton Street to independent grassroots gigs in historic pubs,
-              Kingston upon Hull is one of northern England's most vibrant, distinctive cultural centres.
-              Whether you are planning a weekend visit, tracking upcoming comedy dates, or scouting free
-              family activities during the school holidays, our weekly-updated listings cover every corner of the city.
+              From packed arena tours on Myton Street to independent grassroots gigs in historic
+              pubs, Kingston upon Hull is one of northern England's most vibrant, distinctive
+              cultural centres. Whether you are planning a weekend visit, tracking upcoming comedy
+              dates, or scouting free family activities during the school holidays, our
+              weekly-updated listings cover every corner of the city.
             </p>
           </div>
 
@@ -325,19 +335,23 @@ function WhatsOn() {
             <div>
               <h3 className="text-xl font-bold uppercase mb-2">Major Arenas & Theatres</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                <strong>Connexin Live Hull</strong> (the 3,500-capacity arena near Hull Marina) hosts global touring rock bands,
-                stand-up comedians, and major sporting bouts. For theatre lovers, <strong>Hull New Theatre</strong> in Kingston
-                Square welcomes national West End musicals, opera, and family pantomimes, while <strong>Hull Truck Theatre</strong> on
-                Ferensway champions groundbreaking regional drama and intimate new writing.
+                <strong>Connexin Live Hull</strong> (the 3,500-capacity arena near Hull Marina)
+                hosts global touring rock bands, stand-up comedians, and major sporting bouts. For
+                theatre lovers, <strong>Hull New Theatre</strong> in Kingston Square welcomes
+                national West End musicals, opera, and family pantomimes, while{" "}
+                <strong>Hull Truck Theatre</strong> on Ferensway champions groundbreaking regional
+                drama and intimate new writing.
               </p>
             </div>
             <div>
               <h3 className="text-xl font-bold uppercase mb-2">Grassroots Venues & Nightlife</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                Hull's live music heritage runs deep. The legendary <strong>New Adelphi Club</strong> on De Grey Street has launched
-                breakout bands for over four decades. Along Spring Bank, <strong>The Polar Bear Music Club</strong> offers late-night
-                live sets and showcase nights, while the converted warehouses along <strong>Humber Street</strong> host acoustic sessions,
-                DJ sets, and contemporary art exhibitions.
+                Hull's live music heritage runs deep. The legendary{" "}
+                <strong>New Adelphi Club</strong> on De Grey Street has launched breakout bands for
+                over four decades. Along Spring Bank, <strong>The Polar Bear Music Club</strong>{" "}
+                offers late-night live sets and showcase nights, while the converted warehouses
+                along <strong>Humber Street</strong> host acoustic sessions, DJ sets, and
+                contemporary art exhibitions.
               </p>
             </div>
           </div>
@@ -351,30 +365,45 @@ function WhatsOn() {
                 to="/hull-fair"
                 className="p-5 border border-border bg-background hover:border-accent transition-colors block group"
               >
-                <div className="text-xs font-mono uppercase text-accent mb-1">October Tradition</div>
-                <div className="font-bold text-lg group-hover:text-accent transition-colors">Hull Fair</div>
+                <div className="text-xs font-mono uppercase text-accent mb-1">
+                  October Tradition
+                </div>
+                <div className="font-bold text-lg group-hover:text-accent transition-colors">
+                  Hull Fair
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Europe’s largest travelling fair featuring over 250 spectacular rides and attractions along Walton Street.
+                  Europe’s largest travelling fair featuring over 250 spectacular rides and
+                  attractions along Walton Street.
                 </p>
               </Link>
               <Link
                 to="/humber-street-sesh"
                 className="p-5 border border-border bg-background hover:border-accent transition-colors block group"
               >
-                <div className="text-xs font-mono uppercase text-accent mb-1">August Music Festival</div>
-                <div className="font-bold text-lg group-hover:text-accent transition-colors">Humber Street Sesh</div>
+                <div className="text-xs font-mono uppercase text-accent mb-1">
+                  August Music Festival
+                </div>
+                <div className="font-bold text-lg group-hover:text-accent transition-colors">
+                  Humber Street Sesh
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  The UK’s premier grassroots festival showcasing over 200 homegrown artists across Marina and Old Town stages.
+                  The UK’s premier grassroots festival showcasing over 200 homegrown artists across
+                  Marina and Old Town stages.
                 </p>
               </Link>
               <Link
                 to="/freedom-festival"
                 className="p-5 border border-border bg-background hover:border-accent transition-colors block group"
               >
-                <div className="text-xs font-mono uppercase text-accent mb-1">International Arts</div>
-                <div className="font-bold text-lg group-hover:text-accent transition-colors">Freedom Festival</div>
+                <div className="text-xs font-mono uppercase text-accent mb-1">
+                  International Arts
+                </div>
+                <div className="font-bold text-lg group-hover:text-accent transition-colors">
+                  Freedom Festival
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  World-class street theatre, acrobatic spectacles, outdoor dance, and community exhibitions celebrating civil liberties.
+                  World-class street theatre, acrobatic spectacles, outdoor dance, and community
+                  exhibitions celebrating civil liberties.
                 </p>
               </Link>
               <Link
@@ -382,46 +411,65 @@ function WhatsOn() {
                 className="p-5 border border-border bg-background hover:border-accent transition-colors block group"
               >
                 <div className="text-xs font-mono uppercase text-accent mb-1">Winter Highlight</div>
-                <div className="font-bold text-lg group-hover:text-accent transition-colors">Christmas Lights Switch-On</div>
+                <div className="font-bold text-lg group-hover:text-accent transition-colors">
+                  Christmas Lights Switch-On
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Queen Victoria Square illuminations, festive markets, and live stage entertainment inaugurating the winter season.
+                  Queen Victoria Square illuminations, festive markets, and live stage entertainment
+                  inaugurating the winter season.
                 </p>
               </Link>
             </div>
           </div>
 
           <div className="pt-6">
-            <h3 className="text-2xl md:text-3xl font-display uppercase mb-4">Frequently Asked Questions</h3>
+            <h3 className="text-2xl md:text-3xl font-display uppercase mb-4">
+              Frequently Asked Questions
+            </h3>
             <div className="divide-y divide-border">
               <div className="py-4">
-                <h4 className="font-bold text-base mb-1">Where do the biggest touring bands play in Hull?</h4>
+                <h4 className="font-bold text-base mb-1">
+                  Where do the biggest touring bands play in Hull?
+                </h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Connexin Live (Hull Arena) near the marina hosts major arena tours, rock bands, and stadium comedy.
-                  For intimate touring acts, The New Adelphi Club, Polar Bear, and Social on Humber Street are the go-to independent music rooms.
+                  Connexin Live (Hull Arena) near the marina hosts major arena tours, rock bands,
+                  and stadium comedy. For intimate touring acts, The New Adelphi Club, Polar Bear,
+                  and Social on Humber Street are the go-to independent music rooms.
                 </p>
               </div>
               <div className="py-4">
-                <h4 className="font-bold text-base mb-1">What theatres operate in Hull for touring plays and comedy?</h4>
+                <h4 className="font-bold text-base mb-1">
+                  What theatres operate in Hull for touring plays and comedy?
+                </h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Hull New Theatre in Kingston Square stages large West End touring musicals, ballet, and opera.
-                  Hull Truck Theatre on Ferensway produces original regional drama, award-winning plays, and regular comedy circuit nights.
+                  Hull New Theatre in Kingston Square stages large West End touring musicals,
+                  ballet, and opera. Hull Truck Theatre on Ferensway produces original regional
+                  drama, award-winning plays, and regular comedy circuit nights.
                 </p>
               </div>
               <div className="py-4">
-                <h4 className="font-bold text-base mb-1">Are there free events and community festivals in Hull?</h4>
+                <h4 className="font-bold text-base mb-1">
+                  Are there free events and community festivals in Hull?
+                </h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Yes. Most outdoor programming during Freedom Festival, the Queen Victoria Square Christmas Lights Switch-On,
-                  and Pride in Hull are free to attend. You can also filter our calendar using the "Free" toggle above to discover no-cost community activities.
+                  Yes. Most outdoor programming during Freedom Festival, the Queen Victoria Square
+                  Christmas Lights Switch-On, and Pride in Hull are free to attend. You can also
+                  filter our calendar using the "Free" toggle above to discover no-cost community
+                  activities.
                 </p>
               </div>
               <div className="py-4">
-                <h4 className="font-bold text-base mb-1">How can event organisers list an event on HU NOW?</h4>
+                <h4 className="font-bold text-base mb-1">
+                  How can event organisers list an event on HU NOW?
+                </h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Organisers, promoters, and local venues can submit their event details via our simple{" "}
+                  Organisers, promoters, and local venues can submit their event details via our
+                  simple{" "}
                   <Link to="/submit" className="underline font-medium hover:text-accent">
                     event submission form
                   </Link>
-                  . Submissions are reviewed by our editorial team and published to the live city diary.
+                  . Submissions are reviewed by our editorial team and published to the live city
+                  diary.
                 </p>
               </div>
             </div>

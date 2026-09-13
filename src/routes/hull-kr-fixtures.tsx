@@ -6,7 +6,7 @@ export const Route = createFileRoute("/hull-kr-fixtures")({
   loader: async () => {
     const { getStoreFromDatabase } = await import("@/lib/store.functions");
     const store = await getStoreFromDatabase().catch(() => null);
-    return { events: store?.events ?? [] };
+    return { events: store?.events ?? [], loadFailed: !store };
   },
   head: () => ({
     meta: [
@@ -19,5 +19,6 @@ export const Route = createFileRoute("/hull-kr-fixtures")({
 });
 
 function HullKrFixturesPage() {
-  return <FixtureLandingPage team="hull-kr" events={Route.useLoaderData().events} />;
+  const data = Route.useLoaderData();
+  return <FixtureLandingPage team="hull-kr" events={data.events} loadFailed={data.loadFailed} />;
 }

@@ -43,6 +43,7 @@ function SearchPage() {
   const [type, setType] = useState("all");
   const [results, setResults] = useState<SearchResults>(emptyResults);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchFailed, setSearchFailed] = useState(false);
   const [inputValue, setInputValue] = useState(q);
   const [showRecent, setShowRecent] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -87,13 +88,17 @@ function SearchPage() {
     }
 
     setIsSearching(true);
+    setSearchFailed(false);
     const id = window.setTimeout(() => {
       void searchContentFn({ data: { query: term } })
         .then((nextResults) => {
           if (!cancelled) setResults(nextResults);
         })
         .catch(() => {
-          if (!cancelled) setResults(emptyResults);
+          if (!cancelled) {
+            setResults(emptyResults);
+            setSearchFailed(true);
+          }
         })
         .finally(() => {
           if (!cancelled) setIsSearching(false);
@@ -292,7 +297,14 @@ function SearchPage() {
         </div>
       )}
 
-      {term && !isSearching && total === 0 && (
+      {term && !isSearching && searchFailed && (
+        <div className="max-w-7xl mx-auto px-4 py-24 text-center">
+          <p className="font-display text-4xl uppercase mb-4">Search unavailable</p>
+          <p className="text-muted-foreground">Please refresh and try again.</p>
+        </div>
+      )}
+
+      {term && !isSearching && !searchFailed && total === 0 && (
         <div className="max-w-7xl mx-auto px-4 py-24 text-center">
           <p className="font-display text-4xl uppercase mb-4">No results</p>
           <p className="text-muted-foreground">Try a different search term.</p>

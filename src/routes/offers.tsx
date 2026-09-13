@@ -14,17 +14,19 @@ export const Route = createFileRoute("/offers")({
     }),
   loader: async () => {
     const { fetchActiveOffers } = await import("@/lib/content-read.functions");
-    const [user, offers] = await Promise.all([
+    const [user, offersResult] = await Promise.all([
       getCurrentUser().catch(() => null),
-      fetchActiveOffers({ data: { limit: 100 } }).catch(() => []),
+      fetchActiveOffers({ data: { limit: 100 } })
+        .then((offers) => ({ offers, loadFailed: false }))
+        .catch(() => ({ offers: [], loadFailed: true })),
     ]);
-    return { user, offers };
+    return { user, ...offersResult };
   },
   component: Offers,
 });
 
 function Offers() {
-  const { user, offers } = Route.useLoaderData();
+  const { user, offers, loadFailed } = Route.useLoaderData();
 
   return (
     <PublicLayout>
@@ -56,19 +58,26 @@ function Offers() {
       </section>
 
       <section className="max-w-7xl mx-auto px-4 py-12">
-        {offers.length === 0 && (
-          <div className="border-2 border-dashed border-foreground/20 p-12 text-center space-y-3">
-            <p className="font-display text-3xl uppercase">No offers right now</p>
-            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-              Check back soon — new deals from Hull's independents are added regularly.
-            </p>
-            <Link
-              to="/listings"
-              className="inline-block mt-2 text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent"
-            >
-              Browse all businesses →
-            </Link>
+        {loadFailed ? (
+          <div className="border-2 border-dashed border-foreground/20 p-12 text-center">
+            <p className="font-display text-3xl uppercase">Offers could not be loaded</p>
+            <p className="text-sm text-muted-foreground mt-2">Please refresh and try again.</p>
           </div>
+        ) : (
+          offers.length === 0 && (
+            <div className="border-2 border-dashed border-foreground/20 p-12 text-center space-y-3">
+              <p className="font-display text-3xl uppercase">No offers right now</p>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                Check back soon — new deals from Hull's independents are added regularly.
+              </p>
+              <Link
+                to="/listings"
+                className="inline-block mt-2 text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent"
+              >
+                Browse all businesses →
+              </Link>
+            </div>
+          )
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {offers.map((o) => {
