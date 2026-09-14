@@ -936,6 +936,129 @@ export const seedArticles: Article[] = [
   },
 ];
 
+seedArticles.push(
+  {
+    id: "article-hull-fair-ride-prices-2026",
+    title: "Hull Fair Ride Prices 2026: What Visitors Should Budget",
+    slug: "hull-fair-ride-prices-2026",
+    excerpt:
+      "A practical, honest guide to Hull Fair admission, ride pricing and budgeting without publishing unconfirmed prices.",
+    content: `<h2>Are Hull Fair ride prices confirmed for 2026?</h2><p>Hull Fair runs at Walton Street from Friday 9 October to Saturday 17 October 2026, closing on Sunday 11 October. Entry to the fairground is free, but every ride, game and food stall is operated and priced separately. Hull City Council has not published a single official 2026 ride-price list, so any website claiming one fixed price for every attraction should be treated cautiously.</p><h2>How payment works</h2><p>Look for the price displayed at each attraction before joining its queue. Prices and accepted payment methods can differ between operators, and a price seen on one ride should not be assumed to apply elsewhere. Carrying both a payment card and some cash gives you an alternative, but visitors should never assume every operator accepts both.</p><h2>Planning a realistic budget</h2><p>Decide how many rides each person may choose before arriving, then keep food, games and travel in separate parts of the budget. Families can reduce surprises by agreeing a spending limit with children and checking prices together. Admission being free also means visitors can enjoy the lights, atmosphere and traditional food without buying a ride package.</p><h2>Avoid unverified price claims</h2><p>Older social posts and previous-year guides are not reliable evidence for 2026. Prices can change by ride, operator and year. HU NOW will only publish exact figures when they appear in current official information or are visibly displayed at the fair. Check the <a href="https://www.hull.gov.uk/leisure/hull-fair" target="_blank" rel="noopener noreferrer">Hull City Council Hull Fair page</a> before travelling, and confirm the displayed cost at the attraction before paying.</p><h2>Confirmed visitor information</h2><p>The official schedule lists a 4pm opening on Friday 9 October, noon openings on both Saturdays, 2pm openings Monday to Friday, and an 11pm close each operating night. The fair is closed on Sunday 11 October. These confirmed times are more useful for planning than speculative ride prices because they let families choose a quieter weekday afternoon or a busier evening visit.</p>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "things-to-do",
+    author: "HU NOW Editorial Team",
+    readingMinutes: 4,
+    featuredImage: "photo-1533230408708-8f9f91d1235a",
+    status: "published",
+    publishedAt: "2026-09-14",
+    tags: ["Hull Fair", "Hull Fair Prices", "Family", "Guides"],
+    isFeatured: false,
+    isSponsored: false,
+    seo: {
+      title: "Hull Fair Ride Prices 2026: Budget & Admission Guide",
+      description:
+        "Is Hull Fair free and how much should you budget for rides? Confirmed 2026 admission and practical advice without unreliable price claims.",
+    },
+  },
+  {
+    id: "article-hull-fair-food-guide",
+    title: "Hull Fair Food Guide: Traditional Favourites and Visitor Tips",
+    slug: "hull-fair-food-guide",
+    excerpt:
+      "What to eat at Hull Fair, from patties and brandy snap to practical allergy and payment advice.",
+    content: `<h2>Food is part of the Hull Fair tradition</h2><p>For many visitors, Hull Fair is as much about familiar tastes and smells as the rides. Patties and chips, cream-filled brandy snap, roasted chestnuts, toffee apples and pomegranates are closely associated with generations of visits to Walton Street. Individual traders vary from year to year, so this guide describes traditions rather than promising that a named stall or product will be present.</p><h2>Hull patties and chips</h2><p>A Hull patty is traditionally made with seasoned mashed potato, often flavoured with sage and onion, coated in batter and fried. It is commonly served with chips and chip spice. Recipes and allergens vary between vendors; ask the trader directly if you need ingredient or cross-contamination information.</p><h2>Brandy snap and sweet favourites</h2><p>Brandy snap is a crisp rolled wafer commonly filled with cream at the fair. Toffee apples, candy floss, doughnuts and roasted nuts are other familiar choices. Dairy, nut, gluten and other allergens may be present, including through shared preparation areas, so never rely on a general online description when making a medical decision.</p><h2>Payment and sensible planning</h2><p>Food stalls set their own prices and payment methods. Check the displayed menu before ordering and consider carrying both card and cash. Busy evenings can mean queues, particularly on Friday and Saturday. A weekday afternoon may be easier for families, although crowd levels cannot be guaranteed.</p><h2>Keeping information accurate</h2><p>Hull City Council confirms the fair dates and operating hours but does not publish a definitive menu or price list for independent traders. HU NOW therefore avoids quoting unverified 2026 food prices. Check signs at the stall, ask about allergens and keep hot food away from crowded ride entrances. Read the <a href="/hull-fair">complete Hull Fair guide</a> for confirmed dates, opening hours and travel advice.</p>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "food-and-drink",
+    author: "HU NOW Editorial Team",
+    readingMinutes: 4,
+    featuredImage: "photo-1515003197210-e0cd71810b5f",
+    status: "published",
+    publishedAt: "2026-09-14",
+    tags: ["Hull Fair", "Food", "Guides"],
+    isFeatured: false,
+    isSponsored: false,
+    seo: {
+      title: "Hull Fair Food Guide: Patties, Brandy Snap & Tips",
+      description:
+        "A practical guide to traditional Hull Fair food, payment, allergens and choosing stalls during the 2026 fair on Walton Street.",
+    },
+  },
+  {
+    id: "article-hull-fair-family-guide-2026",
+    title: "Hull Fair with Children 2026: A Practical Family Guide",
+    slug: "hull-fair-family-guide-2026",
+    excerpt:
+      "Plan a calmer family visit to Hull Fair with confirmed opening times, meeting-point advice and sensible budgeting.",
+    content: `<h2>Planning Hull Fair with children</h2><p>Hull Fair takes place on Walton Street from 9 to 17 October 2026 and is closed on Sunday 11 October. The first Friday opens at 4pm, Saturdays open at noon, and Monday to Friday opens at 2pm. Every operating night closes at 11pm. Families with younger children may prefer daylight or early-evening hours, but no time can be guaranteed to be quiet.</p><h2>Agree a meeting point</h2><p>The fair can be bright, noisy and crowded. Choose a clear meeting point as soon as you arrive, show children how to identify event staff, and make sure older children know a parent or guardian's phone number. A current photograph on your phone can help if someone becomes separated. Follow instructions from council stewards and emergency services.</p><h2>Noise, lights and accessibility</h2><p>Individual rides use flashing lights, loud music and temporary access arrangements. Families affected by sensory conditions should assess each attraction separately and contact the council or operator for current accessibility information. Ear defenders may help some visitors, but they do not remove every sensory trigger.</p><h2>Budgeting and payments</h2><p>Entry is free; rides, games and food are paid for individually. There is no official universal 2026 ride-price list. Agree a spending limit before arriving, check the displayed price and do not assume every operator accepts the same payment method.</p><h2>Travel and weather</h2><p>Road and parking restrictions operate around Walton Street. Use official travel information and allow additional time at busy periods. October weather can change quickly, so check the forecast and bring suitable layers. The <a href="https://www.hull.gov.uk/leisure/hull-fair" target="_blank" rel="noopener noreferrer">Hull City Council page</a> is the authoritative source for last-minute operational changes.</p>`,
+    category: "Guides",
+    subcategory: "family",
+    section: "things-to-do",
+    author: "HU NOW Editorial Team",
+    readingMinutes: 4,
+    featuredImage: "photo-1500530855697-b586d89ba3ee",
+    status: "published",
+    publishedAt: "2026-09-14",
+    tags: ["Hull Fair", "Family", "Children", "Guides"],
+    isFeatured: false,
+    isSponsored: false,
+    seo: {
+      title: "Hull Fair with Children 2026: Family Visitor Guide",
+      description:
+        "Confirmed opening times and practical advice for visiting Hull Fair with children, including safety, budgeting, sensory needs and travel.",
+    },
+  },
+  {
+    id: "article-hull-fair-accessibility-guide-2026",
+    title: "Hull Fair Accessibility Guide 2026: Planning Your Visit",
+    slug: "hull-fair-accessibility-guide-2026",
+    excerpt:
+      "Accessibility planning for Hull Fair, with cautious advice on temporary surfaces, ride access, transport and support.",
+    content: `<h2>Accessibility at a temporary fairground</h2><p>Hull Fair is built temporarily on and around Walton Street, so routes, surfaces and ride access can differ from a permanent attraction. Paved areas do not guarantee step-free access to every ride or stall. Visitors should check their own requirements with Hull City Council and the relevant ride operator before travelling.</p><h2>Ride access is individual</h2><p>Each attraction has its own physical design and safety requirements. Transfer arrangements, restraint systems, steps and boarding procedures may differ. Staff at the ride are best placed to explain the current requirements, but visitors with specific needs may wish to seek information in advance rather than relying on a decision made in a busy queue.</p><h2>Choosing a time</h2><p>The confirmed 2026 schedule is 4pm on Friday 9 October, noon on Saturdays 10 and 17 October, and 2pm Monday 12 to Friday 16 October, with an 11pm close. The fair is closed on Sunday 11 October. Earlier weekday hours may be less intense for some visitors, although noise, lighting and crowd levels cannot be guaranteed.</p><h2>Travel and parking</h2><p>Restrictions apply around Walton Street during the fair. Blue Badge holders should not assume ordinary access or parking arrangements remain available. Check the council's current traffic, parking and public-transport information before setting off and allow time for temporary diversions.</p><h2>Sensory and personal support</h2><p>Bright moving lights, music, announcements and crowds are central features of the event. Consider ear protection, a planned quiet exit route and a clear meeting point. Anyone requiring medical or personal assistance should attend with the support appropriate to their circumstances. This guide is general planning information, not a guarantee of access. Use the <a href="https://www.hull.gov.uk/leisure/hull-fair" target="_blank" rel="noopener noreferrer">official council page</a> for current notices.</p>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "things-to-do",
+    author: "HU NOW Editorial Team",
+    readingMinutes: 4,
+    featuredImage: "photo-1517457373958-b7bdd4587205",
+    status: "published",
+    publishedAt: "2026-09-14",
+    tags: ["Hull Fair", "Accessibility", "Guides"],
+    isFeatured: false,
+    isSponsored: false,
+    seo: {
+      title: "Hull Fair Accessibility Guide 2026: Visit Planning",
+      description:
+        "Practical accessibility planning for Hull Fair 2026, covering temporary surfaces, individual ride access, crowds, sensory needs and transport.",
+    },
+  },
+  {
+    id: "article-brantingham-park-fireworks-2026",
+    title: "Brantingham Park Fireworks 2026: Confirmed Times and Tickets",
+    slug: "brantingham-park-fireworks-2026",
+    excerpt:
+      "Confirmed organiser information for the 2026 Fireworx Extravaganza at Brantingham Park near Hull.",
+    content: `<h2>Confirmed 2026 event details</h2><p>Brantingham Park's 2026 Fireworx Extravaganza takes place on Thursday 5 November from 5pm to 9pm. The organiser's Eventbrite listing states that the fireworks begin promptly at 7:15pm and are presented by Eastern Pyro Ltd. The venue is Brantingham Park, Brantingham Road, Elloughton HU15 1HX.</p><h2>Tickets and admission</h2><p>This is a ticket-only event. The organiser explicitly states there will be no pay-on-the-day admission, so visitors should obtain tickets in advance and bring the ticket for scanning at the entrance. Availability and ticket prices can change; use the organiser's current booking page rather than an old screenshot or social post.</p><h2>What the organiser confirms</h2><p>The published programme includes catering outlets, indoor areas, a covered grandstand, a children's disco and free face painting from 5pm. Free on-site parking is advertised. Under-16s must attend with a parent or legal guardian. The booking page states a no-refunds policy.</p><h2>Before travelling</h2><p>Allow time for traffic and entry checks, dress for an outdoor November event and follow venue instructions. Do not infer rules about sparklers, outside food, accessibility or pets unless they appear in the organiser's current event information. Those arrangements may change.</p><h2>Source and updates</h2><p>These details were checked on 14 September 2026 against the <a href="https://www.eventbrite.com/e/2026-fireworx-extravaganza-tickets-2000150996473" target="_blank" rel="noopener noreferrer">2026 Fireworx Extravaganza listing published by Brantingham Park</a>. HU NOW will update this page if the organiser changes the schedule. For other locations, use the <a href="/guides/hull-bonfire-night-fireworks-guide-2026">Hull and East Yorkshire fireworks guide</a>; unconfirmed venues are clearly labelled.</p>`,
+    category: "Guides",
+    subcategory: "guides",
+    section: "things-to-do",
+    author: "HU NOW Editorial Team",
+    readingMinutes: 4,
+    featuredImage: "photo-1498931299472-f7a63a5a1cfa",
+    status: "published",
+    publishedAt: "2026-09-14",
+    tags: ["Bonfire Night", "Fireworks", "Brantingham Park", "Guides"],
+    isFeatured: false,
+    isSponsored: false,
+    seo: {
+      title: "Brantingham Park Fireworks 2026: Times & Tickets",
+      description:
+        "Confirmed date, opening time, fireworks time, ticket requirements and parking for Brantingham Park Fireworx Extravaganza 2026.",
+    },
+  },
+);
+
 export const seedEvents: EventItem[] = [
   {
     id: "e1",

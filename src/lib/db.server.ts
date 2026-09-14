@@ -535,6 +535,7 @@ async function ensureSeeded() {
   await seedReady;
   await ensureAdvanceLandingPages();
   await ensureAnnualEventPages();
+  await ensureEditorialPagesSeptember2026();
   await ensureSundayDinnerSeo();
   await ensureFireworksGuide2026();
   await ensureBrunchGuideDepth();
@@ -592,7 +593,7 @@ async function ensureFireworksGuide2026() {
   const pool = getPool();
   const marker = await pool.query(
     `insert into site_settings (key, value)
-     values ('migration:hull-fireworks-guide-2026', 'done')
+     values ('migration:hull-fireworks-guide-2026-v2', 'done')
      on conflict (key) do nothing
      returning key`,
   );
@@ -622,6 +623,35 @@ async function ensureFireworksGuide2026() {
       article.slug,
     ],
   );
+  const { cacheInvalidate } = await import("./cache.server");
+  cacheInvalidate("db:store");
+}
+
+async function ensureEditorialPagesSeptember2026() {
+  const pageIds = [
+    "article-hull-fair-ride-prices-2026",
+    "article-hull-fair-food-guide",
+    "article-hull-fair-family-guide-2026",
+    "article-hull-fair-accessibility-guide-2026",
+    "article-brantingham-park-fireworks-2026",
+  ];
+  const pages = seedArticles.filter((article) => pageIds.includes(article.id));
+  const pool = getPool();
+  const marker = await pool.query(
+    `insert into site_settings (key, value)
+     values ('migration:editorial-pages-september-2026', 'done')
+     on conflict (key) do nothing
+     returning key`,
+  );
+  if (!marker.rowCount) return;
+
+  for (const page of pages) {
+    await pool.query(
+      `insert into articles (id, data) values ($1, $2)
+       on conflict (id) do update set data = excluded.data`,
+      [page.id, JSON.stringify(page)],
+    );
+  }
   const { cacheInvalidate } = await import("./cache.server");
   cacheInvalidate("db:store");
 }
