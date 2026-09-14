@@ -14,6 +14,7 @@ import { formatFullDate, formatEventDate, formatWeekday } from "@/lib/dates";
 import { subscribeNewsletter } from "@/lib/public.functions";
 import { buildSeoMeta } from "@/lib/seo-meta";
 import { formatHullFairDateRange, getHullFairPromotion } from "@/lib/hull-fair-promotion";
+import { AREA_IMAGES } from "@/lib/area-images";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -95,9 +96,10 @@ function Index() {
   );
   const events = publishedEvents.slice(0, 4);
   const articles = allArticles.filter((a) => a.status === "published").slice(0, 4);
-  const offers = allOffers.filter((o) => o.status === "active").slice(0, 3);
+  const offers = allOffers
+    .filter((o) => o.status === "active" && (!o.endDate || o.endDate >= today))
+    .slice(0, 3);
   const listings = allListingsData.filter((l) => l.isFeatured).slice(0, 4);
-  const allListings = allListingsData;
 
   const featuredArticles = allArticles.filter((a) => a.isFeatured && a.status === "published");
   const featuredEvents = allEvents.filter((e) => e.isFeatured && e.status === "published");
@@ -220,26 +222,43 @@ function Index() {
         </div>
       </section>
 
-      {/* [7] Live stats band */}
+      {/* Useful visitor shortcuts */}
       <section className="border-b-2 border-foreground bg-foreground text-background">
-        <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-4 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
           {[
-            { label: "Events this week", value: weekEvents.length > 0 ? weekEvents.length : "—" },
             {
-              label: "Featured places",
-              value: featuredListings.length > 0 ? featuredListings.length : "—",
+              label: "What's on today",
+              detail: `${todayEvents.length} listed`,
+              to: "/whats-on",
+              search: { when: "today" },
             },
-            { label: "Stories published", value: articles.length > 0 ? articles.length : "—" },
-            { label: "Hull businesses", value: allListings.length > 0 ? allListings.length : "—" },
-          ].map(({ label, value }) => (
-            <div key={label} className="px-4 md:px-8 first:pl-0 last:pr-0 py-2">
-              <div className="font-display text-4xl md:text-5xl leading-none mb-1 text-accent">
-                {value}
-              </div>
-              <div className="text-[10px] font-mono uppercase tracking-widest text-white/40">
+            {
+              label: "This weekend",
+              detail: `${weekendEvents.length} listed`,
+              to: "/whats-on",
+              search: { when: "weekend" },
+            },
+            { label: "Open now", detail: "Food, drink & places", to: "/open-now" },
+            {
+              label: "Free things to do",
+              detail: "Low-cost days out",
+              to: "/whats-on",
+              search: { free: true },
+            },
+          ].map(({ label, detail, to, search }) => (
+            <Link
+              key={label}
+              to={to as "/whats-on"}
+              search={search}
+              className="group px-4 md:px-8 first:pl-0 last:pr-0 py-3 min-h-16"
+            >
+              <div className="font-display text-xl md:text-2xl leading-none text-accent group-hover:text-white transition-colors">
                 {label}
               </div>
-            </div>
+              <div className="mt-1 text-[9px] font-mono uppercase tracking-widest text-white/45 group-hover:text-white/75">
+                {detail} →
+              </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -247,7 +266,7 @@ function Index() {
       {/* Hull Fair superhub banner — visible only while an edition is upcoming or live */}
       {hullFairPromotion && (
         <section className="border-b-2 border-foreground bg-gradient-to-r from-[#0b0130] via-black to-[#0b0130] text-white">
-          <div className="max-w-7xl mx-auto px-4 py-6 md:py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[1fr_320px] items-center gap-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center shrink-0 text-accent">
                 <svg
@@ -276,28 +295,39 @@ function Index() {
                 <h2 className="text-2xl md:text-3xl font-display uppercase tracking-tight leading-none text-white">
                   {hullFairPromotion.event.title} Complete Guide
                 </h2>
-                <p className="text-xs md:text-sm text-white/70 mt-1 max-w-2xl">
-                  {hullFairPromotion.event.description}
+                <p className="text-sm text-white/75 mt-2 max-w-2xl text-pretty">
+                  Confirmed dates, daily opening times, travel advice and ride-price guidance. Entry
+                  is free; rides and stalls are individually priced.
                 </p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
-              <a
-                href={
-                  hullFairPromotion.event.slug === "hull-fair-2026"
-                    ? "/hull-fair"
-                    : `/events/${hullFairPromotion.event.slug}`
-                }
-                className="flex-1 md:flex-initial text-center px-6 py-3 bg-accent text-background font-bold text-xs uppercase tracking-widest hover:bg-accent/90 transition-colors"
-              >
-                Explore Hull Fair Guide →
-              </a>
-              <Link
-                to="/guides/guide-to-parking-at-hull-fair"
-                className="flex-1 md:flex-initial text-center px-4 py-3 border border-white/20 text-white text-xs font-bold uppercase tracking-widest hover:border-white hover:bg-white/10 transition-colors"
-              >
-                Parking Guide
-              </Link>
+            <div className="relative overflow-hidden border border-white/20 min-h-36 flex items-end p-4">
+              <ResponsiveImage
+                id={hullFairPromotion.event.featuredImage}
+                alt="Hull Fair rides illuminated at night"
+                width={640}
+                height={360}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/10" />
+              <div className="relative flex flex-wrap gap-2 w-full">
+                <a
+                  href={
+                    hullFairPromotion.event.slug === "hull-fair-2026"
+                      ? "/hull-fair"
+                      : `/events/${hullFairPromotion.event.slug}`
+                  }
+                  className="flex-1 text-center px-4 py-3 bg-accent text-background font-bold text-xs uppercase tracking-widest hover:bg-white transition-colors"
+                >
+                  Explore Hull Fair Guide →
+                </a>
+                <Link
+                  to="/guides/guide-to-parking-at-hull-fair"
+                  className="flex-1 text-center px-4 py-3 bg-black/60 border border-white/40 text-white text-xs font-bold uppercase tracking-widest hover:border-white hover:bg-black transition-colors"
+                >
+                  Parking Guide
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -305,7 +335,7 @@ function Index() {
 
       {/* [8] Spotlight — live city picks */}
       <section className="border-b-2 border-foreground bg-background">
-        <div className="max-w-7xl mx-auto px-4 py-8 md:py-10">
+        <div className="max-w-7xl mx-auto px-4 py-7 md:py-8">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               {/* [9] Event count label */}
@@ -350,27 +380,38 @@ function Index() {
                   key={event.id}
                   to="/events/$slug"
                   params={{ slug: event.slug }}
-                  className={`group border-2 border-foreground p-5 hover:bg-foreground hover:text-background transition-colors ${i === 0 ? "md:row-span-1" : ""}`}
+                  className={`group border-2 border-foreground overflow-hidden hover:bg-foreground hover:text-background transition-colors ${i === 0 ? "md:row-span-1" : ""}`}
                 >
-                  {/* [10] Prominent day of week */}
-                  <div
-                    className="font-display text-5xl uppercase leading-none mb-3 text-foreground/10 group-hover:text-background/10 transition-colors select-none"
-                    suppressHydrationWarning
-                  >
-                    {formatWeekday(event.startDate)}
+                  <div className="aspect-[16/7] overflow-hidden bg-stone-200">
+                    <ResponsiveImage
+                      id={event.featuredImage}
+                      alt={event.title}
+                      width={520}
+                      height={230}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
-                  <div
-                    className="mb-2 font-mono text-[10px] uppercase"
-                    style={{ color: categoryColor(event.category) }}
-                  >
-                    {event.category} · {event.startTime}
+                  <div className="p-4">
+                    {/* [10] Prominent day of week */}
+                    <div
+                      className="font-display text-3xl uppercase leading-none mb-2 text-foreground/15 group-hover:text-background/15 transition-colors select-none"
+                      suppressHydrationWarning
+                    >
+                      {formatWeekday(event.startDate)}
+                    </div>
+                    <div
+                      className="mb-2 font-mono text-[10px] uppercase"
+                      style={{ color: categoryColor(event.category) }}
+                    >
+                      {event.category} · {event.startTime}
+                    </div>
+                    <h3 className="font-display text-2xl uppercase leading-none mb-2 group-hover:text-accent transition-colors">
+                      {event.title}
+                    </h3>
+                    <p className="text-xs font-mono uppercase opacity-60">
+                      {cleanLocation(event.locationName)}
+                    </p>
                   </div>
-                  <h3 className="font-display text-2xl uppercase leading-none mb-2 group-hover:text-accent transition-colors">
-                    {event.title}
-                  </h3>
-                  <p className="text-xs font-mono uppercase opacity-60">
-                    {cleanLocation(event.locationName)}
-                  </p>
                 </Link>
               ))}
             </div>
@@ -405,7 +446,7 @@ function Index() {
       )}
 
       {/* ── MAIN GRID ────────────────────────────────────────────────────────── */}
-      <main className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <main className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
         <div className="lg:col-span-8">
           {/* [12] Section label + number */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -552,6 +593,9 @@ function Index() {
             {offers.map((o) => (
               <OfferCard key={o.id} offer={o} />
             ))}
+            {offers.length === 0 && (
+              <p className="text-sm text-muted-foreground">No current offers. Check back soon.</p>
+            )}
             <Link
               to="/offers"
               className="inline-block text-[10px] font-bold uppercase tracking-widest text-accent"
@@ -563,14 +607,14 @@ function Index() {
       </main>
 
       {/* ── LATEST STORIES ───────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 py-16 border-t border-border">
+      <section className="max-w-7xl mx-auto px-4 py-12 border-t border-border">
         <div className="flex items-end justify-between mb-10 gap-4">
           <div>
             {/* [15] Section number */}
             <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/30 mb-1.5">
               02 / Latest Stories
             </div>
-            <h2 className="text-5xl font-display uppercase">From Our Journalists</h2>
+            <h2 className="text-4xl md:text-5xl font-display uppercase">From Our Journalists</h2>
             {/* [16] Section subtitle */}
             <p className="text-sm text-muted-foreground mt-1.5">
               Hull news, culture and what's making people talk
@@ -787,13 +831,13 @@ function Index() {
       </section>
 
       {/* ── INDEPENDENT HULL ─────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 py-16 border-b border-border">
+      <section className="max-w-7xl mx-auto px-4 py-12 border-b border-border">
         <div className="flex items-end justify-between mb-10 gap-4">
           <div>
             <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/30 mb-1.5">
               03 / Independent Hull
             </div>
-            <h2 className="text-5xl font-display uppercase">Independent Hull</h2>
+            <h2 className="text-4xl md:text-5xl font-display uppercase">Independent Hull</h2>
             {/* [20] Section subtitle */}
             <p className="text-sm text-muted-foreground mt-1.5">
               Shops, cafés, restaurants and more — the city's independent scene
@@ -813,7 +857,7 @@ function Index() {
               params={{ slug: listings[0].slug }}
               className="group block md:col-span-2"
             >
-              <div className="w-full aspect-[16/10] overflow-hidden bg-stone-200">
+              <div className="w-full aspect-[16/7] overflow-hidden bg-stone-200">
                 <ResponsiveImage
                   id={listings[0].featuredImage}
                   alt={listings[0].name}
@@ -833,7 +877,7 @@ function Index() {
                 <h3 className="text-2xl md:text-4xl font-display uppercase leading-none group-hover:underline mb-2">
                   {listings[0].name}
                 </h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">
+                <p className="text-sm text-muted-foreground line-clamp-4 max-w-3xl leading-relaxed">
                   {listings[0].description}
                 </p>
               </div>
@@ -906,7 +950,7 @@ function Index() {
 
       {/* [NEW] Hull neighbourhoods strip */}
       <section className="border-b border-border bg-background">
-        <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-10">
           <div className="flex items-end justify-between mb-6 gap-4">
             <div>
               <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/30 mb-1.5">
@@ -929,13 +973,24 @@ function Index() {
                 params={{ area: slug }}
                 className="group shrink-0 w-44 md:w-auto"
               >
-                <div className="border-2 border-foreground/15 group-hover:border-foreground transition-colors p-5 h-full">
-                  <h3 className="font-display text-2xl uppercase leading-none mb-2 group-hover:text-accent transition-colors">
-                    {label}
-                  </h3>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
-                  <div className="mt-3 text-[9px] font-mono uppercase tracking-widest text-foreground/30 group-hover:text-accent transition-colors">
-                    Explore →
+                <div className="border-2 border-foreground/15 group-hover:border-accent group-hover:-translate-y-1 transition-all h-full overflow-hidden">
+                  <div className="aspect-[16/8] overflow-hidden bg-stone-200">
+                    <img
+                      src={AREA_IMAGES[slug]?.src}
+                      alt={AREA_IMAGES[slug]?.alt ?? `${label}, Hull`}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-display text-2xl uppercase leading-none mb-2 group-hover:text-accent transition-colors">
+                      {label}
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
+                    <div className="mt-3 text-[10px] font-bold uppercase tracking-widest text-foreground/60 group-hover:text-accent transition-colors">
+                      Explore →
+                    </div>
                   </div>
                 </div>
               </Link>
