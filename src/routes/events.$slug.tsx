@@ -48,7 +48,7 @@ export const Route = createFileRoute("/events/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "event" },
-        { property: "og:url", content: url },
+        { property: "og:url", content: `https://www.hunow.co.uk${url}` },
         { property: "og:image", content: image },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
