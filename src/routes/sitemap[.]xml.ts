@@ -52,7 +52,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         entries.push({
           path: "/christmas-lights-switch-on",
           changefreq: "weekly",
-          priority: "0.9",
+          priority: "1.0",
           lastmod: today(),
         });
         entries.push({

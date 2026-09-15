@@ -172,6 +172,21 @@ export const ARTICLE_FAQS: Record<string, FAQItem[]> = {
       answer:
         "Yes, the switch-on officially launches Hull's late-night Christmas shopping season, with major shopping centres (St Stephen's, Princes Quay) and high street retailers open until 8:00 PM or later.",
     },
+    {
+      question: "When are the East Riding Christmas lights switched on in 2026?",
+      answer:
+        "East Riding town switch-ons typically begin with Flemingate in Beverley in mid-November, followed by Pocklington, then Hessle, Driffield and Hornsea in late November, Bridlington and Cottingham at the end of November, and Howden, Withernsea and Market Weighton in early December. HU NOW's Christmas lights hub lists every date, time and location.",
+    },
+    {
+      question: "What Christmas events are on at garden centres in East Yorkshire?",
+      answer:
+        "Hornsea Garden Centre runs its Santa's Grotto with a magical train journey and 40-minute experience, plus Starlight with Santa and a Quiet Grotto session. Langlands Garden Centre at Shiptonthorpe offers a Santa's Grotto along with Breakfast with Santa and Afternoon Tea with Santa sittings. Both typically run from late November to Christmas Eve and should be pre-booked.",
+    },
+    {
+      question: "Do I need tickets for the Christmas lights switch-on events?",
+      answer:
+        "No for the town switch-ons — Hull's Queen Victoria Square event, Flemingate in Beverley, Hessle, Driffield, Hornsea, Bridlington, Cottingham and the parish council switch-ons are all free to attend. Only garden centre Santa experiences, such as the grottos at Hornsea and Langlands, require pre-booked tickets.",
+    },
   ],
 
   "hull-pride": [
