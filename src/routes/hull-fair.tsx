@@ -150,6 +150,11 @@ export const Route = createFileRoute("/hull-fair")({
               availability: "https://schema.org/InStock",
               url: "https://www.hunow.co.uk/hull-fair",
             },
+            organizer: {
+              "@type": "Organization",
+              name: "Showmen's Guild of Great Britain & Hull City Council",
+              url: "https://www.showmensguild.co.uk",
+            },
             publisher: {
               "@type": "Organization",
               name: "HU NOW",

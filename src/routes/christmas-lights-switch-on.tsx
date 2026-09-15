@@ -308,6 +308,20 @@ export const Route = createFileRoute("/christmas-lights-switch-on")({
               addressCountry: "GB",
             },
           },
+          organizer: {
+            "@type": "Organization",
+            name: "Hull City Council",
+            url: "https://www.hull.gov.uk",
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "HU NOW",
+            url: "https://www.hunow.co.uk",
+            logo: {
+              "@type": "ImageObject",
+              url: "https://www.hunow.co.uk/hunow.jpg",
+            },
+          },
         }),
       },
       {
