@@ -251,22 +251,21 @@ export const Route = createFileRoute("/christmas-lights-switch-on")({
   head: () => ({
     meta: [
       {
-        title:
-          "Christmas Lights Switch-Ons 2026: Hull & East Riding Dates, Times & Garden Centre Events — HU NOW",
+        title: "Christmas Lights Switch-Ons 2026: Hull & East Riding | HU NOW",
       },
       {
         name: "description",
         content:
-          "Every confirmed Christmas lights switch-on for 2026 across Hull and the East Riding — Beverley, Bridlington, Driffield, Hessle, Hornsea, Hedon, Brough, Willerby, Pocklington, Cottingham, Goole and more — plus Santa's grottos at Hornsea and Langlands garden centres.",
+          "Confirmed dates and times for 2026 Christmas lights switch-ons across Hull and East Yorkshire, plus Santa's grottos at Hornsea and Langlands.",
       },
       {
         property: "og:title",
-        content: "Christmas Lights Switch-Ons 2026 — Hull & East Riding Hub",
+        content: "Christmas Lights Switch-Ons 2026: Hull & East Riding | HU NOW",
       },
       {
         property: "og:description",
         content:
-          "Dates, times and locations for every Christmas lights switch-on in Hull and the East Riding in 2026, plus garden centre Santa's grottos and festive events.",
+          "Confirmed dates and times for 2026 Christmas lights switch-ons across Hull and East Yorkshire, plus Santa's grottos at Hornsea and Langlands.",
       },
       {
         property: "og:image",

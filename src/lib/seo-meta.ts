@@ -27,9 +27,11 @@ export function formatTitle(title: string | undefined | null, suffix = "HU NOW")
   let t = (title || "").trim();
   if (!t) return `HU NOW — Independent Guide to Hull & East Yorkshire`;
 
-  if (t.endsWith(`— ${suffix}`) || t.endsWith(`- ${suffix}`)) {
-    t = t.replace(/\s*([—-]\s*HU NOW)\s*$/, "").trim();
+  // Strip existing suffix or prefix if already present
+  if (t.startsWith("HU NOW —") || t.startsWith("HU NOW -")) {
+    t = t.replace(/^HU NOW\s*[—-]\s*/, "").trim();
   }
+  t = t.replace(/\s*[—-]\s*HU NOW(\s*Magazine)?$/i, "").trim();
 
   // Ensure title is between 40 and 60 chars
   if (t.length < 25) {
@@ -38,7 +40,7 @@ export function formatTitle(title: string | undefined | null, suffix = "HU NOW")
 
   const full = `${t} — ${suffix}`;
   if (full.length > 65) {
-    return `${t.slice(0, 55 - suffix.length).trim()}... — ${suffix}`;
+    return `${t.slice(0, 58 - suffix.length).trim()} — ${suffix}`;
   }
   return full;
 }
