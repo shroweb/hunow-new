@@ -30,32 +30,62 @@ const HULL_FAIR_FAQS = [
   {
     question: "How much are rides at Hull Fair 2026?",
     answer:
-      "Admission is free, but rides and games are priced individually by their operators. Official 2026 ride prices have not been published, so check the displayed price before joining a queue and budget for each attraction separately.",
-  },
-  {
-    question: "Where is the best place to park for Hull Fair?",
-    answer:
-      "Hull City Council lists two park-and-ride sites for Hull Fair: Priory Park, Henry Boot Way (HU4 7DY), and Humber Bridge, Ferriby Road, Hessle (HU13 0JG). Buses are scheduled every 10 to 15 minutes, with both sites open until 11:00 PM each day.",
-  },
-  {
-    question: "Can I park on streets near Walton Street?",
-    answer:
-      "Parking and access restrictions apply on Walton Street and a number of surrounding roads during the fair. Check Hull City Council's current road-closure and parking-restriction list before travelling rather than relying on normal street parking.",
+      "Admission is free, but rides and games are priced individually by their operators. There is no single official 2026 ride-price list; check the displayed price before joining a queue.",
   },
   {
     question: "Can you pay by card at Hull Fair, or is it cash only?",
     answer:
-      "Payment methods are set by individual ride and stall operators and may vary. Check before buying and consider carrying both a payment card and some cash so you have an alternative.",
+      "Payment methods vary between operators. Check before joining a ride queue or ordering food, and consider carrying both a card and some cash as alternatives.",
+  },
+  {
+    question: "Can you walk to Hull Fair from Hull Paragon Interchange train station?",
+    answer:
+      "Yes, walking is often faster than sitting in Anlaby Road traffic. It is a straightforward 1.3-mile walk (approx. 20–25 minutes). Exit Paragon Station onto Anlaby Road (A1105), walk directly west past Hull Royal Infirmary, and enter West Park via the MKM Stadium gates, which leads directly to Walton Street.",
+  },
+  {
+    question: "Which buses run to Hull Fair from Hull Paragon Interchange?",
+    answer:
+      "Additional bus services operate during Hull Fair, but routes, boarding points and last departures can change. Check the current Stagecoach and East Yorkshire Buses journey planners before travelling.",
+  },
+  {
+    question: "Where can taxis drop off and pick up for Hull Fair?",
+    answer:
+      "Ask your taxi operator to check the current road closures and agree a safe legal drop-off away from Walton Street. Hull Paragon Interchange has a taxi rank, but we have not verified a dedicated fairground drop-off point for 2026.",
+  },
+  {
+    question: "Where is the best place to park for Hull Fair?",
+    answer:
+      "Hull City Council lists two park-and-ride sites: Priory Park, Henry Boot Way (HU4 7DY), and Humber Bridge, Ferriby Road, Hessle (HU13 0JG). Buses run every 10 to 15 minutes and both sites are open until 11:00 PM each day. The council also lists public parking at MKM Stadium; check availability and charges before travelling.",
+  },
+  {
+    question: "Can I park on streets near Walton Street?",
+    answer:
+      "Temporary access and permit-parking restrictions apply on Walton Street and specified nearby roads. Check Hull City Council's current road-closure and parking-restriction list before travelling.",
+  },
+  {
+    question: "Are dogs allowed at Hull Fair?",
+    answer:
+      "Pet dogs are strongly discouraged and not recommended at Hull Fair due to extreme noise, dense crowds, flashing lights, and the hazard of discarded wooden food skewers and hot grease on the ground. Legitimate assistance and guide dogs are permitted, but general pet owners should leave dogs safely at home.",
+  },
+  {
+    question: "Where are the toilets and baby-changing facilities?",
+    answer:
+      "We have not found an official 2026 facilities map confirming toilet or baby-changing locations. Check the council's latest visitor information or ask an event steward on arrival.",
+  },
+  {
+    question: "What happens if a child gets lost at Hull Fair?",
+    answer:
+      "Agree a meeting point before entering and tell a nearby event steward or police officer immediately if a child becomes separated. We have not verified a specific lost-children post for 2026.",
   },
   {
     question: "What are the must-eat traditional foods at Hull Fair?",
     answer:
-      "Traditional Hull Fair favourites include Bob Carver's famous sage-and-onion patties with chips, hot Wright's brandy snaps filled with fresh dairy cream, hot roasted chestnuts, toffee apples, and fresh pomegranates.",
+      "Traditional Hull Fair favourites include Bob Carver's famous sage-and-onion patties with chips and chip spice, Wright's brandy snaps filled with fresh whipped dairy cream, hot roasted chestnuts in paper bags, toffee apples, and fresh pomegranates eaten with pins.",
   },
   {
     question: "What are the quietest times to visit Hull Fair with toddlers?",
     answer:
-      "Weekday afternoons are generally a better choice than Friday and Saturday evenings for families hoping to avoid the busiest periods, although crowd and queue levels cannot be guaranteed.",
+      "Weekday afternoons may be a better choice than Friday and Saturday evenings for families, but crowd and queue levels cannot be guaranteed.",
   },
 ];
 
@@ -329,6 +359,12 @@ function HullFairPage() {
             📅 Dates & Times
           </a>
           <a
+            href="#travel"
+            className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors"
+          >
+            🚶 Walk, Buses & Taxis
+          </a>
+          <a
             href="#parking"
             className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors"
           >
@@ -338,7 +374,7 @@ function HullFairPage() {
             href="#rides"
             className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors"
           >
-            🎡 Ride Prices
+            🎡 Ride Prices & Budget
           </a>
           <a
             href="#food"
@@ -350,7 +386,7 @@ function HullFairPage() {
             href="#family"
             className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors"
           >
-            👨‍👩‍👧 Family & Safety
+            👨‍👩‍👧 Family, Dogs & Toilets
           </a>
           <a
             href="#faqs"
@@ -487,85 +523,217 @@ function HullFairPage() {
           </div>
         </section>
 
-        {/* Section 2: Parking & Shuttles */}
-        <section id="parking" className="scroll-mt-20 border-t-2 border-foreground pt-10">
+        {/* Section 2: Getting There — Walking, Buses, Taxis & Parking */}
+        <section id="travel" className="scroll-mt-20 border-t-2 border-foreground pt-10">
           <div className="text-[10px] font-mono uppercase tracking-widest text-accent mb-2">
-            Travel & Parking Navigator
+            Transit & Arrival Guide
           </div>
           <h2 className="text-3xl md:text-4xl font-display uppercase mb-6">
-            Where to Park for Hull Fair 2026
+            Getting to Hull Fair: Walk, Bus, Taxi or Drive
           </h2>
           <p className="text-muted-foreground mb-6">
-            Walton Street and the immediate residential terraces are closed to public traffic. Here
-            are the official, stress-free ways to get to the fair without receiving a parking
-            ticket.
+            Walton Street and surrounding residential roads are closed to general traffic. Whether
+            you are arriving by train at Hull Paragon Interchange, catching a dedicated fair bus,
+            taking a cab, or driving to a Park & Ride, here is how to reach Walton Street smoothly.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="border-2 border-foreground p-6 bg-foreground/[0.02]">
-              <div className="text-xs font-mono uppercase text-accent font-bold mb-1">
-                Top Recommendation
+          {/* Walking Route from Station */}
+          <div className="border-2 border-foreground p-6 bg-foreground/[0.02] mb-8">
+            <div className="flex items-center gap-2 text-xs font-mono uppercase text-accent font-bold mb-2">
+              <span>🚶 The Insider Choice</span>
+              <span>•</span>
+              <span>1.3 Miles · 20–25 Mins Walk</span>
+            </div>
+            <h3 className="font-display text-2xl uppercase mb-3">
+              Walking Route from Hull Paragon Interchange
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+              Arriving in Hull by train or coach? Walking from Hull Paragon Interchange down to the
+              MKM Stadium and Walton Street is completely flat, well-lit, and very often{" "}
+              <strong>faster than sitting in gridlocked Anlaby Road traffic</strong>.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono bg-background p-4 border border-border mb-4">
+              <div>
+                <div className="font-bold text-foreground mb-1">Step 1: Exit Station</div>
+                <div className="text-muted-foreground">
+                  Exit main station entrance onto Ferensway, turn right and head toward Anlaby Road
+                  (A1105).
+                </div>
               </div>
-              <h3 className="font-display text-2xl uppercase mb-2">Priory Park & Ride</h3>
+              <div>
+                <div className="font-bold text-foreground mb-1">Step 2: Head West</div>
+                <div className="text-muted-foreground">
+                  Walk west straight along Anlaby Road past Hull Royal Infirmary and under the
+                  railway arches.
+                </div>
+              </div>
+              <div>
+                <div className="font-bold text-foreground mb-1">Step 3: Enter West Park</div>
+                <div className="text-muted-foreground">
+                  Turn right into West Park through the stadium gates, which leads directly onto
+                  Walton Street.
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              💡{" "}
+              <em>
+                Tip: Follow the steady stream of fairgoers and illuminated big wheel visible across
+                West Park. Wide pavements all the way make this easy for pushchairs.
+              </em>
+            </div>
+          </div>
+
+          {/* Buses & Taxis Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="border border-border p-6 bg-foreground/[0.02]">
+              <div className="text-xs font-mono uppercase text-accent font-bold mb-1">
+                Public Transit
+              </div>
+              <h3 className="font-display text-2xl uppercase mb-2">Buses from the Interchange</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Located off the A63 at Henry Boot Way (<strong>HU4 7DY</strong>), with more than 650
-                free parking spaces and frequent Hull Fair bus services.
+                Both major bus operators run high-frequency services between Hull Paragon
+                Interchange and the fairground:
               </p>
-              <ul className="text-xs space-y-1.5 font-mono text-muted-foreground">
+              <ul className="text-xs space-y-2 text-muted-foreground">
                 <li>
-                  • <strong>Frequency:</strong> Buses every 10–15 mins
+                  • <strong>East Yorkshire Buses:</strong> Runs frequent special Hull Fair shuttles
+                  from the Interchange, plus regular services <strong>56, 57, and 66</strong>{" "}
+                  dropping on Anlaby Road.
                 </li>
                 <li>
-                  • <strong>Fare:</strong> Parking is free; bus fares apply
+                  • <strong>Stagecoach:</strong> Frequent services <strong>2, 3, 4, and 5</strong>{" "}
+                  along Anlaby Road directly to the West Park gates.
                 </li>
                 <li>
-                  • <strong>Postcode:</strong> HU4 7DY
+                  • <strong>Late Departures:</strong> Return buses run regularly until after the
+                  fair shuts at 11:00 PM.
                 </li>
               </ul>
             </div>
 
             <div className="border border-border p-6 bg-foreground/[0.02]">
               <div className="text-xs font-mono uppercase text-muted-foreground font-bold mb-1">
-                Closest Walking Option
+                Taxis & Private Hire
               </div>
-              <h3 className="font-display text-2xl uppercase mb-2">MKM Stadium Parking</h3>
+              <h3 className="font-display text-2xl uppercase mb-2">Taxis & Drop-Off Zones</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Hull City Council lists public parking at MKM Stadium. Availability and charges can
-                change, so check the official travel information before setting off.
+                Road closures change access near Walton Street. We have not verified dedicated
+                fairground taxi drop-off points for 2026; agree a safe legal stop with your driver.
               </p>
-              <ul className="text-xs space-y-1.5 font-mono text-muted-foreground">
+              <ul className="text-xs space-y-2 text-muted-foreground">
                 <li>
-                  • <strong>Cost:</strong> Check the current event-day charge
+                  • <strong>Hull Paragon:</strong> A taxi rank is available at the interchange.
                 </li>
                 <li>
-                  • <strong>Tip:</strong> Allow extra time during busy periods
+                  • <strong>Before travelling:</strong> Check the council's current road-closure
+                  information and allow extra time.
                 </li>
                 <li>
-                  • <strong>Postcode:</strong> HU3 6HU
+                  • <strong>Pick-up:</strong> Arrange a location with your driver that does not
+                  block residential access or a temporary closure.
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-2 border-dashed border-rose-500/40 bg-rose-500/5 p-6 mb-6">
-            <h4 className="font-bold text-rose-600 uppercase text-sm mb-1">
-              Strict Street Permit Zones: Avoid Parking Fines
-            </h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Road closures and permit-only parking apply on Walton Street and specified nearby
-              roads, including parts of Lowther Street, Walliker Street, Paisley Street, Lonsdale
-              Street, Sandringham Street, Granville Street, Perry Street, Ruskin Street, Arthur
-              Street and Little Anlaby Road. Check Hull City Council's current list before
-              travelling.
-            </p>
-          </div>
+          <div id="parking" className="scroll-mt-20 pt-4">
+            <h3 className="font-display text-2xl uppercase mb-4">
+              Official Park & Ride and Car Parking
+            </h3>
 
-          <Link
-            to="/guides/guide-to-parking-at-hull-fair"
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent hover:underline"
-          >
-            Read our in-depth Guide to Parking at Hull Fair →
-          </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="border-2 border-foreground p-6 bg-foreground/[0.02]">
+                <div className="text-xs font-mono uppercase text-accent font-bold mb-1">
+                  Top Recommendation
+                </div>
+                <h4 className="font-display text-2xl uppercase mb-2">Priory Park & Ride</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Located off the A63 at Henry Boot Way (<strong>HU4 7DY</strong>), with more than
+                  650 free parking spaces and frequent Hull Fair bus services.
+                </p>
+                <ul className="text-xs space-y-1.5 font-mono text-muted-foreground">
+                  <li>
+                    • <strong>Frequency:</strong> Buses every 10–15 mins
+                  </li>
+                  <li>
+                    • <strong>Fare:</strong> Parking is free; bus fares apply
+                  </li>
+                  <li>
+                    • <strong>Postcode:</strong> HU4 7DY
+                  </li>
+                </ul>
+              </div>
+
+              <div className="border border-border p-6 bg-foreground/[0.02]">
+                <div className="text-xs font-mono uppercase text-muted-foreground font-bold mb-1">
+                  Second Park & Ride
+                </div>
+                <h4 className="font-display text-2xl uppercase mb-2">Humber Bridge Park & Ride</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Located at Ferriby Road, Hessle (<strong>HU13 0JG</strong>). Ideal for visitors
+                  travelling across the Humber Bridge or from the West.
+                </p>
+                <ul className="text-xs space-y-1.5 font-mono text-muted-foreground">
+                  <li>
+                    • <strong>Frequency:</strong> Buses every 10–15 mins
+                  </li>
+                  <li>
+                    • <strong>Hours:</strong> Open until 11:00 PM daily
+                  </li>
+                  <li>
+                    • <strong>Postcode:</strong> HU13 0JG
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="border border-border p-6 bg-foreground/[0.02] mb-6">
+              <div className="text-xs font-mono uppercase text-muted-foreground font-bold mb-1">
+                Closest Paid Parking
+              </div>
+              <h4 className="font-display text-xl uppercase mb-2">
+                MKM Stadium Car Park (HU3 6HU)
+              </h4>
+              <p className="text-sm text-muted-foreground mb-2">
+                Situated inside West Park directly next to Walton Street. Dedicated parking is
+                provided on non-match days. Entry is via Walton Street / Anlaby Road.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Spaces fill quickly on Friday and Saturday evenings; check Hull City Council's event
+                notices for current vehicle charges.
+              </p>
+            </div>
+
+            <div className="border-2 border-dashed border-rose-500/40 bg-rose-500/5 p-6 mb-6">
+              <h4 className="font-bold text-rose-600 uppercase text-sm mb-1">
+                Street Permit Zones: Check Before Parking
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Road closures and permit-only parking apply on Walton Street and specified nearby
+                roads, including parts of Lowther Street, Walliker Street, Paisley Street, Lonsdale
+                Street, Sandringham Street, Granville Street, Perry Street, Ruskin Street, Arthur
+                Street and Little Anlaby Road. Check Hull City Council's current restriction times
+                and signs before parking.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                to="/guides/guide-to-parking-at-hull-fair"
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent hover:underline"
+              >
+                Read our in-depth Guide to Parking at Hull Fair →
+              </Link>
+              <span className="text-muted-foreground/40">•</span>
+              <Link
+                to="/guides/hull-fair-buses-2026"
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent hover:underline"
+              >
+                See full Hull Fair Bus Times & Shuttles →
+              </Link>
+            </div>
+          </div>
         </section>
 
         {/* Ad Placement */}

@@ -53,4 +53,21 @@ describe("new editorial guides", () => {
     expect(article?.content).toContain("Awaiting 2026 Confirmation");
     expect(article?.content).toContain("Do not travel based on previous years' schedules");
   });
+
+  test("links the fireworks organiser and distinguishes dated guidance from live listings", () => {
+    const article = seedArticles.find(
+      (item) => item.slug === "hull-bonfire-night-fireworks-guide-2026",
+    );
+    expect(article?.content).toContain("eventbrite.com/e/2026-fireworx-extravaganza");
+    expect(article?.content).toContain("not a live tonight listing");
+  });
+
+  test("qualifies Sunday-roast claims with current venue sources", () => {
+    const article = seedArticles.find(
+      (item) => item.slug === "best-sunday-roasts-hull-east-yorkshire",
+    );
+    expect(article?.content).toContain("pipeandglass.co.uk/menus");
+    expect(article?.content).toContain("greendragonpubwelton.co.uk");
+    expect(article?.content).toContain("not confirmation of this Sunday's dishes");
+  });
 });

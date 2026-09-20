@@ -536,8 +536,10 @@ async function ensureSeeded() {
   await ensureAdvanceLandingPages();
   await ensureAnnualEventPages();
   await ensureEditorialPagesSeptember2026();
+  await ensureHullFairParkingGuide2026();
   await ensureSundayDinnerSeo();
   await ensureFireworksGuide2026();
+  await ensureEditorialSourceCorrections2026();
   await ensureBrunchGuideDepth();
 }
 
@@ -654,6 +656,124 @@ async function ensureEditorialPagesSeptember2026() {
   }
   const { cacheInvalidate } = await import("./cache.server");
   cacheInvalidate("db:store");
+}
+
+async function ensureHullFairParkingGuide2026() {
+  const article = seedArticles.find((item) => item.slug === "guide-to-parking-at-hull-fair");
+  if (!article) return;
+
+  const client = await getPool().connect();
+  let updated = false;
+  try {
+    await client.query("begin");
+    const marker = await client.query(
+      `insert into site_settings (key, value)
+       values ('migration:hull-fair-parking-guide-2026-correction', 'true'::jsonb)
+       on conflict (key) do nothing
+       returning key`,
+    );
+    if (marker.rowCount) {
+      const result = await client.query(
+        `update articles
+         set data = jsonb_set(
+           jsonb_set(
+             jsonb_set(
+               jsonb_set(data, '{title}', $1::jsonb),
+               '{excerpt}', $2::jsonb
+             ),
+             '{content}', $3::jsonb
+           ),
+           '{seo}', $4::jsonb
+         )
+         where slug = $5`,
+        [
+          JSON.stringify(article.title),
+          JSON.stringify(article.excerpt),
+          JSON.stringify(article.content),
+          JSON.stringify(article.seo),
+          article.slug,
+        ],
+      );
+      if (!result.rowCount) {
+        await client.query("insert into articles (id, data) values ($1, $2)", [
+          article.id,
+          JSON.stringify(article),
+        ]);
+      }
+      updated = true;
+    }
+    await client.query("commit");
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
+
+  if (updated) {
+    const { cacheInvalidate } = await import("./cache.server");
+    cacheInvalidate("db:store");
+  }
+}
+
+async function ensureEditorialSourceCorrections2026() {
+  const slugs = [
+    "hull-bonfire-night-fireworks-guide-2026",
+    "best-sunday-roasts-hull-east-yorkshire",
+  ];
+  const articles = seedArticles.filter((article) => slugs.includes(article.slug));
+  if (articles.length !== slugs.length) return;
+
+  const client = await getPool().connect();
+  let updated = false;
+  try {
+    await client.query("begin");
+    const marker = await client.query(
+      `insert into site_settings (key, value)
+       values ('migration:editorial-source-corrections-2026', 'true'::jsonb)
+       on conflict (key) do nothing
+       returning key`,
+    );
+    if (marker.rowCount) {
+      for (const article of articles) {
+        const result = await client.query(
+          `update articles
+           set data = jsonb_set(
+             jsonb_set(
+               jsonb_set(data, '{content}', $1::jsonb),
+               '{excerpt}', $2::jsonb
+             ),
+             '{seo}', $3::jsonb
+           )
+           where slug = $4`,
+          [
+            JSON.stringify(article.content),
+            JSON.stringify(article.excerpt),
+            JSON.stringify(article.seo),
+            article.slug,
+          ],
+        );
+        if (!result.rowCount) {
+          await client.query("insert into articles (id, data) values ($1, $2)", [
+            article.id,
+            JSON.stringify(article),
+          ]);
+        }
+      }
+      updated = true;
+    }
+    await client.query("commit");
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
+
+  if (updated) {
+    const { cacheInvalidate } = await import("./cache.server");
+    cacheInvalidate("db:store");
+  }
 }
 
 async function ensureSundayDinnerSeo() {

@@ -225,9 +225,9 @@ export const seedArticles: Article[] = [
 </ul>
 
 <h2>Option 2: MKM Stadium Parking (5-Minute Walk)</h2>
-<p>The <strong>MKM Stadium (formerly KC Stadium)</strong>, situated directly adjacent to Walton Street Fairground inside West Park, provides dedicated parking for fairgoers on non-match days.</p>
+<p>Hull City Council lists public parking at <strong>MKM Stadium</strong>, beside Walton Street Fairground. Availability may change, including on match days, so check the council's current notice before travelling.</p>
 <ul>
-  <li><strong>Access:</strong> Entry is via the Walton Street / Anlaby Road entrance.</li>
+  <li><strong>Access:</strong> Follow the council's current access directions and on-site signs.</li>
   <li><strong>Cost:</strong> Check Hull City Council’s current event information for the applicable charge.</li>
   <li><strong>Availability:</strong> Spaces may be limited at busy times, so allow extra time and keep a park-and-ride option in reserve.</li>
   <li><strong>Matchday Warning:</strong> Check the stadium fixture list and official traffic information before travelling.</li>
@@ -257,7 +257,7 @@ export const seedArticles: Article[] = [
 
 <h2>Plan Your Visit to Hull Fair 2026</h2>
 <p>Hull Fair 2026 runs from <strong>Friday 9 October through Saturday 17 October 2026</strong> (closed Sunday 11 October). It opens at 4:00 PM on the first Friday, 12 noon on both Saturdays, and 2:00 PM Monday to Friday, closing at 11:00 PM each night.</p>
-<p>For full event details, opening times, ride lists, and historical background, see our dedicated <a href="/events/hull-fair-2026">Hull Fair 2026 What’s On Guide</a>.</p>`,
+<p>For full event details and the day-by-day timetable, see our <a href="/hull-fair">Hull Fair 2026 guide</a>. Before setting off, check the <a href="https://www.hull.gov.uk/leisure/hull-fair/3" target="_blank" rel="noopener noreferrer">council's current road closures and parking restrictions</a> and <a href="https://www.hull.gov.uk/leisure/hull-fair" target="_blank" rel="noopener noreferrer">official opening times</a>.</p>`,
     category: "Guides",
     subcategory: "guides",
     section: "things-to-do",
@@ -344,7 +344,7 @@ export const seedArticles: Article[] = [
     title: "Hull Fireworks 2026: Bonfire Night Displays, Dates & Tickets",
     slug: "hull-bonfire-night-fireworks-guide-2026",
     excerpt:
-      "Find confirmed Hull fireworks and Bonfire Night displays for 2026, including dates, start times, tickets, parking and family information across Hull and East Yorkshire.",
+      "Find verified Bonfire Night displays near Hull for 2026, with confirmed dates and tickets clearly separated from locations awaiting an announcement.",
     content: `<h2>Hull Fireworks and Bonfire Night 2026</h2>
 <p>Looking for fireworks in Hull tonight or a Bonfire Night display near you? This guide tracks confirmed organised displays across Hull and East Yorkshire for November 2026. Details are checked against organiser information and updated as tickets and timings are announced.</p>
 
@@ -369,7 +369,9 @@ export const seedArticles: Article[] = [
 <p>We will add confirmed dates, ticket links and start times here as organisers publish them. Do not travel based on previous years' schedules.</p>
 
 <h2>Are There Fireworks in Hull Tonight?</h2>
-<p>On Thursday 5 November 2026, the confirmed nearby event in this guide is Brantingham Park, with the display scheduled for 7:15 PM. On any other date, check the event date above and the organiser's latest ticket information before setting off.</p>
+<p>This is a dated 2026 guide, not a live tonight listing. Brantingham Park is scheduled for Thursday 5 November at 7:15 PM; check the date and the organiser's latest information before travelling.</p>
+
+<p><strong>Source:</strong> <a href="https://www.eventbrite.com/e/2026-fireworx-extravaganza-tickets-2000150996473" target="_blank" rel="noopener noreferrer">Brantingham Park's 2026 organiser listing</a>. Times, availability and event arrangements can change.</p>
 
 <h2>Bonfire Night Safety and Visiting Tips</h2>
 <ul>
@@ -397,7 +399,7 @@ export const seedArticles: Article[] = [
     seo: {
       title: "Hull Fireworks 2026: Bonfire Night Displays & Tickets",
       description:
-        "Confirmed Hull fireworks and Bonfire Night displays for 2026. Find dates, start times, tickets, parking and updates for Hull and East Yorkshire.",
+        "Verified Bonfire Night displays near Hull for 2026, with organiser links, ticket details and clear updates on unconfirmed locations.",
     },
   },
   {
@@ -406,40 +408,34 @@ export const seedArticles: Article[] = [
     slug: "best-sunday-roasts-hull-east-yorkshire",
     excerpt:
       "Looking for the best Sunday dinner in Hull? Discover Sunday roasts, pub lunches, Yorkshire puddings and country inns to book in Hull and East Yorkshire.",
-    content: `<h2>The Quest for the Perfect Sunday Roast</h2>
-<p>In Yorkshire, Sunday lunch is taken seriously. We demand towering, crisp-edged Yorkshire puddings, slow-roasted local meats with serious flavour, roast potatoes that crackle on the outside and fluff up in the centre, and gravy that has simmered for hours. Whether you want a historic wooden-beamed tavern in Hull Old Town or an award-winning country dining pub in the East Riding, here are the finest Sunday roasts to book this weekend.</p>
+    content: `<h2>Where to find Sunday lunch in Hull and East Yorkshire</h2>
+<p>Looking for a Sunday roast in Hull? Start by choosing between a city-centre pub and a country dining trip. Menus, serving hours and prices change, so this guide separates venues with a published Sunday offer from places where you should confirm the current menu before booking.</p>
 
-<h2>1. The Minerva Hotel (Nelson Street Pier, Hull Old Town)</h2>
-<p>Perched right on the riverfront overlooking the Humber Estuary, The Minerva is renowned for delivering one of the most generous, classic Sunday roasts in the city. Expect hand-carved topside of beef, roast loin of pork with golden crackling, or roast turkey served with giant homemade Yorkshire puddings, honey-glazed root vegetables, and lashings of rich meat gravy.</p>
+<h2>Sunday-roast options with published information</h2>
+<h3>The Green Dragon, Welton</h3>
+<p>The Green Dragon advertises a Sunday roast on its <a href="https://www.greendragonpubwelton.co.uk/" target="_blank" rel="noopener noreferrer">official pub website</a>. The venue is at Cowgate, Welton, HU15 1NB, with parking and accessible access listed among its facilities. This is a practical option if you want a village pub outside central Hull. Check its current Sunday menu, price and table availability before travelling.</p>
+
+<h3>The Pipe and Glass, South Dalton</h3>
+<p>The Pipe and Glass publishes a separate <a href="https://www.pipeandglass.co.uk/menus" target="_blank" rel="noopener noreferrer">Sunday lunch menu</a> and lists Sunday food service from noon to 4pm. It is at West End, South Dalton, HU17 7PN. The restaurant recommends booking ahead; its bar is walk-in. Check the current menu if you are specifically after a traditional roast or need a vegetarian or vegan option.</p>
+
+<h2>Hull and West Hull places to check directly</h2>
+<h3>The Minerva, Hull waterfront</h3>
+<p>The Minerva has published a <a href="https://minerva-hull.co.uk/onewebmedia/Minerva%20Menu%20A3%20Folded%20Cream%202024.pdf" target="_blank" rel="noopener noreferrer">Sunday-roast menu</a>, but that document is dated 2024. Treat it as evidence of a past offering, not confirmation of this Sunday's dishes, prices or opening hours. Ask the pub for the current menu before making a special journey.</p>
+
+<h3>The Lion &amp; Key, Hull Old Town</h3>
+<p>The Lion &amp; Key is a High Street pub with food service, but we have not verified a current dedicated Sunday-roast menu. Use its <a href="https://www.the-lionandkey-hull.foodndrink.uk/" target="_blank" rel="noopener noreferrer">venue page</a> to check contact and opening details, then ask what is being served this Sunday.</p>
+
+<h3>The Wheatsheaf, Kirk Ella</h3>
+<p>The Wheatsheaf lists Sunday food service on its <a href="https://www.wheatsheafkirkella.co.uk/menus" target="_blank" rel="noopener noreferrer">official menus page</a>. It does not establish a fixed roast selection for every Sunday, so check the live menu or call the pub for today's dishes and dietary options.</p>
+
+<h2>Before you book</h2>
 <ul>
-  <li><strong>Vibe:</strong> Historic maritime pub with panoramic river views and open fireplaces.</li>
-  <li><strong>Tip:</strong> Book a table in the conservatory or arrive early for a walk along the pier before lunch.</li>
+  <li><strong>Confirm the roast:</strong> A pub being open for Sunday food does not guarantee a roast is on the menu that week.</li>
+  <li><strong>Check timings and price:</strong> Kitchens can have different hours from the bar, and menus change seasonally.</li>
+  <li><strong>Ask about allergies:</strong> Contact the venue directly about ingredients and cross-contact; do not rely on a general online guide.</li>
+  <li><strong>Plan the journey:</strong> South Dalton and Welton are outside Hull city centre, so check travel options if you are not driving.</li>
 </ul>
-
-<h2>2. The Lion & Key (High Street, Hull Old Town)</h2>
-<p>Famous for its ceiling covered in vintage beer mats and traditional tavern atmosphere, The Lion & Key delivers serious pub dining. Their Sunday lunch features prime cuts from local Yorkshire butchers, accompanied by real ale gravy, seasonal greens, and homemade stuffing.</p>
-<ul>
-  <li><strong>Drink Pairing:</strong> Pick from an unbeatable selection of local craft ales and cask bitters on tap.</li>
-</ul>
-
-<h2>3. The Pipe and Glass (South Dalton, East Yorkshire)</h2>
-<p>Just 25 minutes from Hull near Beverley, The Pipe and Glass holds a Michelin star and sets the benchmark for British country dining. Their Sunday roasts feature dry-aged Yorkshire beef, slow-cooked local belly pork, and roasted loin of lamb served with seasonal vegetables grown in their kitchen garden.</p>
-<ul>
-  <li><strong>Best for:</strong> Special occasions and food lovers seeking the ultimate gastro experience.</li>
-  <li><strong>Booking:</strong> Essential weeks in advance.</li>
-</ul>
-
-<h2>4. The Wheatsheaf (Kirk Ella)</h2>
-<p>A firm favourite with West Hull families, The Wheatsheaf provides a welcoming village pub setting with a dedicated Sunday roast menu featuring succulent roasted meats, cauliflower cheese, and vegetarian nut roasts that don't skimp on flavour.</p>
-
-<h2>5. The Green Dragon (Welton)</h2>
-<p>Famous for its connection to highwayman Dick Turpin, this historic 17th-century coaching inn tucked beside the Welton village duck pond serves an exceptional traditional roast beside crackling log fires.</p>
-
-<h2>Booking & Visiting Advice</h2>
-<ul>
-  <li><strong>Book in advance:</strong> Sunday roasts in Hull regularly sell out by 2:00 PM; reserve your table by Thursday or Friday.</li>
-  <li><strong>Dietary requirements:</strong> Most featured pubs offer robust vegetarian and vegan roast options with vegetable gravies.</li>
-</ul>`,
+<p><em>Venue information checked 20 September 2026. We have not independently tasted or ranked these roasts; “best” is a search-friendly guide to options, not an unverified award.</em></p>`,
     category: "Guides",
     subcategory: "guides",
     section: "food-and-drink",
