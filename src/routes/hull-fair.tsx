@@ -727,7 +727,8 @@ function HullFairPage() {
               </Link>
               <span className="text-muted-foreground/40">•</span>
               <Link
-                to="/guides/hull-fair-buses-2026"
+                to="/$taxonomy/$slug"
+                params={{ taxonomy: "travel", slug: "hull-fair-buses-2026" }}
                 className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent hover:underline"
               >
                 See full Hull Fair Bus Times & Shuttles →

@@ -11,7 +11,6 @@ const NEW_GUIDE_SLUGS = [
 
 const KNOWN_THIN_ARTICLES = [
   "hull-fair-opening-times-2026:128",
-  "hull-fair-buses-2026:181",
   "secret-garden-cafe-whitefriargate:117",
   "10-minutes-spray-k:127",
   "old-town-foodie-hub:121",
@@ -69,5 +68,17 @@ describe("new editorial guides", () => {
     expect(article?.content).toContain("pipeandglass.co.uk/menus");
     expect(article?.content).toContain("greendragonpubwelton.co.uk");
     expect(article?.content).toContain("not confirmation of this Sunday's dishes");
+  });
+
+  test("gives Hull Fair bus readers verified sites and an honest timetable caveat", () => {
+    const buses = seedArticles.find((item) => item.slug === "hull-fair-buses-2026");
+    const times = seedArticles.find((item) => item.slug === "hull-fair-opening-times-2026");
+    expect(wordCount(buses?.content ?? "")).toBeGreaterThanOrEqual(225);
+    expect(buses?.content).toContain("Humber Bridge");
+    expect(buses?.content).toContain("hull.gov.uk/leisure/hull-fair/3");
+    expect(buses?.content.replace(/<[^>]+>/g, "")).toContain(
+      "not a promise that a bus leaves at exactly 11pm",
+    );
+    expect(times?.content).toContain("/travel/hull-fair-buses-2026");
   });
 });

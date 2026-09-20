@@ -168,12 +168,12 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
 });
 
 function ArticleDetail() {
-  const { slug, taxonomy: taxonomySlug } = Route.useParams();
+  const { taxonomy: taxonomySlug } = Route.useParams();
   const { article: loadedArticle, taxonomy } = Route.useLoaderData();
   const articles = useStore((s) => s.articles);
   const events = useStore((s) => s.events);
   const listings = useStore((s) => s.listings);
-  const article = articles.find((a) => a.slug === slug) ?? loadedArticle;
+  const article = loadedArticle;
   if (!article) throw notFound();
 
   useEffect(() => {

@@ -120,7 +120,7 @@ export const seedArticles: Article[] = [
 </ul>
 <p>Individual rides and stalls may stop admitting customers before the site closes. Weather, safety requirements or operational decisions can also affect opening, so check current official announcements before travelling.</p>
 <h2>Plan your visit</h2>
-<p>Entry is free, while rides, games and food are priced individually. See the <a href="/hull-fair">complete Hull Fair guide</a> for parking, food, ride and family information, or read our <a href="/guides/hull-fair-buses-2026">Hull Fair buses guide</a>.</p>`,
+<p>Entry is free, while rides, games and food are priced individually. See the <a href="/hull-fair">complete Hull Fair guide</a> for parking, food, ride and family information, or read our <a href="/travel/hull-fair-buses-2026">Hull Fair buses guide</a>.</p>`,
     category: "Guides",
     tags: ["Hull Fair", "Opening Times", "Family", "What's On"],
     featuredImage: "/hull-fair-hero.jpg",
@@ -144,19 +144,27 @@ export const seedArticles: Article[] = [
     slug: "hull-fair-buses-2026",
     excerpt:
       "How to reach Hull Fair by bus, including the two park-and-ride locations, service frequency and late-evening planning.",
-    content: `<h2>Getting to Hull Fair by bus</h2>
-<p>Using a bus or park-and-ride service is one of the simplest ways to avoid the road closures and residential parking restrictions around Walton Street during Hull Fair.</p>
-<h2>Hull Fair park-and-ride buses</h2>
-<p>Hull City Council lists dedicated Hull Fair services from two sites. Services are scheduled every <strong>10–15 minutes</strong>, with both sites open until <strong>11:00 PM</strong> each day of the fair.</p>
+    content: `<h2>Hull Fair 2026 by bus: what is confirmed?</h2>
+<p>Hull Fair runs from Friday 9 to Saturday 17 October 2026 at Walton Street, with no fair on Sunday 11 October. Hull City Council confirms two park-and-ride sites for the fair. Buses are scheduled every <strong>10–15 minutes</strong> and both sites are open until <strong>11pm each operating day</strong>. The council also says additional bus services will operate, but its fair information does not specify all routes, boarding stops, fares or the final return departure.</p>
+
+<h2>Choose a park-and-ride site</h2>
 <ul>
-  <li><strong>Priory Park:</strong> Henry Boot Way, Hull HU4 7DY. Parking is free; bus fares apply.</li>
-  <li><strong>Humber Bridge:</strong> Ferriby Road, Hessle HU13 0JG.</li>
+  <li><strong>Priory Park:</strong> Henry Boot Way, Hull <strong>HU4 7DY</strong>. This may suit drivers approaching via the A63 or west Hull. The regular Priory Park site has free parking; check the fair service fare before boarding.</li>
+  <li><strong>Humber Bridge:</strong> Ferriby Road, Hessle <strong>HU13 0JG</strong>. This may suit visitors approaching from the bridge or Hessle.</li>
 </ul>
-<p>Allow extra time at peak periods and confirm current fares, boarding points and last departures before setting off.</p>
-<h2>Local bus services</h2>
-<p>Additional local services may operate near Walton Street and from Hull Paragon Interchange. Routes and temporary diversions can change during the fair, so use the current operator journey planner on the day rather than relying on an older timetable.</p>
-<h2>More Hull Fair travel information</h2>
-<p>Read our <a href="/guides/guide-to-parking-at-hull-fair">complete Hull Fair parking guide</a> for stadium parking and road restrictions, check the <a href="/guides/hull-fair-opening-times-2026">daily opening timetable</a>, or return to the <a href="/hull-fair">main Hull Fair guide</a>.</p>`,
+<p>The <a href="https://www.hull.gov.uk/leisure/hull-fair/3" target="_blank" rel="noopener noreferrer">council's Hull Fair travel notice</a> is the source for the two locations, 10–15-minute frequency and 11pm site hours. Site closing time is <em>not</em> a promise that a bus leaves at exactly 11pm. Check the operator's return timetable and where to queue before entering the fair.</p>
+
+<h2>Coming from Hull Paragon Interchange?</h2>
+<p>The interchange is a useful starting point for local buses. The council confirms additional services for Hull Fair but does not publish a complete route list on its fair page. Use the current <a href="https://www.stagecoachbus.com/" target="_blank" rel="noopener noreferrer">Stagecoach</a> or <a href="https://www.eastyorkshirebuses.co.uk/" target="_blank" rel="noopener noreferrer">East Yorkshire Buses</a> journey planner for your date, including any diversions and the last journey back. Do not rely on a previous year's fair timetable or assume an ordinary service runs late enough for an 11pm fairground close.</p>
+
+<h2>Before setting off</h2>
+<ul>
+  <li><strong>Check your return:</strong> note the stop location, route number and final departure before leaving the bus.</li>
+  <li><strong>Check fares:</strong> parking and bus travel are separate; the council fair page does not list a universal 2026 shuttle fare.</li>
+  <li><strong>Allow for closures:</strong> temporary restrictions affect Walton Street and surrounding roads, so boarding locations may differ from an ordinary day.</li>
+  <li><strong>Allow extra time:</strong> 10–15 minutes is the advertised service frequency, not a guaranteed journey time or queue length.</li>
+</ul>
+<p>See the <a href="/guides/guide-to-parking-at-hull-fair">parking guide</a> for stadium parking and restrictions, the <a href="/guides/hull-fair-opening-times-2026">day-by-day timetable</a>, or the <a href="/hull-fair">main Hull Fair guide</a>.</p>`,
     category: "Guides",
     tags: ["Hull Fair", "Buses", "Park and Ride", "Travel"],
     featuredImage: "/hull-fair-hero.jpg",

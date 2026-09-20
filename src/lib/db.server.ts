@@ -534,6 +534,7 @@ async function ensureSeeded() {
   }
   await seedReady;
   await ensureAdvanceLandingPages();
+  await ensureHullFairTravelGuides2026();
   await ensureAnnualEventPages();
   await ensureEditorialPagesSeptember2026();
   await ensureHullFairParkingGuide2026();
@@ -848,6 +849,46 @@ async function ensureAdvanceLandingPages() {
   }
 
   if (inserted) {
+    const { cacheInvalidate } = await import("./cache.server");
+    cacheInvalidate("db:store");
+  }
+}
+
+async function ensureHullFairTravelGuides2026() {
+  const slugs = ["hull-fair-buses-2026", "hull-fair-opening-times-2026"];
+  const articles = seedArticles.filter((article) => slugs.includes(article.slug));
+  if (articles.length !== slugs.length) return;
+
+  const client = await getPool().connect();
+  let updated = false;
+  try {
+    await client.query("begin");
+    const marker = await client.query(
+      `insert into site_settings (key, value)
+       values ('migration:hull-fair-travel-guides-2026', 'true'::jsonb)
+       on conflict (key) do nothing
+       returning key`,
+    );
+    if (marker.rowCount) {
+      for (const article of articles) {
+        await client.query(
+          `update articles
+           set data = jsonb_set(data, '{content}', $1::jsonb)
+           where slug = $2`,
+          [JSON.stringify(article.content), article.slug],
+        );
+      }
+      updated = true;
+    }
+    await client.query("commit");
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
+
+  if (updated) {
     const { cacheInvalidate } = await import("./cache.server");
     cacheInvalidate("db:store");
   }
