@@ -68,6 +68,13 @@ describe("new editorial guides", () => {
     expect(article?.content).toContain("pipeandglass.co.uk/menus");
     expect(article?.content).toContain("greendragonpubwelton.co.uk");
     expect(article?.content).toContain("not confirmation of this Sunday's dishes");
+    expect(wordCount(article?.content ?? "")).toBeGreaterThanOrEqual(800);
+    expect(article?.content).toContain(
+      "flaminggrillpubs.co.uk/pubs/east-riding-yorkshire/sailmakers/sunday-roasts",
+    );
+    expect(article?.content).toContain("not the Sailmakers Arms in Old Town");
+    expect(article?.content).toContain("How much is Sunday dinner in Hull?");
+    expect(article?.content).toContain("21 September 2026");
   });
 
   test("gives Hull Fair bus readers verified sites and an honest timetable caveat", () => {

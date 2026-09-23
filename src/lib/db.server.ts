@@ -541,7 +541,49 @@ async function ensureSeeded() {
   await ensureSundayDinnerSeo();
   await ensureFireworksGuide2026();
   await ensureEditorialSourceCorrections2026();
+  await ensureSundayDinnerDepth2026();
   await ensureBrunchGuideDepth();
+}
+
+async function ensureSundayDinnerDepth2026() {
+  const article = seedArticles.find(
+    (item) => item.slug === "best-sunday-roasts-hull-east-yorkshire",
+  );
+  if (!article) return;
+  const client = await getPool().connect();
+  let updated = false;
+  try {
+    await client.query("begin");
+    const marker = await client.query(
+      `insert into site_settings (key, value)
+       values ('migration:sunday-dinner-depth-2026-09-21', 'true'::jsonb)
+       on conflict (key) do nothing returning key`,
+    );
+    if (marker.rowCount) {
+      await client.query(
+        `update articles set data = data || $1::jsonb where slug = $2`,
+        [
+          JSON.stringify({
+            content: article.content,
+            excerpt: article.excerpt,
+            seo: article.seo,
+          }),
+          article.slug,
+        ],
+      );
+      updated = true;
+    }
+    await client.query("commit");
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
+  if (updated) {
+    const { cacheInvalidate } = await import("./cache.server");
+    cacheInvalidate("db:store");
+  }
 }
 
 async function ensureBrunchGuideDepth() {
@@ -1028,25 +1070,31 @@ export async function getDatabaseStore(): Promise<AppStore> {
   const cached = cacheGet<AppStore>("db:store");
   if (cached) return cached;
 
-  await ensureSchema();
-  await seedIfEmpty();
+  try {
+    await ensureSchema();
+    await seedIfEmpty();
 
-  const store = emptyStore();
+    const store = emptyStore();
 
-  for (const collection of collections) {
-    const result = await getPool().query<{ data: unknown }>(
-      `select data from ${tables[collection]} order by created_at desc`,
+    for (const collection of collections) {
+      const result = await getPool().query<{ data: unknown }>(
+        `select data from ${tables[collection]} order by created_at desc`,
+      );
+      store[collection] = result.rows.map((row) => row.data) as never;
+    }
+
+    const subscribers = await getPool().query<{ email: string }>(
+      "select email from newsletter_subscribers order by created_at desc",
     );
-    store[collection] = result.rows.map((row) => row.data) as never;
+    store.newsletter = subscribers.rows.map((row) => row.email);
+
+    cacheSet("db:store", store, 5 * 60_000); // cache for 5 minutes
+    return store;
+  } catch (error) {
+    console.error("Database query failed in getDatabaseStore; using fallbackStore:", error);
+    cacheSet("db:store", fallbackStore, 60_000); // cache fallback for 1 minute
+    return fallbackStore;
   }
-
-  const subscribers = await getPool().query<{ email: string }>(
-    "select email from newsletter_subscribers order by created_at desc",
-  );
-  store.newsletter = subscribers.rows.map((row) => row.email);
-
-  cacheSet("db:store", store, 60_000); // cache for 60s
-  return store;
 }
 
 export async function saveDatabaseStore(store: AppStore) {
@@ -1124,6 +1172,8 @@ async function deleteRecord(table: UpsertTable, id: string) {
 
 export async function upsertArticle(article: import("@/types").Article) {
   await upsertRecord("articles", article.id, article);
+  const { cacheInvalidate } = await import("./cache.server");
+  if (article.slug) cacheInvalidate(`db:article:${article.slug}`);
 }
 export async function deleteArticle(id: string) {
   await deleteRecord("articles", id);
@@ -1131,6 +1181,8 @@ export async function deleteArticle(id: string) {
 
 export async function upsertEvent(event: import("@/types").EventItem) {
   await upsertRecord("events", event.id, event);
+  const { cacheInvalidate } = await import("./cache.server");
+  if (event.slug) cacheInvalidate(`db:event:${event.slug}`);
   annualEventsCheckedOn = undefined;
   await ensureAnnualEventPages();
 }
@@ -1335,30 +1387,72 @@ export async function resetDatabaseToEmpty() {
 }
 
 export async function getArticleBySlug(slug: string) {
-  await ensureSeeded();
-  const result = await getPool().query<{ data: unknown }>(
-    "select data from articles where slug = $1 limit 1",
-    [slug],
-  );
-  return result.rows[0]?.data as import("@/types").Article | undefined;
+  const { cacheGet, cacheSet } = await import("./cache.server");
+  const cacheKey = `db:article:${slug}`;
+  const cached = cacheGet<import("@/types").Article | null>(cacheKey);
+  if (cached !== undefined) return cached ?? undefined;
+
+  try {
+    await ensureSeeded();
+    const result = await getPool().query<{ data: unknown }>(
+      "select data from articles where slug = $1 limit 1",
+      [slug],
+    );
+    const article = (result.rows[0]?.data as import("@/types").Article | undefined) ?? null;
+    cacheSet(cacheKey, article, 10 * 60_000); // 10 minutes
+    return article ?? undefined;
+  } catch (error) {
+    console.error(`Database query failed in getArticleBySlug(${slug}); using seed fallback:`, error);
+    const fallback = seedArticles.find((a) => a.slug === slug) ?? null;
+    cacheSet(cacheKey, fallback, 60_000);
+    return fallback ?? undefined;
+  }
 }
 
 export async function getEventBySlug(slug: string) {
-  await ensureSeeded();
-  const result = await getPool().query<{ data: unknown }>(
-    "select data from events where slug = $1 limit 1",
-    [slug],
-  );
-  return result.rows[0]?.data as import("@/types").EventItem | undefined;
+  const { cacheGet, cacheSet } = await import("./cache.server");
+  const cacheKey = `db:event:${slug}`;
+  const cached = cacheGet<import("@/types").EventItem | null>(cacheKey);
+  if (cached !== undefined) return cached ?? undefined;
+
+  try {
+    await ensureSeeded();
+    const result = await getPool().query<{ data: unknown }>(
+      "select data from events where slug = $1 limit 1",
+      [slug],
+    );
+    const event = (result.rows[0]?.data as import("@/types").EventItem | undefined) ?? null;
+    cacheSet(cacheKey, event, 10 * 60_000); // 10 minutes
+    return event ?? undefined;
+  } catch (error) {
+    console.error(`Database query failed in getEventBySlug(${slug}); using seed fallback:`, error);
+    const fallback = seedEvents.find((e) => e.slug === slug) ?? null;
+    cacheSet(cacheKey, fallback, 60_000);
+    return fallback ?? undefined;
+  }
 }
 
 export async function getListingBySlug(slug: string) {
-  await ensureSeeded();
-  const result = await getPool().query<{ data: unknown }>(
-    "select data from listings where slug = $1 limit 1",
-    [slug],
-  );
-  return result.rows[0]?.data as import("@/types").Listing | undefined;
+  const { cacheGet, cacheSet } = await import("./cache.server");
+  const cacheKey = `db:listing:${slug}`;
+  const cached = cacheGet<import("@/types").Listing | null>(cacheKey);
+  if (cached !== undefined) return cached ?? undefined;
+
+  try {
+    await ensureSeeded();
+    const result = await getPool().query<{ data: unknown }>(
+      "select data from listings where slug = $1 limit 1",
+      [slug],
+    );
+    const listing = (result.rows[0]?.data as import("@/types").Listing | undefined) ?? null;
+    cacheSet(cacheKey, listing, 10 * 60_000); // 10 minutes
+    return listing ?? undefined;
+  } catch (error) {
+    console.error(`Database query failed in getListingBySlug(${slug}); using seed fallback:`, error);
+    const fallback = seedListings.find((l) => l.slug === slug) ?? null;
+    cacheSet(cacheKey, fallback, 60_000);
+    return fallback ?? undefined;
+  }
 }
 
 export async function getPagedListings(options: {
@@ -1368,54 +1462,78 @@ export async function getPagedListings(options: {
   page?: number;
   limit?: number;
 }) {
-  await ensureSeeded();
-  const cat = options.category && options.category !== "All" ? options.category : null;
-  const area = options.area && options.area !== "All" ? options.area : null;
-  const q = options.q ? `%${options.q}%` : null;
-  const page = options.page ?? 1;
-  const limit = options.limit ?? 12;
-  const offset = (page - 1) * limit;
+  try {
+    await ensureSeeded();
+    const cat = options.category && options.category !== "All" ? options.category : null;
+    const area = options.area && options.area !== "All" ? options.area : null;
+    const q = options.q ? `%${options.q}%` : null;
+    const page = options.page ?? 1;
+    const limit = options.limit ?? 12;
+    const offset = (page - 1) * limit;
 
-  let query = "select data from listings where 1=1";
-  let countQuery = "select count(*) from listings where 1=1";
-  const params: unknown[] = [];
-  let paramIndex = 1;
+    let query = "select data from listings where 1=1";
+    let countQuery = "select count(*) from listings where 1=1";
+    const params: unknown[] = [];
+    let paramIndex = 1;
 
-  if (cat) {
-    query += ` and category = $${paramIndex}`;
-    countQuery += ` and category = $${paramIndex}`;
-    params.push(cat);
-    paramIndex++;
+    if (cat) {
+      query += ` and category = $${paramIndex}`;
+      countQuery += ` and category = $${paramIndex}`;
+      params.push(cat);
+      paramIndex++;
+    }
+
+    if (area) {
+      query += ` and area = $${paramIndex}`;
+      countQuery += ` and area = $${paramIndex}`;
+      params.push(area);
+      paramIndex++;
+    }
+
+    if (q) {
+      query += ` and (data->>'name' ilike $${paramIndex} or data->>'description' ilike $${paramIndex})`;
+      countQuery += ` and (data->>'name' ilike $${paramIndex} or data->>'description' ilike $${paramIndex})`;
+      params.push(q);
+      paramIndex++;
+    }
+
+    query += " order by created_at desc";
+    query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
+    params.push(limit, offset);
+
+    const pool = getPool();
+    const [itemsResult, countResult] = await Promise.all([
+      pool.query<{ data: unknown }>(query, params),
+      pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
+    ]);
+
+    return {
+      items: itemsResult.rows.map((r) => r.data) as import("@/types").Listing[],
+      totalCount: Number(countResult.rows[0].count),
+    };
+  } catch (error) {
+    console.error("Database query failed in getPagedListings; using seed fallback:", error);
+    let filtered = seedListings;
+    if (options.category && options.category !== "All") {
+      filtered = filtered.filter((l) => l.category === options.category);
+    }
+    if (options.area && options.area !== "All") {
+      filtered = filtered.filter((l) => l.area === options.area);
+    }
+    if (options.q) {
+      const qLower = options.q.toLowerCase();
+      filtered = filtered.filter(
+        (l) => l.name.toLowerCase().includes(qLower) || l.description?.toLowerCase().includes(qLower),
+      );
+    }
+    const page = options.page ?? 1;
+    const limit = options.limit ?? 12;
+    const offset = (page - 1) * limit;
+    return {
+      items: filtered.slice(offset, offset + limit),
+      totalCount: filtered.length,
+    };
   }
-
-  if (area) {
-    query += ` and area = $${paramIndex}`;
-    countQuery += ` and area = $${paramIndex}`;
-    params.push(area);
-    paramIndex++;
-  }
-
-  if (q) {
-    query += ` and (data->>'name' ilike $${paramIndex} or data->>'description' ilike $${paramIndex})`;
-    countQuery += ` and (data->>'name' ilike $${paramIndex} or data->>'description' ilike $${paramIndex})`;
-    params.push(q);
-    paramIndex++;
-  }
-
-  query += " order by created_at desc";
-  query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
-  params.push(limit, offset);
-
-  const pool = getPool();
-  const [itemsResult, countResult] = await Promise.all([
-    pool.query<{ data: unknown }>(query, params),
-    pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
-  ]);
-
-  return {
-    items: itemsResult.rows.map((r) => r.data) as import("@/types").Listing[],
-    totalCount: Number(countResult.rows[0].count),
-  };
 }
 
 export async function getPagedEvents(options: {
@@ -1427,89 +1545,113 @@ export async function getPagedEvents(options: {
   limit?: number;
   status?: string;
 }) {
-  await ensureSeeded();
-  const cat = options.category && options.category !== "All" ? options.category : null;
-  const q = options.q ? `%${options.q}%` : null;
-  const freeOnly = options.freeOnly ?? false;
-  const when = options.when ?? "all";
-  const page = options.page ?? 1;
-  const limit = options.limit ?? 12;
-  const offset = (page - 1) * limit;
-  const status = options.status ?? "published";
+  try {
+    await ensureSeeded();
+    const cat = options.category && options.category !== "All" ? options.category : null;
+    const q = options.q ? `%${options.q}%` : null;
+    const freeOnly = options.freeOnly ?? false;
+    const when = options.when ?? "all";
+    const page = options.page ?? 1;
+    const limit = options.limit ?? 12;
+    const offset = (page - 1) * limit;
+    const status = options.status ?? "published";
 
-  let query = "select data from events where 1=1";
-  let countQuery = "select count(*) from events where 1=1";
-  const params: unknown[] = [];
-  let paramIndex = 1;
+    let query = "select data from events where 1=1";
+    let countQuery = "select count(*) from events where 1=1";
+    const params: unknown[] = [];
+    let paramIndex = 1;
 
-  if (cat) {
-    query += ` and category = $${paramIndex}`;
-    countQuery += ` and category = $${paramIndex}`;
-    params.push(cat);
-    paramIndex++;
+    if (cat) {
+      query += ` and category = $${paramIndex}`;
+      countQuery += ` and category = $${paramIndex}`;
+      params.push(cat);
+      paramIndex++;
+    }
+
+    if (freeOnly) {
+      query += ` and (data->>'isFree')::boolean = true`;
+      countQuery += ` and (data->>'isFree')::boolean = true`;
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    if (when === "today") {
+      query += ` and data->>'startDate' = $${paramIndex}`;
+      countQuery += ` and data->>'startDate' = $${paramIndex}`;
+      params.push(today);
+      paramIndex++;
+    } else if (when === "weekend") {
+      const now = new Date();
+      const day = now.getDay();
+      const daysToSat = day === 6 ? 0 : 6 - day;
+      const sat = new Date(now);
+      sat.setDate(now.getDate() + daysToSat);
+      const sun = new Date(sat);
+      sun.setDate(sat.getDate() + 1);
+      const satStr = sat.toISOString().slice(0, 10);
+      const sunStr = sun.toISOString().slice(0, 10);
+
+      query += ` and (data->>'startDate' = $${paramIndex} or data->>'startDate' = $${paramIndex + 1})`;
+      countQuery += ` and (data->>'startDate' = $${paramIndex} or data->>'startDate' = $${paramIndex + 1})`;
+      params.push(satStr, sunStr);
+      paramIndex += 2;
+    } else {
+      query += ` and coalesce(nullif(data->>'endDate', ''), data->>'startDate') >= $${paramIndex}`;
+      countQuery += ` and coalesce(nullif(data->>'endDate', ''), data->>'startDate') >= $${paramIndex}`;
+      params.push(today);
+      paramIndex++;
+    }
+
+    if (q) {
+      query += ` and (data->>'title' ilike $${paramIndex} or data->>'locationName' ilike $${paramIndex})`;
+      countQuery += ` and (data->>'title' ilike $${paramIndex} or data->>'locationName' ilike $${paramIndex})`;
+      params.push(q);
+      paramIndex++;
+    }
+
+    if (status) {
+      query += ` and data->>'status' = $${paramIndex}`;
+      countQuery += ` and data->>'status' = $${paramIndex}`;
+      params.push(status);
+      paramIndex++;
+    }
+
+    query += " order by data->>'startDate' asc, created_at desc";
+    query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
+    params.push(limit, offset);
+
+    const pool = getPool();
+    const [itemsResult, countResult] = await Promise.all([
+      pool.query<{ data: unknown }>(query, params),
+      pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
+    ]);
+
+    return {
+      items: itemsResult.rows.map((r) => r.data) as import("@/types").EventItem[],
+      totalCount: Number(countResult.rows[0].count),
+    };
+  } catch (error) {
+    console.error("Database query failed in getPagedEvents; using seed fallback:", error);
+    let filtered = seedEvents.filter((e) => !options.status || e.status === options.status);
+    if (options.category && options.category !== "All") {
+      filtered = filtered.filter((e) => e.category === options.category);
+    }
+    if (options.freeOnly) {
+      filtered = filtered.filter((e) => e.isFree);
+    }
+    if (options.q) {
+      const qLower = options.q.toLowerCase();
+      filtered = filtered.filter(
+        (e) => e.title.toLowerCase().includes(qLower) || e.locationName?.toLowerCase().includes(qLower),
+      );
+    }
+    const page = options.page ?? 1;
+    const limit = options.limit ?? 12;
+    const offset = (page - 1) * limit;
+    return {
+      items: filtered.slice(offset, offset + limit),
+      totalCount: filtered.length,
+    };
   }
-
-  if (freeOnly) {
-    query += ` and (data->>'isFree')::boolean = true`;
-    countQuery += ` and (data->>'isFree')::boolean = true`;
-  }
-
-  const today = new Date().toISOString().slice(0, 10);
-  if (when === "today") {
-    query += ` and data->>'startDate' = $${paramIndex}`;
-    countQuery += ` and data->>'startDate' = $${paramIndex}`;
-    params.push(today);
-    paramIndex++;
-  } else if (when === "weekend") {
-    const now = new Date();
-    const day = now.getDay();
-    const daysToSat = day === 6 ? 0 : 6 - day;
-    const sat = new Date(now);
-    sat.setDate(now.getDate() + daysToSat);
-    const sun = new Date(sat);
-    sun.setDate(sat.getDate() + 1);
-    const satStr = sat.toISOString().slice(0, 10);
-    const sunStr = sun.toISOString().slice(0, 10);
-
-    query += ` and (data->>'startDate' = $${paramIndex} or data->>'startDate' = $${paramIndex + 1})`;
-    countQuery += ` and (data->>'startDate' = $${paramIndex} or data->>'startDate' = $${paramIndex + 1})`;
-    params.push(satStr, sunStr);
-    paramIndex += 2;
-  } else {
-    query += ` and coalesce(nullif(data->>'endDate', ''), data->>'startDate') >= $${paramIndex}`;
-    countQuery += ` and coalesce(nullif(data->>'endDate', ''), data->>'startDate') >= $${paramIndex}`;
-    params.push(today);
-    paramIndex++;
-  }
-
-  if (q) {
-    query += ` and (data->>'title' ilike $${paramIndex} or data->>'locationName' ilike $${paramIndex})`;
-    countQuery += ` and (data->>'title' ilike $${paramIndex} or data->>'locationName' ilike $${paramIndex})`;
-    params.push(q);
-    paramIndex++;
-  }
-
-  if (status) {
-    query += ` and data->>'status' = $${paramIndex}`;
-    countQuery += ` and data->>'status' = $${paramIndex}`;
-    params.push(status);
-    paramIndex++;
-  }
-
-  query += " order by data->>'startDate' asc, created_at desc";
-  query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
-  params.push(limit, offset);
-
-  const pool = getPool();
-  const [itemsResult, countResult] = await Promise.all([
-    pool.query<{ data: unknown }>(query, params),
-    pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
-  ]);
-
-  return {
-    items: itemsResult.rows.map((r) => r.data) as import("@/types").EventItem[],
-    totalCount: Number(countResult.rows[0].count),
-  };
 }
 
 export async function getPagedArticles(options: {
@@ -1518,46 +1660,61 @@ export async function getPagedArticles(options: {
   limit?: number;
   status?: string;
 }) {
-  await ensureSeeded();
-  const cat = options.category && options.category !== "All" ? options.category : null;
-  const page = options.page ?? 1;
-  const limit = options.limit ?? 12;
-  const offset = (page - 1) * limit;
-  const status = options.status ?? "published";
+  try {
+    await ensureSeeded();
+    const cat = options.category && options.category !== "All" ? options.category : null;
+    const page = options.page ?? 1;
+    const limit = options.limit ?? 12;
+    const offset = (page - 1) * limit;
+    const status = options.status ?? "published";
 
-  let query = "select data from articles where 1=1";
-  let countQuery = "select count(*) from articles where 1=1";
-  const params: unknown[] = [];
-  let paramIndex = 1;
+    let query = "select data from articles where 1=1";
+    let countQuery = "select count(*) from articles where 1=1";
+    const params: unknown[] = [];
+    let paramIndex = 1;
 
-  if (cat) {
-    query += ` and category = $${paramIndex}`;
-    countQuery += ` and category = $${paramIndex}`;
-    params.push(cat);
-    paramIndex++;
+    if (cat) {
+      query += ` and category = $${paramIndex}`;
+      countQuery += ` and category = $${paramIndex}`;
+      params.push(cat);
+      paramIndex++;
+    }
+
+    if (status) {
+      query += ` and data->>'status' = $${paramIndex}`;
+      countQuery += ` and data->>'status' = $${paramIndex}`;
+      params.push(status);
+      paramIndex++;
+    }
+
+    query += " order by created_at desc";
+    query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
+    params.push(limit, offset);
+
+    const pool = getPool();
+    const [itemsResult, countResult] = await Promise.all([
+      pool.query<{ data: unknown }>(query, params),
+      pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
+    ]);
+
+    return {
+      items: itemsResult.rows.map((r) => r.data) as import("@/types").Article[],
+      totalCount: Number(countResult.rows[0].count),
+    };
+  } catch (error) {
+    console.error("Database query failed in getPagedArticles; using seed fallback:", error);
+    let filtered = seedArticles.filter((a) => !options.status || a.status === options.status);
+    if (options.category && options.category !== "All") {
+      filtered = filtered.filter((a) => a.category === options.category);
+    }
+    const page = options.page ?? 1;
+    const limit = options.limit ?? 12;
+    const offset = (page - 1) * limit;
+    return {
+      items: filtered.slice(offset, offset + limit),
+      totalCount: filtered.length,
+    };
   }
-
-  if (status) {
-    query += ` and data->>'status' = $${paramIndex}`;
-    countQuery += ` and data->>'status' = $${paramIndex}`;
-    params.push(status);
-    paramIndex++;
-  }
-
-  query += " order by created_at desc";
-  query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
-  params.push(limit, offset);
-
-  const pool = getPool();
-  const [itemsResult, countResult] = await Promise.all([
-    pool.query<{ data: unknown }>(query, params),
-    pool.query<{ count: string }>(countQuery, params.slice(0, paramIndex - 1)),
-  ]);
-
-  return {
-    items: itemsResult.rows.map((r) => r.data) as import("@/types").Article[],
-    totalCount: Number(countResult.rows[0].count),
-  };
 }
 
 export async function recordAdEvent(adId: string, eventType: "impression" | "click") {
@@ -2645,42 +2802,47 @@ export async function getRelatedForListing(
   area: string,
   name: string,
 ) {
-  await ensureSeeded();
-  const pool = getPool();
-  const lowerName = `%${name.toLowerCase().trim()}%`;
-  const lowerArea = `%${area.toLowerCase().trim()}%`;
+  try {
+    await ensureSeeded();
+    const pool = getPool();
+    const lowerName = `%${name.toLowerCase().trim()}%`;
+    const lowerArea = `%${area.toLowerCase().trim()}%`;
 
-  const [articlesRes, eventsRes, listingsRes] = await Promise.all([
-    pool.query<{ data: unknown }>(
-      `select data from articles
-       where data->>'status' = 'published'
-         and (category = $1 or lower(data->>'content') ilike $2 or lower(data->>'title') ilike $2)
-       order by created_at desc limit 3`,
-      [category, lowerName],
-    ),
-    pool.query<{ data: unknown }>(
-      `select data from events
-       where data->>'status' = 'published'
-         and (category = $1 or lower(data->>'locationName') ilike $2 or lower(data->>'address') ilike $3)
-       order by data->>'startDate' asc, created_at desc limit 3`,
-      [category, lowerName, lowerArea],
-    ),
-    pool.query<{ data: unknown }>(
-      `select data from listings
-       where id != $1
-         and (category = $2 or area = $3)
-       order by case when category = $2 and area = $3 then 1
-                     when category = $2 then 2
-                     else 3 end asc, created_at desc limit 3`,
-      [listingId, category, area],
-    ),
-  ]);
+    const [articlesRes, eventsRes, listingsRes] = await Promise.all([
+      pool.query<{ data: unknown }>(
+        `select data from articles
+         where data->>'status' = 'published'
+           and (category = $1 or lower(data->>'content') ilike $2 or lower(data->>'title') ilike $2)
+         order by created_at desc limit 3`,
+        [category, lowerName],
+      ),
+      pool.query<{ data: unknown }>(
+        `select data from events
+         where data->>'status' = 'published'
+           and (category = $1 or lower(data->>'locationName') ilike $2 or lower(data->>'address') ilike $3)
+         order by data->>'startDate' asc, created_at desc limit 3`,
+        [category, lowerName, lowerArea],
+      ),
+      pool.query<{ data: unknown }>(
+        `select data from listings
+         where id != $1
+           and (category = $2 or area = $3)
+         order by case when category = $2 and area = $3 then 1
+                       when category = $2 then 2
+                       else 3 end asc, created_at desc limit 3`,
+        [listingId, category, area],
+      ),
+    ]);
 
-  return {
-    articles: articlesRes.rows.map((r) => r.data) as import("@/types").Article[],
-    events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
-    listings: listingsRes.rows.map((r) => r.data) as import("@/types").Listing[],
-  };
+    return {
+      articles: articlesRes.rows.map((r) => r.data) as import("@/types").Article[],
+      events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
+      listings: listingsRes.rows.map((r) => r.data) as import("@/types").Listing[],
+    };
+  } catch (error) {
+    console.error("Database query failed in getRelatedForListing; using fallback:", error);
+    return { articles: [], events: [], listings: [] };
+  }
 }
 
 export async function getRelatedForEvent(
@@ -2689,40 +2851,45 @@ export async function getRelatedForEvent(
   locationName: string,
   address: string,
 ) {
-  await ensureSeeded();
-  const pool = getPool();
-  const lowerLoc = `%${locationName.toLowerCase().trim()}%`;
+  try {
+    await ensureSeeded();
+    const pool = getPool();
+    const lowerLoc = `%${locationName.toLowerCase().trim()}%`;
 
-  const [eventsRes, venueRes, nearbyRes] = await Promise.all([
-    pool.query<{ data: unknown }>(
-      `select data from events
-       where id != $1 and data->>'status' = 'published'
-         and (category = $2 or lower(data->>'locationName') ilike $3)
-       order by data->>'startDate' asc, created_at desc limit 3`,
-      [eventId, category, lowerLoc],
-    ),
-    pool.query<{ data: unknown }>(
-      `select data from listings
-       where lower(data->>'name') ilike $1
-       order by created_at desc limit 1`,
-      [lowerLoc],
-    ),
-    pool.query<{ data: unknown }>(
-      `select data from listings
-       where data->>'status' = 'published'
-         and lower(data->>'name') not ilike $1
-       order by created_at desc limit 4`,
-      [lowerLoc],
-    ),
-  ]);
+    const [eventsRes, venueRes, nearbyRes] = await Promise.all([
+      pool.query<{ data: unknown }>(
+        `select data from events
+         where id != $1 and data->>'status' = 'published'
+           and (category = $2 or lower(data->>'locationName') ilike $3)
+         order by data->>'startDate' asc, created_at desc limit 3`,
+        [eventId, category, lowerLoc],
+      ),
+      pool.query<{ data: unknown }>(
+        `select data from listings
+         where lower(data->>'name') ilike $1
+         order by created_at desc limit 1`,
+        [lowerLoc],
+      ),
+      pool.query<{ data: unknown }>(
+        `select data from listings
+         where data->>'status' = 'published'
+           and lower(data->>'name') not ilike $1
+         order by created_at desc limit 4`,
+        [lowerLoc],
+      ),
+    ]);
 
-  const venue = venueRes.rows[0]?.data as import("@/types").Listing | undefined;
-  const nearby = nearbyRes.rows.map((r) => r.data) as import("@/types").Listing[];
+    const venue = venueRes.rows[0]?.data as import("@/types").Listing | undefined;
+    const nearby = nearbyRes.rows.map((r) => r.data) as import("@/types").Listing[];
 
-  return {
-    events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
-    listings: venue ? [venue, ...nearby] : nearby,
-  };
+    return {
+      events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
+      listings: venue ? [venue, ...nearby] : nearby,
+    };
+  } catch (error) {
+    console.error("Database query failed in getRelatedForEvent; using fallback:", error);
+    return { events: [], listings: [] };
+  }
 }
 
 export async function getRelatedForArticle(
@@ -2731,75 +2898,103 @@ export async function getRelatedForArticle(
   subcategory: string,
   title: string,
 ) {
-  await ensureSeeded();
-  const pool = getPool();
-  const lowerTitle = `%${title.toLowerCase().trim()}%`;
+  try {
+    await ensureSeeded();
+    const pool = getPool();
+    const lowerTitle = `%${title.toLowerCase().trim()}%`;
 
-  const [articlesRes, eventsRes, listingsRes] = await Promise.all([
-    pool.query<{ data: unknown }>(
-      `select data from articles
-       where id != $1 and data->>'status' = 'published'
-         and (category = $2 or subcategory = $3)
-       order by created_at desc limit 3`,
-      [articleId, category, subcategory],
-    ),
-    pool.query<{ data: unknown }>(
-      `select data from events
-       where data->>'status' = 'published'
-         and (category = $2 or lower(data->>'title') ilike $3)
-       order by data->>'startDate' asc, created_at desc limit 2`,
-      [category, lowerTitle],
-    ),
-    pool.query<{ data: unknown }>(
-      `select data from listings
-       where category = $1 or lower(data->>'name') ilike $2
-       order by created_at desc limit 2`,
-      [category, lowerTitle],
-    ),
-  ]);
+    const [articlesRes, eventsRes, listingsRes] = await Promise.all([
+      pool.query<{ data: unknown }>(
+        `select data from articles
+         where id != $1 and data->>'status' = 'published'
+           and (category = $2 or subcategory = $3)
+         order by created_at desc limit 3`,
+        [articleId, category, subcategory],
+      ),
+      pool.query<{ data: unknown }>(
+        `select data from events
+         where data->>'status' = 'published'
+           and (category = $2 or lower(data->>'title') ilike $3)
+         order by data->>'startDate' asc, created_at desc limit 2`,
+        [category, lowerTitle],
+      ),
+      pool.query<{ data: unknown }>(
+        `select data from listings
+         where category = $1 or lower(data->>'name') ilike $2
+         order by created_at desc limit 2`,
+        [category, lowerTitle],
+      ),
+    ]);
 
-  return {
-    articles: articlesRes.rows.map((r) => r.data) as import("@/types").Article[],
-    events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
-    listings: listingsRes.rows.map((r) => r.data) as import("@/types").Listing[],
-  };
+    return {
+      articles: articlesRes.rows.map((r) => r.data) as import("@/types").Article[],
+      events: eventsRes.rows.map((r) => r.data) as import("@/types").EventItem[],
+      listings: listingsRes.rows.map((r) => r.data) as import("@/types").Listing[],
+    };
+  } catch (error) {
+    console.error("Database query failed in getRelatedForArticle; using fallback:", error);
+    return {
+      articles: seedArticles
+        .filter(
+          (a) =>
+            a.id !== articleId &&
+            a.status === "published" &&
+            (a.category === category || a.subcategory === subcategory),
+        )
+        .slice(0, 3),
+      events: [],
+      listings: [],
+    };
+  }
 }
 
 export async function getOfferById(id: string) {
-  await ensureSeeded();
-  const r = await getPool().query<{ data: unknown }>(
-    `select data from offers
-     where id = $1
-       and data->>'status' = 'active'
-       and data->>'startDate' <= $2
-       and data->>'endDate' >= $2
-     limit 1`,
-    [id, new Date().toISOString().slice(0, 10)],
-  );
-  return r.rows[0]?.data as import("@/types").Offer | undefined;
+  try {
+    await ensureSeeded();
+    const r = await getPool().query<{ data: unknown }>(
+      `select data from offers
+       where id = $1
+         and data->>'status' = 'active'
+         and data->>'startDate' <= $2
+         and data->>'endDate' >= $2
+       limit 1`,
+      [id, new Date().toISOString().slice(0, 10)],
+    );
+    return r.rows[0]?.data as import("@/types").Offer | undefined;
+  } catch (error) {
+    console.error(`Database query failed in getOfferById(${id}); using seed fallback:`, error);
+    return seedOffers.find((o) => o.id === id);
+  }
 }
 
 export async function getActiveOffers(excludeListingId?: string, limit = 100) {
-  await ensureSeeded();
-  const pool = getPool();
-  const today = new Date().toISOString().slice(0, 10);
-  const sql = excludeListingId
-    ? `select o.data, l.slug as listing_slug
-       from offers o
-       left join listings l on o.listing_id = l.id
-       where o.listing_id != $1 and o.data->>'status' = 'active'
-         and o.data->>'startDate' <= $2 and o.data->>'endDate' >= $2
-       order by o.created_at desc limit $3`
-    : `select o.data, l.slug as listing_slug
-       from offers o
-       left join listings l on o.listing_id = l.id
-       where o.data->>'status' = 'active'
-         and o.data->>'startDate' <= $1 and o.data->>'endDate' >= $1
-       order by o.created_at desc limit $2`;
-  const params = excludeListingId ? [excludeListingId, today, limit] : [today, limit];
-  const r = await pool.query<{ data: import("@/types").Offer; listing_slug?: string }>(sql, params);
-  return r.rows.map((row) => ({
-    ...(row.data as import("@/types").Offer),
-    listingSlug: row.listing_slug ?? undefined,
-  }));
+  try {
+    await ensureSeeded();
+    const pool = getPool();
+    const today = new Date().toISOString().slice(0, 10);
+    const sql = excludeListingId
+      ? `select o.data, l.slug as listing_slug
+         from offers o
+         left join listings l on o.listing_id = l.id
+         where o.listing_id != $1 and o.data->>'status' = 'active'
+           and o.data->>'startDate' <= $2 and o.data->>'endDate' >= $2
+         order by o.created_at desc limit $3`
+      : `select o.data, l.slug as listing_slug
+         from offers o
+         left join listings l on o.listing_id = l.id
+         where o.data->>'status' = 'active'
+           and o.data->>'startDate' <= $1 and o.data->>'endDate' >= $1
+         order by o.created_at desc limit $2`;
+    const params = excludeListingId ? [excludeListingId, today, limit] : [today, limit];
+    const r = await pool.query<{ data: import("@/types").Offer; listing_slug?: string }>(sql, params);
+    return r.rows.map((row) => ({
+      ...(row.data as import("@/types").Offer),
+      listingSlug: row.listing_slug ?? undefined,
+    }));
+  } catch (error) {
+    console.error("Database query failed in getActiveOffers; using seed fallback:", error);
+    return seedOffers
+      .filter((o) => o.status === "active" && (!excludeListingId || o.listingId !== excludeListingId))
+      .slice(0, limit);
+  }
 }

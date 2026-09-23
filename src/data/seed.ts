@@ -170,7 +170,7 @@ export const seedArticles: Article[] = [
   <li><strong>Priory Park</strong> — Henry Boot Way, Hull <strong>HU4 7DY</strong>. Parking is free at this site; only the shuttle bus fare applies. The site is open until 11:00 PM each operating night of the fair.</li>
   <li><strong>Humber Bridge</strong> — Ferriby Road, Hessle <strong>HU13 0JG</strong>. Ideal for visitors approaching from the Humber Bridge or from the west. Buses run every 10 to 15 minutes and the site is open until 11:00 PM.</li>
 </ul>
-<p>Check current fares with the operator before travelling. Confirm where to board the return bus and note the last departure before entering the fair.</p>
+<p>The <a href="https://www.hull.gov.uk/leisure/hull-fair/3" target="_blank" rel="noopener noreferrer">council's Hull Fair travel notice</a> confirms both park-and-ride locations and 11:00 PM site hours. Site closing time is not a promise that a bus leaves at exactly 11pm; check current return timetables and fares with the operator before travelling, and note the last departure before entering the fair.</p>
 
 <h2>Taxis and private hire</h2>
 <p>A hackney carriage rank operates at Hull Paragon Interchange. For private hire and app-based services (Uber, 35/Drive, Hull Cars), the approved drop-off points are along Anlaby Road near the West Park / MKM Stadium entrance, or Calvert Lane to the north. Walton Street and the surrounding residential roads are closed to non-permit vehicles; do not ask a driver to attempt access.</p>
