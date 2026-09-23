@@ -140,46 +140,120 @@ export const seedArticles: Article[] = [
   },
   {
     id: "article-hull-fair-buses-2026",
-    title: "Hull Fair Buses 2026: Park & Ride and Travel Guide",
+    title: "Hull Fair Buses 2026: Walking Route, Bus Services & Travel Guide",
     slug: "hull-fair-buses-2026",
     excerpt:
-      "How to reach Hull Fair by bus, including the two park-and-ride locations, service frequency and late-evening planning.",
-    content: `<h2>Hull Fair 2026 by bus: what is confirmed?</h2>
-<p>Hull Fair runs from Friday 9 to Saturday 17 October 2026 at Walton Street, with no fair on Sunday 11 October. Hull City Council confirms two park-and-ride sites for the fair. Buses are scheduled every <strong>10–15 minutes</strong> and both sites are open until <strong>11pm each operating day</strong>. The council also says additional bus services will operate, but its fair information does not specify all routes, boarding stops, fares or the final return departure.</p>
+      "How to reach Hull Fair by bus, park-and-ride shuttle, taxi or on foot from Hull Paragon Interchange — including the 20-minute walking route down Anlaby Road.",
+    content: `<h2>Getting to Hull Fair 2026 without a car</h2>
+<p>Hull Fair runs from Friday 9 to Saturday 17 October 2026 at Walton Street, with no fair on Sunday 11 October. Walton Street and the residential terraces surrounding it are closed to general traffic during the fair, which means arriving without a car is often the easier and faster option.</p>
 
-<h2>Choose a park-and-ride site</h2>
+<h2>Walking from Hull Paragon Interchange (The Insider Route)</h2>
+<p>The walk from Hull Paragon Interchange to Walton Street is <strong>1.3 miles</strong> and takes approximately <strong>20 to 25 minutes</strong> on a flat, well-lit, wide-pavement route. On busy Friday and Saturday evenings it is frequently faster than sitting in stationary Anlaby Road traffic.</p>
 <ul>
-  <li><strong>Priory Park:</strong> Henry Boot Way, Hull <strong>HU4 7DY</strong>. This may suit drivers approaching via the A63 or west Hull. The regular Priory Park site has free parking; check the fair service fare before boarding.</li>
-  <li><strong>Humber Bridge:</strong> Ferriby Road, Hessle <strong>HU13 0JG</strong>. This may suit visitors approaching from the bridge or Hessle.</li>
+  <li><strong>Step 1:</strong> Exit the main station entrance onto Ferensway, then turn right and walk toward Anlaby Road (A1105).</li>
+  <li><strong>Step 2:</strong> Walk west along Anlaby Road, passing Hull Royal Infirmary on your left and the railway arches overhead.</li>
+  <li><strong>Step 3:</strong> Turn right into West Park through the MKM Stadium gates. Walton Street is directly ahead, signposted and busy with fairgoers.</li>
 </ul>
-<p>The <a href="https://www.hull.gov.uk/leisure/hull-fair/3" target="_blank" rel="noopener noreferrer">council's Hull Fair travel notice</a> is the source for the two locations, 10–15-minute frequency and 11pm site hours. Site closing time is <em>not</em> a promise that a bus leaves at exactly 11pm. Check the operator's return timetable and where to queue before entering the fair.</p>
+<p>The route is suitable for pushchairs and is clearly signposted once you enter West Park. The illuminated big wheel is visible from a distance and helps orientate first-time visitors.</p>
 
-<h2>Coming from Hull Paragon Interchange?</h2>
-<p>The interchange is a useful starting point for local buses. The council confirms additional services for Hull Fair but does not publish a complete route list on its fair page. Use the current <a href="https://www.stagecoachbus.com/" target="_blank" rel="noopener noreferrer">Stagecoach</a> or <a href="https://www.eastyorkshirebuses.co.uk/" target="_blank" rel="noopener noreferrer">East Yorkshire Buses</a> journey planner for your date, including any diversions and the last journey back. Do not rely on a previous year's fair timetable or assume an ordinary service runs late enough for an 11pm fairground close.</p>
-
-<h2>Before setting off</h2>
+<h2>Bus services from Hull Paragon Interchange</h2>
+<p>Hull City Council confirms that additional bus services operate during Hull Fair. Two main operators run frequent services along Anlaby Road:</p>
 <ul>
-  <li><strong>Check your return:</strong> note the stop location, route number and final departure before leaving the bus.</li>
-  <li><strong>Check fares:</strong> parking and bus travel are separate; the council fair page does not list a universal 2026 shuttle fare.</li>
-  <li><strong>Allow for closures:</strong> temporary restrictions affect Walton Street and surrounding roads, so boarding locations may differ from an ordinary day.</li>
-  <li><strong>Allow extra time:</strong> 10–15 minutes is the advertised service frequency, not a guaranteed journey time or queue length.</li>
+  <li><strong>East Yorkshire Buses:</strong> Runs dedicated Hull Fair special shuttles between the Interchange and the fairground during the event. Regular services 56, 57, and 66 also stop along Anlaby Road close to West Park. Check the East Yorkshire Buses journey planner for your specific travel date, as fair-period diversions can alter boarding stops.</li>
+  <li><strong>Stagecoach:</strong> Services 2, 3, 4, and 5 operate frequently along Anlaby Road toward Walton Street and the stadium approach. Late-night return services run until after the fair closes at 11:00 PM.</li>
 </ul>
-<p>See the <a href="/guides/guide-to-parking-at-hull-fair">parking guide</a> for stadium parking and restrictions, the <a href="/guides/hull-fair-opening-times-2026">day-by-day timetable</a>, or the <a href="/hull-fair">main Hull Fair guide</a>.</p>`,
+<p>Always use the current <a href="https://www.eastyorkshirebuses.co.uk/" target="_blank" rel="noopener noreferrer">East Yorkshire Buses</a> or <a href="https://www.stagecoachbus.com/" target="_blank" rel="noopener noreferrer">Stagecoach</a> journey planner on the day of your visit. Do not rely on a previous year's timetable: service numbers, diversions, and last departure times change from year to year.</p>
+
+<h2>Official park-and-ride shuttles</h2>
+<p>Hull City Council lists two dedicated Hull Fair park-and-ride sites with shuttle buses running every 10 to 15 minutes:</p>
+<ul>
+  <li><strong>Priory Park</strong> — Henry Boot Way, Hull <strong>HU4 7DY</strong>. Parking is free at this site; only the shuttle bus fare applies. The site is open until 11:00 PM each operating night of the fair.</li>
+  <li><strong>Humber Bridge</strong> — Ferriby Road, Hessle <strong>HU13 0JG</strong>. Ideal for visitors approaching from the Humber Bridge or from the west. Buses run every 10 to 15 minutes and the site is open until 11:00 PM.</li>
+</ul>
+<p>Check current fares with the operator before travelling. Confirm where to board the return bus and note the last departure before entering the fair.</p>
+
+<h2>Taxis and private hire</h2>
+<p>A hackney carriage rank operates at Hull Paragon Interchange. For private hire and app-based services (Uber, 35/Drive, Hull Cars), the approved drop-off points are along Anlaby Road near the West Park / MKM Stadium entrance, or Calvert Lane to the north. Walton Street and the surrounding residential roads are closed to non-permit vehicles; do not ask a driver to attempt access.</p>
+<p>When leaving the fair, consider walking five minutes toward Hull Royal Infirmary or Chanterlands Avenue before booking a return cab. This reduces waiting time in the traffic-congested Walton Street area and avoids surge pricing triggered by demand near the gates.</p>
+
+<h2>Practical tips before you travel</h2>
+<ul>
+  <li><strong>Check your return journey before entering the fair:</strong> note the bus stop location, route number and last departure time.</li>
+  <li><strong>Card payments may fail:</strong> 100,000+ visitors crowd Walton Street on peak nights, causing 4G/5G congestion that makes contactless card readers unreliable. Withdraw cash from a high-street ATM before travelling, not from on-site machines which charge £2.50 to £3.50 per withdrawal.</li>
+  <li><strong>Boarding stops may move:</strong> road closures and temporary restrictions affect Walton Street and surrounding roads, so confirm current stop locations with the operator.</li>
+  <li><strong>Arrive early on Saturdays:</strong> the fair opens at noon on Saturday 10 and Saturday 17 October. Bus services fill quickly from midday on these days.</li>
+</ul>
+<p>Read our <a href="/guides/guide-to-parking-at-hull-fair">complete Hull Fair parking guide</a> for car park options and road closure details, check the <a href="/guides/hull-fair-opening-times-2026">day-by-day timetable</a>, or return to the <a href="/hull-fair">main Hull Fair guide</a>.</p>`,
     category: "Guides",
-    tags: ["Hull Fair", "Buses", "Park and Ride", "Travel"],
+    tags: ["Hull Fair", "Buses", "Park and Ride", "Travel", "Walking Route"],
     featuredImage: "/hull-fair-hero.jpg",
     author: "HU NOW Editorial Team",
     status: "published",
     isFeatured: false,
     isSponsored: false,
-    readingMinutes: 3,
+    readingMinutes: 4,
     publishedAt: "2026-09-13",
     section: "community",
     subcategory: "travel",
     seo: {
-      title: "Hull Fair Buses 2026: Park & Ride Information",
+      title: "Hull Fair Buses & Travel Guide 2026: Walk, Bus & Shuttles",
       description:
-        "Hull Fair 2026 bus and park-and-ride guide, including Priory Park and Humber Bridge locations, service frequency and travel advice.",
+        "How to get to Hull Fair 2026 — walking from Hull Paragon (20 mins), East Yorkshire Buses and Stagecoach services, park-and-ride shuttles, and taxi drop-off points.",
+    },
+  },
+  {
+    id: "article-hull-fair-history",
+    title: "The History of Hull Fair: 700 Years from Medieval Charter to Walton Street",
+    slug: "hull-fair-history",
+    excerpt:
+      "From a 13th-century royal charter to one of Europe's largest travelling fairs: the full story of Hull Fair, where it began, how it moved, and why it keeps coming back.",
+    content: `<h2>Where it all began: the royal charters</h2>
+<p>Hull Fair is one of the oldest surviving fairs in Europe, with a documented history stretching back to the late thirteenth century. The earliest records connect the fair to a series of royal charters granted during a period when the town on the Humber was transforming from a small trading port into a significant English town.</p>
+<p>In 1279, when the settlement was still known as <strong>Wyke upon Hull</strong>, a charter granted on 10 November permitted an annual fair. A further charter in 1293 — when King Edward I had taken possession of the town, renamed it <strong>Kingston upon Hull</strong>, and formally laid out its streets — established a fair lasting six weeks, held in late spring and early summer. These early fairs were first and foremost commercial events: livestock, cloth, salt fish, rope, ironwork, and produce from the Humber and beyond were traded across what had become an important North Sea port.</p>
+<p>The fair was not simply entertainment. For medieval towns, a chartered fair represented economic privilege — a sanctioned window in which merchants from across England and the Continent could legally buy and sell goods without local guild restrictions. Hull's status as a royal town and port gave its fair particular importance.</p>
+
+<h2>Early locations: the Market Place and beyond</h2>
+<p>For centuries the fair moved around the town as Hull grew. Its earliest incarnations were held near the <strong>Market Place</strong>, behind Holy Trinity Church (now Hull Minster), and along the waterfront area around Wellington Street and Nelson Street, close to the piers where goods from Mediterranean and Baltic ships were unloaded.</p>
+<p>As the fair evolved from a trading event into a mix of commerce and entertainment — jugglers, animal shows, musicians, and early mechanical novelties were gradually introduced — it needed more open space. In the eighteenth century it was held on open ground outside the town walls known as the <strong>Brown Cow fields</strong>. By 1865 the fair had moved to the <strong>Corporation Fields on Park Street</strong>, but that site proved too noisy for nearby residents and too small for a fair that was growing rapidly.</p>
+
+<h2>The calendar riots of 1752</h2>
+<p>One of the most vivid episodes in Hull Fair's history stems not from the fairground itself but from a political act in Westminster. When Britain adopted the Gregorian calendar in September 1752, eleven days were removed from the calendar overnight. Ordinary people who feared their fair days — and therefore their livelihoods — would be shortened took to the streets in Hull and elsewhere, demanding: <strong>"Give us back our eleven days!"</strong></p>
+<p>The protest was effective. Hull Fair was shifted to align with the pre-change calendar, which is why it now opens on the <strong>Friday nearest to 11 October</strong> rather than the late spring or early summer dates of its original charters. The calendar change is the reason Hull Fair falls in autumn, making it inseparably associated with October evenings, falling leaves, and cold Humber air.</p>
+
+<h2>The move to Walton Street: 1888</h2>
+<p>The modern era of Hull Fair begins in <strong>1888</strong>, when the fair was moved to its current home on <strong>Walton Street</strong>, in the area of West Hull adjacent to what is now West Park. The original site covered eight acres — enormous for a travelling fair but already straining under the demand of showmen wanting pitches.</p>
+<p>In <strong>1906</strong> the site was doubled in size, bringing Walton Street to the scale that visitors recognise today. By this point Hull Fair was firmly entertainment-led rather than trade-led: mechanical rides, steam-powered attractions, freak shows, and travelling theatres had replaced the livestock and cloth merchants of the medieval fair.</p>
+<p>The pomegranates that remain one of the most distinctive Hull Fair traditions have their own story rooted in the port. As Mediterranean ships unloaded their autumn cargoes at Hull Docks, showmen and traders had access to seasonal exotic fruit that was rare and expensive away from a major port. Pomegranates, sold with pins so that fairgoers could eat the seeds on the spot, became one of Hull Fair's most unusual and enduring traditions — a reminder that the fair was always bound up with Hull's identity as a port city open to the world.</p>
+
+<h2>The fair that would not die: wartime closures</h2>
+<p>Hull Fair has been suspended only a handful of times in its long history, and each suspension reflects a national crisis rather than any local failure of will.</p>
+<p>During the <strong>First World War</strong> the fair continued in 1914 but was suspended from 1915 onward. Hull Corporation's Markets Committee confirmed in July 1915 that no contracts had been signed and that wartime lighting restrictions — the Walton Street site was too exposed to be lit safely against enemy observation — made operation impossible after dark.</p>
+<p>The <strong>Second World War</strong> brought a longer suspension, from <strong>1939 to 1945</strong>. The Walton Street site was not left idle during these years: it served as a mooring point for barrage balloons defending Hull against Luftwaffe bombing raids, as a military vehicle park, and as a tank training ground. Hull was one of the most heavily bombed British cities outside London, and the Walton Street area bore its share of the damage. When the fair returned in 1945 and again in full vigour in 1946, the celebrations were felt across a city that had been through years of destruction.</p>
+<p>In 1944, showman Billy Butlin — later founder of the Butlin's holiday camps — proposed an amusement park for Hull using blackout-compliant marquees on a bomb site near the city centre, aiming to boost morale during the Blitz. The short-lived "Blackout Amusement Park" was approved and opened, but closed in September 1944 following a fire. It stands as a measure of how much Hull residents missed their annual fair.</p>
+
+<h2>The modern fair and COVID-19</h2>
+<p>In the decades after the Second World War, Hull Fair resumed as an unbroken autumn tradition. The Showmen's Guild of Great Britain, which represents the travelling showmen and their families who run the fair, works with Hull City Council to ensure the event happens every year. The guild families who operate the major rides and stalls are often third, fourth, or fifth-generation fairground operators, and many of the named attractions — Wright's brandy snaps, Bob Carver's patties — represent multi-generational family businesses.</p>
+<p>The fair's only modern cancellation came in <strong>2020</strong>, when the COVID-19 pandemic made a mass public gathering on Walton Street impossible. It was the first time in the post-war era that the fair had been cancelled outright. When Hull Fair returned in <strong>October 2021</strong>, the queues along Anlaby Road and the noise from Walton Street announced something that Hull had genuinely missed.</p>
+
+<h2>Hull Fair today</h2>
+<p>Hull Fair now occupies the same Walton Street footprint established in 1906. Hull City Council describes it as one of Europe's largest travelling fairs, with more than 250 rides on site alongside hundreds of food, game, and novelty stalls. The fair opens on the <strong>Friday nearest to 11 October</strong> — a schedule anchored to the calendar protests of 1752 — and runs for nine days, closed on Sunday by an old charter rule against Sunday trading.</p>
+<p>In 2026, Hull Fair runs from <strong>Friday 9 October to Saturday 17 October</strong>, closed on Sunday 11 October. Admission to the Walton Street site remains free, as it has been for generations. Rides, games, food, and stalls are priced individually by their operators.</p>
+<p>After more than 700 years, the fair is still built on the same idea that powered the original charters: gather people together in one place, in autumn, and give them a reason to spend an evening on Walton Street. The medieval king who signed the 1293 charter would recognise the impulse, even if the fifty-metre drop towers would likely surprise him.</p>`,
+    category: "Stories",
+    tags: ["Hull Fair", "History", "Hull History", "Walton Street", "Traditions"],
+    featuredImage: "/hull-fair-hero.jpg",
+    author: "HU NOW Editorial Team",
+    status: "published",
+    isFeatured: true,
+    isSponsored: false,
+    readingMinutes: 8,
+    publishedAt: "2026-09-23",
+    section: "stories",
+    subcategory: "history",
+    seo: {
+      title: "The History of Hull Fair: 700 Years from Charter to Walton Street",
+      description:
+        "How Hull Fair began with a 13th-century royal charter, why it moved to Walton Street in 1888, how it survived two world wars, and what it means to Hull today.",
     },
   },
   {
@@ -415,11 +489,24 @@ export const seedArticles: Article[] = [
     title: "Best Sunday Dinner in Hull: Sunday Roasts & Pub Lunches 2026",
     slug: "best-sunday-roasts-hull-east-yorkshire",
     excerpt:
-      "Looking for the best Sunday dinner in Hull? Discover Sunday roasts, pub lunches, Yorkshire puddings and country inns to book in Hull and East Yorkshire.",
+      "Compare Sunday dinner options in Hull and East Yorkshire, with official menu links, published serving times, meat-free choices and practical booking advice.",
     content: `<h2>Where to find Sunday lunch in Hull and East Yorkshire</h2>
 <p>Looking for a Sunday roast in Hull? Start by choosing between a city-centre pub and a country dining trip. Menus, serving hours and prices change, so this guide separates venues with a published Sunday offer from places where you should confirm the current menu before booking.</p>
 
+<h2>Choose your Sunday lunch</h2>
+<ul>
+  <li><strong>For a published roast selection in Hull:</strong> start with Sailmakers at St Andrews Quay, whose official Sunday page lists meat, vegetarian and vegan choices.</li>
+  <li><strong>For a village pub:</strong> consider the Green Dragon in Welton, which advertises Sunday roasts and lists a car park.</li>
+  <li><strong>For a book-ahead country lunch:</strong> the Pipe and Glass in South Dalton has a dedicated Sunday menu and a published noon–4pm food service.</li>
+  <li><strong>For lunch around Old Town:</strong> the Sailmakers Arms publishes Sunday food hours; confirm a roast specifically if that is what you want. The Minerva and Lion &amp; Key also need a current-menu check.</li>
+</ul>
+<p>This is a researched shortlist, not a scored tasting review. Hull venues and East Yorkshire villages are separated below so you do not book a country pub expecting a city-centre location.</p>
+
 <h2>Sunday-roast options with published information</h2>
+<h3>Sailmakers, St Andrews Quay, Hull</h3>
+<p><strong>Where:</strong> St Andrews Quay, HU3 4SA. The pub's <a href="https://www.flaminggrillpubs.co.uk/pubs/east-riding-yorkshire/sailmakers/sunday-roasts" target="_blank" rel="noopener noreferrer">official Sunday-roast page</a> lists beef, turkey and a combination of the two, alongside a vegetarian mushroom-and-cheese bake and a vegan mushroom-and-garlic bake. Check the live menu for availability and the price for your chosen meal.</p>
+<p><strong>Why shortlist it:</strong> its published meat-free choices help a mixed group compare options before booking. This is Sailmakers at St Andrews Quay, <strong>not the Sailmakers Arms in Old Town</strong>. Use the correct venue's booking link and check the Sunday kitchen closing time rather than relying on the bar's opening hours.</p>
+
 <h3>The Green Dragon, Welton</h3>
 <p>The Green Dragon advertises a Sunday roast on its <a href="https://www.greendragonpubwelton.co.uk/" target="_blank" rel="noopener noreferrer">official pub website</a>. The venue is at Cowgate, Welton, HU15 1NB, with parking and accessible access listed among its facilities. This is a practical option if you want a village pub outside central Hull. Check its current Sunday menu, price and table availability before travelling.</p>
 
@@ -427,6 +514,9 @@ export const seedArticles: Article[] = [
 <p>The Pipe and Glass publishes a separate <a href="https://www.pipeandglass.co.uk/menus" target="_blank" rel="noopener noreferrer">Sunday lunch menu</a> and lists Sunday food service from noon to 4pm. It is at West End, South Dalton, HU17 7PN. The restaurant recommends booking ahead; its bar is walk-in. Check the current menu if you are specifically after a traditional roast or need a vegetarian or vegan option.</p>
 
 <h2>Hull and West Hull places to check directly</h2>
+<h3>The Sailmakers Arms, Old Town</h3>
+<p>The <a href="https://www.thesailmakersarms.com/menus" target="_blank" rel="noopener noreferrer">Sailmakers Arms menus page</a> lists Sunday food service from <strong>noon to 5pm</strong> and describes the pub as dog and family friendly. That confirms a Sunday lunch opportunity, but not a particular roast or price. Ask what is available that week before booking. For a dog-friendly table, confirm which part of the pub you can eat in.</p>
+
 <h3>The Minerva, Hull waterfront</h3>
 <p>The Minerva has published a <a href="https://minerva-hull.co.uk/onewebmedia/Minerva%20Menu%20A3%20Folded%20Cream%202024.pdf" target="_blank" rel="noopener noreferrer">Sunday-roast menu</a>, but that document is dated 2024. Treat it as evidence of a past offering, not confirmation of this Sunday's dishes, prices or opening hours. Ask the pub for the current menu before making a special journey.</p>
 
@@ -436,6 +526,14 @@ export const seedArticles: Article[] = [
 <h3>The Wheatsheaf, Kirk Ella</h3>
 <p>The Wheatsheaf lists Sunday food service on its <a href="https://www.wheatsheafkirkella.co.uk/menus" target="_blank" rel="noopener noreferrer">official menus page</a>. It does not establish a fixed roast selection for every Sunday, so check the live menu or call the pub for today's dishes and dietary options.</p>
 
+<h2>Vegetarian, vegan and family Sunday dinners</h2>
+<p>Sailmakers at St Andrews Quay explicitly advertises vegetarian and vegan roast alternatives. The Pipe and Glass links separate vegetarian, vegan and children's menus alongside its Sunday lunch menu; ask which dishes are available during Sunday service. A vegetarian main does not by itself establish whether the accompanying gravy, potatoes or Yorkshire pudding suit a vegan diet.</p>
+<p>For children, ask about smaller portions, a separate menu and highchair availability when reserving. For allergies or coeliac requirements, speak directly to the venue about ingredients, preparation and cross-contact before ordering; a menu label is not a substitute for that conversation.</p>
+
+<h2>How much is Sunday dinner in Hull?</h2>
+<p>There is no single city-wide price, and an old menu is not a reliable budget for this weekend. Compare the current cost of the roast itself, optional sides, children's meals and any set-menu requirement. Check whether a deposit or cancellation charge applies to your booking. This guide does not invent a price range or present an older PDF's prices as current.</p>
+<p>If value is your priority, decide on a total per person before booking and include drinks and travel. Ask whether advertised offers apply on Sundays: a weekday lunch deal may not cover the roast menu.</p>
+
 <h2>Before you book</h2>
 <ul>
   <li><strong>Confirm the roast:</strong> A pub being open for Sunday food does not guarantee a roast is on the menu that week.</li>
@@ -443,7 +541,15 @@ export const seedArticles: Article[] = [
   <li><strong>Ask about allergies:</strong> Contact the venue directly about ingredients and cross-contact; do not rely on a general online guide.</li>
   <li><strong>Plan the journey:</strong> South Dalton and Welton are outside Hull city centre, so check travel options if you are not driving.</li>
 </ul>
-<p><em>Venue information checked 20 September 2026. We have not independently tasted or ranked these roasts; “best” is a search-friendly guide to options, not an unverified award.</em></p>`,
+<h2>Sunday lunch questions</h2>
+<h3>Where can I get Sunday dinner in Hull city centre?</h3>
+<p>Start with the Old Town and waterfront options above if you want to stay central. The Sailmakers Arms publishes Sunday food hours; confirm the current roast offering with the Minerva and Lion &amp; Key. St Andrews Quay is a separate location, while Welton and South Dalton are outside Hull.</p>
+<h3>Can I get a roast late on Sunday?</h3>
+<p>Do not assume an evening bar opening means the roast is still available. The Pipe and Glass lists Sunday food until 4pm and the Sailmakers Arms until 5pm. Confirm the final order time and roast availability with your chosen venue, especially for a late booking.</p>
+<h3>Do I need to book?</h3>
+<p>Reserve ahead if you need a particular time, a large table or dietary arrangements. The Pipe and Glass explicitly recommends restaurant reservations, while its bar dining is walk-in. For other venues, use the official links above to check their booking policy; an empty booking slot does not guarantee every dish will be available.</p>
+<p>Explore more <a href="/eat">food and drink in Hull</a>, or use our <a href="/areas/old-town">Old Town guide</a> to plan the rest of your visit.</p>
+<p><em>Sunday dinner guide updated 21 September 2026. Official sources are linked beside each venue. Serving times and menus can change; entries based on older information are labelled. We have not independently tasted or ranked these meals.</em></p>`,
     category: "Guides",
     subcategory: "guides",
     section: "food-and-drink",
@@ -458,7 +564,7 @@ export const seedArticles: Article[] = [
     seo: {
       title: "Best Sunday Dinner in Hull 2026: Sunday Roast Guide",
       description:
-        "Find the best Sunday dinner in Hull and East Yorkshire, from classic Sunday roasts and pub lunches to vegetarian options and country inns. Includes booking tips.",
+        "Compare Sunday dinner in Hull and East Yorkshire: roast menus, published serving times, vegetarian and vegan choices, official links and booking advice.",
     },
   },
   {

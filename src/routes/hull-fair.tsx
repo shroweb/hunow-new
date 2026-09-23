@@ -760,9 +760,7 @@ function HullFairPage() {
             <div className="border border-border p-5">
               <div className="text-2xl mb-1">🧸</div>
               <h3 className="font-display text-xl uppercase mb-1">Children's Rides</h3>
-              <div className="text-accent font-mono font-bold text-lg mb-3">
-                Priced Individually
-              </div>
+              <div className="text-accent font-mono font-bold text-lg mb-2">Typically £2.50–£3.50</div>
               <p className="text-xs text-muted-foreground">
                 Teacups, mini roller coasters, funhouses, toy carousels, inflatables, and gentle
                 train rides.
@@ -772,7 +770,7 @@ function HullFairPage() {
             <div className="border border-border p-5">
               <div className="text-2xl mb-1">🎡</div>
               <h3 className="font-display text-xl uppercase mb-1">Family Classics</h3>
-              <div className="text-accent font-mono font-bold text-lg mb-3">Check On Site</div>
+              <div className="text-accent font-mono font-bold text-lg mb-2">Typically £3.50–£5.00</div>
               <p className="text-xs text-muted-foreground">
                 Dodgems (bumper cars), Waltzers, Giant Observation Wheel, Ghost Train, Sizzler, and
                 Helter Skelter.
@@ -782,12 +780,43 @@ function HullFairPage() {
             <div className="border border-border p-5">
               <div className="text-2xl mb-1">🚀</div>
               <h3 className="font-display text-xl uppercase mb-1">Extreme Thrill Rides</h3>
-              <div className="text-accent font-mono font-bold text-lg mb-3">Check On Site</div>
+              <div className="text-accent font-mono font-bold text-lg mb-2">Typically £4.00–£7.00</div>
               <p className="text-xs text-muted-foreground">
                 Air, Reverse Bungee, Giant Booster, XXL Speed, AtmosFear, and 50-metre drop towers.
               </p>
             </div>
           </div>
+
+          <div className="bg-amber-500/10 border-l-4 border-amber-500 p-5 mb-6">
+            <div className="font-bold text-amber-900 dark:text-amber-200 mb-2">
+              Realistic Budget Guide
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-amber-800/90 dark:text-amber-300/90">
+              <div>
+                <strong>Per Child (4–10 rides):</strong>
+                <br />£25–£45 for rides plus £10–£15 for food
+              </div>
+              <div>
+                <strong>Family of 4 Evening:</strong>
+                <br />Budget £80–£130 including food, games, and rides
+              </div>
+              <div>
+                <strong>Game Stalls:</strong>
+                <br />Hook-a-Duck, Darts, Hoopla typically £3–£5 per go
+              </div>
+            </div>
+            <p className="text-xs text-amber-800/80 dark:text-amber-400/80 mt-3">
+              These are estimated historical benchmarks only. All prices are set by individual
+              operators and must be confirmed at each attraction before paying.
+            </p>
+          </div>
+
+          <Link
+            to="/guides/hull-fair-ride-prices-2026"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent hover:underline"
+          >
+            Read our detailed Hull Fair ride prices and budgeting guide →
+          </Link>
         </section>
 
         {/* Section 4: Food Bucket List */}
@@ -860,47 +889,74 @@ function HullFairPage() {
           </div>
         </section>
 
-        {/* Section 5: Family & Safety */}
+        {/* Section 5: Family, Safety & Practicalities */}
         <section id="family" className="scroll-mt-20 border-t-2 border-foreground pt-10">
           <div className="text-[10px] font-mono uppercase tracking-widest text-accent mb-2">
             Visitor Advice
           </div>
           <h2 className="text-3xl md:text-4xl font-display uppercase mb-6">
-            Family Tips, Cash vs Card & Safety
+            Family, Dogs, Toilets & Practical Tips
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="border border-border p-6">
-              <h3 className="font-bold uppercase text-sm mb-2">🕒 Quiet Times for Families</h3>
+              <h3 className="font-bold uppercase text-sm mb-2">🕒 Quieter Times for Families</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Weekday afternoons are generally less busy than Friday and Saturday evenings, making
-                them a sensible choice for families. Crowd and queue levels can still vary.
+                Weekday afternoons (Monday to Thursday, 2:00 PM to 5:00 PM) are significantly
+                quieter than Friday and Saturday evenings. Pushchairs are manageable along Walton
+                Street, though expect a crowd at peak hours regardless of day.
               </p>
             </div>
 
             <div className="border border-border p-6">
-              <h3 className="font-bold uppercase text-sm mb-2">🪪 Plan for Separation</h3>
+              <h3 className="font-bold uppercase text-sm mb-2">🪪 If a Child Gets Separated</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Agree a meeting point, make sure children know which adults to approach for help,
-                and keep a current photo of them on your phone. Follow instructions from event
-                staff.
+                Agree a fixed meeting point before entering — a recognisable landmark works better
+                than trying to phone in a noisy crowd. Tell children to find a uniformed event
+                steward or police officer, and keep a current photo of them on your phone. Write
+                your mobile number on a child's wrist with a marker pen or ask a steward for a
+                child ID wristband on arrival.
               </p>
             </div>
 
             <div className="border border-border p-6">
-              <h3 className="font-bold uppercase text-sm mb-2">💳 Cash vs Contactless Cards</h3>
+              <h3 className="font-bold uppercase text-sm mb-2">💳 Cash, Cards & Mobile Signal</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Payment methods vary by operator. Check before ordering or joining a ride queue and
-                consider carrying both a payment card and some cash as alternatives.
+                Many operators accept contactless payment, but mobile network congestion across
+                Walton Street (100,000+ visitors) regularly causes card terminals to buffer or fail.
+                On-site temporary ATMs carry a £2.50 to £3.50 withdrawal fee and queue badly on
+                Friday and Saturday nights. Withdraw cash from a high-street bank or ATM{" "}
+                <strong>before</strong> you arrive.
+              </p>
+            </div>
+
+            <div className="border border-border p-6">
+              <h3 className="font-bold uppercase text-sm mb-2">🚻 Toilets & Baby Changing</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Temporary public toilet blocks, accessible portaloos, and baby-changing units are
+                provided on site along Walton Street and near the West Park / MKM Stadium entrance.
+                Look for green and white signage from stewards on arrival, as exact locations can
+                shift between years.
+              </p>
+            </div>
+
+            <div className="border border-border p-6">
+              <h3 className="font-bold uppercase text-sm mb-2">🐕 Dogs at Hull Fair</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Pet dogs are strongly discouraged. The fairground creates serious hazards for animals
+                — extreme noise levels, strobe lighting, dense crowds, discarded wooden food
+                skewers on the ground, and hot cooking grease. Registered assistance and guide dogs
+                are of course permitted. All other dog owners should leave their pets safely at home.
               </p>
             </div>
 
             <div className="border border-border p-6">
               <h3 className="font-bold uppercase text-sm mb-2">♿ Accessibility & Blue Badges</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Walton Street is largely paved, but temporary fairground layouts and individual ride
-                access vary. Check current accessibility arrangements with the council or ride
-                operator.
+                Walton Street is largely paved. Individual rides and stalls have their own
+                boarding arrangements; ask staff at each attraction. Blue Badge holders should
+                check Hull City Council's current parking guidance before travelling, as standard
+                arrangements may not apply during road closures.
               </p>
             </div>
           </div>
