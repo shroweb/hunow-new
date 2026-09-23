@@ -122,6 +122,83 @@ const SECTIONS: { title: string; fields: FieldDef[] }[] = [
       },
     ],
   },
+  {
+    title: "Local Vibe & Header Utility Bar",
+    fields: [
+      {
+        key: "header_ticker_enabled",
+        label: "Header Utility Ticker (Enabled: true / false)",
+        placeholder: "true",
+        hint: "Set to 'true' to display the thin top utility bar with Humber tides, weather, and bulletin.",
+      },
+      {
+        key: "header_ticker_text",
+        label: "Daily Dispatch / Bulletin Text",
+        type: "text",
+        placeholder: "Hull Fair: 9–17 October · Humber High Tide: 18:42 · Weather: 14°C Overcast",
+        hint: "Current bulletin shown across the top of all pages.",
+      },
+    ],
+  },
+  {
+    title: "Homepage Editor's Column (From the Editor)",
+    fields: [
+      {
+        key: "editor_letter_enabled",
+        label: "Show Editor's Column (true / false)",
+        placeholder: "true",
+      },
+      {
+        key: "editor_letter_title",
+        label: "Column Headline",
+        placeholder: "From the Editor: Why autumn in Hull belongs to Walton Street",
+      },
+      {
+        key: "editor_letter_author",
+        label: "Author / Byline",
+        placeholder: "Callum MacInnes",
+      },
+      {
+        key: "editor_letter_role",
+        label: "Author Role",
+        placeholder: "Founder & Editor",
+      },
+      {
+        key: "editor_letter_avatar",
+        label: "Author Photo URL",
+        type: "image",
+        placeholder: "/avatar.jpg",
+      },
+      {
+        key: "editor_letter_body",
+        label: "Editor's Note / Body",
+        type: "textarea",
+        placeholder: "Personal weekly message from the editor...",
+        hint: "Short personal foreword giving a human, grounded voice to the homepage.",
+      },
+    ],
+  },
+  {
+    title: "Overheard in Hull & Community Quote",
+    fields: [
+      {
+        key: "overheard_hull_enabled",
+        label: "Show Overheard Block (true / false)",
+        placeholder: "true",
+      },
+      {
+        key: "overheard_hull_quote",
+        label: "Quote Text",
+        type: "textarea",
+        placeholder: "It's not a proper night out if you haven't lost your voice on the waltzers and covered yourself in chip spice.",
+      },
+      {
+        key: "overheard_hull_source",
+        label: "Attribution / Source",
+        placeholder: "Overheard down Princes Ave",
+      },
+    ],
+  },
 ];
 
 const ALL_KEYS = SECTIONS.flatMap((s) => s.fields.map((f) => f.key));

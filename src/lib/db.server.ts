@@ -499,6 +499,15 @@ create table if not exists web_push_subscriptions (
   created_at timestamptz not null default now()
 );
 create index if not exists web_push_subscriptions_user_id_idx on web_push_subscriptions (user_id);
+
+create table if not exists authors (
+  id text primary key,
+  data jsonb not null,
+  slug text generated always as (data->>'slug') stored,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists authors_slug_idx on authors (slug);
 `;
 
 export async function ensureSchema() {
@@ -2040,6 +2049,20 @@ const SETTING_DEFAULTS: Record<string, string> = {
   social_twitter: "",
   social_tiktok: "",
   social_youtube: "",
+  // Local vibe & header utility ticker
+  header_ticker_enabled: "true",
+  header_ticker_text: "Hull Fair: 9–17 October on Walton Street · Humber High Tide: 18:42 · Weather: 14°C Overcast",
+  // Homepage editor's column
+  editor_letter_enabled: "true",
+  editor_letter_title: "From the Editor: Why autumn in Hull belongs to Walton Street",
+  editor_letter_author: "Callum MacInnes",
+  editor_letter_role: "Founder & Editor",
+  editor_letter_avatar: "",
+  editor_letter_body: "Every October, something shifts across the city. The nights pull in, the wind off the Humber bites a little harder, and Walton Street transforms into an electric sea of neon, fried onions, and waltzer screams. Welcome to the new HU NOW — independently reported, strictly local, and completely free.",
+  // Community quote / overheard
+  overheard_hull_enabled: "true",
+  overheard_hull_quote: "It's not a proper night out in Hull if you haven't lost your voice on the waltzers and covered yourself in chip spice.",
+  overheard_hull_source: "Overheard down Princes Ave",
 };
 
 export async function getSiteSettings(): Promise<Record<string, string>> {
@@ -2074,6 +2097,53 @@ export async function setSiteSetting(key: string, value: string) {
     "insert into site_settings (key, value) values ($1, $2) on conflict (key) do update set value = $2",
     [key, value],
   );
+}
+
+export async function getAuthors(): Promise<import("./authors").Author[]> {
+  const { cacheGet, cacheSet } = await import("./cache.server");
+  const cached = cacheGet<import("./authors").Author[]>("db:authors");
+  if (cached) return cached;
+
+  try {
+    await ensureSchema();
+    const result = await getPool().query<{ data: unknown }>(
+      "select data from authors order by (data->>'name') asc",
+    );
+    if (result.rows.length === 0) {
+      const { AUTHORS } = await import("./authors");
+      const list = Object.values(AUTHORS);
+      cacheSet("db:authors", list, 5 * 60_000);
+      return list;
+    }
+    const list = result.rows.map((r) => r.data as import("./authors").Author);
+    cacheSet("db:authors", list, 5 * 60_000);
+    return list;
+  } catch (error) {
+    console.error("Database query failed in getAuthors; using fallback AUTHORS:", error);
+    const { AUTHORS } = await import("./authors");
+    return Object.values(AUTHORS);
+  }
+}
+
+export async function upsertAuthor(author: import("./authors").Author) {
+  await ensureSchema();
+  const id = author.id || author.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const record = { ...author, id };
+  await getPool().query(
+    `insert into authors (id, data) values ($1, $2)
+     on conflict (id) do update set data = $2`,
+    [id, JSON.stringify(record)],
+  );
+  const { cacheInvalidate } = await import("./cache.server");
+  cacheInvalidate("db:authors");
+  return record;
+}
+
+export async function deleteAuthor(id: string) {
+  await ensureSchema();
+  await getPool().query("delete from authors where id = $1", [id]);
+  const { cacheInvalidate } = await import("./cache.server");
+  cacheInvalidate("db:authors");
 }
 
 export interface ListingClaimRow {

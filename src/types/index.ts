@@ -8,6 +8,23 @@ export interface SeoMeta {
   noIndex?: boolean;
 }
 
+export interface HonestVerdict {
+  theGood?: string;
+  theCatch?: string;
+  proTip?: string;
+}
+
+export interface AuthorProfile {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+  bio: string;
+  avatarUrl?: string;
+  locationNote?: string;
+  socialHandle?: string;
+}
+
 export interface Article {
   id: string;
   title: string;
@@ -31,6 +48,11 @@ export interface Article {
   seriesOrder?: number;
   pollId?: string;
   seo?: SeoMeta;
+  verifiedDate?: string;
+  verifiedNote?: string;
+  honestVerdict?: HonestVerdict;
+  priceCheck?: string;
+  editorialBadge?: string;
 }
 
 export interface EventItem {

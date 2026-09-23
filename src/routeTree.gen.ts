@@ -82,6 +82,7 @@ import { Route as AdminEditorialPicksRouteImport } from './routes/admin.editoria
 import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
 import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
+import { Route as AdminAuthorsRouteImport } from './routes/admin.authors'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as AdminAreasRouteImport } from './routes/admin.areas'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
@@ -469,6 +470,11 @@ const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
   path: '/businesses',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAuthorsRoute = AdminAuthorsRouteImport.update({
+  id: '/authors',
+  path: '/authors',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminArticlesRoute = AdminArticlesRouteImport.update({
   id: '/articles',
   path: '/articles',
@@ -617,6 +623,7 @@ export interface FileRoutesByFullPath {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/authors': typeof AdminAuthorsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
@@ -711,6 +718,7 @@ export interface FileRoutesByTo {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/authors': typeof AdminAuthorsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
@@ -808,6 +816,7 @@ export interface FileRoutesById {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/areas': typeof AdminAreasRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/authors': typeof AdminAuthorsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/comments': typeof AdminCommentsRoute
@@ -906,6 +915,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/areas'
     | '/admin/articles'
+    | '/admin/authors'
     | '/admin/businesses'
     | '/admin/claims'
     | '/admin/comments'
@@ -1000,6 +1010,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/areas'
     | '/admin/articles'
+    | '/admin/authors'
     | '/admin/businesses'
     | '/admin/claims'
     | '/admin/comments'
@@ -1096,6 +1107,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/areas'
     | '/admin/articles'
+    | '/admin/authors'
     | '/admin/businesses'
     | '/admin/claims'
     | '/admin/comments'
@@ -1723,6 +1735,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBusinessesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/authors': {
+      id: '/admin/authors'
+      path: '/authors'
+      fullPath: '/admin/authors'
+      preLoaderRoute: typeof AdminAuthorsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/articles': {
       id: '/admin/articles'
       path: '/articles'
@@ -1890,6 +1909,7 @@ interface AdminRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminAreasRoute: typeof AdminAreasRoute
   AdminArticlesRoute: typeof AdminArticlesRoute
+  AdminAuthorsRoute: typeof AdminAuthorsRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminClaimsRoute: typeof AdminClaimsRoute
   AdminCommentsRoute: typeof AdminCommentsRoute
@@ -1918,6 +1938,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminAreasRoute: AdminAreasRoute,
   AdminArticlesRoute: AdminArticlesRoute,
+  AdminAuthorsRoute: AdminAuthorsRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminClaimsRoute: AdminClaimsRoute,
   AdminCommentsRoute: AdminCommentsRoute,

@@ -42,6 +42,7 @@ const navSections: { title: string; items: { to: string; label: string; icon: Lu
     title: "Content",
     items: [
       { to: "/admin/articles", label: "Posts", icon: FileText },
+      { to: "/admin/authors", label: "Authors", icon: Users },
       { to: "/admin/events", label: "Events", icon: CalendarDays },
       { to: "/admin/import", label: "Import", icon: Download },
       { to: "/admin/media", label: "Media", icon: Image },

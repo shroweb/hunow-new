@@ -19,12 +19,17 @@ import { AREA_IMAGES } from "@/lib/area-images";
 export const Route = createFileRoute("/")({
   loader: async () => {
     const { getStoreFromDatabase } = await import("@/lib/store.functions");
-    const store = await getStoreFromDatabase();
+    const { getSettings } = await import("@/lib/settings.functions");
+    const [store, settings] = await Promise.all([
+      getStoreFromDatabase(),
+      getSettings().catch(() => ({} as Record<string, string>)),
+    ]);
     return {
       articles: store.articles,
       events: store.events,
       listings: store.listings,
       offers: store.offers,
+      settings,
     };
   },
   head: () =>
@@ -73,6 +78,7 @@ function Index() {
     events: loaderEvents,
     listings: loaderListings,
     offers: loaderOffers,
+    settings,
   } = Route.useLoaderData();
   const [cmdOpen, setCmdOpen] = useState(false);
   const [heroQ, setHeroQ] = useState("");
@@ -603,8 +609,72 @@ function Index() {
               All offers →
             </Link>
           </div>
+
+          {/* Overheard in Hull */}
+          {settings?.overheard_hull_enabled !== "false" && settings?.overheard_hull_quote && (
+            <div className="border-2 border-dashed border-amber-500/40 bg-amber-500/5 p-5 space-y-2.5">
+              <div className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                <span>💬</span>
+                <span>Overheard in Hull</span>
+              </div>
+              <blockquote className="font-serif italic text-sm text-foreground/90 leading-snug">
+                "{settings.overheard_hull_quote}"
+              </blockquote>
+              {settings.overheard_hull_source && (
+                <div className="text-[10px] font-mono uppercase text-muted-foreground">
+                  — {settings.overheard_hull_source}
+                </div>
+              )}
+            </div>
+          )}
         </aside>
       </main>
+
+      {/* ── FROM THE EDITOR / DISPATCH ────────────────────────────────────────── */}
+      {settings?.editor_letter_enabled !== "false" && settings?.editor_letter_body && (
+        <section className="border-y-2 border-foreground bg-accent/5 py-10 my-4">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="grid md:grid-cols-12 gap-8 items-start">
+              <div className="md:col-span-4 border-b md:border-b-0 md:border-r border-border pb-6 md:pb-0 md:pr-8">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-accent font-bold mb-2">
+                  Dispatch · Independent Voice
+                </div>
+                <h3 className="font-display text-2xl md:text-3xl uppercase leading-tight mb-4">
+                  {settings.editor_letter_title || "From the Editor"}
+                </h3>
+                <div className="flex items-center gap-3 mt-4">
+                  {settings.editor_letter_avatar ? (
+                    <img
+                      src={settings.editor_letter_avatar}
+                      alt={settings.editor_letter_author || "Editor"}
+                      className="w-12 h-12 rounded-full object-cover border border-border"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-foreground text-background flex items-center justify-center font-bold text-lg">
+                      {(settings.editor_letter_author || "C")[0]}
+                    </div>
+                  )}
+                  <div>
+                    <div className="font-bold text-sm text-foreground">
+                      {settings.editor_letter_author || "Callum MacInnes"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {settings.editor_letter_role || "Founder & Editor, HU NOW"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="md:col-span-8 space-y-4 text-base md:text-lg font-serif leading-relaxed text-foreground/90">
+                <p>{settings.editor_letter_body}</p>
+                <div className="text-[11px] font-mono uppercase text-muted-foreground pt-2">
+                  HU NOW · Written, verified and published in Hull
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── LATEST STORIES ───────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 py-12 border-t border-border">

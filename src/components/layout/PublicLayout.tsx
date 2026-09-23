@@ -30,6 +30,23 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   const [cmdOpen, setCmdOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountLabel, setAccountLabel] = useState("Sign in");
+  const [ticker, setTicker] = useState<{ enabled: boolean; text: string }>({
+    enabled: true,
+    text: "Hull Fair: 9–17 October on Walton Street · Humber High Tide: 18:42 · Weather: 14°C Overcast",
+  });
+
+  useEffect(() => {
+    getSettings()
+      .then((s) => {
+        if (s) {
+          setTicker({
+            enabled: s.header_ticker_enabled !== "false",
+            text: s.header_ticker_text || "Hull Fair: 9–17 October on Walton Street · Humber High Tide: 18:42 · Weather: 14°C Overcast",
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     getCurrentUser()
@@ -67,6 +84,26 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       >
         Skip to content
       </a>
+      {/* Top Local Dispatch Bar */}
+      {ticker.enabled && (
+        <div className="bg-foreground text-background border-b border-foreground text-[10px] md:text-[11px] font-mono py-1.5 px-4 overflow-x-auto scrollbar-none z-50">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 whitespace-nowrap">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="font-bold uppercase tracking-wider text-accent shrink-0">HULL DISPATCH:</span>
+              <span className="text-white/90">{ticker.text}</span>
+            </div>
+            <div className="hidden md:flex items-center gap-3 text-[10px] text-white/60 shrink-0">
+              <span>📍 KINGSTON UPON HULL</span>
+              <span>•</span>
+              <Link to="/hull-fair" className="hover:text-accent transition-colors underline decoration-white/30">
+                Hull Fair Hub →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       <nav
         className="pwa-nav sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b-2 border-foreground"
         onMouseLeave={() => setOpen(null)}

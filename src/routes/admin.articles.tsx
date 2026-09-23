@@ -22,12 +22,16 @@ import { TiptapEditor } from "@/components/admin/TiptapEditor";
 import { NAV_SECTIONS, findSection } from "@/lib/nav";
 import { setState, slugify, uid, useStore } from "@/lib/store";
 import { upsertArticleFn, deleteArticleFn } from "@/lib/content.functions";
-import { getAdminPolls } from "@/lib/polls.functions";
+import { getAuthorsFn } from "@/lib/authors.functions";
 import type { Article } from "@/types";
 import type { PollRow } from "@/lib/db.server";
+import type { Author } from "@/lib/authors";
 
 export const Route = createFileRoute("/admin/articles")({
-  loader: async () => ({ polls: await getAdminPolls() }),
+  loader: async () => ({
+    polls: await getAdminPolls(),
+    authors: await getAuthorsFn(),
+  }),
   component: AdminArticles,
 });
 
@@ -45,7 +49,7 @@ const ARTICLE_CATEGORIES = [
 ];
 
 function AdminArticles() {
-  const { polls } = Route.useLoaderData() as { polls: PollRow[] };
+  const { polls, authors } = Route.useLoaderData() as { polls: PollRow[]; authors: Author[] };
   const articles = useStore((s) => s.articles);
   const [editing, setEditing] = useState<Article | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -106,6 +110,11 @@ function AdminArticles() {
       setErrors(nextErrors);
       return;
     }
+    const theGood = String(fd.get("theGood") || "").trim();
+    const theCatch = String(fd.get("theCatch") || "").trim();
+    const proTip = String(fd.get("proTip") || "").trim();
+    const honestVerdict = theGood || theCatch || proTip ? { theGood, theCatch, proTip } : undefined;
+
     const a: Article = {
       id: editing?.id ?? uid(),
       title,
@@ -118,7 +127,7 @@ function AdminArticles() {
         .map((t) => t.trim())
         .filter(Boolean),
       featuredImage: featuredImage || "photo-1554118811-1e0d58224f24",
-      author: String(fd.get("author")),
+      author: String(fd.get("author") || "HU NOW"),
       status,
       isFeatured: fd.get("isFeatured") === "on",
       isSponsored: fd.get("isSponsored") === "on",
@@ -132,6 +141,11 @@ function AdminArticles() {
       seriesOrder: Number(fd.get("seriesOrder") || 0) || undefined,
       pollId: String(fd.get("pollId") || "") || undefined,
       seo: readSeo(fd),
+      editorialBadge: String(fd.get("editorialBadge") || "") || undefined,
+      verifiedDate: String(fd.get("verifiedDate") || "") || undefined,
+      verifiedNote: String(fd.get("verifiedNote") || "") || undefined,
+      honestVerdict,
+      priceCheck: String(fd.get("priceCheck") || "") || undefined,
     };
     setSaving(true);
     try {
@@ -231,6 +245,109 @@ function AdminArticles() {
                       defaultValue={editing?.content}
                     />
                   </AdminField>
+
+                  {/* Human Proof & Review Stamp */}
+                  <div className="border-2 border-dashed border-amber-500/40 bg-amber-500/5 p-5 space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-500/20 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">🛡️</span>
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                          Human Proof & Editorial Verification
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        Anti-AI signals: verified visits, honest caveats, price check
+                      </span>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <AdminField label="Editorial Stamp / Pick">
+                        <select
+                          name="editorialBadge"
+                          defaultValue={editing?.editorialBadge ?? ""}
+                          className={adminInput}
+                        >
+                          <option value="">None</option>
+                          <option value="Proper Hull Institution">⭐ Proper Hull Institution</option>
+                          <option value="HU NOW Certified Pint">🍺 HU NOW Certified Pint</option>
+                          <option value="Hidden Gem">💎 Hidden Gem</option>
+                          <option value="Worth the Queue">⏱️ Worth the Queue</option>
+                          <option value="Best for Sundays">🍗 Best for Sundays</option>
+                          <option value="Late Night Essential">🌙 Late Night Essential</option>
+                        </select>
+                      </AdminField>
+                      <AdminField label="Verified In-Person Date">
+                        <input
+                          type="date"
+                          name="verifiedDate"
+                          defaultValue={editing?.verifiedDate}
+                          className={adminInput}
+                        />
+                      </AdminField>
+                    </div>
+
+                    <AdminField
+                      label="In-Person Visit Notes"
+                      hint="e.g. Visited on a Tuesday lunchtime; outdoor seating open, cash & cards accepted"
+                    >
+                      <input
+                        name="verifiedNote"
+                        defaultValue={editing?.verifiedNote}
+                        placeholder="Candid observation from actual visit"
+                        className={adminInput}
+                      />
+                    </AdminField>
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <AdminField
+                        label="The Good (What Genuinely Shines)"
+                        hint="e.g. Crisp golden batter, generous with the chip spice, pints under £4"
+                      >
+                        <input
+                          name="theGood"
+                          defaultValue={editing?.honestVerdict?.theGood}
+                          placeholder="Authentic highlight"
+                          className={adminInput}
+                        />
+                      </AdminField>
+                      <AdminField
+                        label="The Catch (Honest Caveats / What to Skip)"
+                        hint="e.g. 25-minute wait after 12:30pm; street parking is permit-only"
+                      >
+                        <input
+                          name="theCatch"
+                          defaultValue={editing?.honestVerdict?.theCatch}
+                          placeholder="Honest criticism or caveat"
+                          className={adminInput}
+                        />
+                      </AdminField>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <AdminField
+                        label="Local Pro-Tip"
+                        hint="e.g. RingGo code 24510 for parking; cut down the alley by the church"
+                      >
+                        <input
+                          name="proTip"
+                          defaultValue={editing?.honestVerdict?.proTip}
+                          placeholder="Practical insider tip"
+                          className={adminInput}
+                        />
+                      </AdminField>
+                      <AdminField
+                        label="Price Check (Exact Pounds & Pence)"
+                        hint="e.g. Pint of Bitter £3.90 · Patty Butty with Chips £4.50 · Flat White £3.10"
+                      >
+                        <input
+                          name="priceCheck"
+                          defaultValue={editing?.priceCheck}
+                          placeholder="Exact pricing evidence"
+                          className={adminInput}
+                        />
+                      </AdminField>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -257,13 +374,29 @@ function AdminArticles() {
                       slug: editing?.slug ?? "preview",
                     })}
                   />
-                  <AdminField label="Author">
+                  <AdminField
+                    label="Author"
+                    hint={
+                      <Link to="/admin/authors" className="text-accent underline hover:text-accent/80">
+                        Manage authors →
+                      </Link>
+                    }
+                  >
                     <input
                       name="author"
-                      defaultValue={editing?.author ?? "HU NOW"}
+                      list="admin-authors-list"
+                      defaultValue={editing?.author ?? "Callum MacInnes"}
                       required
+                      placeholder="Pick author or type name"
                       className={adminInput}
                     />
+                    <datalist id="admin-authors-list">
+                      {authors.map((a) => (
+                        <option key={a.name} value={a.name}>
+                          {a.role ? `${a.role} · ` : ""}{a.locationNote ?? ""}
+                        </option>
+                      ))}
+                    </datalist>
                   </AdminField>
                   <AdminField label="Category">
                     <select

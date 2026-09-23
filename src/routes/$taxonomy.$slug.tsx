@@ -11,7 +11,7 @@ import { ArticleComments } from "@/components/ArticleComments";
 import { SeriesNav } from "@/components/SeriesNav";
 import { useStore } from "@/lib/store";
 import { addToHistory } from "@/lib/reading-history";
-import { authorSlug } from "@/lib/authors";
+import { authorSlug, getAuthor } from "@/lib/authors";
 import { fetchArticleBySlug } from "@/lib/content-read.functions";
 import { findTaxonomy, articlePath } from "@/lib/taxonomy";
 import { img } from "@/data/seed";
@@ -231,8 +231,13 @@ function ArticleDetail() {
           />
         </div>
         <div className="max-w-3xl mx-auto px-4 py-12">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="font-mono text-[10px] uppercase text-accent">{article.category}</span>
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <span className="font-mono text-[10px] uppercase text-accent font-bold">{article.category}</span>
+            {article.editorialBadge && (
+              <span className="px-2.5 py-1 bg-amber-500/10 border border-amber-500/40 text-amber-700 dark:text-amber-400 font-mono text-[10px] font-bold uppercase tracking-wider rounded-sm">
+                ⭐ {article.editorialBadge}
+              </span>
+            )}
             {article.series && seriesArticles.length > 0 && (
               <a
                 href={`/series/${article.series.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
@@ -248,6 +253,76 @@ function ArticleDetail() {
             {article.title}
           </h1>
           <p className="text-2xl text-muted-foreground mb-8 leading-snug">{article.excerpt}</p>
+
+          {/* In-Person Verification Badge */}
+          {(article.verifiedDate || article.verifiedNote) && (
+            <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 rounded text-xs flex items-start gap-3">
+              <span className="text-base leading-none">✓</span>
+              <div>
+                <span className="font-bold uppercase tracking-wider text-[10px] block font-mono">
+                  Verified in person by HU NOW {article.verifiedDate ? `· ${article.verifiedDate}` : ""}
+                </span>
+                {article.verifiedNote && (
+                  <p className="mt-1 text-xs text-foreground/80 leading-relaxed">{article.verifiedNote}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Exact Price Check Badge */}
+          {article.priceCheck && (
+            <div className="mb-6 p-4 bg-card border border-border text-xs flex flex-wrap items-center justify-between gap-3 font-mono shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">💷</span>
+                <span className="font-bold uppercase text-[10px] tracking-wider text-muted-foreground">Price Check:</span>
+              </div>
+              <span className="font-bold text-foreground">{article.priceCheck}</span>
+            </div>
+          )}
+
+          {/* Honest Verdict Box */}
+          {article.honestVerdict &&
+            (article.honestVerdict.theGood ||
+              article.honestVerdict.theCatch ||
+              article.honestVerdict.proTip) && (
+              <div className="mb-8 border-2 border-foreground bg-card p-5 md:p-6 shadow-sm space-y-4">
+                <div className="flex items-center gap-2 pb-3 border-b border-border">
+                  <span className="text-lg">⚖️</span>
+                  <h3 className="font-display uppercase text-lg tracking-wide text-foreground">
+                    The Honest Verdict: What Shines & What to Skip
+                  </h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4 text-xs leading-relaxed">
+                  {article.honestVerdict.theGood && (
+                    <div className="p-3.5 bg-emerald-500/5 border border-emerald-500/20 rounded">
+                      <div className="font-mono font-bold uppercase text-[10px] text-emerald-600 dark:text-emerald-400 mb-1">
+                        🟢 The Best Bit
+                      </div>
+                      <p className="text-foreground/90">{article.honestVerdict.theGood}</p>
+                    </div>
+                  )}
+                  {article.honestVerdict.theCatch && (
+                    <div className="p-3.5 bg-amber-500/5 border border-amber-500/20 rounded">
+                      <div className="font-mono font-bold uppercase text-[10px] text-amber-600 dark:text-amber-400 mb-1">
+                        🟡 The Catch / What to Expect
+                      </div>
+                      <p className="text-foreground/90">{article.honestVerdict.theCatch}</p>
+                    </div>
+                  )}
+                </div>
+                {article.honestVerdict.proTip && (
+                  <div className="p-3 bg-accent/10 border border-accent/20 rounded text-xs flex items-start gap-2.5">
+                    <span className="text-accent text-sm">💡</span>
+                    <div>
+                      <span className="font-mono font-bold uppercase text-[10px] text-accent block">
+                        Local Pro-Tip
+                      </span>
+                      <p className="text-foreground/90 mt-0.5">{article.honestVerdict.proTip}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           <div className="flex gap-4 border-y border-border py-4 mb-12 font-mono text-[10px] uppercase">
             <span>
               <span className="text-muted-foreground">By </span>
@@ -363,6 +438,46 @@ function ArticleDetail() {
               </div>
             );
           })()}
+
+          {/* Author Box */}
+          {(() => {
+            const authorData = getAuthor(article.author);
+            return (
+              <div className="my-10 p-6 bg-card border-2 border-foreground/15 flex items-start gap-4 md:gap-5 shadow-sm">
+                {authorData.avatarUrl ? (
+                  <img
+                    src={authorData.avatarUrl}
+                    alt={authorData.name}
+                    className="w-14 h-14 rounded-full object-cover shrink-0 border border-border"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center font-bold text-accent text-xl shrink-0">
+                    {authorData.name[0]}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="font-bold text-base text-foreground">{authorData.name}</span>
+                    <span className="text-xs text-accent font-medium">{authorData.role}</span>
+                    {authorData.locationNote && (
+                      <span className="text-[10px] font-mono text-muted-foreground">
+                        📍 {authorData.locationNote}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
+                    {authorData.bio}
+                  </p>
+                  {authorData.socialHandle && (
+                    <span className="mt-2 inline-block text-[10px] font-mono text-foreground/70">
+                      Contact: {authorData.socialHandle}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+
           <NewsletterStrip />
           <ArticleComments articleId={article.id} />
         </div>
