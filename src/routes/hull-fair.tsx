@@ -408,6 +408,15 @@ function HullFairPage() {
             transforms West Hull into an electric carnival of neon, laughter, screams, and the aroma
             of hot patties, roasted nuts, and spun sugar.
           </p>
+          <div className="not-prose mt-4">
+            <Link
+              to="/$taxonomy/$slug"
+              params={{ taxonomy: "history", slug: "hull-fair-history" }}
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent hover:underline"
+            >
+              📖 Discover the 700-year story: Read the History of Hull Fair →
+            </Link>
+          </div>
         </section>
 
         <figure className="border-2 border-foreground bg-foreground overflow-hidden">
