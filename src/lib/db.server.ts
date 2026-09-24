@@ -79,11 +79,14 @@ function getDatabaseUrl() {
 
 export function getPool() {
   if (!pool) {
+    const databaseUrl = getDatabaseUrl();
+    const isRemote = !databaseUrl.includes("localhost") && !databaseUrl.includes("127.0.0.1");
     pool = new Pool({
-      connectionString: getDatabaseUrl(),
+      connectionString: databaseUrl,
       max: process.env.VERCEL ? 3 : 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
+      ssl: isRemote ? { rejectUnauthorized: false } : undefined,
     });
   }
   return pool;
