@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const subscribeNewsletter = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       email: z.string().email(),
       segments: z.array(z.enum(["events", "offers", "businesses"])).default([]),
@@ -21,7 +21,7 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
   });
 
 export const unsubscribeNewsletter = createServerFn({ method: "GET" })
-  .validator(z.object({ token: z.string().min(12) }))
+  .inputValidator(z.object({ token: z.string().min(12) }))
   .handler(async ({ data }) => {
     const { unsubscribeNewsletterToken } = await import("./db.server");
     const email = await unsubscribeNewsletterToken(data.token);
@@ -29,7 +29,7 @@ export const unsubscribeNewsletter = createServerFn({ method: "GET" })
   });
 
 export const submitForReview = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       id: z.string().min(1),
       type: z.enum(["event", "listing"]),
@@ -57,7 +57,7 @@ export const submitForReview = createServerFn({ method: "POST" })
   });
 
 export const submitContact = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       name: z.string().min(1),
       email: z.string().email(),
@@ -94,7 +94,7 @@ export const submitContact = createServerFn({ method: "POST" })
   });
 
 export const redeemOffer = createServerFn({ method: "POST" })
-  .validator(z.object({ offerId: z.string().min(1) }))
+  .inputValidator(z.object({ offerId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { checkRateLimit, getClientIp } = await import("./rate-limit.server");
     const { getRequest } = await import("@tanstack/start-server-core");

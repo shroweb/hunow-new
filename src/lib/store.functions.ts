@@ -27,7 +27,7 @@ export const getStoreFromDatabase = createServerFn({ method: "GET" }).handler(as
 });
 
 export const saveStoreToDatabase = createServerFn({ method: "POST" })
-  .validator(storeSchema)
+  .inputValidator(storeSchema)
   .handler(async () => {
     throw new Error(
       "Full-store saves are disabled. Use targeted database writes instead.",

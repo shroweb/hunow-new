@@ -2,28 +2,28 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const fetchArticleBySlug = createServerFn({ method: "GET" })
-  .validator(z.object({ slug: z.string() }))
+  .inputValidator(z.object({ slug: z.string() }))
   .handler(async ({ data }) => {
     const { getArticleBySlug } = await import("./db.server");
     return getArticleBySlug(data.slug);
   });
 
 export const fetchEventBySlug = createServerFn({ method: "GET" })
-  .validator(z.object({ slug: z.string() }))
+  .inputValidator(z.object({ slug: z.string() }))
   .handler(async ({ data }) => {
     const { getEventBySlug } = await import("./db.server");
     return getEventBySlug(data.slug);
   });
 
 export const fetchListingBySlug = createServerFn({ method: "GET" })
-  .validator(z.object({ slug: z.string() }))
+  .inputValidator(z.object({ slug: z.string() }))
   .handler(async ({ data }) => {
     const { getListingBySlug } = await import("./db.server");
     return getListingBySlug(data.slug);
   });
 
 export const fetchPagedListings = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       category: z.string().optional(),
       area: z.string().optional(),
@@ -38,7 +38,7 @@ export const fetchPagedListings = createServerFn({ method: "POST" })
   });
 
 export const fetchPagedEvents = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       category: z.string().optional(),
       freeOnly: z.boolean().optional(),
@@ -55,7 +55,7 @@ export const fetchPagedEvents = createServerFn({ method: "POST" })
   });
 
 export const fetchPagedArticles = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       category: z.string().optional(),
       page: z.number().optional(),
@@ -69,7 +69,7 @@ export const fetchPagedArticles = createServerFn({ method: "POST" })
   });
 
 export const fetchRelatedForListing = createServerFn({ method: "GET" })
-  .validator(
+  .inputValidator(
     z.object({
       listingId: z.string(),
       category: z.string(),
@@ -83,7 +83,7 @@ export const fetchRelatedForListing = createServerFn({ method: "GET" })
   });
 
 export const fetchRelatedForEvent = createServerFn({ method: "GET" })
-  .validator(
+  .inputValidator(
     z.object({
       eventId: z.string(),
       category: z.string(),
@@ -97,7 +97,7 @@ export const fetchRelatedForEvent = createServerFn({ method: "GET" })
   });
 
 export const fetchRelatedForArticle = createServerFn({ method: "GET" })
-  .validator(
+  .inputValidator(
     z.object({
       articleId: z.string(),
       category: z.string(),
@@ -111,14 +111,14 @@ export const fetchRelatedForArticle = createServerFn({ method: "GET" })
   });
 
 export const fetchOfferById = createServerFn({ method: "GET" })
-  .validator(z.object({ id: z.string() }))
+  .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     const { getOfferById } = await import("./db.server");
     return getOfferById(data.id);
   });
 
 export const fetchActiveOffers = createServerFn({ method: "GET" })
-  .validator(z.object({ excludeListingId: z.string().optional(), limit: z.number().optional() }))
+  .inputValidator(z.object({ excludeListingId: z.string().optional(), limit: z.number().optional() }))
   .handler(async ({ data }) => {
     const { getActiveOffers } = await import("./db.server");
     return getActiveOffers(data.excludeListingId, data.limit);

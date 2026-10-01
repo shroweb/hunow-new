@@ -54,7 +54,7 @@ export const getServerSavedItems = createServerFn({ method: "GET" }).handler(asy
 });
 
 export const syncSavedItem = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       kind: z.enum(["event", "place", "story", "offer"]),
       id: z.string(),

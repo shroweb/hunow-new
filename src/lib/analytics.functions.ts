@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const trackAnalyticsEvent = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       eventType: z.string().min(1).max(60),
       path: z.string().max(300).optional(),
@@ -15,7 +15,7 @@ export const trackAnalyticsEvent = createServerFn({ method: "POST" })
   });
 
 export const getAdminAnalytics = createServerFn({ method: "GET" })
-  .validator(z.object({ days: z.number().optional() }))
+  .inputValidator(z.object({ days: z.number().optional() }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { getAnalyticsSummary } = await import("./db.server");

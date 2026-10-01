@@ -3,7 +3,7 @@ import { z } from "zod";
 import { resolveAreaImage } from "./area-images";
 
 export const getAreaPageData = createServerFn({ method: "GET" })
-  .validator(z.object({ areaSlug: z.string().min(1) }))
+  .inputValidator(z.object({ areaSlug: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getAreaGuide, getTaxonomyKey, getPool, getListingBySlug } = await import("./db.server");
 
@@ -94,7 +94,7 @@ export const getAllAreaGuidesAdmin = createServerFn({ method: "GET" }).handler(a
 });
 
 export const upsertAreaGuideAdmin = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       areaKey: z.string().min(1),
       intro: z.string(),

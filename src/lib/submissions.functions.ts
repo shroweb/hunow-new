@@ -34,7 +34,7 @@ export const getAdminSubmissions = createServerFn({ method: "GET" }).handler(asy
 });
 
 export const approveAdminSubmission = createServerFn({ method: "POST" })
-  .validator(z.object({ submissionId: z.string().min(1) }))
+  .inputValidator(z.object({ submissionId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { getPool, ensureSchema } = await import("./db.server");
@@ -121,7 +121,7 @@ export const approveAdminSubmission = createServerFn({ method: "POST" })
   });
 
 export const rejectAdminSubmission = createServerFn({ method: "POST" })
-  .validator(z.object({ submissionId: z.string().min(1) }))
+  .inputValidator(z.object({ submissionId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { getPool, ensureSchema } = await import("./db.server");

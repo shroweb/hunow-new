@@ -13,7 +13,7 @@ export interface Review {
 }
 
 export const getListingReviews = createServerFn({ method: "GET" })
-  .validator(z.object({ listingId: z.string().min(1) }))
+  .inputValidator(z.object({ listingId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getPool, ensureSchemaOnce } = await import("./db.server.review");
     await ensureSchemaOnce();
@@ -42,7 +42,7 @@ export const getListingReviews = createServerFn({ method: "GET" })
   });
 
 export const submitReview = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       listingId: z.string().min(1),
       rating: z.number().int().min(1).max(5),
@@ -96,7 +96,7 @@ export const getPendingReviews = createServerFn({ method: "GET" }).handler(async
 });
 
 export const moderateReview = createServerFn({ method: "POST" })
-  .validator(z.object({ reviewId: z.string(), action: z.enum(["approve", "reject"]) }))
+  .inputValidator(z.object({ reviewId: z.string(), action: z.enum(["approve", "reject"]) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { getPool, ensureSchemaOnce } = await import("./db.server.review");
@@ -108,7 +108,7 @@ export const moderateReview = createServerFn({ method: "POST" })
   });
 
 export const deleteReview = createServerFn({ method: "POST" })
-  .validator(z.object({ reviewId: z.string().min(1) }))
+  .inputValidator(z.object({ reviewId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { currentUser } = await import("./auth.server");
     const user = await currentUser();

@@ -55,7 +55,7 @@ export const syncEntertainmentFn = createServerFn({ method: "POST" })
 
 // 2. Tourism & Civic (Visit Hull)
 export const syncCivicFn = createServerFn({ method: "POST" })
-  .validator(z.object({ limit: z.number().optional() }).optional())
+  .inputValidator(z.object({ limit: z.number().optional() }).optional())
   .handler(async ({ data }): Promise<SyncReport> => {
     await requireAdmin();
     await ensureSchema();
@@ -86,7 +86,7 @@ export const syncCivicFn = createServerFn({ method: "POST" })
 
 // 3. Food & Drink Directory (UK Food Standards Agency)
 export const syncFoodDirectoryFn = createServerFn({ method: "POST" })
-  .validator(z.object({ limit: z.number().optional() }).optional())
+  .inputValidator(z.object({ limit: z.number().optional() }).optional())
   .handler(async ({ data }): Promise<SyncReport> => {
     await requireAdmin();
     await ensureSchema();

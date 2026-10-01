@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const getEventRsvp = createServerFn({ method: "GET" })
-  .validator(z.object({ eventId: z.string().min(1) }))
+  .inputValidator(z.object({ eventId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getPool, ensureSchema } = await import("./db.server.rsvp");
     const { currentUser } = await import("./auth.server");
@@ -28,7 +28,7 @@ export const getEventRsvp = createServerFn({ method: "GET" })
   });
 
 export const toggleRsvp = createServerFn({ method: "POST" })
-  .validator(z.object({ eventId: z.string().min(1) }))
+  .inputValidator(z.object({ eventId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getPool, ensureSchema } = await import("./db.server.rsvp");
     const { currentUser } = await import("./auth.server");

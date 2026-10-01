@@ -7,7 +7,7 @@ const credentialsSchema = z.object({
 });
 
 export const signUpUser = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     credentialsSchema.extend({
       name: z.string().min(2),
     }),
@@ -18,7 +18,7 @@ export const signUpUser = createServerFn({ method: "POST" })
   });
 
 export const signInUser = createServerFn({ method: "POST" })
-  .validator(credentialsSchema)
+  .inputValidator(credentialsSchema)
   .handler(async ({ data }) => {
     const { signIn } = await import("./auth.server");
     return signIn(data);
@@ -36,14 +36,14 @@ export const getCurrentUser = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const requestPasswordResetFn = createServerFn({ method: "POST" })
-  .validator(z.object({ email: z.string().email() }))
+  .inputValidator(z.object({ email: z.string().email() }))
   .handler(async ({ data }) => {
     const { requestPasswordReset } = await import("./auth.server");
     return requestPasswordReset(data.email);
   });
 
 export const resetPasswordFn = createServerFn({ method: "POST" })
-  .validator(z.object({ token: z.string().min(1), password: z.string().min(8) }))
+  .inputValidator(z.object({ token: z.string().min(1), password: z.string().min(8) }))
   .handler(async ({ data }) => {
     const { resetPassword } = await import("./auth.server");
     return resetPassword(data.token, data.password);
@@ -55,7 +55,7 @@ export const getAdminUsers = createServerFn({ method: "GET" }).handler(async () 
 });
 
 export const updateAdminUserRole = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       userId: z.string().min(1),
       role: z.enum(["user", "admin"]),
@@ -67,7 +67,7 @@ export const updateAdminUserRole = createServerFn({ method: "POST" })
   });
 
 export const updateAdminUserAppRole = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       userId: z.string().min(1),
       appRole: z.enum(["customer", "business"]),
@@ -87,7 +87,7 @@ export const updateAdminUserAppRole = createServerFn({ method: "POST" })
   });
 
 export const updateProfileFn = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       name: z.string().min(2).optional(),
       avatarUrl: z.string().nullable().optional(),
@@ -103,7 +103,7 @@ export const updateProfileFn = createServerFn({ method: "POST" })
   });
 
 export const uploadAvatarFn = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({ fileName: z.string().min(1), dataUrl: z.string().startsWith("data:image/") }),
   )
   .handler(async ({ data }) => {
@@ -147,7 +147,7 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
   });
 
 export const updatePasswordFn = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       currentPassword: z.string().min(1),
       newPassword: z.string().min(8),
@@ -162,7 +162,7 @@ export const updatePasswordFn = createServerFn({ method: "POST" })
   });
 
 export const deleteAccountFn = createServerFn({ method: "POST" })
-  .validator(z.object({ password: z.string().min(1) }))
+  .inputValidator(z.object({ password: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { currentUser, deleteAccount } = await import("./auth.server");
     const user = await currentUser();
@@ -172,7 +172,7 @@ export const deleteAccountFn = createServerFn({ method: "POST" })
   });
 
 export const getPublicProfileFn = createServerFn({ method: "GET" })
-  .validator(z.object({ userId: z.string().min(1) }))
+  .inputValidator(z.object({ userId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getPublicProfile } = await import("./auth.server");
     return getPublicProfile(data.userId);
@@ -186,7 +186,7 @@ export const getNewsletterPrefsFn = createServerFn({ method: "GET" }).handler(as
 });
 
 export const updateNewsletterPrefsFn = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       segments: z.array(z.enum(["events", "offers", "businesses"])),
     }),

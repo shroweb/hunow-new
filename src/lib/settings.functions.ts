@@ -7,7 +7,7 @@ export const getSettings = createServerFn({ method: "GET" }).handler(async () =>
 });
 
 export const saveSetting = createServerFn({ method: "POST" })
-  .validator(z.object({ key: z.string().min(1), value: z.string() }))
+  .inputValidator(z.object({ key: z.string().min(1), value: z.string() }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { setSiteSetting } = await import("./db.server");

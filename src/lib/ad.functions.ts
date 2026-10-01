@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const trackAdEvent = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       adId: z.string().min(1),
       eventType: z.enum(["impression", "click"]),
