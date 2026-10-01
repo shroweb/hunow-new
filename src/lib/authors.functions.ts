@@ -18,7 +18,7 @@ export const getAuthorsFn = createServerFn({ method: "GET" }).handler(async () =
 });
 
 export const upsertAuthorFn = createServerFn({ method: "POST" })
-  .inputValidator(authorSchema)
+  .validator(authorSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertAuthor } = await import("./db.server");
@@ -27,7 +27,7 @@ export const upsertAuthorFn = createServerFn({ method: "POST" })
   });
 
 export const deleteAuthorFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string() }))
+  .validator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteAuthor } = await import("./db.server");

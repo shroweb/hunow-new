@@ -114,7 +114,7 @@ export const getNewsletterSubscribers = createServerFn({ method: "GET" }).handle
 });
 
 export const renderNewsletterIssue = createServerFn({ method: "POST" })
-  .inputValidator(issueSchema)
+  .validator(issueSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();
@@ -122,7 +122,7 @@ export const renderNewsletterIssue = createServerFn({ method: "POST" })
   });
 
 export const saveNewsletterDraft = createServerFn({ method: "POST" })
-  .inputValidator(issueSchema)
+  .validator(issueSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { saveNewsletterCampaign } = await import("./db.server");
@@ -143,7 +143,7 @@ export const saveNewsletterDraft = createServerFn({ method: "POST" })
   });
 
 export const sendNewsletterTest = createServerFn({ method: "POST" })
-  .inputValidator(testSendSchema)
+  .validator(testSendSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { recordAnalyticsEvent } = await import("./db.server");
@@ -164,7 +164,7 @@ export const sendNewsletterTest = createServerFn({ method: "POST" })
   });
 
 export const sendNewsletterCampaign = createServerFn({ method: "POST" })
-  .inputValidator(issueSchema)
+  .validator(issueSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { getNewsletterRecipients, recordAnalyticsEvent, saveNewsletterCampaign } =

@@ -10,7 +10,7 @@ const uploadSchema = z.object({
 });
 
 export const uploadImage = createServerFn({ method: "POST" })
-  .inputValidator(uploadSchema)
+  .validator(uploadSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();

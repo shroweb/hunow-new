@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const claimListing = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       listingId: z.string().min(1),
       message: z.string().max(1000).optional(),
@@ -37,7 +37,7 @@ export const getAdminListingClaims = createServerFn({ method: "GET" }).handler(a
 });
 
 export const moderateAdminListingClaim = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       claimId: z.string().min(1),
       action: z.enum(["approve", "reject"]),
@@ -68,7 +68,7 @@ export const getBusinessOffers = createServerFn({ method: "GET" }).handler(async
 });
 
 export const updateBusinessListing = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       listingId: z.string().min(1),
       description: z.string().min(1),
@@ -93,7 +93,7 @@ export const updateBusinessListing = createServerFn({ method: "POST" })
   });
 
 export const upsertBusinessOffer = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       id: z.string().optional(),
       listingId: z.string().min(1),
@@ -156,7 +156,7 @@ export const upsertBusinessOffer = createServerFn({ method: "POST" })
   });
 
 export const getListingUpdatesForOwner = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ listingId: z.string().min(1) }))
+  .validator(z.object({ listingId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { currentUser } = await import("./auth.server");
     const { getOwnedListings, getListingUpdates } = await import("./db.server");
@@ -168,7 +168,7 @@ export const getListingUpdatesForOwner = createServerFn({ method: "GET" })
   });
 
 export const postListingUpdateFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ listingId: z.string().min(1), body: z.string().min(1).max(500) }))
+  .validator(z.object({ listingId: z.string().min(1), body: z.string().min(1).max(500) }))
   .handler(async ({ data }) => {
     const { currentUser } = await import("./auth.server");
     const { getOwnedListings, postListingUpdate } = await import("./db.server");
@@ -182,7 +182,7 @@ export const postListingUpdateFn = createServerFn({ method: "POST" })
   });
 
 export const deleteListingUpdateFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ updateId: z.string().min(1) }))
+  .validator(z.object({ updateId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { currentUser } = await import("./auth.server");
     const { deleteListingUpdate } = await import("./db.server");
@@ -193,7 +193,7 @@ export const deleteListingUpdateFn = createServerFn({ method: "POST" })
   });
 
 export const getListingReviewsForOwner = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ listingId: z.string().min(1) }))
+  .validator(z.object({ listingId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { currentUser } = await import("./auth.server");
     const { getOwnedListings } = await import("./db.server");
@@ -206,7 +206,7 @@ export const getListingReviewsForOwner = createServerFn({ method: "GET" })
   });
 
 export const getBusinessRedemptionsFn = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ listingId: z.string().min(1) }))
+  .validator(z.object({ listingId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { currentUser } = await import("./auth.server");
     const { getPool, getOwnedListings } = await import("./db.server");

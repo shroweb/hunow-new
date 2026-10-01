@@ -171,7 +171,7 @@ const collectionSchema = z.object({
 // ---- Articles ----
 
 export const upsertArticleFn = createServerFn({ method: "POST" })
-  .inputValidator(articleSchema)
+  .validator(articleSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertArticle } = await import("./db.server");
@@ -181,7 +181,7 @@ export const upsertArticleFn = createServerFn({ method: "POST" })
   });
 
 export const deleteArticleFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string().min(1) }))
+  .validator(z.object({ id: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteArticle } = await import("./db.server");
@@ -193,7 +193,7 @@ export const deleteArticleFn = createServerFn({ method: "POST" })
 // ---- Events ----
 
 export const upsertEventFn = createServerFn({ method: "POST" })
-  .inputValidator(eventSchema)
+  .validator(eventSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertEvent } = await import("./db.server");
@@ -203,7 +203,7 @@ export const upsertEventFn = createServerFn({ method: "POST" })
   });
 
 export const deleteEventFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string().min(1) }))
+  .validator(z.object({ id: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteEvent } = await import("./db.server");
@@ -213,7 +213,7 @@ export const deleteEventFn = createServerFn({ method: "POST" })
   });
 
 export const bulkArchiveEventsFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ beforeDate: z.string().min(1) }))
+  .validator(z.object({ beforeDate: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { bulkArchiveEvents } = await import("./db.server");
@@ -225,7 +225,7 @@ export const bulkArchiveEventsFn = createServerFn({ method: "POST" })
 // ---- Listings ----
 
 export const upsertListingFn = createServerFn({ method: "POST" })
-  .inputValidator(listingSchema)
+  .validator(listingSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertListing } = await import("./db.server");
@@ -235,7 +235,7 @@ export const upsertListingFn = createServerFn({ method: "POST" })
   });
 
 export const deleteListingFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string().min(1) }))
+  .validator(z.object({ id: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteListing } = await import("./db.server");
@@ -247,7 +247,7 @@ export const deleteListingFn = createServerFn({ method: "POST" })
 // ---- Offers ----
 
 export const upsertOfferFn = createServerFn({ method: "POST" })
-  .inputValidator(offerSchema)
+  .validator(offerSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertOffer } = await import("./db.server");
@@ -257,7 +257,7 @@ export const upsertOfferFn = createServerFn({ method: "POST" })
   });
 
 export const deleteOfferFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string().min(1) }))
+  .validator(z.object({ id: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteOffer } = await import("./db.server");
@@ -269,7 +269,7 @@ export const deleteOfferFn = createServerFn({ method: "POST" })
 // ---- Ads ----
 
 export const upsertAdFn = createServerFn({ method: "POST" })
-  .inputValidator(adSchema)
+  .validator(adSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertAd } = await import("./db.server");
@@ -279,7 +279,7 @@ export const upsertAdFn = createServerFn({ method: "POST" })
   });
 
 export const deleteAdFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string().min(1) }))
+  .validator(z.object({ id: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteAd } = await import("./db.server");
@@ -291,7 +291,7 @@ export const deleteAdFn = createServerFn({ method: "POST" })
 // ---- Media ----
 
 export const upsertMediaFn = createServerFn({ method: "POST" })
-  .inputValidator(mediaSchema)
+  .validator(mediaSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertMedia } = await import("./db.server");
@@ -301,7 +301,7 @@ export const upsertMediaFn = createServerFn({ method: "POST" })
   });
 
 export const deleteMediaFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string().min(1) }))
+  .validator(z.object({ id: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteMedia } = await import("./db.server");
@@ -313,7 +313,7 @@ export const deleteMediaFn = createServerFn({ method: "POST" })
 // ---- Collections ----
 
 export const upsertCollectionFn = createServerFn({ method: "POST" })
-  .inputValidator(collectionSchema)
+  .validator(collectionSchema)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { upsertCollection } = await import("./db.server");
@@ -323,7 +323,7 @@ export const upsertCollectionFn = createServerFn({ method: "POST" })
   });
 
 export const deleteCollectionFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string().min(1) }))
+  .validator(z.object({ id: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteCollection } = await import("./db.server");
@@ -335,7 +335,7 @@ export const deleteCollectionFn = createServerFn({ method: "POST" })
 // ---- Search ----
 
 export const searchContentFn = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ query: z.string().max(100) }))
+  .validator(z.object({ query: z.string().max(100) }))
   .handler(async ({ data }) => {
     const { searchContent } = await import("./db.server");
     return searchContent(data.query);
@@ -344,7 +344,7 @@ export const searchContentFn = createServerFn({ method: "GET" })
 // ---- Eventbrite import ----
 
 export const importEventbriteUrlFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ urlOrId: z.string().min(1) }))
+  .validator(z.object({ urlOrId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();
@@ -355,7 +355,7 @@ export const importEventbriteUrlFn = createServerFn({ method: "POST" })
 // ---- Hull Sports fixtures (Hull City, Hull KR, Hull FC) ----
 
 export const syncHullSportsFixturesFn = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({ team: z.enum(["hull-city", "hull-kr", "hull-fc", "all"]).optional() }).optional(),
   )
   .handler(async ({ data }) => {
@@ -380,7 +380,7 @@ export const getVapidPublicKeyFn = createServerFn({ method: "GET" }).handler(asy
 });
 
 export const saveWebPushSubscriptionFn = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       endpoint: z.string().url(),
       p256dh: z.string(),
@@ -399,7 +399,7 @@ export const saveWebPushSubscriptionFn = createServerFn({ method: "POST" })
 // ---- Admin: assign listing owner ----
 
 export const assignListingOwnerFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ listingId: z.string(), email: z.string().email() }))
+  .validator(z.object({ listingId: z.string(), email: z.string().email() }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();
@@ -411,7 +411,7 @@ export const assignListingOwnerFn = createServerFn({ method: "POST" })
   });
 
 export const createBusinessOwnerFn = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       listingId: z.string(),
       email: z.string().email(),
@@ -456,7 +456,7 @@ export const createBusinessOwnerFn = createServerFn({ method: "POST" })
   });
 
 export const sendPushToSegmentFn = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       segment: z.enum(["all", "events", "offers", "businesses"]),
       title: z.string().min(1),
@@ -474,7 +474,7 @@ export const sendPushToSegmentFn = createServerFn({ method: "POST" })
 // ---- Google Places ----
 
 export const searchGooglePlacesFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ query: z.string().min(1) }))
+  .validator(z.object({ query: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();
@@ -483,7 +483,7 @@ export const searchGooglePlacesFn = createServerFn({ method: "POST" })
   });
 
 export const getGooglePlaceDetailsFn = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ placeId: z.string().min(1) }))
+  .validator(z.object({ placeId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();

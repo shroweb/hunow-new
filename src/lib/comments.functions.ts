@@ -2,14 +2,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const getComments = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ articleId: z.string().min(1) }))
+  .validator(z.object({ articleId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getApprovedComments } = await import("./db.server");
     return getApprovedComments(data.articleId);
   });
 
 export const submitComment = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       articleId: z.string().min(1),
       authorName: z.string().min(1).max(80),
@@ -39,7 +39,7 @@ export const adminGetAllComments = createServerFn({ method: "GET" }).handler(asy
 });
 
 export const adminApproveComment = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string(), approved: z.boolean() }))
+  .validator(z.object({ id: z.string(), approved: z.boolean() }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { setCommentApproved } = await import("./db.server");
@@ -49,7 +49,7 @@ export const adminApproveComment = createServerFn({ method: "POST" })
   });
 
 export const adminDeleteComment = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string() }))
+  .validator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteComment } = await import("./db.server");

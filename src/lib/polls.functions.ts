@@ -3,7 +3,7 @@ import { getCookie, setCookie } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 export const getPollByIdFn = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ pollId: z.string().min(1) }))
+  .validator(z.object({ pollId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getPollById } = await import("./db.server");
     const poll = await getPollById(data.pollId);
@@ -21,7 +21,7 @@ export const getPolls = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const castVote = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ pollId: z.string().min(1), optionId: z.string().min(1) }))
+  .validator(z.object({ pollId: z.string().min(1), optionId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const already = getCookie(`poll_${data.pollId}`);
     if (already) return { ok: false, reason: "already_voted" as const };
@@ -47,7 +47,7 @@ export const getAdminPolls = createServerFn({ method: "GET" }).handler(async () 
 });
 
 export const createAdminPoll = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       question: z.string().min(3),
       options: z.array(z.string().min(1)).min(2).max(6),
@@ -63,7 +63,7 @@ export const createAdminPoll = createServerFn({ method: "POST" })
   });
 
 export const closeAdminPoll = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ pollId: z.string().min(1) }))
+  .validator(z.object({ pollId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { setPollStatus } = await import("./db.server");
@@ -73,7 +73,7 @@ export const closeAdminPoll = createServerFn({ method: "POST" })
   });
 
 export const deleteAdminPoll = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ pollId: z.string().min(1) }))
+  .validator(z.object({ pollId: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deletePoll } = await import("./db.server");

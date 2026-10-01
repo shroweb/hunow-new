@@ -7,7 +7,7 @@ export const getRedirects = createServerFn({ method: "GET" }).handler(async () =
 });
 
 export const saveRedirect = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       id: z.string(),
       from: z.string().min(1),
@@ -24,7 +24,7 @@ export const saveRedirect = createServerFn({ method: "POST" })
   });
 
 export const removeRedirect = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string() }))
+  .validator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     const { deleteRedirect } = await import("./db.server");
@@ -34,7 +34,7 @@ export const removeRedirect = createServerFn({ method: "POST" })
   });
 
 export const resolveRedirect = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ path: z.string() }))
+  .validator(z.object({ path: z.string() }))
   .handler(async ({ data }) => {
     const { checkRedirect } = await import("./db.server");
     return checkRedirect(data.path);
