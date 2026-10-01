@@ -568,7 +568,7 @@ async function ensureSundayDinnerDepth2026() {
     await client.query("begin");
     const marker = await client.query(
       `insert into site_settings (key, value)
-       values ('migration:sunday-dinner-depth-2026-09-21', 'true'::jsonb)
+       values ('migration:sunday-dinner-venues-2026-10-01', 'true'::jsonb)
        on conflict (key) do nothing returning key`,
     );
     if (marker.rowCount) {
@@ -576,9 +576,16 @@ async function ensureSundayDinnerDepth2026() {
         `update articles set data = data || $1::jsonb where slug = $2`,
         [
           JSON.stringify({
+            title: article.title,
             content: article.content,
             excerpt: article.excerpt,
             seo: article.seo,
+            verifiedDate: article.verifiedDate,
+            verifiedNote: article.verifiedNote,
+            editorialBadge: article.editorialBadge,
+            honestVerdict: article.honestVerdict,
+            priceCheck: article.priceCheck,
+            tags: article.tags,
           }),
           article.slug,
         ],

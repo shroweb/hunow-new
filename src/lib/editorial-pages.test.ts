@@ -73,8 +73,17 @@ describe("new editorial guides", () => {
       "flaminggrillpubs.co.uk/pubs/east-riding-yorkshire/sailmakers/sunday-roasts",
     );
     expect(article?.content).toContain("not the Sailmakers Arms in Old Town");
-    expect(article?.content).toContain("How much is Sunday dinner in Hull?");
-    expect(article?.content).toContain("21 September 2026");
+    expect(article?.content).toContain("Mr Moody's Tavern");
+    expect(article?.content).toContain("Butler Whites");
+    expect(article?.content).toContain("The Minerva");
+    expect(article?.content).toContain("The Lion &amp; Key");
+    expect(article?.content).toContain("Red Sails");
+    expect(article?.content).toContain("The Lambwath");
+    expect(article?.content).toContain("google.com/maps");
+    expect(article?.content).toContain("butler-whites.co.uk");
+    expect(article?.content).toContain("redsailspubhull.co.uk");
+    expect(article?.content).toContain("stonehouserestaurants.co.uk");
+    expect(article?.content).toContain("minerva-hull.co.uk");
   });
 
   test("gives Hull Fair bus readers verified sites and an honest timetable caveat", () => {

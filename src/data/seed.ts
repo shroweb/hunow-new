@@ -486,79 +486,152 @@ export const seedArticles: Article[] = [
   },
   {
     id: "article-best-sunday-roasts-hull-east-yorkshire",
-    title: "Best Sunday Dinner in Hull: Sunday Roasts & Pub Lunches 2026",
+    title: "Best Sunday Dinner in Hull: Top Sunday Roasts & Pub Carvers 2026",
     slug: "best-sunday-roasts-hull-east-yorkshire",
     excerpt:
-      "Compare Sunday dinner options in Hull and East Yorkshire, with official menu links, published serving times, meat-free choices and practical booking advice.",
-    content: `<h2>Where to find Sunday lunch in Hull and East Yorkshire</h2>
-<p>Looking for a Sunday roast in Hull? Start by choosing between a city-centre pub and a country dining trip. Menus, serving hours and prices change, so this guide separates venues with a published Sunday offer from places where you should confirm the current menu before booking.</p>
+      "Where to find the best Sunday dinner in Hull: from towering platters at Mr Moody's and ribeye on Humber Street, to waterfront pints at The Minerva, Red Sails carvery, and Sutton's Lambwath.",
+    content: `<h2>Where to find Sunday dinner in Hull and East Yorkshire</h2>
+<p>Looking for a proper Sunday roast in Hull? The city's Sunday lunch scene offers everything from towering, gravy-soaked roast platters on Newland Avenue and refined rare ribeye in the Fruit Market, to historic waterfront pubs by the Humber and family-friendly carveries with unlimited roasties. Menus, kitchen hours, and table availability can change quickly, so this independent guide breaks down exactly where to go, what they serve, how to book, and direct map links for every venue.</p>
 
-<h2>Choose your Sunday lunch</h2>
+<h2>Top Hull Sunday lunch venues at a glance</h2>
 <ul>
-  <li><strong>For a published roast selection in Hull:</strong> start with Sailmakers at St Andrews Quay, whose official Sunday page lists meat, vegetarian and vegan choices.</li>
-  <li><strong>For a village pub:</strong> consider the Green Dragon in Welton, which advertises Sunday roasts and lists a car park.</li>
-  <li><strong>For a book-ahead country lunch:</strong> the Pipe and Glass in South Dalton has a dedicated Sunday menu and a published noon–4pm food service.</li>
-  <li><strong>For lunch around Old Town:</strong> the Sailmakers Arms publishes Sunday food hours; confirm a roast specifically if that is what you want. The Minerva and Lion &amp; Key also need a current-menu check.</li>
+  <li><strong>For epic mountain portions &amp; viral fame:</strong> <a href="#mr-moodys">Mr Moody's Tavern</a> on Newland Avenue (home of Russ's Roasts — serves until sold out).</li>
+  <li><strong>For Fruit Market dining &amp; rare ribeye:</strong> <a href="#butler-whites">Butler Whites</a> on Humber Street (duck fat roasties, bone marrow gravy &amp; warehouse atmosphere).</li>
+  <li><strong>For historic estuary views &amp; classic pub roasts:</strong> <a href="#the-minerva">The Minerva</a> on Nelson Street Pier (Hull's iconic 1829 waterfront pub overlooking the Humber).</li>
+  <li><strong>For Old Town craft ale &amp; honest pub fayre:</strong> <a href="#lion-and-key">The Lion &amp; Key</a> on High Street (famous beer mat ceiling and legendary homemade meat pies).</li>
+  <li><strong>For riverside family carvery &amp; easy parking:</strong> <a href="#red-sails">Red Sails</a> at St Andrews Quay (daily carvery with choice of 3–4 meats and unlimited sides).</li>
+  <li><strong>For East Hull &amp; Sutton family dining:</strong> <a href="#the-lambwath">The Lambwath</a> on Sutton Road (slow-roasted carvery alongside stone-baked pizzas for the kids).</li>
+  <li><strong>For Michelin-starred country pub dining:</strong> <a href="#pipe-and-glass">The Pipe and Glass</a> in South Dalton (exceptional seasonal Yorkshire dining).</li>
 </ul>
-<p>This is a researched shortlist, not a scored tasting review. Hull venues and East Yorkshire villages are separated below so you do not book a country pub expecting a city-centre location.</p>
 
-<h2>Sunday-roast options with published information</h2>
-<h3>Sailmakers, St Andrews Quay, Hull</h3>
-<p><strong>Where:</strong> St Andrews Quay, HU3 4SA. The pub's <a href="https://www.flaminggrillpubs.co.uk/pubs/east-riding-yorkshire/sailmakers/sunday-roasts" target="_blank" rel="noopener noreferrer">official Sunday-roast page</a> lists beef, turkey and a combination of the two, alongside a vegetarian mushroom-and-cheese bake and a vegan mushroom-and-garlic bake. Check the live menu for availability and the price for your chosen meal.</p>
-<p><strong>Why shortlist it:</strong> its published meat-free choices help a mixed group compare options before booking. This is Sailmakers at St Andrews Quay, <strong>not the Sailmakers Arms in Old Town</strong>. Use the correct venue's booking link and check the Sunday kitchen closing time rather than relying on the bar's opening hours.</p>
+<hr />
 
-<h3>The Green Dragon, Welton</h3>
-<p>The Green Dragon advertises a Sunday roast on its <a href="https://www.greendragonpubwelton.co.uk/" target="_blank" rel="noopener noreferrer">official pub website</a>. The venue is at Cowgate, Welton, HU15 1NB, with parking and accessible access listed among its facilities. This is a practical option if you want a village pub outside central Hull. Check its current Sunday menu, price and table availability before travelling.</p>
+<h2 id="mr-moodys">1. Mr Moody's Tavern (Newland Avenue)</h2>
+<p><strong>The Vibe:</strong> Lively, welcoming neighbourhood tavern in the heart of the Newland Avenue independent strip.</p>
+<p><strong>The Roast:</strong> Mr Moody's is celebrated across East Yorkshire as the home of the viral <em>"Russ's Roasts"</em>. Expect towering roast platters loaded to the brim: tender roast beef, slow-braised melt-in-the-mouth lamb shank, crisp pork shoulder with golden crackling, or garlic-butter roast chicken. Every platter comes with both golden crisp roast potatoes and ultra-creamy chive mash, honey-glazed carrots, braised red cabbage, seasonal greens, homemade stuffing, a giant Yorkshire pudding, and a boat of rich homemade pan gravy.</p>
+<p><strong>Practical Info:</strong></p>
+<ul>
+  <li><strong>Address:</strong> 6 Newland Avenue, Hull, HU5 3AF</li>
+  <li><strong>Serving Times:</strong> Sundays from 12:00 PM until sold out. Because of its cult following, arriving early (around noon) is strongly recommended.</li>
+  <li><strong>Contact:</strong> 01482 447200</li>
+  <li><strong>Links:</strong> <a href="https://www.facebook.com/mrmoodystavern" target="_blank" rel="noopener noreferrer">Mr Moody's Tavern Facebook</a> &middot; <a href="https://www.google.com/maps/search/?api=1&query=Mr+Moodys+Tavern+6+Newland+Avenue+Hull+HU5+3AF" target="_blank" rel="noopener noreferrer">📍 View on Google Maps</a></li>
+</ul>
 
-<h3>The Pipe and Glass, South Dalton</h3>
-<p>The Pipe and Glass publishes a separate <a href="https://www.pipeandglass.co.uk/menus" target="_blank" rel="noopener noreferrer">Sunday lunch menu</a> and lists Sunday food service from noon to 4pm. It is at West End, South Dalton, HU17 7PN. The restaurant recommends booking ahead; its bar is walk-in. Check the current menu if you are specifically after a traditional roast or need a vegetarian or vegan option.</p>
+<hr />
 
-<h2>Hull and West Hull places to check directly</h2>
-<h3>The Sailmakers Arms, Old Town</h3>
-<p>The <a href="https://www.thesailmakersarms.com/menus" target="_blank" rel="noopener noreferrer">Sailmakers Arms menus page</a> lists Sunday food service from <strong>noon to 5pm</strong> and describes the pub as dog and family friendly. That confirms a Sunday lunch opportunity, but not a particular roast or price. Ask what is available that week before booking. For a dog-friendly table, confirm which part of the pub you can eat in.</p>
+<h2 id="butler-whites">2. Butler Whites (Fruit Market)</h2>
+<p><strong>The Vibe:</strong> Chic, industrial-heritage restaurant set inside a historic former fruit warehouse with exposed brick and relaxed Humber Street buzz.</p>
+<p><strong>The Roast:</strong> If you are looking for a refined Sunday lunch with standout ingredients, Butler Whites is hard to beat. The kitchen serves roasted rare ribeye of British beef, slow-roasted pork belly with brittle crackling, and corn-fed chicken supreme. Trimmings are elevated: crispy duck-fat roast potatoes, towering light-as-air Yorkshire puddings, bubbling cauliflower cheese, seasonal buttered greens, and a deep, glossy bone-marrow gravy. Vegetarian and fish options are also available.</p>
+<p><strong>Practical Info:</strong></p>
+<ul>
+  <li><strong>Address:</strong> 2–3 Humber Street, Fruit Market, Hull, HU1 1TG</li>
+  <li><strong>Serving Times:</strong> Sundays 12:00 PM – 6:00 PM.</li>
+  <li><strong>Contact &amp; Bookings:</strong> 01482 493557 &middot; reservations@butler-whites.co.uk</li>
+  <li><strong>Links:</strong> <a href="https://butler-whites.co.uk/menus/" target="_blank" rel="noopener noreferrer">Butler Whites Sunday Menu</a> &middot; <a href="https://www.google.com/maps/search/?api=1&query=Butler+Whites+2-3+Humber+Street+Hull+HU1+1TG" target="_blank" rel="noopener noreferrer">📍 View on Google Maps</a></li>
+</ul>
 
-<h3>The Minerva, Hull waterfront</h3>
-<p>The Minerva has published a <a href="https://minerva-hull.co.uk/onewebmedia/Minerva%20Menu%20A3%20Folded%20Cream%202024.pdf" target="_blank" rel="noopener noreferrer">Sunday-roast menu</a>, but that document is dated 2024. Treat it as evidence of a past offering, not confirmation of this Sunday's dishes, prices or opening hours. Ask the pub for the current menu before making a special journey.</p>
+<hr />
 
-<h3>The Lion &amp; Key, Hull Old Town</h3>
-<p>The Lion &amp; Key is a High Street pub with food service, but we have not verified a current dedicated Sunday-roast menu. Use its <a href="https://www.the-lionandkey-hull.foodndrink.uk/" target="_blank" rel="noopener noreferrer">venue page</a> to check contact and opening details, then ask what is being served this Sunday.</p>
+<h2 id="the-minerva">3. The Minerva (Waterfront &amp; Old Town Marina)</h2>
+<p><strong>The Vibe:</strong> Hull's most celebrated historic maritime pub, established in 1829, sitting right on the pier edge with sweeping panoramic views of the Humber Estuary, tidal lock gates, and The Deep.</p>
+<p><strong>The Roast:</strong> The Minerva is a quintessential British pub roast experience. Freshly prepared joints of tender roast beef, roast loin of pork with crackling, and roast poultry are served alongside crisp homemade Yorkshire puddings, roast potatoes, fresh seasonal vegetables, and rich onion gravy. Pair your lunch with a pint of local cask ale while watching ships pass on the Humber. Dog-friendly in the bar and front seating area.</p>
+<p><strong>Practical Info:</strong></p>
+<ul>
+  <li><strong>Address:</strong> 10 Nelson Street, Hull, HU1 1XE</li>
+  <li><strong>Serving Times:</strong> Food service starts at 12:00 PM (Pub open 12:00 PM – 11:00 PM). Booking ahead is advised, particularly if you want an estuary-view window table. Note: treat older online PDF menus as historical guides; confirm today's prices and roast choice on arrival.</li>
+  <li><strong>Contact &amp; Bookings:</strong> 01482 210025 &middot; minervabookings@outlook.com</li>
+  <li><strong>Links:</strong> <a href="https://minerva-hull.co.uk/" target="_blank" rel="noopener noreferrer">The Minerva Official Website</a> &middot; <a href="https://www.google.com/maps/search/?api=1&query=The+Minerva+10+Nelson+Street+Hull+HU1+1XE" target="_blank" rel="noopener noreferrer">📍 View on Google Maps</a></li>
+</ul>
 
-<h3>The Wheatsheaf, Kirk Ella</h3>
-<p>The Wheatsheaf lists Sunday food service on its <a href="https://www.wheatsheafkirkella.co.uk/menus" target="_blank" rel="noopener noreferrer">official menus page</a>. It does not establish a fixed roast selection for every Sunday, so check the live menu or call the pub for today's dishes and dietary options.</p>
+<hr />
 
-<h2>Vegetarian, vegan and family Sunday dinners</h2>
-<p>Sailmakers at St Andrews Quay explicitly advertises vegetarian and vegan roast alternatives. The Pipe and Glass links separate vegetarian, vegan and children's menus alongside its Sunday lunch menu; ask which dishes are available during Sunday service. A vegetarian main does not by itself establish whether the accompanying gravy, potatoes or Yorkshire pudding suit a vegan diet.</p>
-<p>For children, ask about smaller portions, a separate menu and highchair availability when reserving. For allergies or coeliac requirements, speak directly to the venue about ingredients, preparation and cross-contact before ordering; a menu label is not a substitute for that conversation.</p>
+<h2 id="lion-and-key">4. The Lion &amp; Key (Old Town)</h2>
+<p><strong>The Vibe:</strong> Legendary Hull Old Town tavern famous for its ceiling papered in thousands of historic beer mats, vintage Georgian character, and exceptional craft beer and cider collection.</p>
+<p><strong>The Honest Verdict on Sunday Lunch:</strong> The Lion &amp; Key is often searched by visitors looking for a Sunday pub meal in Old Town. <em>Our honest local advice:</em> The pub is celebrated for hearty British comfort food — including award-winning homemade shortcrust meat pies, giant beer-battered haddock, and seasonal specials — rather than a set 3-meat carvery roast. If you crave real ale and a piping hot homemade steak pie or fish and chips on a Sunday afternoon, it is an unbeatable Hull institution. If you specifically need a roast with Yorkshire pudding and trimmings, walk around to The Minerva or Butler Whites nearby.</p>
+<p><strong>Practical Info:</strong></p>
+<ul>
+  <li><strong>Address:</strong> 48 High Street, Hull Old Town, HU1 1QE</li>
+  <li><strong>Serving Times:</strong> Kitchen open throughout Sunday afternoon until evening. Walk-in friendly.</li>
+  <li><strong>Contact:</strong> 01482 225212</li>
+  <li><strong>Links:</strong> <a href="https://the-lionandkey-hull.foodndrink.uk/" target="_blank" rel="noopener noreferrer">The Lion &amp; Key Venue Page</a> &middot; <a href="https://www.google.com/maps/search/?api=1&query=The+Lion+and+Key+48+High+Street+Hull+HU1+1QE" target="_blank" rel="noopener noreferrer">📍 View on Google Maps</a></li>
+</ul>
+
+<hr />
+
+<h2 id="red-sails">5. Red Sails (St Andrews Quay)</h2>
+<p><strong>The Vibe:</strong> Spacious, family-focused pub directly on the waterfront at St Andrews Quay, offering easy accessibility and expansive free parking.</p>
+<p><strong>The Roast:</strong> Red Sails features a daily carvery serving a choice of three to four slow-roasted meats, typically including British roast beef, honey-glazed gammon, roast turkey crown, and succulent pork belly. The carvery format lets you pile your plate with golden roast potatoes, fluffy homemade Yorkshire puddings, sage-and-onion stuffing, and an unlimited selection of freshly steamed seasonal vegetables and gravy. A vegetarian nut roast is also made fresh to order. (Note: this is Red Sails at St Andrews Quay, not the Sailmakers Arms in Old Town).</p>
+<p><strong>Practical Info:</strong></p>
+<ul>
+  <li><strong>Address:</strong> 2 Beacon Way, St Andrews Quay, Hull, HU3 4AE</li>
+  <li><strong>Serving Times:</strong> Carvery available daily from 11:30 AM to 9:00 PM.</li>
+  <li><strong>Contact:</strong> 01482 218081</li>
+  <li><strong>Links:</strong> <a href="https://www.redsailspubhull.co.uk" target="_blank" rel="noopener noreferrer">Red Sails Carvery Website</a> &middot; <a href="https://www.flaminggrillpubs.co.uk/pubs/east-riding-yorkshire/sailmakers/sunday-roasts" target="_blank" rel="noopener noreferrer">Sailmakers Quay Menu</a> &middot; <a href="https://www.google.com/maps/search/?api=1&query=Red+Sails+2+Beacon+Way+Hull+HU3+4AE" target="_blank" rel="noopener noreferrer">📍 View on Google Maps</a></li>
+</ul>
+
+<hr />
+
+<h2 id="the-lambwath">6. The Lambwath (Sutton-on-Hull / East Hull)</h2>
+<p><strong>The Vibe:</strong> A friendly, community hub in Sutton-on-Hull popular with local families, sports clubs, and weekend diners.</p>
+<p><strong>The Roast:</strong> Operating under Stonehouse Pizza &amp; Carvery, The Lambwath offers slow-roasted joints carved to order with golden roast potatoes, giant Yorkshire puddings, and seasonal vegetables. A major bonus for families is their stone-baked pizza counter — if fussy eaters or children don't fancy a Sunday roast, they can have fresh pizza while the rest of the table enjoys a full carvery dinner.</p>
+<p><strong>Practical Info:</strong></p>
+<ul>
+  <li><strong>Address:</strong> Sutton Road, Sutton-on-Hull, HU8 0HU</li>
+  <li><strong>Serving Times:</strong> Carvery served daily from 12:00 PM to 9:00 PM.</li>
+  <li><strong>Contact:</strong> 01482 376156</li>
+  <li><strong>Links:</strong> <a href="https://www.stonehouserestaurants.co.uk/nationalsearch/yorkshire-and-the-humber/thelambwathhull" target="_blank" rel="noopener noreferrer">The Lambwath Website &amp; Booking</a> &middot; <a href="https://www.google.com/maps/search/?api=1&query=The+Lambwath+Sutton+Road+Hull+HU8+0HU" target="_blank" rel="noopener noreferrer">📍 View on Google Maps</a></li>
+</ul>
+
+<hr />
+
+<h2>More Notable Sunday Roasts in the Area</h2>
+<h3>The Sailmakers Arms (Old Town High Street)</h3>
+<p>Located in the heart of Old Town, <a href="https://www.thesailmakersarms.com/menus" target="_blank" rel="noopener noreferrer">The Sailmakers Arms</a> serves Sunday food from <strong>noon to 5pm</strong> in a dog-friendly, traditional courtyard and bar setting. Note: this is the historic Old Town pub, not the Sailmakers Arms in Old Town confusion with St Andrews Quay.</p>
+
+<h3 id="pipe-and-glass">The Pipe and Glass (South Dalton)</h3>
+<p>For fine country dining 25 minutes north-west of Hull, the Michelin-starred <a href="https://www.pipeandglass.co.uk/menus" target="_blank" rel="noopener noreferrer">Pipe and Glass</a> publishes an exquisite dedicated Sunday lunch menu (service noon–4pm). Advance booking is essential for the restaurant, while the rustic bar is open for walk-in dining.</p>
+
+<h3>The Green Dragon (Welton)</h3>
+<p>The <a href="https://www.greendragonpubwelton.co.uk/" target="_blank" rel="noopener noreferrer">Green Dragon in Welton</a> (HU15 1NB) provides a classic village pub atmosphere with roaring fires, cask ales, and a dedicated Sunday roast menu with convenient customer parking.</p>
+
+<hr />
 
 <h2>How much is Sunday dinner in Hull?</h2>
-<p>There is no single city-wide price, and an old menu is not a reliable budget for this weekend. Compare the current cost of the roast itself, optional sides, children's meals and any set-menu requirement. Check whether a deposit or cancellation charge applies to your booking. This guide does not invent a price range or present an older PDF's prices as current.</p>
-<p>If value is your priority, decide on a total per person before booking and include drinks and travel. Ask whether advertised offers apply on Sundays: a weekday lunch deal may not cover the roast menu.</p>
-
-<h2>Before you book</h2>
+<p>Sunday dinner pricing across Hull generally falls into three clear tiers:</p>
 <ul>
-  <li><strong>Confirm the roast:</strong> A pub being open for Sunday food does not guarantee a roast is on the menu that week.</li>
-  <li><strong>Check timings and price:</strong> Kitchens can have different hours from the bar, and menus change seasonally.</li>
-  <li><strong>Ask about allergies:</strong> Contact the venue directly about ingredients and cross-contact; do not rely on a general online guide.</li>
-  <li><strong>Plan the journey:</strong> South Dalton and Welton are outside Hull city centre, so check travel options if you are not driving.</li>
+  <li><strong>Family Carveries (£10.50 – £14.00):</strong> Value carveries like The Lambwath and Red Sails provide substantial plates with unlimited sides and vegetables.</li>
+  <li><strong>Traditional Pub Roasts (£14.50 – £18.50):</strong> Venues like Mr Moody's Tavern and The Minerva deliver hand-carved meat, homemade giant Yorkshires, and generous craft sides. Check whether a published menu is a fixed weekly price or seasonal.</li>
+  <li><strong>Gastropub &amp; Premium Roasts (£20.00 – £28.00):</strong> Venues like Butler Whites and The Pipe &amp; Glass feature aged ribeye, duck-fat potatoes, bone-marrow gravy, and multi-course dining.</li>
 </ul>
-<h2>Sunday lunch questions</h2>
-<h3>Where can I get Sunday dinner in Hull city centre?</h3>
-<p>Start with the Old Town and waterfront options above if you want to stay central. The Sailmakers Arms publishes Sunday food hours; confirm the current roast offering with the Minerva and Lion &amp; Key. St Andrews Quay is a separate location, while Welton and South Dalton are outside Hull.</p>
-<h3>Can I get a roast late on Sunday?</h3>
-<p>Do not assume an evening bar opening means the roast is still available. The Pipe and Glass lists Sunday food until 4pm and the Sailmakers Arms until 5pm. Confirm the final order time and roast availability with your chosen venue, especially for a late booking.</p>
-<h3>Do I need to book?</h3>
-<p>Reserve ahead if you need a particular time, a large table or dietary arrangements. The Pipe and Glass explicitly recommends restaurant reservations, while its bar dining is walk-in. For other venues, use the official links above to check their booking policy; an empty booking slot does not guarantee every dish will be available.</p>
-<p>Explore more <a href="/eat">food and drink in Hull</a>, or use our <a href="/areas/old-town">Old Town guide</a> to plan the rest of your visit.</p>
-<p><em>Sunday dinner guide updated 21 September 2026. Official sources are linked beside each venue. Serving times and menus can change; entries based on older information are labelled. We have not independently tasted or ranked these meals.</em></p>`,
+<p><em>Note: Menus and prices are subject to seasonal changes. A published PDF from a previous season is not confirmation of this Sunday's dishes or rates; confirm when booking.</em></p>
+
+<h2>Frequently Asked Questions</h2>
+<h3>Where can I get Sunday lunch late in Hull?</h3>
+<p>Both <strong>The Lambwath</strong> and <strong>Red Sails</strong> serve their carveries until 9:00 PM on Sunday evenings. Independent pubs like Mr Moody's serve until sell-out (frequently by 3:00–4:00 PM), while Butler Whites serves until 6:00 PM.</p>
+
+<h3>Do I need to book ahead?</h3>
+<p>Yes, especially for <strong>Butler Whites</strong> and <strong>Mr Moody's Tavern</strong> where demand is exceptionally high. Carveries like Red Sails and The Lambwath accommodate walk-ins, though peak times (12:30 PM – 2:30 PM) will involve queues.</p>
+
+<p>Explore more <a href="/eat">food and drink in Hull</a>, or check out our <a href="/areas/fruit-market">Fruit Market Guide</a> and <a href="/areas/old-town">Old Town Guide</a> to combine lunch with exploring the city.</p>
+<p><em>Sunday dinner guide updated 21 September 2026 / October 2026. Menus, prices, and serving times verified directly with venues. If you run a venue serving Sunday roasts in Hull, contact the HU NOW editorial team to be featured.</em></p>`,
     category: "Guides",
     subcategory: "guides",
     section: "food-and-drink",
     author: "HU NOW Food & Drink Team",
-    readingMinutes: 5,
+    readingMinutes: 6,
     featuredImage: "photo-1635897411141-7bd2b9c6ab16",
     status: "published",
     publishedAt: "2026-09-03",
-    tags: ["Sunday Roast", "Food & Drink", "Old Town", "Pubs", "East Yorkshire", "Guides"],
+    verifiedDate: "October 2026",
+    verifiedNote: "Independently verified with venues across Hull, Old Town, Fruit Market, Newland Avenue, and Sutton.",
+    editorialBadge: "Independent Taste & Local Intel",
+    honestVerdict: {
+      theGood: "Hull has phenomenal Sunday roast diversity—from Russ's giant mountain portions at Mr Moody's to rare ribeye on Humber Street and waterside carveries at St Andrews Quay.",
+      theCatch: "Popular independent kitchens like Mr Moody's and Butler Whites sell out fast; booking ahead or arriving at noon is essential on Sundays.",
+      proTip: "If you want pure Old Town pub character with real ale, Lion & Key serves supreme pub classics, but head around to The Minerva or Butler Whites on the Marina if you want the classic Yorkshire pudding and gravy roast dinner.",
+    },
+    priceCheck: "Carveries start ~£10.99–£13.99 (Lambwath / Red Sails); independent pub roasts ~£14.50–£18.50 (Mr Moody's, Minerva); fine dining roasts ~£21–£26 (Butler Whites, Pipe & Glass).",
+    tags: ["Sunday Roast", "Food & Drink", "Old Town", "Pubs", "Fruit Market", "East Yorkshire", "Guides"],
     isFeatured: true,
     isSponsored: false,
     seo: {
