@@ -41,7 +41,10 @@ async function normalizeCatastrophicSsrResponse(
     url: request.url,
     status: response.status,
   });
-  return new Response(renderErrorPage(), {
+  const html = request.url.includes("debug=1")
+    ? `<pre style="padding:20px;background:#222;color:#ff6b6b;overflow:auto;white-space:pre-wrap">${error instanceof Error ? error.stack : String(error)}</pre>`
+    : renderErrorPage();
+  return new Response(html, {
     status: 500,
     headers: { "content-type": "text/html; charset=utf-8" },
   });
@@ -88,8 +91,11 @@ export default {
     } catch (error) {
       console.error(error);
       void reportServerError(error, { source: "server_fetch", url: request.url });
+      const html = request.url.includes("debug=1")
+        ? `<pre style="padding:20px;background:#222;color:#ff6b6b;overflow:auto;white-space:pre-wrap">${error instanceof Error ? error.stack : String(error)}</pre>`
+        : renderErrorPage();
       return addSecurityHeaders(
-        new Response(renderErrorPage(), {
+        new Response(html, {
           status: 500,
           headers: { "content-type": "text/html; charset=utf-8" },
         }),
