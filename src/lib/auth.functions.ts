@@ -74,16 +74,46 @@ export const updateAdminUserAppRole = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
-    const { requireAdmin } = await import("./auth.server");
-    const { getPool } = await import("./db.server");
-    await requireAdmin();
-    const pool = getPool();
-    const result = await pool.query<{ id: string; app_role: string }>(
-      `update users set app_role = $2, updated_at = now() where id = $1 returning id, app_role`,
-      [data.userId, data.appRole],
-    );
-    if (!result.rows[0]) throw new Error("User not found.");
-    return { id: result.rows[0].id, appRole: result.rows[0].app_role };
+    const { updateUserAppRoleForAdmin } = await import("./auth.server");
+    return updateUserAppRoleForAdmin(data);
+  });
+
+export const createAdminUser = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      name: z.string().min(2, "Name must be at least 2 characters"),
+      email: z.string().email("Please provide a valid email address"),
+      password: z.string().min(8, "Password must be at least 8 characters"),
+      role: z.enum(["user", "admin"]),
+      appRole: z.enum(["customer", "business"]),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { createUserForAdmin } = await import("./auth.server");
+    return createUserForAdmin(data);
+  });
+
+export const deleteAdminUser = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      userId: z.string().min(1),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { deleteUserForAdmin } = await import("./auth.server");
+    return deleteUserForAdmin(data.userId);
+  });
+
+export const resetAdminUserPassword = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      userId: z.string().min(1),
+      newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { resetUserPasswordForAdmin } = await import("./auth.server");
+    return resetUserPasswordForAdmin(data);
   });
 
 export const updateProfileFn = createServerFn({ method: "POST" })

@@ -238,16 +238,6 @@ export async function resetPassword(token: string, newPassword: string) {
   return { ok: true };
 }
 
-export interface AdminUserRow {
-  id: string;
-  email: string;
-  name: string;
-  role: AuthRole;
-  appRole: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
   await requireAdmin();
   const result = await getPool().query<{
@@ -317,6 +307,140 @@ export async function updateUserRoleForAdmin(input: { userId: string; role: Auth
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
   };
+}
+
+export async function updateUserAppRoleForAdmin(input: {
+  userId: string;
+  appRole: "customer" | "business";
+}) {
+  await requireAdmin();
+  await ensureAuthSchema();
+
+  const result = await getPool().query<{ id: string; app_role: string }>(
+    `update users set app_role = $2, updated_at = now() where id = $1 returning id, app_role`,
+    [input.userId, input.appRole],
+  );
+  const row = result.rows[0];
+  if (!row) throw new Error("User not found.");
+  return { id: row.id, appRole: row.app_role as "customer" | "business" };
+}
+
+export async function createUserForAdmin(input: {
+  name: string;
+  email: string;
+  password: string;
+  role: AuthRole;
+  appRole: "customer" | "business";
+}): Promise<AdminUserRow> {
+  await requireAdmin();
+  await ensureAuthSchema();
+
+  const email = normaliseEmail(input.email);
+  const name = input.name.trim();
+  if (!name) throw new Error("Name is required.");
+  if (!email || !email.includes("@")) throw new Error("Valid email is required.");
+  if (!input.password || input.password.length < 8) {
+    throw new Error("Password must be at least 8 characters.");
+  }
+  if (!["user", "admin"].includes(input.role)) {
+    throw new Error("Invalid system role.");
+  }
+  if (!["customer", "business"].includes(input.appRole)) {
+    throw new Error("Invalid account type.");
+  }
+
+  const existing = await getPool().query("select id from users where email = $1", [email]);
+  if (existing.rows.length > 0) {
+    throw new Error("An account already exists for that email.");
+  }
+
+  const userId = crypto.randomUUID();
+  const passwordHash = await hashPassword(input.password);
+
+  const result = await getPool().query<{
+    id: string;
+    email: string;
+    name: string;
+    role: AuthRole;
+    app_role: string;
+    created_at: Date;
+    updated_at: Date;
+  }>(
+    `
+    insert into users (id, email, name, password_hash, role, app_role, created_at, updated_at)
+    values ($1, $2, $3, $4, $5, $6, now(), now())
+    returning id, email, name, role, app_role, created_at, updated_at
+    `,
+    [userId, email, name, passwordHash, input.role, input.appRole],
+  );
+
+  const row = result.rows[0];
+  return {
+    id: row.id,
+    email: row.email,
+    name: row.name,
+    role: row.role,
+    appRole: row.app_role,
+    createdAt: row.created_at.toISOString(),
+    updatedAt: row.updated_at.toISOString(),
+  };
+}
+
+export async function deleteUserForAdmin(userId: string) {
+  const admin = await requireAdmin();
+  await ensureAuthSchema();
+
+  if (admin.id === userId) {
+    throw new Error("You cannot delete your own account.");
+  }
+
+  const userRes = await getPool().query<{ role: string }>(
+    "select role from users where id = $1",
+    [userId],
+  );
+  if (!userRes.rows[0]) {
+    throw new Error("User not found.");
+  }
+
+  if (userRes.rows[0].role === "admin") {
+    const adminCount = await getPool().query<{ count: string }>(
+      "select count(*)::text as count from users where role = 'admin'",
+    );
+    if (Number(adminCount.rows[0]?.count ?? 0) <= 1) {
+      throw new Error("You cannot delete the final admin account.");
+    }
+  }
+
+  await getPool().query("delete from sessions where user_id = $1", [userId]);
+  await getPool().query("delete from password_reset_tokens where user_id = $1", [userId]);
+  await getPool().query("delete from users where id = $1", [userId]);
+
+  return { ok: true, id: userId };
+}
+
+export async function resetUserPasswordForAdmin(input: {
+  userId: string;
+  newPassword: string;
+}) {
+  await requireAdmin();
+  await ensureAuthSchema();
+
+  if (!input.newPassword || input.newPassword.length < 8) {
+    throw new Error("Password must be at least 8 characters.");
+  }
+
+  const hash = await hashPassword(input.newPassword);
+  const result = await getPool().query(
+    "update users set password_hash = $1, updated_at = now() where id = $2 returning id",
+    [hash, input.userId],
+  );
+  if (!result.rows[0]) {
+    throw new Error("User not found.");
+  }
+
+  await getPool().query("delete from sessions where user_id = $1", [input.userId]);
+
+  return { ok: true, id: input.userId };
 }
 
 // ---- Profile updates ----
