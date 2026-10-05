@@ -157,39 +157,39 @@ function Index() {
     <PublicLayout>
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section
-        className="relative overflow-hidden border-b-2 border-foreground bg-foreground text-background flex flex-col justify-between"
+        className="relative overflow-hidden border-b-2 border-foreground bg-[#070b16] text-white flex flex-col justify-between"
         style={{ animation: "reveal 0.6s cubic-bezier(0.19,1,0.22,1) both" }}
       >
-        {/* Layered high-definition backdrop image with enhanced visibility */}
+        {/* Layered high-definition backdrop image with clear photographic presence */}
         <ResponsiveImage
           id="/hull-marina-hero.jpg"
           alt="Hull Marina waterfront"
           width={1600}
           height={900}
-          className="absolute inset-0 h-full w-full object-cover scale-105 filter brightness-[0.92] contrast-[1.04]"
+          className="absolute inset-0 h-full w-full object-cover scale-105 filter brightness-[0.9] contrast-[1.05]"
           fetchPriority="high"
           loading="eager"
           sizes="100vw"
         />
-        {/* Atmospheric subtle shading keeping the Marina waterfront lights, boats, and architecture clearly visible */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/90 via-[#050814]/40 to-black/15" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050814]/85 via-[#050814]/30 to-transparent hidden lg:block" />
+        {/* Gradients tailored to ensure 100% readable text without turning the image pitch black */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070b16]/90 via-[#070b16]/75 to-[#070b16]/95 sm:via-[#070b16]/55 sm:to-[#070b16]/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070b16]/90 via-[#070b16]/40 to-transparent hidden lg:block" />
 
         {/* Hero Center Stage */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-6 sm:py-10 lg:py-14 w-full flex-grow flex items-center">
-          <div className="w-full grid lg:grid-cols-12 gap-6 lg:gap-12 items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 sm:py-12 lg:py-16 w-full flex-grow flex items-center">
+          <div className="w-full grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* Left Column (7 cols): Headline, Subtitle, Search */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-6">
               
               {/* Overline Tag */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-accent/20 border border-accent/40 text-accent font-mono text-[9px] sm:text-[10px] uppercase font-bold tracking-widest backdrop-blur-xs">
-                <Sparkles className="size-3" />
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-black/60 border border-white/20 text-accent font-mono text-[10px] uppercase font-bold tracking-widest backdrop-blur-md">
+                <Sparkles className="size-3 shrink-0" />
                 <span>Kingston upon Hull &amp; East Yorkshire</span>
               </div>
 
               {/* Responsive Headline */}
-              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display leading-[0.95] text-balance tracking-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display leading-[0.95] tracking-tight uppercase text-white">
                 DISCOVER WHAT&apos;S{" "}
                 <span className="text-accent underline decoration-accent/40 underline-offset-4 sm:underline-offset-8">
                   HAPPENING
@@ -198,11 +198,11 @@ function Index() {
               </h1>
 
               {/* Sub-lead Description */}
-              <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-xl font-sans leading-relaxed text-pretty">
+              <p className="text-sm sm:text-base md:text-lg text-white/80 max-w-xl font-sans leading-relaxed text-pretty">
                 Independent daily coverage of live music, food &amp; drink, hidden pubs, cultural happenings, and community stories across Hull.
               </p>
 
-              {/* Functional Search Console */}
+              {/* Clean Functional Search Console */}
               <div className="pt-1 max-w-xl">
                 <form
                   onSubmit={(e) => {
@@ -213,17 +213,17 @@ function Index() {
                       setCmdOpen(true);
                     }
                   }}
-                  className="group relative flex items-center border-2 border-white/30 bg-black/60 backdrop-blur-md focus-within:border-accent focus-within:bg-black/80 transition-all shadow-2xl"
+                  className="relative flex items-center border-2 border-white/30 bg-black/85 backdrop-blur-md focus-within:border-accent transition-all shadow-2xl p-1"
                 >
-                  <Search className="size-4 sm:size-5 text-white/40 group-focus-within:text-accent ml-3 sm:ml-4 shrink-0 transition-colors" />
+                  <Search className="size-4 sm:size-5 text-white/50 ml-2.5 sm:ml-3 shrink-0" />
                   <input
                     value={heroQ}
                     onChange={(e) => setHeroQ(e.target.value)}
                     type="text"
-                    placeholder="Search events, places, Sunday roasts, gigs..."
-                    className="flex-grow bg-transparent px-3 py-3 sm:py-3.5 font-mono text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none"
+                    placeholder="Search events, places, gigs..."
+                    className="flex-grow min-w-0 bg-transparent px-2.5 sm:px-3 py-2 sm:py-2.5 font-mono text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none"
                   />
-                  <div className="flex items-center gap-1.5 pr-2">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       type="button"
                       onClick={() => setCmdOpen(true)}
@@ -234,7 +234,7 @@ function Index() {
                     </button>
                     <button
                       type="submit"
-                      className="bg-accent text-foreground px-4 sm:px-6 py-2 sm:py-2.5 font-bold uppercase tracking-wider text-xs hover:bg-white transition-colors shrink-0 cursor-pointer"
+                      className="bg-accent text-black font-extrabold px-3.5 sm:px-5 py-2 sm:py-2.5 uppercase tracking-wider text-xs hover:bg-white transition-colors cursor-pointer"
                     >
                       Search
                     </button>
@@ -246,7 +246,7 @@ function Index() {
             {/* Right Column (5 cols): Curated Editorial Spotlight Card */}
             <div className="lg:col-span-5">
               {primaryHeroArticle && (
-                <div className="relative group border-2 border-white/20 bg-black/70 backdrop-blur-md overflow-hidden hover:border-accent transition-all duration-300 shadow-2xl">
+                <div className="relative group border-2 border-white/20 bg-[#0d1222] overflow-hidden hover:border-accent transition-all duration-300 shadow-2xl">
                   {/* Spotlight Top Header */}
                   <div className="px-3.5 sm:px-4 py-2 border-b border-white/10 flex items-center justify-between bg-white/5 text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/60">
                     <span className="flex items-center gap-1.5 text-accent font-bold">
@@ -261,7 +261,7 @@ function Index() {
                   </div>
 
                   {/* Spotlight Image with category tag */}
-                  <div className="relative aspect-[16/9] sm:aspect-[16/10] overflow-hidden bg-black/40">
+                  <div className="relative aspect-[16/9] sm:aspect-[16/10] overflow-hidden bg-black/60">
                     <ResponsiveImage
                       id={primaryHeroArticle.featuredImage || "/hull-marina-hero.jpg"}
                       alt={decodeHtml(primaryHeroArticle.title)}
@@ -271,32 +271,28 @@ function Index() {
                       loading="eager"
                       sizes="(max-width: 1024px) 100vw, 40vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent" />
-                    
-                    <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
-                      <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-black/80 backdrop-blur-xs border border-white/20 text-accent font-mono text-[9px] uppercase font-bold tracking-widest">
+                    <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10">
+                      <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-black/90 border border-white/25 text-accent font-mono text-[9px] uppercase font-bold tracking-widest shadow-md">
                         {primaryHeroArticle.category || "Guide"}
                       </span>
                     </div>
-
-                    <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3">
-                      <Link
-                        to={articlePath(primaryHeroArticle)}
-                        className="font-display text-lg sm:text-2xl text-white hover:text-accent transition-colors leading-tight line-clamp-2 block"
-                      >
-                        {decodeHtml(primaryHeroArticle.title)}
-                      </Link>
-                    </div>
                   </div>
 
-                  {/* Spotlight Excerpt & CTA */}
-                  <div className="p-3.5 sm:p-4 space-y-2.5 bg-black/40">
-                    <p className="text-xs text-white/70 line-clamp-2 leading-relaxed">
+                  {/* Spotlight Content & CTA with high-contrast text */}
+                  <div className="p-4 sm:p-5 space-y-3 bg-[#0d1222]">
+                    <Link
+                      to={articlePath(primaryHeroArticle)}
+                      className="font-display text-xl sm:text-2xl text-white hover:text-accent transition-colors leading-tight line-clamp-2 block uppercase"
+                    >
+                      {decodeHtml(primaryHeroArticle.title)}
+                    </Link>
+
+                    <p className="text-xs sm:text-sm text-white/70 line-clamp-2 leading-relaxed">
                       {decodeHtml(primaryHeroArticle.excerpt)}
                     </p>
                     
-                    <div className="pt-2 border-t border-white/10 flex items-center justify-between">
-                      <span className="text-[10px] font-mono text-white/40 uppercase tracking-wider">
+                    <div className="pt-2.5 border-t border-white/10 flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">
                         By {primaryHeroArticle.author || "HU NOW"}
                       </span>
                       <Link
@@ -310,16 +306,16 @@ function Index() {
 
                   {/* Mini-ticker of upcoming event or secondary guide */}
                   {(primaryHeroEvent || secondaryHeroArticle) && (
-                    <div className="border-t border-white/10 bg-white/5 p-2.5 sm:p-3 flex items-center justify-between text-xs hover:bg-white/10 transition-colors">
+                    <div className="border-t border-white/10 bg-black/50 p-3 flex items-center justify-between text-xs hover:bg-black/70 transition-colors">
                       {primaryHeroEvent ? (
                         <Link
                           to={`/events/${primaryHeroEvent.slug}`}
                           className="flex items-center gap-2 text-white/90 hover:text-white w-full overflow-hidden group"
                         >
-                          <span className="shrink-0 text-[9px] font-mono uppercase px-2 py-0.5 bg-accent text-foreground font-extrabold tracking-wider">
+                          <span className="shrink-0 text-[9px] font-mono uppercase px-2 py-0.5 bg-accent text-black font-extrabold tracking-wider">
                             Live Gig / Event
                           </span>
-                          <span className="truncate text-xs font-semibold text-white/90 group-hover:text-accent transition-colors">
+                          <span className="truncate text-xs font-medium text-white/80 group-hover:text-accent transition-colors">
                             {decodeHtml(primaryHeroEvent.title)}
                           </span>
                           <ArrowRight className="size-3.5 ml-auto shrink-0 text-white/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
@@ -332,7 +328,7 @@ function Index() {
                           <span className="shrink-0 text-[9px] font-mono uppercase px-2 py-0.5 bg-white/15 border border-white/20 text-white font-bold tracking-wider">
                             Also Reading
                           </span>
-                          <span className="truncate text-xs font-semibold text-white/90 group-hover:text-accent transition-colors">
+                          <span className="truncate text-xs font-medium text-white/80 group-hover:text-accent transition-colors">
                             {decodeHtml(secondaryHeroArticle.title)}
                           </span>
                           <ArrowRight className="size-3.5 ml-auto shrink-0 text-white/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
@@ -348,8 +344,8 @@ function Index() {
         </div>
 
         {/* 3. Hero Bottom: Live Visitor Shortcuts Strip */}
-        <div className="relative z-10 border-t-2 border-white/15 bg-black/60 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-4 py-2.5 sm:py-3.5 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+        <div className="relative z-10 border-t-2 border-white/15 bg-black/80 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-4 py-3 sm:py-3.5 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-0 sm:divide-x sm:divide-white/10">
             <Link
               to="/whats-on"
               search={{ when: "today" }}
