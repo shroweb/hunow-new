@@ -1,6 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import {
+  Search,
+  ArrowRight,
+  Sparkles,
+  Calendar,
+  Clock,
+  Compass,
+  Flame,
+} from "lucide-react";
 import { CommandPalette } from "@/components/CommandPalette";
 import { AdSlot } from "@/components/AdSlot";
 import { PollWidget } from "@/components/PollWidget";
@@ -115,6 +124,10 @@ function Index() {
     ...featuredEvents.map((e) => ({ label: e.title, href: `/events/${e.slug}` })),
     ...featuredListings.map((l) => ({ label: l.name, href: `/places/${l.slug}` })),
   ].slice(0, 8);
+  const primaryHeroArticle = featuredArticles[0] ?? articles[0];
+  const secondaryHeroArticle = featuredArticles[1] ?? articles[1];
+  const primaryHeroEvent = featuredEvents[0] ?? events[0];
+
   const todayEvents = publishedEvents.filter((event) => event.startDate === todayIso());
   const weekendEvents = publishedEvents.filter((event) => isThisWeekend(event.startDate));
   const weekEvents = publishedEvents.filter((event) => isThisWeek(event.startDate));
@@ -132,140 +145,329 @@ function Index() {
     <PublicLayout>
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section
-        className="relative min-h-[calc(100vh-92px)] overflow-hidden border-b-2 border-foreground bg-foreground text-background"
+        className="relative min-h-[calc(100vh-92px)] overflow-hidden border-b-2 border-foreground bg-foreground text-background flex flex-col justify-between"
         style={{ animation: "reveal 0.6s cubic-bezier(0.19,1,0.22,1) both" }}
       >
+        {/* Layered high-definition backdrop image with top priority */}
         <ResponsiveImage
           id="/hull-marina-hero.jpg"
           alt="Hull Marina waterfront"
           width={1600}
           height={900}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover scale-105 filter brightness-[0.68] contrast-[1.12]"
           fetchPriority="high"
           loading="eager"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-foreground/60" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,12,39,0.88)_0%,rgba(7,12,39,0.70)_44%,rgba(7,12,39,0.24)_100%)]" />
+        {/* Atmospheric vignette & directional linear shading for maximum readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060a17] via-[#060a17]/85 to-[#060a17]/55" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#060a17]/95 via-[#060a17]/75 to-transparent hidden lg:block" />
 
-        {/* [4] Newspaper masthead strip */}
-        <div className="relative border-b border-background/10">
-          <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
-            <span
-              className="text-[9px] font-mono uppercase tracking-[0.2em] text-background/40 truncate max-w-[240px] sm:max-w-none"
-              suppressHydrationWarning
-            >
-              {`Hull · ${liveDate}`}
-            </span>
-            <span className="hidden sm:inline text-[9px] font-mono uppercase tracking-[0.2em] text-background/40">
-              Independent City Guide
-            </span>
-          </div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 py-8 md:py-20 min-h-[60vh] md:min-h-[calc(100vh-132px)] flex items-center">
-          <div className="max-w-5xl">
-            {/* [5] Section label */}
-            <div className="flex items-center gap-3 mb-3 md:mb-5">
-              <span className="w-6 h-[2px] bg-accent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-accent">
-                Hull's independent city guide
+        {/* 1. Newspaper Live Masthead Strip */}
+        <div className="relative z-10 border-b border-white/10 bg-black/40 backdrop-blur-xs">
+          <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono uppercase tracking-[0.18em]">
+            <div className="flex items-center gap-3 text-white/60">
+              <span className="flex items-center gap-1.5 text-accent font-bold">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+                </span>
+                LIVE WIRE
+              </span>
+              <span className="text-white/20">|</span>
+              <span suppressHydrationWarning className="text-white/80 font-medium">
+                {`Hull · ${liveDate}`}
+              </span>
+              <span className="hidden sm:inline text-white/20">|</span>
+              <span className="hidden sm:inline text-white/50">
+                Independent City Guide
               </span>
             </div>
-            <h1 className="text-4xl sm:text-6xl md:text-9xl font-display leading-[0.95] text-balance mb-4 md:mb-8">
-              DISCOVER WHAT&apos;S <span className="text-accent">HAPPENING</span> IN HULL
-            </h1>
-            <p className="text-sm md:text-2xl font-medium max-w-2xl mb-6 md:mb-10 text-pretty text-background/80">
-              Events, food, culture, hidden gems and independent businesses — all in one place.
-            </p>
-            <form
-              className="flex flex-col md:flex-row gap-0 max-w-xl border-2 border-background/30 focus-within:border-accent transition-colors"
-              onSubmit={(e) => {
-                e.preventDefault();
-                window.location.href = `/search?q=${encodeURIComponent(heroQ)}`;
-              }}
-            >
-              <input
-                value={heroQ}
-                onChange={(e) => setHeroQ(e.target.value)}
-                onFocus={() => setCmdOpen(true)}
-                type="text"
-                placeholder="Search events, places, guides..."
-                className="flex-grow bg-transparent px-5 py-4 font-mono text-sm text-background placeholder:text-background/30 focus:outline-none"
-                readOnly
-              />
-              <button
-                type="button"
-                onClick={() => setCmdOpen(true)}
-                className="bg-accent text-foreground px-6 py-4 font-bold uppercase tracking-widest text-xs hover:bg-background transition-colors shrink-0"
-              >
-                Explore
-              </button>
-            </form>
 
-            {/* [6] Quick-access links — editorial pill style */}
-            <div className="flex flex-wrap items-center gap-2 mt-6">
-              <span className="text-[9px] font-mono uppercase tracking-widest text-background/30 mr-1">
-                Jump to
+            <div className="flex items-center gap-4 text-white/50">
+              <span className="hidden md:inline">
+                {todayEvents.length > 0 ? (
+                  <span className="text-accent font-semibold">{todayEvents.length} events today</span>
+                ) : (
+                  <span>Weekend guide updated</span>
+                )}
               </span>
-              {[
-                { label: "What's On", to: "/whats-on" },
-                { label: "Places", to: "/places" },
-                { label: "Open Now", to: "/open-now" },
-                { label: "Food & Drink", to: "/c/$section", params: { section: "food-and-drink" } },
-              ].map(({ label, to, params }) => (
-                <Link
-                  key={label}
-                  to={to as "/whats-on"}
-                  params={params as Record<string, string>}
-                  className="px-3 py-1 border border-background/20 text-[10px] font-mono uppercase tracking-wide text-background/60 hover:border-accent hover:text-accent transition-colors"
-                >
-                  {label}
-                </Link>
-              ))}
+              <span className="text-white/20 hidden md:inline">•</span>
+              <span className="tracking-widest text-white/70">STRICTLY LOCAL · INDEPENDENT</span>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Useful visitor shortcuts */}
-      <section className="border-b-2 border-foreground bg-foreground text-background">
-        <div className="max-w-7xl mx-auto px-4 py-4 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
-          {[
-            {
-              label: "What's on today",
-              detail: `${todayEvents.length} listed`,
-              to: "/whats-on",
-              search: { when: "today" },
-            },
-            {
-              label: "This weekend",
-              detail: `${weekendEvents.length} listed`,
-              to: "/whats-on",
-              search: { when: "weekend" },
-            },
-            { label: "Open now", detail: "Food, drink & places", to: "/open-now" },
-            {
-              label: "Free things to do",
-              detail: "Low-cost days out",
-              to: "/whats-on",
-              search: { free: true },
-            },
-          ].map(({ label, detail, to, search }) => (
-            <Link
-              key={label}
-              to={to as "/whats-on"}
-              search={search}
-              className="group px-4 md:px-8 first:pl-0 last:pr-0 py-3 min-h-16"
-            >
-              <div className="font-display text-xl md:text-2xl leading-none text-accent group-hover:text-white transition-colors">
-                {label}
+        {/* 2. Hero Center Stage (Split-Screen on Desktop, Stack on Mobile) */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12 lg:py-16 w-full flex-grow flex items-center">
+          <div className="w-full grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* Left Column (7 cols): Editorial Headline, Tagline, Interactive Search */}
+            <div className="lg:col-span-7 space-y-6">
+              
+              {/* Section Pill Label */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/15 border border-accent/40 text-accent font-mono text-[10px] uppercase font-bold tracking-widest">
+                <Sparkles className="size-3" />
+                <span>Kingston upon Hull &amp; East Yorkshire</span>
               </div>
-              <div className="mt-1 text-[9px] font-mono uppercase tracking-widest text-white/45 group-hover:text-white/75">
-                {detail} →
+
+              {/* Main Headline */}
+              <h1 className="text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-display leading-[0.92] text-balance tracking-tight">
+                DISCOVER WHAT&apos;S{" "}
+                <span className="text-accent underline decoration-accent/40 underline-offset-8">
+                  HAPPENING
+                </span>{" "}
+                IN HULL
+              </h1>
+
+              {/* Sub-lead Description */}
+              <p className="text-base sm:text-lg md:text-xl text-white/85 max-w-2xl font-sans leading-relaxed text-pretty">
+                Independent daily coverage of live music, food &amp; drink, hidden pubs, cultural happenings, and community stories across Hull.
+              </p>
+
+              {/* Functional Search Console */}
+              <div className="pt-2 max-w-xl">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (heroQ.trim()) {
+                      window.location.href = `/search?q=${encodeURIComponent(heroQ.trim())}`;
+                    } else {
+                      setCmdOpen(true);
+                    }
+                  }}
+                  className="group relative flex items-center border-2 border-white/30 bg-black/60 backdrop-blur-md focus-within:border-accent focus-within:bg-black/80 transition-all shadow-2xl"
+                >
+                  <Search className="size-5 text-white/40 group-focus-within:text-accent ml-4 shrink-0 transition-colors" />
+                  <input
+                    value={heroQ}
+                    onChange={(e) => setHeroQ(e.target.value)}
+                    type="text"
+                    placeholder="Search events, places, Sunday roasts, gigs..."
+                    className="flex-grow bg-transparent px-3 py-4 font-mono text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none"
+                  />
+                  <div className="flex items-center gap-1.5 pr-2">
+                    <button
+                      type="button"
+                      onClick={() => setCmdOpen(true)}
+                      className="hidden sm:inline-flex items-center px-2 py-1 bg-white/10 hover:bg-white/20 border border-white/20 font-mono text-[10px] text-white/60 tracking-wider transition-colors cursor-pointer"
+                      title="Open Search Palette (⌘K)"
+                    >
+                      ⌘K
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-accent text-foreground px-4 sm:px-6 py-2.5 font-bold uppercase tracking-wider text-xs hover:bg-white transition-colors shrink-0 cursor-pointer"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </form>
+
+                {/* Quick Topic Chips */}
+                <div className="flex flex-wrap items-center gap-1.5 mt-3 text-[10px] font-mono uppercase tracking-wider">
+                  <span className="text-white/40 mr-1">Trending:</span>
+                  <a
+                    href="/hull-fair"
+                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
+                  >
+                    🎡 Hull Fair
+                  </a>
+                  <a
+                    href="/guides/best-sunday-roasts-hull-east-yorkshire"
+                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
+                  >
+                    🍗 Sunday Roasts
+                  </a>
+                  <Link
+                    to="/c/$section"
+                    params={{ section: "whats-on" }}
+                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
+                  >
+                    🎸 Gigs &amp; Music
+                  </Link>
+                  <Link
+                    to="/open-now"
+                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
+                  >
+                    ⏱️ Open Now
+                  </Link>
+                  <Link
+                    to="/places"
+                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
+                  >
+                    ⚓ Places
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column (5 cols): Curated Editorial Spotlight Card */}
+            <div className="lg:col-span-5">
+              {primaryHeroArticle && (
+                <div className="relative group border-2 border-white/20 bg-black/70 backdrop-blur-md overflow-hidden hover:border-accent transition-all duration-300 shadow-2xl">
+                  {/* Spotlight Top Header */}
+                  <div className="px-4 py-2.5 border-b border-white/10 flex items-center justify-between bg-white/5 text-[10px] font-mono uppercase tracking-widest text-white/60">
+                    <span className="flex items-center gap-1.5 text-accent font-bold">
+                      <Flame className="size-3" />
+                      FEATURED STORY
+                    </span>
+                    <span className="text-white/40">
+                      {primaryHeroArticle.readingMinutes
+                        ? `${primaryHeroArticle.readingMinutes} min read`
+                        : "Editorial Guide"}
+                    </span>
+                  </div>
+
+                  {/* Spotlight Image with category tag */}
+                  <div className="relative aspect-[16/10] overflow-hidden bg-black/40">
+                    <ResponsiveImage
+                      id={primaryHeroArticle.featuredImage || "/hull-marina-hero.jpg"}
+                      alt={primaryHeroArticle.title}
+                      width={700}
+                      height={440}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                      loading="eager"
+                      sizes="(max-width: 1024px) 100vw, 40vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent" />
+                    
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 bg-black/80 backdrop-blur-xs border border-white/20 text-accent font-mono text-[9px] uppercase font-bold tracking-widest">
+                        {primaryHeroArticle.category || "Guide"}
+                      </span>
+                    </div>
+
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <Link
+                        to={articlePath(primaryHeroArticle)}
+                        className="font-display text-xl sm:text-2xl text-white hover:text-accent transition-colors leading-tight line-clamp-2 block"
+                      >
+                        {primaryHeroArticle.title}
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Spotlight Excerpt & CTA */}
+                  <div className="p-4 space-y-3 bg-black/40">
+                    <p className="text-xs text-white/70 line-clamp-2 leading-relaxed">
+                      {primaryHeroArticle.excerpt}
+                    </p>
+                    
+                    <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-white/40 uppercase tracking-wider">
+                        By {primaryHeroArticle.author || "HU NOW"}
+                      </span>
+                      <Link
+                        to={articlePath(primaryHeroArticle)}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold font-mono uppercase tracking-wider text-accent hover:text-white transition-colors"
+                      >
+                        Read Full Story <ArrowRight className="size-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Mini-ticker of upcoming event or secondary guide */}
+                  {(primaryHeroEvent || secondaryHeroArticle) && (
+                    <div className="border-t border-white/10 bg-white/5 p-3 flex items-center justify-between text-xs hover:bg-white/10 transition-colors">
+                      {primaryHeroEvent ? (
+                        <Link
+                          to={`/events/${primaryHeroEvent.slug}`}
+                          className="flex items-center gap-2 text-white/80 hover:text-white w-full truncate"
+                        >
+                          <span className="shrink-0 text-[9px] font-mono uppercase px-1.5 py-0.5 bg-accent/20 border border-accent/40 text-accent font-bold">
+                            Live Gig / Event
+                          </span>
+                          <span className="truncate text-xs font-semibold">{primaryHeroEvent.title}</span>
+                          <ArrowRight className="size-3 ml-auto shrink-0 text-white/40" />
+                        </Link>
+                      ) : secondaryHeroArticle ? (
+                        <Link
+                          to={articlePath(secondaryHeroArticle)}
+                          className="flex items-center gap-2 text-white/80 hover:text-white w-full truncate"
+                        >
+                          <span className="shrink-0 text-[9px] font-mono uppercase px-1.5 py-0.5 bg-white/10 border border-white/20 text-white font-bold">
+                            Also Reading
+                          </span>
+                          <span className="truncate text-xs font-semibold">{secondaryHeroArticle.title}</span>
+                          <ArrowRight className="size-3 ml-auto shrink-0 text-white/40" />
+                        </Link>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+
+        {/* 3. Hero Bottom: Live Visitor Shortcuts Strip */}
+        <div className="relative z-10 border-t-2 border-white/15 bg-black/60 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-4 py-3.5 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+            <Link
+              to="/whats-on"
+              search={{ when: "today" }}
+              className="group px-3 md:px-6 first:pl-0 last:pr-0 py-2 hover:bg-white/5 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <span className="size-2 rounded-full bg-accent animate-pulse" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+                  Happening Today
+                </span>
+              </div>
+              <div className="font-display text-lg md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+                {todayEvents.length > 0 ? `${todayEvents.length} Events` : "What's On"}
               </div>
             </Link>
-          ))}
+
+            <Link
+              to="/whats-on"
+              search={{ when: "weekend" }}
+              className="group px-3 md:px-6 first:pl-0 last:pr-0 py-2 hover:bg-white/5 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Calendar className="size-3 text-white/40 group-hover:text-accent transition-colors" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+                  This Weekend
+                </span>
+              </div>
+              <div className="font-display text-lg md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+                {weekendEvents.length > 0 ? `${weekendEvents.length} Events` : "Weekend Guide"}
+              </div>
+            </Link>
+
+            <Link
+              to="/open-now"
+              className="group px-3 md:px-6 first:pl-0 last:pr-0 py-2 hover:bg-white/5 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Clock className="size-3 text-white/40 group-hover:text-accent transition-colors" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+                  Open Right Now
+                </span>
+              </div>
+              <div className="font-display text-lg md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+                Food &amp; Nightlife
+              </div>
+            </Link>
+
+            <Link
+              to="/whats-on"
+              search={{ free: true }}
+              className="group px-3 md:px-6 first:pl-0 last:pr-0 py-2 hover:bg-white/5 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Compass className="size-3 text-white/40 group-hover:text-accent transition-colors" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+                  Budget Friendly
+                </span>
+              </div>
+              <div className="font-display text-lg md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+                Free Things To Do
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
 
