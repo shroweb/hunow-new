@@ -22,7 +22,6 @@ import { img } from "@/data/seed";
 import { formatFullDate, formatEventDate, formatWeekday } from "@/lib/dates";
 import { subscribeNewsletter } from "@/lib/public.functions";
 import { buildSeoMeta } from "@/lib/seo-meta";
-import { formatHullFairDateRange, getHullFairPromotion } from "@/lib/hull-fair-promotion";
 import { AREA_IMAGES } from "@/lib/area-images";
 
 export const Route = createFileRoute("/")({
@@ -119,7 +118,6 @@ function Index() {
   const allOffers = loaderOffers?.length ? loaderOffers : storeOffers;
 
   const today = todayIso();
-  const hullFairPromotion = getHullFairPromotion(allEvents, today);
   const publishedEvents = allEvents.filter(
     (e) => e.status === "published" && (e.endDate || e.startDate) >= today,
   );
@@ -418,75 +416,7 @@ function Index() {
         </div>
       </section>
 
-      {/* Hull Fair superhub banner — visible only while an edition is upcoming or live */}
-      {hullFairPromotion && (
-        <section className="border-b-2 border-foreground bg-gradient-to-r from-[#0b0130] via-black to-[#0b0130] text-white">
-          <div className="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[1fr_320px] items-center gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center shrink-0 text-accent">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-              </div>
-              <div>
-                <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-accent mb-1 font-bold">
-                  <span>{hullFairPromotion.isLive ? "On now" : "Annual Tradition"}</span>
-                  <span>•</span>
-                  <span>{formatHullFairDateRange(hullFairPromotion.event)}</span>
-                </div>
-                <h2 className="text-2xl md:text-3xl font-display uppercase tracking-tight leading-none text-white">
-                  {hullFairPromotion.event.title} Complete Guide
-                </h2>
-                <p className="text-sm text-white/75 mt-2 max-w-2xl text-pretty">
-                  Confirmed dates, daily opening times, travel advice and ride-price guidance. Entry
-                  is free; rides and stalls are individually priced.
-                </p>
-              </div>
-            </div>
-            <div className="relative overflow-hidden border border-white/20 min-h-36 flex items-end p-4">
-              <ResponsiveImage
-                id={hullFairPromotion.event.featuredImage}
-                alt="Hull Fair rides illuminated at night"
-                width={640}
-                height={360}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/10" />
-              <div className="relative flex flex-wrap gap-2 w-full">
-                <a
-                  href={
-                    hullFairPromotion.event.slug === "hull-fair-2026"
-                      ? "/hull-fair"
-                      : `/events/${hullFairPromotion.event.slug}`
-                  }
-                  className="flex-1 text-center px-4 py-3 bg-accent text-background font-bold text-xs uppercase tracking-widest hover:bg-white transition-colors"
-                >
-                  Explore Hull Fair Guide →
-                </a>
-                <Link
-                  to="/guides/guide-to-parking-at-hull-fair"
-                  className="flex-1 text-center px-4 py-3 bg-black/60 border border-white/40 text-white text-xs font-bold uppercase tracking-widest hover:border-white hover:bg-black transition-colors"
-                >
-                  Parking Guide
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+
 
       {/* [8] Spotlight — live city picks */}
       <section className="border-b-2 border-foreground bg-background">
