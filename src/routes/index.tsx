@@ -74,10 +74,24 @@ function categoryColor(cat: string): string {
   return map[cat] ?? "var(--color-accent)";
 }
 
+function decodeHtml(val?: string | null): string {
+  if (!val) return "";
+  return val
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+}
+
 // Clean and truncate scraped event locations (e.g. removes scraped description paragraphs)
 function cleanLocation(val?: string | null): string {
   if (!val) return "";
-  const first = val.split(/[.\n]/)[0].trim();
+  const decoded = decodeHtml(val);
+  const first = decoded.split(/[.\n]/)[0].trim();
   return first.length > 45 ? first.slice(0, 45) + "…" : first;
 }
 
@@ -145,88 +159,53 @@ function Index() {
     <PublicLayout>
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section
-        className="relative min-h-[calc(100vh-92px)] overflow-hidden border-b-2 border-foreground bg-foreground text-background flex flex-col justify-between"
+        className="relative overflow-hidden border-b-2 border-foreground bg-foreground text-background flex flex-col justify-between"
         style={{ animation: "reveal 0.6s cubic-bezier(0.19,1,0.22,1) both" }}
       >
-        {/* Layered high-definition backdrop image with top priority */}
+        {/* Layered high-definition backdrop image with enhanced visibility */}
         <ResponsiveImage
           id="/hull-marina-hero.jpg"
           alt="Hull Marina waterfront"
           width={1600}
           height={900}
-          className="absolute inset-0 h-full w-full object-cover scale-105 filter brightness-[0.68] contrast-[1.12]"
+          className="absolute inset-0 h-full w-full object-cover scale-105 filter brightness-[0.92] contrast-[1.04]"
           fetchPriority="high"
           loading="eager"
           sizes="100vw"
         />
-        {/* Atmospheric vignette & directional linear shading for maximum readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#060a17] via-[#060a17]/85 to-[#060a17]/55" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#060a17]/95 via-[#060a17]/75 to-transparent hidden lg:block" />
+        {/* Atmospheric subtle shading keeping the Marina waterfront lights, boats, and architecture clearly visible */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/90 via-[#050814]/40 to-black/15" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050814]/85 via-[#050814]/30 to-transparent hidden lg:block" />
 
-        {/* 1. Newspaper Live Masthead Strip */}
-        <div className="relative z-10 border-b border-white/10 bg-black/40 backdrop-blur-xs">
-          <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono uppercase tracking-[0.18em]">
-            <div className="flex items-center gap-3 text-white/60">
-              <span className="flex items-center gap-1.5 text-accent font-bold">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-                </span>
-                LIVE WIRE
-              </span>
-              <span className="text-white/20">|</span>
-              <span suppressHydrationWarning className="text-white/80 font-medium">
-                {`Hull · ${liveDate}`}
-              </span>
-              <span className="hidden sm:inline text-white/20">|</span>
-              <span className="hidden sm:inline text-white/50">
-                Independent City Guide
-              </span>
-            </div>
-
-            <div className="flex items-center gap-4 text-white/50">
-              <span className="hidden md:inline">
-                {todayEvents.length > 0 ? (
-                  <span className="text-accent font-semibold">{todayEvents.length} events today</span>
-                ) : (
-                  <span>Weekend guide updated</span>
-                )}
-              </span>
-              <span className="text-white/20 hidden md:inline">•</span>
-              <span className="tracking-widest text-white/70">STRICTLY LOCAL · INDEPENDENT</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 2. Hero Center Stage (Split-Screen on Desktop, Stack on Mobile) */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12 lg:py-16 w-full flex-grow flex items-center">
-          <div className="w-full grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        {/* Hero Center Stage */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-6 sm:py-10 lg:py-14 w-full flex-grow flex items-center">
+          <div className="w-full grid lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             
-            {/* Left Column (7 cols): Editorial Headline, Tagline, Interactive Search */}
-            <div className="lg:col-span-7 space-y-6">
+            {/* Left Column (7 cols): Headline, Subtitle, Search */}
+            <div className="lg:col-span-7 space-y-4 sm:space-y-6">
               
-              {/* Section Pill Label */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/15 border border-accent/40 text-accent font-mono text-[10px] uppercase font-bold tracking-widest">
+              {/* Overline Tag */}
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-accent/20 border border-accent/40 text-accent font-mono text-[9px] sm:text-[10px] uppercase font-bold tracking-widest backdrop-blur-xs">
                 <Sparkles className="size-3" />
                 <span>Kingston upon Hull &amp; East Yorkshire</span>
               </div>
 
-              {/* Main Headline */}
-              <h1 className="text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-display leading-[0.92] text-balance tracking-tight">
+              {/* Responsive Headline */}
+              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display leading-[0.95] text-balance tracking-tight">
                 DISCOVER WHAT&apos;S{" "}
-                <span className="text-accent underline decoration-accent/40 underline-offset-8">
+                <span className="text-accent underline decoration-accent/40 underline-offset-4 sm:underline-offset-8">
                   HAPPENING
                 </span>{" "}
                 IN HULL
               </h1>
 
               {/* Sub-lead Description */}
-              <p className="text-base sm:text-lg md:text-xl text-white/85 max-w-2xl font-sans leading-relaxed text-pretty">
+              <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-xl font-sans leading-relaxed text-pretty">
                 Independent daily coverage of live music, food &amp; drink, hidden pubs, cultural happenings, and community stories across Hull.
               </p>
 
               {/* Functional Search Console */}
-              <div className="pt-2 max-w-xl">
+              <div className="pt-1 max-w-xl">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -238,13 +217,13 @@ function Index() {
                   }}
                   className="group relative flex items-center border-2 border-white/30 bg-black/60 backdrop-blur-md focus-within:border-accent focus-within:bg-black/80 transition-all shadow-2xl"
                 >
-                  <Search className="size-5 text-white/40 group-focus-within:text-accent ml-4 shrink-0 transition-colors" />
+                  <Search className="size-4 sm:size-5 text-white/40 group-focus-within:text-accent ml-3 sm:ml-4 shrink-0 transition-colors" />
                   <input
                     value={heroQ}
                     onChange={(e) => setHeroQ(e.target.value)}
                     type="text"
                     placeholder="Search events, places, Sunday roasts, gigs..."
-                    className="flex-grow bg-transparent px-3 py-4 font-mono text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none"
+                    className="flex-grow bg-transparent px-3 py-3 sm:py-3.5 font-mono text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none"
                   />
                   <div className="flex items-center gap-1.5 pr-2">
                     <button
@@ -257,48 +236,12 @@ function Index() {
                     </button>
                     <button
                       type="submit"
-                      className="bg-accent text-foreground px-4 sm:px-6 py-2.5 font-bold uppercase tracking-wider text-xs hover:bg-white transition-colors shrink-0 cursor-pointer"
+                      className="bg-accent text-foreground px-4 sm:px-6 py-2 sm:py-2.5 font-bold uppercase tracking-wider text-xs hover:bg-white transition-colors shrink-0 cursor-pointer"
                     >
                       Search
                     </button>
                   </div>
                 </form>
-
-                {/* Quick Topic Chips */}
-                <div className="flex flex-wrap items-center gap-1.5 mt-3 text-[10px] font-mono uppercase tracking-wider">
-                  <span className="text-white/40 mr-1">Trending:</span>
-                  <a
-                    href="/hull-fair"
-                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
-                  >
-                    🎡 Hull Fair
-                  </a>
-                  <a
-                    href="/guides/best-sunday-roasts-hull-east-yorkshire"
-                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
-                  >
-                    🍗 Sunday Roasts
-                  </a>
-                  <Link
-                    to="/c/$section"
-                    params={{ section: "whats-on" }}
-                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
-                  >
-                    🎸 Gigs &amp; Music
-                  </Link>
-                  <Link
-                    to="/open-now"
-                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
-                  >
-                    ⏱️ Open Now
-                  </Link>
-                  <Link
-                    to="/places"
-                    className="px-2.5 py-1 border border-white/20 bg-white/5 text-white/80 hover:border-accent hover:text-accent hover:bg-accent/10 transition-colors"
-                  >
-                    ⚓ Places
-                  </Link>
-                </div>
               </div>
             </div>
 
@@ -307,7 +250,7 @@ function Index() {
               {primaryHeroArticle && (
                 <div className="relative group border-2 border-white/20 bg-black/70 backdrop-blur-md overflow-hidden hover:border-accent transition-all duration-300 shadow-2xl">
                   {/* Spotlight Top Header */}
-                  <div className="px-4 py-2.5 border-b border-white/10 flex items-center justify-between bg-white/5 text-[10px] font-mono uppercase tracking-widest text-white/60">
+                  <div className="px-3.5 sm:px-4 py-2 border-b border-white/10 flex items-center justify-between bg-white/5 text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/60">
                     <span className="flex items-center gap-1.5 text-accent font-bold">
                       <Flame className="size-3" />
                       FEATURED STORY
@@ -320,10 +263,10 @@ function Index() {
                   </div>
 
                   {/* Spotlight Image with category tag */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-black/40">
+                  <div className="relative aspect-[16/9] sm:aspect-[16/10] overflow-hidden bg-black/40">
                     <ResponsiveImage
                       id={primaryHeroArticle.featuredImage || "/hull-marina-hero.jpg"}
-                      alt={primaryHeroArticle.title}
+                      alt={decodeHtml(primaryHeroArticle.title)}
                       width={700}
                       height={440}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -332,26 +275,26 @@ function Index() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent" />
                     
-                    <div className="absolute top-3 left-3">
-                      <span className="px-2.5 py-1 bg-black/80 backdrop-blur-xs border border-white/20 text-accent font-mono text-[9px] uppercase font-bold tracking-widest">
+                    <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
+                      <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-black/80 backdrop-blur-xs border border-white/20 text-accent font-mono text-[9px] uppercase font-bold tracking-widest">
                         {primaryHeroArticle.category || "Guide"}
                       </span>
                     </div>
 
-                    <div className="absolute bottom-3 left-3 right-3">
+                    <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3">
                       <Link
                         to={articlePath(primaryHeroArticle)}
-                        className="font-display text-xl sm:text-2xl text-white hover:text-accent transition-colors leading-tight line-clamp-2 block"
+                        className="font-display text-lg sm:text-2xl text-white hover:text-accent transition-colors leading-tight line-clamp-2 block"
                       >
-                        {primaryHeroArticle.title}
+                        {decodeHtml(primaryHeroArticle.title)}
                       </Link>
                     </div>
                   </div>
 
                   {/* Spotlight Excerpt & CTA */}
-                  <div className="p-4 space-y-3 bg-black/40">
+                  <div className="p-3.5 sm:p-4 space-y-2.5 bg-black/40">
                     <p className="text-xs text-white/70 line-clamp-2 leading-relaxed">
-                      {primaryHeroArticle.excerpt}
+                      {decodeHtml(primaryHeroArticle.excerpt)}
                     </p>
                     
                     <div className="pt-2 border-t border-white/10 flex items-center justify-between">
@@ -369,28 +312,32 @@ function Index() {
 
                   {/* Mini-ticker of upcoming event or secondary guide */}
                   {(primaryHeroEvent || secondaryHeroArticle) && (
-                    <div className="border-t border-white/10 bg-white/5 p-3 flex items-center justify-between text-xs hover:bg-white/10 transition-colors">
+                    <div className="border-t border-white/10 bg-white/5 p-2.5 sm:p-3 flex items-center justify-between text-xs hover:bg-white/10 transition-colors">
                       {primaryHeroEvent ? (
                         <Link
                           to={`/events/${primaryHeroEvent.slug}`}
-                          className="flex items-center gap-2 text-white/80 hover:text-white w-full truncate"
+                          className="flex items-center gap-2 text-white/90 hover:text-white w-full overflow-hidden group"
                         >
-                          <span className="shrink-0 text-[9px] font-mono uppercase px-1.5 py-0.5 bg-accent/20 border border-accent/40 text-accent font-bold">
+                          <span className="shrink-0 text-[9px] font-mono uppercase px-2 py-0.5 bg-accent text-foreground font-extrabold tracking-wider">
                             Live Gig / Event
                           </span>
-                          <span className="truncate text-xs font-semibold">{primaryHeroEvent.title}</span>
-                          <ArrowRight className="size-3 ml-auto shrink-0 text-white/40" />
+                          <span className="truncate text-xs font-semibold text-white/90 group-hover:text-accent transition-colors">
+                            {decodeHtml(primaryHeroEvent.title)}
+                          </span>
+                          <ArrowRight className="size-3.5 ml-auto shrink-0 text-white/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
                         </Link>
                       ) : secondaryHeroArticle ? (
                         <Link
                           to={articlePath(secondaryHeroArticle)}
-                          className="flex items-center gap-2 text-white/80 hover:text-white w-full truncate"
+                          className="flex items-center gap-2 text-white/90 hover:text-white w-full overflow-hidden group"
                         >
-                          <span className="shrink-0 text-[9px] font-mono uppercase px-1.5 py-0.5 bg-white/10 border border-white/20 text-white font-bold">
+                          <span className="shrink-0 text-[9px] font-mono uppercase px-2 py-0.5 bg-white/15 border border-white/20 text-white font-bold tracking-wider">
                             Also Reading
                           </span>
-                          <span className="truncate text-xs font-semibold">{secondaryHeroArticle.title}</span>
-                          <ArrowRight className="size-3 ml-auto shrink-0 text-white/40" />
+                          <span className="truncate text-xs font-semibold text-white/90 group-hover:text-accent transition-colors">
+                            {decodeHtml(secondaryHeroArticle.title)}
+                          </span>
+                          <ArrowRight className="size-3.5 ml-auto shrink-0 text-white/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
                         </Link>
                       ) : null}
                     </div>
@@ -404,19 +351,19 @@ function Index() {
 
         {/* 3. Hero Bottom: Live Visitor Shortcuts Strip */}
         <div className="relative z-10 border-t-2 border-white/15 bg-black/60 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-4 py-3.5 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+          <div className="max-w-7xl mx-auto px-4 py-2.5 sm:py-3.5 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
             <Link
               to="/whats-on"
               search={{ when: "today" }}
-              className="group px-3 md:px-6 first:pl-0 last:pr-0 py-2 hover:bg-white/5 transition-colors"
+              className="group px-2.5 sm:px-6 first:pl-0 last:pr-0 py-1.5 sm:py-2 hover:bg-white/5 transition-colors"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="size-2 rounded-full bg-accent animate-pulse" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
                   Happening Today
                 </span>
               </div>
-              <div className="font-display text-lg md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+              <div className="font-display text-base sm:text-xl md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
                 {todayEvents.length > 0 ? `${todayEvents.length} Events` : "What's On"}
               </div>
             </Link>
@@ -424,30 +371,30 @@ function Index() {
             <Link
               to="/whats-on"
               search={{ when: "weekend" }}
-              className="group px-3 md:px-6 first:pl-0 last:pr-0 py-2 hover:bg-white/5 transition-colors"
+              className="group px-2.5 sm:px-6 first:pl-0 last:pr-0 py-1.5 sm:py-2 hover:bg-white/5 transition-colors"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Calendar className="size-3 text-white/40 group-hover:text-accent transition-colors" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
                   This Weekend
                 </span>
               </div>
-              <div className="font-display text-lg md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+              <div className="font-display text-base sm:text-xl md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
                 {weekendEvents.length > 0 ? `${weekendEvents.length} Events` : "Weekend Guide"}
               </div>
             </Link>
 
             <Link
               to="/open-now"
-              className="group px-3 md:px-6 first:pl-0 last:pr-0 py-2 hover:bg-white/5 transition-colors"
+              className="group px-2.5 sm:px-6 first:pl-0 last:pr-0 py-1.5 sm:py-2 hover:bg-white/5 transition-colors"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Clock className="size-3 text-white/40 group-hover:text-accent transition-colors" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
                   Open Right Now
                 </span>
               </div>
-              <div className="font-display text-lg md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+              <div className="font-display text-base sm:text-xl md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
                 Food &amp; Nightlife
               </div>
             </Link>
@@ -455,15 +402,15 @@ function Index() {
             <Link
               to="/whats-on"
               search={{ free: true }}
-              className="group px-3 md:px-6 first:pl-0 last:pr-0 py-2 hover:bg-white/5 transition-colors"
+              className="group px-2.5 sm:px-6 first:pl-0 last:pr-0 py-1.5 sm:py-2 hover:bg-white/5 transition-colors"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Compass className="size-3 text-white/40 group-hover:text-accent transition-colors" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
                   Budget Friendly
                 </span>
               </div>
-              <div className="font-display text-lg md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+              <div className="font-display text-base sm:text-xl md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
                 Free Things To Do
               </div>
             </Link>
@@ -811,72 +758,8 @@ function Index() {
               All offers →
             </Link>
           </div>
-
-          {/* Overheard in Hull */}
-          {settings?.overheard_hull_enabled !== "false" && settings?.overheard_hull_quote && (
-            <div className="border-2 border-dashed border-amber-500/40 bg-amber-500/5 p-5 space-y-2.5">
-              <div className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                <span>💬</span>
-                <span>Overheard in Hull</span>
-              </div>
-              <blockquote className="font-serif italic text-sm text-foreground/90 leading-snug">
-                "{settings.overheard_hull_quote}"
-              </blockquote>
-              {settings.overheard_hull_source && (
-                <div className="text-[10px] font-mono uppercase text-muted-foreground">
-                  — {settings.overheard_hull_source}
-                </div>
-              )}
-            </div>
-          )}
         </aside>
       </main>
-
-      {/* ── FROM THE EDITOR / DISPATCH ────────────────────────────────────────── */}
-      {settings?.editor_letter_enabled !== "false" && settings?.editor_letter_body && (
-        <section className="border-y-2 border-foreground bg-accent/5 py-10 my-4">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="grid md:grid-cols-12 gap-8 items-start">
-              <div className="md:col-span-4 border-b md:border-b-0 md:border-r border-border pb-6 md:pb-0 md:pr-8">
-                <div className="text-[10px] font-mono uppercase tracking-widest text-accent font-bold mb-2">
-                  Dispatch · Independent Voice
-                </div>
-                <h3 className="font-display text-2xl md:text-3xl uppercase leading-tight mb-4">
-                  {settings.editor_letter_title || "From the Editor"}
-                </h3>
-                <div className="flex items-center gap-3 mt-4">
-                  {settings.editor_letter_avatar ? (
-                    <img
-                      src={settings.editor_letter_avatar}
-                      alt={settings.editor_letter_author || "Editor"}
-                      className="w-12 h-12 rounded-full object-cover border border-border"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-foreground text-background flex items-center justify-center font-bold text-lg">
-                      {(settings.editor_letter_author || "C")[0]}
-                    </div>
-                  )}
-                  <div>
-                    <div className="font-bold text-sm text-foreground">
-                      {settings.editor_letter_author || "Callum MacInnes"}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {settings.editor_letter_role || "Founder & Editor, HU NOW"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="md:col-span-8 space-y-4 text-base md:text-lg font-serif leading-relaxed text-foreground/90">
-                <p>{settings.editor_letter_body}</p>
-                <div className="text-[11px] font-mono uppercase text-muted-foreground pt-2">
-                  HU NOW · Written, verified and published in Hull
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ── LATEST STORIES ───────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 py-12 border-t border-border">
