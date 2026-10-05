@@ -152,7 +152,16 @@ export default function TiptapEditorInner({ defaultValue, onUpdate }: Props) {
         />
       </div>
 
-      <EditorContent editor={editor} />
+      <div
+        className="cursor-text"
+        onClick={() => {
+          if (!editor?.isFocused) {
+            editor?.chain().focus().run();
+          }
+        }}
+      >
+        <EditorContent editor={editor} />
+      </div>
 
       {/* ③ Word count + read-time */}
       <div className="flex gap-4 px-3 py-1.5 border-t border-foreground/10 text-[10px] font-mono uppercase text-muted-foreground">

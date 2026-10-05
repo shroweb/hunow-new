@@ -298,13 +298,13 @@ export function AdminField({
   children: ReactNode;
 }) {
   return (
-    <label className="block space-y-1">
+    <div className="block space-y-1">
       <span className="block font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
         {label}
       </span>
       {children}
       {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
-    </label>
+    </div>
   );
 }
 
