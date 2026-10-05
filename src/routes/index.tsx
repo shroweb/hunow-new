@@ -344,20 +344,20 @@ function Index() {
         </div>
 
         {/* 3. Hero Bottom: Live Visitor Shortcuts Strip */}
-        <div className="relative z-10 border-t-2 border-white/15 bg-black/80 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-4 py-3 sm:py-3.5 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-0 sm:divide-x sm:divide-white/10">
+        <div className="relative z-10 border-t-2 border-white/15 bg-black/85 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/10 divide-y sm:divide-y-0">
             <Link
               to="/whats-on"
               search={{ when: "today" }}
-              className="group px-2.5 sm:px-6 first:pl-0 last:pr-0 py-1.5 sm:py-2 hover:bg-white/5 transition-colors"
+              className="group p-3 sm:px-6 sm:py-3.5 hover:bg-white/5 transition-colors flex flex-col justify-center"
             >
-              <div className="flex items-center gap-1.5">
-                <span className="size-2 rounded-full bg-accent animate-pulse" />
-                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+              <div className="flex items-center gap-1.5 min-h-4">
+                <span className="size-2 rounded-full bg-accent animate-pulse shrink-0" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors leading-none truncate">
                   Happening Today
                 </span>
               </div>
-              <div className="font-display text-base sm:text-xl md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+              <div className="font-display text-base sm:text-xl lg:text-2xl text-white group-hover:text-accent transition-colors mt-1.5 leading-none uppercase truncate">
                 {todayEvents.length > 0 ? `${todayEvents.length} Events` : "What's On"}
               </div>
             </Link>
@@ -365,30 +365,30 @@ function Index() {
             <Link
               to="/whats-on"
               search={{ when: "weekend" }}
-              className="group px-2.5 sm:px-6 first:pl-0 last:pr-0 py-1.5 sm:py-2 hover:bg-white/5 transition-colors"
+              className="group p-3 sm:px-6 sm:py-3.5 hover:bg-white/5 transition-colors flex flex-col justify-center"
             >
-              <div className="flex items-center gap-1.5">
-                <Calendar className="size-3 text-white/40 group-hover:text-accent transition-colors" />
-                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+              <div className="flex items-center gap-1.5 min-h-4">
+                <Calendar className="size-3 text-white/40 group-hover:text-accent transition-colors shrink-0" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors leading-none truncate">
                   This Weekend
                 </span>
               </div>
-              <div className="font-display text-base sm:text-xl md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+              <div className="font-display text-base sm:text-xl lg:text-2xl text-white group-hover:text-accent transition-colors mt-1.5 leading-none uppercase truncate">
                 {weekendEvents.length > 0 ? `${weekendEvents.length} Events` : "Weekend Guide"}
               </div>
             </Link>
 
             <Link
               to="/open-now"
-              className="group px-2.5 sm:px-6 first:pl-0 last:pr-0 py-1.5 sm:py-2 hover:bg-white/5 transition-colors"
+              className="group p-3 sm:px-6 sm:py-3.5 hover:bg-white/5 transition-colors flex flex-col justify-center"
             >
-              <div className="flex items-center gap-1.5">
-                <Clock className="size-3 text-white/40 group-hover:text-accent transition-colors" />
-                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+              <div className="flex items-center gap-1.5 min-h-4">
+                <Clock className="size-3 text-white/40 group-hover:text-accent transition-colors shrink-0" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors leading-none truncate">
                   Open Right Now
                 </span>
               </div>
-              <div className="font-display text-base sm:text-xl md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+              <div className="font-display text-base sm:text-xl lg:text-2xl text-white group-hover:text-accent transition-colors mt-1.5 leading-none uppercase truncate">
                 Food &amp; Nightlife
               </div>
             </Link>
@@ -396,15 +396,15 @@ function Index() {
             <Link
               to="/whats-on"
               search={{ free: true }}
-              className="group px-2.5 sm:px-6 first:pl-0 last:pr-0 py-1.5 sm:py-2 hover:bg-white/5 transition-colors"
+              className="group p-3 sm:px-6 sm:py-3.5 hover:bg-white/5 transition-colors flex flex-col justify-center"
             >
-              <div className="flex items-center gap-1.5">
-                <Compass className="size-3 text-white/40 group-hover:text-accent transition-colors" />
-                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors">
+              <div className="flex items-center gap-1.5 min-h-4">
+                <Compass className="size-3 text-white/40 group-hover:text-accent transition-colors shrink-0" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors leading-none truncate">
                   Budget Friendly
                 </span>
               </div>
-              <div className="font-display text-base sm:text-xl md:text-2xl text-white group-hover:text-accent transition-colors mt-0.5 leading-none">
+              <div className="font-display text-base sm:text-xl lg:text-2xl text-white group-hover:text-accent transition-colors mt-1.5 leading-none uppercase truncate">
                 Free Things To Do
               </div>
             </Link>
