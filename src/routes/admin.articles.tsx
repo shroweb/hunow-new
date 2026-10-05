@@ -23,15 +23,23 @@ import { NAV_SECTIONS, findSection } from "@/lib/nav";
 import { setState, slugify, uid, useStore } from "@/lib/store";
 import { upsertArticleFn, deleteArticleFn } from "@/lib/content.functions";
 import { getAuthorsFn } from "@/lib/authors.functions";
+import { getAdminPolls } from "@/lib/polls.functions";
 import type { Article } from "@/types";
 import type { PollRow } from "@/lib/db.server";
 import type { Author } from "@/lib/authors";
 
 export const Route = createFileRoute("/admin/articles")({
-  loader: async () => ({
-    polls: await getAdminPolls(),
-    authors: await getAuthorsFn(),
-  }),
+  loader: async () => {
+    try {
+      const [polls, authors] = await Promise.all([
+        getAdminPolls().catch(() => []),
+        getAuthorsFn().catch(() => []),
+      ]);
+      return { polls: polls ?? [], authors: authors ?? [] };
+    } catch {
+      return { polls: [], authors: [] };
+    }
+  },
   component: AdminArticles,
 });
 
@@ -49,7 +57,9 @@ const ARTICLE_CATEGORIES = [
 ];
 
 function AdminArticles() {
-  const { polls, authors } = Route.useLoaderData() as { polls: PollRow[]; authors: Author[] };
+  const loaderData = Route.useLoaderData() as { polls?: PollRow[]; authors?: Author[] } | undefined;
+  const polls = loaderData?.polls ?? [];
+  const authors = loaderData?.authors ?? [];
   const articles = useStore((s) => s.articles);
   const [editing, setEditing] = useState<Article | null>(null);
   const [showForm, setShowForm] = useState(false);
