@@ -181,7 +181,7 @@ function Index() {
               </div>
 
               {/* Responsive Headline */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display leading-[0.95] tracking-tight uppercase text-white">
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-display leading-[0.92] tracking-tight uppercase text-white">
                 DISCOVER WHAT&apos;S{" "}
                 <span className="text-accent underline decoration-accent/40 underline-offset-4 sm:underline-offset-8">
                   HAPPENING
