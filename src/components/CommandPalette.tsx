@@ -18,7 +18,6 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
   const events = useStore((s) => s.events);
   const listings = useStore((s) => s.listings);
   const articles = useStore((s) => s.articles);
-  const offers = useStore((s) => s.offers);
   const inputRef = useRef<HTMLInputElement>(null);
   const [q, setQ] = useState("");
   const [scope, setScope] = useState<ResultKind | "all">("all");
@@ -59,23 +58,16 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
         sub: `Story · ${a.category}`,
         to: articlePath(a),
       })),
-      ...offers.map((o) => ({
-        kind: "offer" as const,
-        title: o.title,
-        sub: `Offer · ${o.businessName}`,
-        to: `/offers`,
-      })),
       { kind: "section", title: "What's On", sub: "Section", to: "/whats-on" },
       { kind: "section", title: "Listings", sub: "Section", to: "/listings" },
       { kind: "section", title: "Stories", sub: "Section", to: "/stories" },
-      { kind: "section", title: "Offers", sub: "Section", to: "/offers" },
       { kind: "section", title: "Saved", sub: "Section", to: "/saved" },
     ];
     return pool
       .filter((r) => scope === "all" || r.kind === scope)
       .filter((r) => !term || `${r.title} ${r.sub}`.toLowerCase().includes(term))
       .slice(0, 30);
-  }, [q, scope, events, listings, articles, offers]);
+  }, [q, scope, events, listings, articles]);
 
   useEffect(() => {
     setActive(0);

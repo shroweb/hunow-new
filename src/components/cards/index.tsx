@@ -5,6 +5,7 @@ import type { Article, EventItem, Listing, Offer } from "@/types";
 import { useIsSaved, toggleSaved } from "@/lib/bookmarks";
 import { articlePath } from "@/lib/taxonomy";
 import { openStatus } from "@/lib/hours";
+import { decodeHtml } from "@/lib/sanitize";
 import { getFixtureMatchup } from "@/lib/fixture-artwork";
 import { FixtureArtwork } from "@/components/fixtures/FixtureArtwork";
 
@@ -97,8 +98,8 @@ export function EventCard({ event }: { event: EventItem }) {
           {dateLabel} / {event.startTime}
         </span>
       </div>
-      <h3 className="text-2xl font-bold leading-tight group-hover:underline mb-2">{event.title}</h3>
-      <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
+      <h3 className="text-2xl font-bold leading-tight group-hover:underline mb-2">{decodeHtml(event.title)}</h3>
+      <p className="text-sm text-muted-foreground line-clamp-2">{decodeHtml(event.description)}</p>
     </Link>
   );
 }

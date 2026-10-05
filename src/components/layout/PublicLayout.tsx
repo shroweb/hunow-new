@@ -247,13 +247,6 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               >
                 Stories
               </Link>
-              <Link
-                to="/offers"
-                className={`whitespace-nowrap px-4 py-3 border-b-2 transition-colors ${pathname.startsWith("/offers") ? "border-accent text-accent" : "border-transparent hover:text-accent"}`}
-                onMouseEnter={() => setOpen(null)}
-              >
-                Offers
-              </Link>
             </div>
           </div>
         </div>
@@ -515,11 +508,6 @@ function Footer() {
             <li>
               <Link to="/stories" className="hover:text-white transition-colors">
                 Stories
-              </Link>
-            </li>
-            <li>
-              <Link to="/offers" className="hover:text-white transition-colors">
-                Offers
               </Link>
             </li>
             <li>

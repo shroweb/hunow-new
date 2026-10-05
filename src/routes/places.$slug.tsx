@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { ArticleCard, ListingCard, EventCard, OfferCard } from "@/components/cards";
+import { ArticleCard, ListingCard, EventCard } from "@/components/cards";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SaveButton } from "@/components/SaveButton";
 import { ShareMenu } from "@/components/ShareMenu";
@@ -28,8 +28,8 @@ export const Route = createFileRoute("/places/$slug")({
     const listing = await fetchListingBySlug({ data: { slug: params.slug } });
     if (!listing) throw notFound();
     const { getListingUpdates } = await import("@/lib/db.server");
-    const { fetchRelatedForListing, fetchOfferById, fetchActiveOffers } = await import("@/lib/content-read.functions");
-    const [reviews, user, updates, related, offer, nearbyOffers] = await Promise.all([
+    const { fetchRelatedForListing } = await import("@/lib/content-read.functions");
+    const [reviews, user, updates, related] = await Promise.all([
       getListingReviews({ data: { listingId: listing.id } }).catch(() => [] as Review[]),
       getCurrentUser().catch(() => null),
       getListingUpdates(listing.id).catch(() => []),
@@ -41,12 +41,8 @@ export const Route = createFileRoute("/places/$slug")({
           name: listing.name,
         },
       }).catch(() => ({ articles: [], events: [], listings: [] })),
-      listing.activeOfferId
-        ? fetchOfferById({ data: { id: listing.activeOfferId } }).catch(() => null)
-        : Promise.resolve(undefined),
-      fetchActiveOffers({ data: { excludeListingId: listing.id, limit: 2 } }).catch(() => []),
     ]);
-    return { listing, reviews, user, updates, related, offer, nearbyOffers };
+    return { listing, reviews, user, updates, related };
   },
   head: ({ loaderData, params }) => {
     const l = loaderData?.listing;
@@ -156,8 +152,6 @@ function PlaceDetail() {
     user,
     updates,
     related,
-    offer,
-    nearbyOffers,
   } = Route.useLoaderData();
   const listing = loadedListing;
   if (!listing) throw notFound();
@@ -370,28 +364,6 @@ function PlaceDetail() {
 
         {/* Main content */}
         <div className="lg:col-span-8 lg:order-1 space-y-10">
-          {offer && (
-            <div className="border-2 border-accent bg-accent/10 p-6 md:p-8">
-              <div className="flex items-start gap-4">
-                <div className="size-12 shrink-0 bg-accent text-background grid place-items-center font-display text-2xl">
-                  %
-                </div>
-                <div className="flex-1">
-                  <div className="text-[10px] font-mono uppercase mb-1 text-accent">
-                    Reader Offer
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-bold mb-2">{offer.title}</h3>
-                  <p className="mb-4 text-muted-foreground">{offer.description}</p>
-                  <Link
-                    to="/offers"
-                    className="inline-block bg-foreground text-background px-5 py-2.5 font-bold uppercase tracking-widest text-[10px] hover:bg-accent transition-colors"
-                  >
-                    Claim Offer
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
 
           <div>
             <h2 className="text-3xl font-display uppercase border-b-2 border-foreground pb-2 mb-4">
@@ -462,18 +434,15 @@ function PlaceDetail() {
         </div>
       </section>
 
-      {(nearbyEvents.length > 0 || nearbyOffers.length > 0) && (
+      {nearbyEvents.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-12 border-t-2 border-foreground">
           <h2 className="text-4xl font-display uppercase mb-2">Nearby in {listing.area}</h2>
           <p className="text-sm text-muted-foreground mb-8">
-            Events and offers near {listing.name}.
+            Events near {listing.name}.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {nearbyEvents.map((e) => (
               <EventCard key={e.id} event={e} />
-            ))}
-            {nearbyOffers.map((o) => (
-              <OfferCard key={o.id} offer={o} />
             ))}
           </div>
         </section>

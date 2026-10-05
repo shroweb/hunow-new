@@ -63,7 +63,6 @@ export const Route = createFileRoute("/sitemap.xml")({
         });
         entries.push({ path: "/whats-on", changefreq: "daily", priority: "0.9", lastmod: today() });
         entries.push({ path: "/stories", changefreq: "daily", priority: "0.9", lastmod: today() });
-        entries.push({ path: "/offers", changefreq: "weekly", priority: "0.8", lastmod: today() });
         entries.push({
           path: "/advertise",
           changefreq: "monthly",

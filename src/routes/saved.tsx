@@ -7,28 +7,26 @@ import { articlePath } from "@/lib/taxonomy";
 import { getServerSavedItems } from "@/lib/saved.functions";
 import { getCurrentUser } from "@/lib/auth.functions";
 
-type Tab = "events" | "places" | "stories" | "offers" | "history";
+type Tab = "events" | "places" | "stories" | "history";
 
 const TABS: { id: Tab; label: string; kind?: SavedItem["kind"] }[] = [
   { id: "events", label: "Events", kind: "event" },
   { id: "places", label: "Places", kind: "place" },
   { id: "stories", label: "Stories", kind: "story" },
-  { id: "offers", label: "Offers", kind: "offer" },
   { id: "history", label: "History" },
 ];
 
-const KIND_PATH: Record<SavedItem["kind"], string> = {
+const KIND_PATH: Record<Exclude<SavedItem["kind"], "offer">, string> = {
   event: "/events",
   place: "/places",
   story: "/stories",
-  offer: "/offers",
 };
 
 export const Route = createFileRoute("/saved")({
   head: () => ({
     meta: [
       { title: "Saved — HU NOW" },
-      { name: "description", content: "Your saved Hull events, places, stories and offers." },
+      { name: "description", content: "Your saved Hull events, places and stories." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -65,7 +63,6 @@ function SavedPage() {
     events: items.filter((i) => i.kind === "event").length,
     places: items.filter((i) => i.kind === "place").length,
     stories: items.filter((i) => i.kind === "story").length,
-    offers: items.filter((i) => i.kind === "offer").length,
     history: history.length,
   };
 
@@ -128,7 +125,6 @@ function SavedList({ items, tab }: { items: SavedItem[]; tab: Tab }) {
       events: { label: "Browse events", to: "/whats-on" },
       places: { label: "Browse places", to: "/places" },
       stories: { label: "Browse stories", to: "/stories" },
-      offers: { label: "Browse offers", to: "/offers" },
       history: { label: "Explore", to: "/" },
     };
     const hint = hints[tab];

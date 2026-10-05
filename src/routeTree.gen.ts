@@ -24,7 +24,6 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as OpenNowRouteImport } from './routes/open-now'
-import { Route as OffersRouteImport } from './routes/offers'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as HumberStreetSeshRouteImport } from './routes/humber-street-sesh'
@@ -178,11 +177,6 @@ const PlacesRoute = PlacesRouteImport.update({
 const OpenNowRoute = OpenNowRouteImport.update({
   id: '/open-now',
   path: '/open-now',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OffersRoute = OffersRouteImport.update({
-  id: '/offers',
-  path: '/offers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsletterRoute = NewsletterRouteImport.update({
@@ -602,7 +596,6 @@ export interface FileRoutesByFullPath {
   '/humber-street-sesh': typeof HumberStreetSeshRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
-  '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/privacy': typeof PrivacyRoute
@@ -697,7 +690,6 @@ export interface FileRoutesByTo {
   '/humber-street-sesh': typeof HumberStreetSeshRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
-  '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/privacy': typeof PrivacyRoute
@@ -795,7 +787,6 @@ export interface FileRoutesById {
   '/humber-street-sesh': typeof HumberStreetSeshRoute
   '/listings': typeof ListingsRoute
   '/newsletter': typeof NewsletterRoute
-  '/offers': typeof OffersRoute
   '/open-now': typeof OpenNowRoute
   '/places': typeof PlacesRouteWithChildren
   '/privacy': typeof PrivacyRoute
@@ -894,7 +885,6 @@ export interface FileRouteTypes {
     | '/humber-street-sesh'
     | '/listings'
     | '/newsletter'
-    | '/offers'
     | '/open-now'
     | '/places'
     | '/privacy'
@@ -989,7 +979,6 @@ export interface FileRouteTypes {
     | '/humber-street-sesh'
     | '/listings'
     | '/newsletter'
-    | '/offers'
     | '/open-now'
     | '/places'
     | '/privacy'
@@ -1086,7 +1075,6 @@ export interface FileRouteTypes {
     | '/humber-street-sesh'
     | '/listings'
     | '/newsletter'
-    | '/offers'
     | '/open-now'
     | '/places'
     | '/privacy'
@@ -1184,7 +1172,6 @@ export interface RootRouteChildren {
   HumberStreetSeshRoute: typeof HumberStreetSeshRoute
   ListingsRoute: typeof ListingsRoute
   NewsletterRoute: typeof NewsletterRoute
-  OffersRoute: typeof OffersRoute
   OpenNowRoute: typeof OpenNowRoute
   PlacesRoute: typeof PlacesRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
@@ -1327,13 +1314,6 @@ declare module '@tanstack/react-router' {
       path: '/open-now'
       fullPath: '/open-now'
       preLoaderRoute: typeof OpenNowRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/offers': {
-      id: '/offers'
-      path: '/offers'
-      fullPath: '/offers'
-      preLoaderRoute: typeof OffersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/newsletter': {
@@ -2083,7 +2063,6 @@ const rootRouteChildren: RootRouteChildren = {
   HumberStreetSeshRoute: HumberStreetSeshRoute,
   ListingsRoute: ListingsRoute,
   NewsletterRoute: NewsletterRoute,
-  OffersRoute: OffersRoute,
   OpenNowRoute: OpenNowRoute,
   PlacesRoute: PlacesRouteWithChildren,
   PrivacyRoute: PrivacyRoute,

@@ -14,7 +14,6 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { AdSlot } from "@/components/AdSlot";
 import { PollWidget } from "@/components/PollWidget";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { OfferCard } from "@/components/cards";
 import { ResponsiveImage } from "@/components/ResponsiveImage";
 import { useStore } from "@/lib/store";
 import { articlePath } from "@/lib/taxonomy";
@@ -36,7 +35,6 @@ export const Route = createFileRoute("/")({
       articles: store.articles,
       events: store.events,
       listings: store.listings,
-      offers: store.offers,
       settings,
     };
   },
@@ -99,7 +97,6 @@ function Index() {
     articles: loaderArticles,
     events: loaderEvents,
     listings: loaderListings,
-    offers: loaderOffers,
     settings,
   } = Route.useLoaderData();
   const [cmdOpen, setCmdOpen] = useState(false);
@@ -109,13 +106,11 @@ function Index() {
   const storeEvents = useStore((s) => s.events);
   const storeArticles = useStore((s) => s.articles);
   const storeListings = useStore((s) => s.listings);
-  const storeOffers = useStore((s) => s.offers);
 
   // Prioritize canonical server loader data for SSR and client hydration
   const allEvents = loaderEvents?.length ? loaderEvents : storeEvents;
   const allArticles = loaderArticles?.length ? loaderArticles : storeArticles;
   const allListingsData = loaderListings?.length ? loaderListings : storeListings;
-  const allOffers = loaderOffers?.length ? loaderOffers : storeOffers;
 
   const today = todayIso();
   const publishedEvents = allEvents.filter(
@@ -123,9 +118,6 @@ function Index() {
   );
   const events = publishedEvents.slice(0, 4);
   const articles = allArticles.filter((a) => a.status === "published").slice(0, 4);
-  const offers = allOffers
-    .filter((o) => o.status === "active" && (!o.endDate || o.endDate >= today))
-    .slice(0, 3);
   const listings = allListingsData.filter((l) => l.isFeatured).slice(0, 4);
 
   const featuredArticles = allArticles.filter((a) => a.isFeatured && a.status === "published");
@@ -466,7 +458,7 @@ function Index() {
                   <div className="aspect-[16/7] overflow-hidden bg-stone-200">
                     <ResponsiveImage
                       id={event.featuredImage}
-                      alt={event.title}
+                      alt={decodeHtml(event.title)}
                       width={520}
                       height={230}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -487,7 +479,7 @@ function Index() {
                       {event.category} · {event.startTime}
                     </div>
                     <h3 className="font-display text-2xl uppercase leading-none mb-2 group-hover:text-accent transition-colors">
-                      {event.title}
+                      {decodeHtml(event.title)}
                     </h3>
                     <p className="text-xs font-mono uppercase opacity-60">
                       {cleanLocation(event.locationName)}
@@ -589,7 +581,7 @@ function Index() {
                 </div>
                 {/* [14] font-display for lead event title */}
                 <h3 className="text-2xl md:text-3xl font-display uppercase leading-none group-hover:underline mb-2">
-                  {events[0].title}
+                  {decodeHtml(events[0].title)}
                 </h3>
                 <div
                   className="text-[10px] font-mono uppercase text-muted-foreground"
@@ -614,7 +606,7 @@ function Index() {
                 <div className="w-20 shrink-0 overflow-hidden bg-stone-200 aspect-[4/3]">
                   <img
                     src={img(e.featuredImage, 160, 120)}
-                    alt={e.title}
+                    alt={decodeHtml(e.title)}
                     width={160}
                     height={120}
                     loading="lazy"
@@ -631,7 +623,7 @@ function Index() {
                     {e.category} · {formatHomeDate(e.startDate)}
                   </div>
                   <h3 className="text-sm font-bold leading-snug group-hover:underline mb-0.5">
-                    {e.title}
+                    {decodeHtml(e.title)}
                   </h3>
                   <div className="text-[9px] font-mono uppercase text-muted-foreground">
                     {cleanLocation(e.locationName)}
@@ -669,21 +661,6 @@ function Index() {
         <aside className="lg:col-span-4 space-y-12">
           <PollWidget />
           <AdSlot placement="Sidebar Ad" />
-          <div className="space-y-4">
-            <h2 className="text-3xl font-display tracking-wide">Reader Offers</h2>
-            {offers.map((o) => (
-              <OfferCard key={o.id} offer={o} />
-            ))}
-            {offers.length === 0 && (
-              <p className="text-sm text-muted-foreground">No current offers. Check back soon.</p>
-            )}
-            <Link
-              to="/offers"
-              className="inline-block text-[10px] font-bold uppercase tracking-widest text-accent"
-            >
-              All offers →
-            </Link>
-          </div>
         </aside>
       </main>
 

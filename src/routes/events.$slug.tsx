@@ -10,7 +10,7 @@ import { fetchEventBySlug } from "@/lib/content-read.functions";
 import { getEventRsvp, toggleRsvp } from "@/lib/rsvp.functions";
 import { addToHistory } from "@/lib/reading-history";
 import { autoLink } from "@/lib/autolink";
-import { sanitizeHtml, escapeAttr } from "@/lib/sanitize";
+import { sanitizeHtml, escapeAttr, decodeHtml } from "@/lib/sanitize";
 import { img } from "@/data/seed";
 import { getFixtureMatchup } from "@/lib/fixture-artwork";
 import { FixtureArtwork } from "@/components/fixtures/FixtureArtwork";
@@ -36,8 +36,8 @@ export const Route = createFileRoute("/events/$slug")({
   head: ({ loaderData, params }) => {
     const e = loaderData?.event;
     if (!e) return {};
-    const title = formatTitle(e.seo?.title ?? e.title);
-    const description = clampDescription(e.seo?.description ?? e.description, e.title);
+    const title = formatTitle(decodeHtml(e.seo?.title ?? e.title));
+    const description = clampDescription(decodeHtml(e.seo?.description ?? e.description), decodeHtml(e.title));
     const image = e.seo?.ogImage ?? img(e.featuredImage, 1200, 630);
     const url = `/events/${params.slug}`;
     return {
@@ -301,7 +301,7 @@ function EventDetail() {
           { label: "Home", to: "/" },
           { label: "What's On", to: "/whats-on" },
           { label: event.category },
-          { label: event.title },
+          { label: decodeHtml(event.title) },
         ]}
       />
       <article className="min-h-screen">
@@ -311,7 +311,7 @@ function EventDetail() {
           ) : (
             <img
               src={img(event.featuredImage, 1600, 900)}
-              alt={event.title}
+              alt={decodeHtml(event.title)}
               className="w-full h-full object-cover"
             />
           )}
@@ -355,7 +355,7 @@ function EventDetail() {
           )}
           <div className="font-mono text-[10px] uppercase text-accent mb-4">{event.category}</div>
           <h1 className="text-5xl md:text-7xl font-display uppercase leading-none mb-8">
-            {event.title}
+            {decodeHtml(event.title)}
           </h1>
           <div className="grid grid-cols-3 gap-4 border-y-2 border-foreground py-5 mb-8 font-mono text-xs uppercase">
             <div>

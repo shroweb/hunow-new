@@ -130,12 +130,10 @@ function SearchPage() {
   const total =
     results.articles.length +
     results.events.length +
-    results.listings.length +
-    results.offers.length;
+    results.listings.length;
   const showArticles = type === "all" || type === "stories";
   const showEvents = type === "all" || type === "events";
   const showListings = type === "all" || type === "places";
-  const showOffers = type === "all" || type === "offers";
 
   // Autocomplete: top 3 per category for the dropdown
   const autocompleteItems = [
@@ -156,12 +154,6 @@ function SearchPage() {
       title: a.title,
       sub: a.category,
       href: articlePath(a),
-    })),
-    ...results.offers.slice(0, 2).map((o) => ({
-      kind: "offer" as const,
-      title: o.title,
-      sub: o.businessName,
-      href: "/offers",
     })),
   ].slice(0, 8);
 
@@ -274,7 +266,6 @@ function SearchPage() {
               ["stories", `Stories (${results.articles.length})`],
               ["events", `Events (${results.events.length})`],
               ["places", `Places (${results.listings.length})`],
-              ["offers", `Offers (${results.offers.length})`],
             ].map(([key, label]) => (
               <button
                 key={key}
@@ -399,31 +390,6 @@ function SearchPage() {
                       </div>
                       <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
                         {l.category} · {l.area}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-          {showOffers && results.offers.length > 0 && (
-            <section>
-              <h2 className="font-display text-3xl uppercase border-b-2 border-foreground pb-2 mb-6">
-                Offers{" "}
-                <span className="text-muted-foreground text-xl">({results.offers.length})</span>
-              </h2>
-              <ul className="divide-y divide-foreground/10">
-                {results.offers.map((o) => (
-                  <li key={o.id} className="py-4">
-                    <Link to="/offers" className="group flex items-start justify-between gap-4">
-                      <div>
-                        <p className="font-bold group-hover:underline">{o.title}</p>
-                        <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
-                          {o.businessName} · {o.description}
-                        </p>
-                      </div>
-                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
-                        {o.category}
                       </span>
                     </Link>
                   </li>
