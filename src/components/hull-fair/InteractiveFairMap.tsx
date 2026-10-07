@@ -23,8 +23,6 @@ import {
   Check,
   Plus,
   Minus,
-  Lock,
-  Unlock,
   Layers,
 } from "lucide-react";
 
@@ -55,7 +53,6 @@ export function InteractiveFairMap({
   const [showLegend, setShowLegend] = useState(true);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
-  const [isZoomedIn, setIsZoomedIn] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(17.5);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -65,7 +62,7 @@ export function InteractiveFairMap({
   const leafletModuleRef = useRef<any>(null);
 
   const FAIR_BOUNDS = HULL_FAIR_MAP_VIEW.fairBounds;
-  // Locked overview for the current container size (recomputed on resize / rotate / fullscreen)
+  // Overview for the current container size (recomputed on resize / rotate / fullscreen)
   const overviewRef = useRef<{ zoom: number; center: [number, number] }>({
     zoom: 17.5,
     center: [
@@ -189,24 +186,8 @@ export function InteractiveFairMap({
         resizeObserver.observe(mapContainerRef.current);
       }
 
-      // REQUIREMENT 1: Lock dragging when zoomed out so map doesn't drift
-      map.dragging.disable();
-      setIsZoomedIn(false);
-
-      // Update dragging state when zoom changes
-      map.on("zoomend", () => {
-        const currentZoom = map.getZoom();
-        const overview = overviewRef.current;
-        if (currentZoom > overview.zoom + 0.15) {
-          map.dragging.enable();
-          setIsZoomedIn(true);
-        } else {
-          map.dragging.disable();
-          setIsZoomedIn(false);
-          map.setView(overview.center, overview.zoom);
-        }
-        setZoomLevel(currentZoom);
-      });
+      // Re-render markers at the right size when the zoom changes
+      map.on("zoomend", () => setZoomLevel(map.getZoom()));
 
       mapInstanceRef.current = map;
       setIsMapReady(true);
@@ -313,7 +294,7 @@ export function InteractiveFairMap({
 
       markersRef.current[poi.id] = marker;
     });
-  }, [filteredPOIs, selectedPOI, isMapReady, isZoomedIn, zoomLevel]);
+  }, [filteredPOIs, selectedPOI, isMapReady, zoomLevel]);
 
   // Select POI
   const handleSelectPOI = (poi: FairPOI) => {
@@ -589,21 +570,6 @@ export function InteractiveFairMap({
           }`}
         >
           <div ref={mapContainerRef} className="relative z-0 w-full h-full bg-[#e9e6df]" />
-
-          {/* Floating Map Status Indicator */}
-          <div className="pointer-events-none absolute top-3 left-3 z-20 flex items-center gap-2 rounded-xl bg-zinc-950/85 backdrop-blur px-3 py-1.5 text-[11px] font-mono text-zinc-300 border border-zinc-800 shadow-md">
-            {isZoomedIn ? (
-              <>
-                <Unlock className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="hidden sm:inline">Zoomed In · Pan enabled</span>
-              </>
-            ) : (
-              <>
-                <Lock className="h-3.5 w-3.5 text-amber-400" />
-                <span className="hidden sm:inline">Locked · Zoom in to pan</span>
-              </>
-            )}
-          </div>
 
           {/* Dedicated Zoom Controls */}
           <div className="absolute top-3 right-3 z-20 flex flex-col gap-1.5 shadow-lg">
