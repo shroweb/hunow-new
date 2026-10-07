@@ -585,24 +585,6 @@ function HullFairPage() {
             </div>
           </section>
 
-          <figure className="border-2 border-foreground bg-foreground overflow-hidden">
-            <div className="aspect-[16/10] md:aspect-[16/9] overflow-hidden">
-              <img
-                src={heroImage}
-                alt="Illuminated thrill rides at Hull Fair on Walton Street"
-                width={2438}
-                height={1836}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
-              />
-            </div>
-            <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-[10px] font-mono uppercase tracking-widest text-background/70">
-              <span>Hull Fair · Walton Street</span>
-              <span>Rides, lights and attractions</span>
-            </figcaption>
-          </figure>
-
           {/* Section 1: Dates & Daily Hours */}
           <section id="dates" className={SECTION_CLASS}>
             <SectionHeader
