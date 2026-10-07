@@ -67,7 +67,7 @@ export function InteractiveFairMap({
   const DESKTOP_CENTER: [number, number] = [660, 660];
   // Fairground + north Walton Street in map units, used to fit the overview on narrow screens
   const FAIR_BOUNDS: [[number, number], [number, number]] = [
-    [430, 185],
+    [380, 185],
     [985, 1060],
   ];
   // Locked overview for the current container size (recomputed on resize / rotate / fullscreen)
