@@ -417,10 +417,10 @@ export function InteractiveFairMap({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <h2 className="text-xs md:text-sm font-mono uppercase tracking-widest text-zinc-300 font-bold">
+            <h2 className="hidden sm:block whitespace-nowrap text-xs md:text-sm font-mono uppercase tracking-widest text-zinc-300 font-bold">
               Hull Fair 2026 Map
             </h2>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+            <span className="whitespace-nowrap text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
               {filteredPOIs.length} POIs
             </span>
           </div>
