@@ -33,10 +33,11 @@ export const Route = createFileRoute("/admin/hull-fair-map")({
 });
 
 export function AdminHullFairMapPage() {
+  // Admin map uses canonical HULL_FAIR_POIS, but allows local tweaks if saved in v2 key
   const [pois, setPois] = useState<FairPOI[]>(() => {
     if (typeof window !== "undefined") {
       try {
-        const local = localStorage.getItem("hull_fair_custom_pois");
+        const local = localStorage.getItem("hull_fair_custom_pois_v2");
         if (local) {
           const parsed = JSON.parse(local);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -97,6 +98,13 @@ export function AdminHullFairMapPage() {
 
   // Load latest from server DB on mount
   useEffect(() => {
+    // Purge old stale v1 localStorage if present
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("hull_fair_custom_pois");
+      } catch {}
+    }
+
     getHullFairPoisFn()
       .then((res) => {
         if (res?.pois && res.pois.length > 0) {
@@ -232,6 +240,13 @@ export function AdminHullFairMapPage() {
       accessible: "#545454",
     };
 
+    const currentZoom = map.getZoom();
+    const isCloseUp = currentZoom > 0.4;
+    const isMidZoom = currentZoom > 0.05;
+    const badgeSize = isCloseUp ? 38 : isMidZoom ? 30 : 25;
+    const iconImgSize = isCloseUp ? 24 : isMidZoom ? 19 : 15;
+    const roundedClass = isCloseUp ? "rounded-xl" : "rounded-lg";
+
     pois.forEach((poi) => {
       const lat = mapHeight * (1 - poi.y / 100);
       const lng = mapWidth * (poi.x / 100);
@@ -242,16 +257,16 @@ export function AdminHullFairMapPage() {
 
       const markerHtml = `
         <div class="group relative flex flex-col items-center cursor-move transition-transform duration-150 ${
-          isActive ? "scale-140 z-50 animate-bounce-subtle" : "hover:scale-120 z-10"
+          isActive ? "scale-125 z-50 animate-bounce-subtle" : "hover:scale-125 z-10"
         }">
-          <div class="relative flex items-center justify-center rounded-2xl bg-white p-1 shadow-2xl backdrop-blur transition-all"
-               style="border: 2.5px solid ${accentColor}; box-shadow: 0 4px 16px ${accentColor}88;">
-            <img src="${iconUrl}" alt="${poi.name}" class="h-6 w-6 object-contain" />
+          <div class="relative flex items-center justify-center ${roundedClass} bg-white shadow-md backdrop-blur transition-all duration-200"
+               style="width: ${badgeSize}px; height: ${badgeSize}px; border: 2px solid ${accentColor}; box-shadow: 0 2px 8px ${accentColor}44;">
+            <img src="${iconUrl}" alt="${poi.name}" style="width: ${iconImgSize}px; height: ${iconImgSize}px;" class="object-contain drop-shadow" />
             ${
               isActive
-                ? `<span class="absolute -top-1.5 -right-1.5 flex h-4 w-4">
+                ? `<span class="absolute -top-1 -right-1 flex h-3 w-3">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border border-white"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-white"></span>
                   </span>`
                 : ""
             }
@@ -267,8 +282,8 @@ export function AdminHullFairMapPage() {
       const customIcon = Leaflet.divIcon({
         html: markerHtml,
         className: "hull-fair-admin-marker",
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
+        iconSize: [badgeSize, badgeSize],
+        iconAnchor: [badgeSize / 2, badgeSize / 2],
       });
 
       const marker = Leaflet.marker([lat, lng], {
@@ -328,7 +343,8 @@ export function AdminHullFairMapPage() {
     try {
       const res = await saveHullFairPoisFn({ data: { pois } });
       try {
-        localStorage.setItem("hull_fair_custom_pois", JSON.stringify(pois));
+        localStorage.setItem("hull_fair_custom_pois_v2", JSON.stringify(pois));
+        localStorage.removeItem("hull_fair_custom_pois");
       } catch {}
       toast.success(`Successfully saved ${res.count} attraction positions to database & code!`);
     } catch (err: any) {
@@ -340,12 +356,13 @@ export function AdminHullFairMapPage() {
 
   // Reset to static defaults
   const handleReset = () => {
-    if (confirm("Reset all positions back to the original layout?")) {
+    if (confirm("Reset all positions back to the official calibrated layout?")) {
       setPois(HULL_FAIR_POIS);
       try {
+        localStorage.removeItem("hull_fair_custom_pois_v2");
         localStorage.removeItem("hull_fair_custom_pois");
       } catch {}
-      toast.info("Reset positions to default.");
+      toast.info("Reset positions to calibrated default.");
     }
   };
 

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { HULL_FAIR_POIS, type FairPOI } from "@/data/hull-fair-map-data";
 
-const SETTING_KEY = "hull_fair_map_pois_v1";
+const SETTING_KEY = "hull_fair_map_pois_v2";
 
 export const getHullFairPoisFn = createServerFn({ method: "GET" }).handler(async () => {
   try {
