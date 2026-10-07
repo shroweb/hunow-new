@@ -38,19 +38,8 @@ export function InteractiveFairMap({
   initialSelectedId,
   className = "",
 }: InteractiveFairMapProps) {
-  // Load POIs with localStorage overrides if admin has placed pins locally
-  const [poisList, setPoisList] = useState<FairPOI[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("hull_fair_custom_pois");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        }
-      } catch {}
-    }
-    return HULL_FAIR_POIS;
-  });
+  // Always use canonical HULL_FAIR_POIS on user-facing map
+  const [poisList, setPoisList] = useState<FairPOI[]>(HULL_FAIR_POIS);
 
   const [selectedCategory, setSelectedCategory] = useState<FairCategory>(initialCategory);
   const [searchQuery, setSearchQuery] = useState("");
