@@ -210,9 +210,11 @@ export function InteractiveFairMap({
     };
 
     const currentZoom = map.getZoom();
-    const isCloseUp = currentZoom > INITIAL_ZOOM + 0.25;
-    const badgeSize = isCloseUp ? 36 : 28;
-    const iconImgSize = isCloseUp ? 22 : 18;
+    const isCloseUp = currentZoom > INITIAL_ZOOM + 0.6;
+    const isMidZoom = currentZoom > INITIAL_ZOOM + 0.2;
+    const badgeSize = isCloseUp ? 38 : isMidZoom ? 30 : 25;
+    const iconImgSize = isCloseUp ? 24 : isMidZoom ? 19 : 15;
+    const roundedClass = isCloseUp ? "rounded-xl" : "rounded-lg";
 
     filteredPOIs.forEach((poi) => {
       const lat = mapHeight * (1 - poi.y / 100);
@@ -225,7 +227,7 @@ export function InteractiveFairMap({
         <div class="group relative flex flex-col items-center cursor-pointer transition-transform duration-200 ${
           isSelected ? "scale-125 z-50 animate-bounce-subtle" : "hover:scale-125 z-10"
         }">
-          <div class="relative flex items-center justify-center rounded-xl bg-white shadow-md backdrop-blur transition-all duration-200"
+          <div class="relative flex items-center justify-center ${roundedClass} bg-white shadow-md backdrop-blur transition-all duration-200"
                style="width: ${badgeSize}px; height: ${badgeSize}px; border: 2px solid ${accentColor}; box-shadow: 0 2px 8px ${accentColor}44;">
             <img src="${iconUrl}" alt="${poi.name}" style="width: ${iconImgSize}px; height: ${iconImgSize}px;" class="object-contain drop-shadow" />
             ${
