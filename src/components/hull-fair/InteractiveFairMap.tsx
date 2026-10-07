@@ -18,6 +18,10 @@ import {
   Sparkles,
   Info,
   Check,
+  Plus,
+  Minus,
+  Lock,
+  Unlock,
 } from "lucide-react";
 
 interface InteractiveFairMapProps {
@@ -31,11 +35,25 @@ export function InteractiveFairMap({
   initialSelectedId,
   className = "",
 }: InteractiveFairMapProps) {
+  // Load POIs with localStorage overrides if admin has placed pins locally
+  const [poisList, setPoisList] = useState<FairPOI[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("hull_fair_custom_pois");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch {}
+    }
+    return HULL_FAIR_POIS;
+  });
+
   const [selectedCategory, setSelectedCategory] = useState<FairCategory>(initialCategory);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPOI, setSelectedPOI] = useState<FairPOI | null>(() => {
     if (initialSelectedId) {
-      return HULL_FAIR_POIS.find((p) => p.id === initialSelectedId) || null;
+      return poisList.find((p) => p.id === initialSelectedId) || null;
     }
     return null;
   });
@@ -43,6 +61,7 @@ export function InteractiveFairMap({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [isZoomedIn, setIsZoomedIn] = useState(false);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapWrapperRef = useRef<HTMLDivElement>(null);
@@ -50,10 +69,13 @@ export function InteractiveFairMap({
   const markersRef = useRef<{ [key: string]: any }>({});
   const leafletModuleRef = useRef<any>(null);
 
+  const INITIAL_ZOOM = -0.15;
+  const DEFAULT_CENTER: [number, number] = [660, 660];
+
   // Filtered POIs
   const filteredPOIs = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    return HULL_FAIR_POIS.filter((poi) => {
+    return poisList.filter((poi) => {
       const matchesCat =
         selectedCategory === "all" ||
         poi.category === selectedCategory ||
@@ -69,23 +91,23 @@ export function InteractiveFairMap({
         poi.description.toLowerCase().includes(q)
       );
     });
-  }, [selectedCategory, searchQuery]);
+  }, [poisList, selectedCategory, searchQuery]);
 
   // Category counts
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: HULL_FAIR_POIS.length };
+    const counts: Record<string, number> = { all: poisList.length };
     for (const cat of FAIR_CATEGORIES) {
       if (cat.key === "all") continue;
-      counts[cat.key] = HULL_FAIR_POIS.filter(
+      counts[cat.key] = poisList.filter(
         (p) =>
           p.category === cat.key ||
           (cat.key === "wc" && p.category === "accessible")
       ).length;
     }
     return counts;
-  }, []);
+  }, [poisList]);
 
-  // Ensure Leaflet stylesheet is injected
+  // Inject Leaflet CSS
   useEffect(() => {
     if (typeof window === "undefined") return;
     const existing = document.getElementById("leaflet-stylesheet");
@@ -109,9 +131,6 @@ export function InteractiveFairMap({
       leafletModuleRef.current = L.default || L;
       const Leaflet = leafletModuleRef.current;
 
-      // Map bounds in CRS.Simple:
-      // Aspect ratio of map-base-3200.webp is 3200 x 2239 (~1.4292)
-      // Coordinates: Y from 0 to 1000, X from 0 to 1429.2
       const mapHeight = 1000;
       const mapWidth = 1429.2;
       const bounds: [[number, number], [number, number]] = [
@@ -126,25 +145,38 @@ export function InteractiveFairMap({
 
       const map = Leaflet.map(mapContainerRef.current, {
         crs: Leaflet.CRS.Simple,
-        minZoom: -1.2,
-        maxZoom: 2,
-        zoomSnap: 0.25,
-        zoomDelta: 0.5,
+        minZoom: -0.3,
+        maxZoom: 2.5,
+        zoomSnap: 0.1,
+        zoomDelta: 0.4,
         attributionControl: false,
         zoomControl: false,
-        maxBounds: [
-          [-150, -150],
-          [mapHeight + 150, mapWidth + 150],
-        ],
-        maxBoundsViscosity: 0.85,
+        // STRICT BOUNDS: never let map pan off screen
+        maxBounds: bounds,
+        maxBoundsViscosity: 1.0,
       });
 
       Leaflet.imageOverlay("/hull-fair/map-base.webp", bounds).addTo(map);
 
-      // Default view centered on Walton Street fairground tarmac
-      // Tarmac center is approx (x: 42%, y: 32%) -> Leaflet CRS [680, 600]
-      const defaultCenter: [number, number] = [680, 600];
-      map.setView(defaultCenter, -0.2);
+      // Default view locked in center of Walton Street tarmac
+      map.setView(DEFAULT_CENTER, INITIAL_ZOOM);
+
+      // REQUIREMENT 1: Lock dragging when zoomed out so map doesn't drift
+      map.dragging.disable();
+      setIsZoomedIn(false);
+
+      // Update dragging state when zoom changes
+      map.on("zoomend", () => {
+        const currentZoom = map.getZoom();
+        if (currentZoom > INITIAL_ZOOM + 0.15) {
+          map.dragging.enable();
+          setIsZoomedIn(true);
+        } else {
+          map.dragging.disable();
+          setIsZoomedIn(false);
+          map.setView(DEFAULT_CENTER, INITIAL_ZOOM);
+        }
+      });
 
       mapInstanceRef.current = map;
       setIsMapReady(true);
@@ -159,7 +191,7 @@ export function InteractiveFairMap({
     };
   }, []);
 
-  // Sync Leaflet markers whenever filteredPOIs or selectedPOI changes
+  // Sync markers
   useEffect(() => {
     const map = mapInstanceRef.current;
     const Leaflet = leafletModuleRef.current;
@@ -173,13 +205,10 @@ export function InteractiveFairMap({
     const mapWidth = 1429.2;
 
     filteredPOIs.forEach((poi) => {
-      // Calculate coordinates in CRS.Simple
       const lat = mapHeight * (1 - poi.y / 100);
       const lng = mapWidth * (poi.x / 100);
-
       const isSelected = selectedPOI?.id === poi.id;
 
-      // Category color accents
       const categoryColorHex: Record<string, string> = {
         rollercoaster: "#f59e0b",
         thrill: "#06b6d4",
@@ -197,14 +226,14 @@ export function InteractiveFairMap({
 
       const markerHtml = `
         <div class="group relative flex flex-col items-center cursor-pointer transition-transform duration-200 ${
-          isSelected ? "scale-125 z-50 animate-bounce-subtle" : "hover:scale-115 z-10"
+          isSelected ? "scale-130 z-50 animate-bounce-subtle" : "hover:scale-120 z-10"
         }">
           <div class="relative flex items-center justify-center rounded-2xl bg-white/95 p-1 shadow-lg backdrop-blur transition-all duration-200 border-2"
                style="border-color: ${accentColor}; box-shadow: 0 4px 14px ${accentColor}44;">
-            <img src="${iconUrl}" alt="${poi.name}" class="h-7 w-7 md:h-8 md:w-8 object-contain drop-shadow" />
+            <img src="${iconUrl}" alt="${poi.name}" class="h-6 w-6 md:h-7 md:w-7 object-contain drop-shadow" />
             ${
               isSelected
-                ? `<span class="absolute -top-1.5 -right-1.5 flex h-3.5 w-3.5">
+                ? `<span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 border border-white"></span>
                   </span>`
@@ -220,22 +249,27 @@ export function InteractiveFairMap({
       const customIcon = Leaflet.divIcon({
         html: markerHtml,
         className: "hull-fair-marker",
-        iconSize: [40, 40],
-        iconAnchor: [20, 20],
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
       });
 
       const marker = Leaflet.marker([lat, lng], { icon: customIcon })
         .addTo(map)
         .on("click", () => {
           setSelectedPOI(poi);
-          map.panTo([lat, lng], { animate: true, duration: 0.5 });
+          // If zoomed out, zoom in towards the tapped marker
+          if (map.getZoom() <= INITIAL_ZOOM + 0.15) {
+            map.setView([lat, lng], 0.6, { animate: true, duration: 0.5 });
+          } else {
+            map.panTo([lat, lng], { animate: true, duration: 0.4 });
+          }
         });
 
       markersRef.current[poi.id] = marker;
     });
   }, [filteredPOIs, selectedPOI, isMapReady]);
 
-  // Handle POI selection from list or search
+  // Select POI
   const handleSelectPOI = (poi: FairPOI) => {
     setSelectedPOI(poi);
     setViewMode("map");
@@ -245,17 +279,30 @@ export function InteractiveFairMap({
       const mapWidth = 1429.2;
       const lat = mapHeight * (1 - poi.y / 100);
       const lng = mapWidth * (poi.x / 100);
-      mapInstanceRef.current.setView([lat, lng], 0.75, {
+      mapInstanceRef.current.setView([lat, lng], 0.8, {
         animate: true,
         duration: 0.6,
       });
     }
   };
 
-  // Re-center map view
+  // Zoom controls
+  const handleZoomIn = () => {
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.zoomIn(0.5);
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.zoomOut(0.5);
+    }
+  };
+
+  // Reset to locked overview
   const handleResetView = () => {
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.setView([680, 600], -0.2, {
+      mapInstanceRef.current.setView(DEFAULT_CENTER, INITIAL_ZOOM, {
         animate: true,
         duration: 0.5,
       });
@@ -263,7 +310,6 @@ export function InteractiveFairMap({
     }
   };
 
-  // Toggle fullscreen
   const toggleFullscreen = () => {
     if (!mapWrapperRef.current) return;
     if (!document.fullscreenElement) {
@@ -275,7 +321,6 @@ export function InteractiveFairMap({
     }
   };
 
-  // Copy shareable link
   const handleShare = () => {
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
@@ -342,8 +387,8 @@ export function InteractiveFairMap({
             <button
               type="button"
               onClick={handleResetView}
-              title="Reset View"
-              className="flex items-center justify-center h-8 w-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 transition-colors"
+              title="Reset View / Overview"
+              className="flex items-center justify-center h-8 w-8 rounded-lg bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 transition-colors"
             >
               <Compass className="h-4 w-4" />
             </button>
@@ -353,7 +398,7 @@ export function InteractiveFairMap({
               type="button"
               onClick={toggleFullscreen}
               title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-              className="flex items-center justify-center h-8 w-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 transition-colors"
+              className="flex items-center justify-center h-8 w-8 rounded-lg bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 transition-colors"
             >
               {isFullscreen ? (
                 <Minimize2 className="h-4 w-4" />
@@ -426,10 +471,39 @@ export function InteractiveFairMap({
         >
           <div ref={mapContainerRef} className="w-full h-full bg-[#1b2318]" />
 
-          {/* Map Guide Overlay Tip */}
-          <div className="pointer-events-none absolute top-3 left-3 z-20 hidden md:flex items-center gap-2 rounded-lg bg-zinc-950/80 backdrop-blur px-2.5 py-1 text-[11px] font-mono text-zinc-300 border border-zinc-800">
-            <Info className="h-3 w-3 text-amber-400" />
-            <span>Pinch or scroll to zoom · Click pins for ride details</span>
+          {/* Floating Map Status Indicator */}
+          <div className="pointer-events-none absolute top-3 left-3 z-20 flex items-center gap-2 rounded-xl bg-zinc-950/85 backdrop-blur px-3 py-1.5 text-[11px] font-mono text-zinc-300 border border-zinc-800 shadow-md">
+            {isZoomedIn ? (
+              <>
+                <Unlock className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Zoomed In · Pan enabled</span>
+              </>
+            ) : (
+              <>
+                <Lock className="h-3.5 w-3.5 text-amber-400" />
+                <span>Locked · Zoom in to pan</span>
+              </>
+            )}
+          </div>
+
+          {/* Dedicated Zoom Controls */}
+          <div className="absolute top-3 right-3 z-20 flex flex-col gap-1.5 shadow-lg">
+            <button
+              type="button"
+              onClick={handleZoomIn}
+              title="Zoom In"
+              className="flex items-center justify-center h-9 w-9 rounded-xl bg-zinc-950/90 hover:bg-zinc-900 text-white border border-zinc-800 shadow-md active:scale-95 transition-all"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={handleZoomOut}
+              title="Zoom Out"
+              className="flex items-center justify-center h-9 w-9 rounded-xl bg-zinc-950/90 hover:bg-zinc-900 text-white border border-zinc-800 shadow-md active:scale-95 transition-all"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
@@ -496,7 +570,7 @@ export function InteractiveFairMap({
           </div>
         )}
 
-        {/* SELECTED POI BOTTOM SHEET / DRAWER (Map Mode) */}
+        {/* SELECTED POI BOTTOM SHEET */}
         {selectedPOI && viewMode === "map" && (
           <div className="absolute bottom-3 left-3 right-3 md:left-auto md:right-4 md:bottom-4 md:w-96 z-30 transition-all animate-in fade-in slide-in-from-bottom-4 duration-200">
             <div className="rounded-2xl bg-zinc-950/95 backdrop-blur-xl border border-zinc-800 p-4 shadow-2xl">
@@ -584,7 +658,7 @@ export function InteractiveFairMap({
         <span className="hidden sm:inline">Walton Street Fairground · 9–17 October 2026</span>
         <span className="sm:hidden">Hull Fair 2026</span>
         <div className="flex items-center gap-3">
-          <span>{filteredPOIs.length} shown</span>
+          <span>{filteredPOIs.length} attractions</span>
           <span className="text-zinc-600">|</span>
           <span className="text-emerald-400 font-bold">Free Admission</span>
         </div>

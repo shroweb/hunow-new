@@ -77,6 +77,7 @@ import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
 import { Route as AdminImportRouteImport } from './routes/admin.import'
+import { Route as AdminHullFairMapRouteImport } from './routes/admin.hull-fair-map'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminEditorialPicksRouteImport } from './routes/admin.editorial-picks'
 import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
@@ -445,6 +446,11 @@ const AdminImportRoute = AdminImportRouteImport.update({
   path: '/import',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHullFairMapRoute = AdminHullFairMapRouteImport.update({
+  id: '/hull-fair-map',
+  path: '/hull-fair-map',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEventsRoute = AdminEventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -629,6 +635,7 @@ export interface FileRoutesByFullPath {
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/hull-fair-map': typeof AdminHullFairMapRoute
   '/admin/import': typeof AdminImportRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -724,6 +731,7 @@ export interface FileRoutesByTo {
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/hull-fair-map': typeof AdminHullFairMapRoute
   '/admin/import': typeof AdminImportRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -822,6 +830,7 @@ export interface FileRoutesById {
   '/admin/comments': typeof AdminCommentsRoute
   '/admin/editorial-picks': typeof AdminEditorialPicksRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/hull-fair-map': typeof AdminHullFairMapRoute
   '/admin/import': typeof AdminImportRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -921,6 +930,7 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
+    | '/admin/hull-fair-map'
     | '/admin/import'
     | '/admin/listings'
     | '/admin/media'
@@ -1016,6 +1026,7 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
+    | '/admin/hull-fair-map'
     | '/admin/import'
     | '/admin/listings'
     | '/admin/media'
@@ -1113,6 +1124,7 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/editorial-picks'
     | '/admin/events'
+    | '/admin/hull-fair-map'
     | '/admin/import'
     | '/admin/listings'
     | '/admin/media'
@@ -1700,6 +1712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminImportRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/hull-fair-map': {
+      id: '/admin/hull-fair-map'
+      path: '/hull-fair-map'
+      fullPath: '/admin/hull-fair-map'
+      preLoaderRoute: typeof AdminHullFairMapRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/events': {
       id: '/admin/events'
       path: '/events'
@@ -1915,6 +1934,7 @@ interface AdminRouteChildren {
   AdminCommentsRoute: typeof AdminCommentsRoute
   AdminEditorialPicksRoute: typeof AdminEditorialPicksRoute
   AdminEventsRoute: typeof AdminEventsRoute
+  AdminHullFairMapRoute: typeof AdminHullFairMapRoute
   AdminImportRoute: typeof AdminImportRoute
   AdminListingsRoute: typeof AdminListingsRoute
   AdminMediaRoute: typeof AdminMediaRoute
@@ -1944,6 +1964,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCommentsRoute: AdminCommentsRoute,
   AdminEditorialPicksRoute: AdminEditorialPicksRoute,
   AdminEventsRoute: AdminEventsRoute,
+  AdminHullFairMapRoute: AdminHullFairMapRoute,
   AdminImportRoute: AdminImportRoute,
   AdminListingsRoute: AdminListingsRoute,
   AdminMediaRoute: AdminMediaRoute,

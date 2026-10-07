@@ -47,6 +47,7 @@ const navSections: { title: string; items: { to: string; label: string; icon: Lu
       { to: "/admin/import", label: "Import", icon: Download },
       { to: "/admin/media", label: "Media", icon: Image },
       { to: "/admin/editorial-picks", label: "Picks", icon: Sparkles },
+      { to: "/admin/hull-fair-map", label: "Hull Fair Map", icon: MapPin },
       { to: "/admin/comments", label: "Comments", icon: MessageSquare },
       { to: "/admin/polls", label: "Polls", icon: BarChart2 },
     ],
