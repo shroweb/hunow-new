@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { HULL_FAIR_POIS, type FairPOI } from "@/data/hull-fair-map-data";
 
-const SETTING_KEY = "hull_fair_map_pois_v3";
+const SETTING_KEY = "hull_fair_map_pois_v4";
 
 export const getHullFairPoisFn = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -65,6 +65,8 @@ export interface FairPOI {
   iconKey: string;
   x: number; // percentage from left (0..100)
   y: number; // percentage from top (0..100)
+  lat: number; // WGS84, used by the live map
+  lng: number;
   locationArea: string;
   thrillLevel?: number;
   heightMin?: string;

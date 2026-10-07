@@ -6,6 +6,7 @@ import {
   FAIR_CATEGORIES,
   SCHEMATIC_LEGEND_ITEMS,
   HULL_FAIR_POIS,
+  HULL_FAIR_MAP_VIEW,
 } from "@/data/hull-fair-map-data";
 import { saveHullFairPoisFn, getHullFairPoisFn } from "@/lib/hull-fair-map.functions";
 import {
@@ -37,7 +38,7 @@ export function AdminHullFairMapPage() {
   const [pois, setPois] = useState<FairPOI[]>(() => {
     if (typeof window !== "undefined") {
       try {
-        const local = localStorage.getItem("hull_fair_custom_pois_v3");
+        const local = localStorage.getItem("hull_fair_custom_pois_v4");
         if (local) {
           const parsed = JSON.parse(local);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -103,6 +104,7 @@ export function AdminHullFairMapPage() {
       try {
         localStorage.removeItem("hull_fair_custom_pois");
         localStorage.removeItem("hull_fair_custom_pois_v2");
+        localStorage.removeItem("hull_fair_custom_pois_v3");
       } catch {}
     }
 
@@ -141,41 +143,36 @@ export function AdminHullFairMapPage() {
       leafletModuleRef.current = L.default || L;
       const Leaflet = leafletModuleRef.current;
 
-      const mapHeight = 1000;
-      const mapWidth = 1429.2;
-      const bounds: [[number, number], [number, number]] = [
-        [0, 0],
-        [mapHeight, mapWidth],
-      ];
-
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
 
       const map = Leaflet.map(mapContainerRef.current, {
-        crs: Leaflet.CRS.Simple,
-        minZoom: -0.4,
-        maxZoom: 3,
+        minZoom: 15,
+        maxZoom: HULL_FAIR_MAP_VIEW.maxZoom,
         zoomSnap: 0.1,
         zoomDelta: 0.4,
         attributionControl: false,
         zoomControl: false,
-        maxBounds: bounds,
+        maxBounds: HULL_FAIR_MAP_VIEW.maxBounds,
         maxBoundsViscosity: 1.0,
       });
 
-      Leaflet.imageOverlay("/hull-fair/map-base.webp", bounds).addTo(map);
-      map.setView([660, 660], 0);
+      Leaflet.tileLayer(HULL_FAIR_MAP_VIEW.tileUrl, {
+        tileSize: HULL_FAIR_MAP_VIEW.tileSize,
+        zoomOffset: HULL_FAIR_MAP_VIEW.zoomOffset,
+        maxNativeZoom: HULL_FAIR_MAP_VIEW.maxNativeZoom,
+        maxZoom: HULL_FAIR_MAP_VIEW.maxZoom,
+        attribution: HULL_FAIR_MAP_VIEW.attribution,
+      }).addTo(map);
+      Leaflet.control.attribution({ position: "bottomleft", prefix: false }).addTo(map);
+      map.fitBounds(HULL_FAIR_MAP_VIEW.fairBounds);
 
       // Single click listener on map that reads from refs
       map.on("click", (e: any) => {
-        const { lat, lng } = e.latlng;
-        const x_pct = Math.round((lng / 1429.2) * 10000) / 100;
-        const y_pct = Math.round((1 - lat / 1000) * 10000) / 100;
-
-        const clampedX = Math.max(0, Math.min(100, x_pct));
-        const clampedY = Math.max(0, Math.min(100, y_pct));
+        const newLat = Math.round(e.latlng.lat * 1e6) / 1e6;
+        const newLng = Math.round(e.latlng.lng * 1e6) / 1e6;
 
         const currentActiveId = activePoiIdRef.current;
         if (!currentActiveId) return;
@@ -185,11 +182,8 @@ export function AdminHullFairMapPage() {
           if (index === -1) return prev;
           const updated = [...prev];
           const poiName = updated[index].name;
-          updated[index] = { ...updated[index], x: clampedX, y: clampedY };
-          try {
-            localStorage.setItem("hull_fair_custom_pois", JSON.stringify(updated));
-          } catch {}
-          toast.success(`Position set for ${poiName} (${clampedX}%, ${clampedY}%)`);
+          updated[index] = { ...updated[index], lat: newLat, lng: newLng };
+          toast.success(`Position set for ${poiName} (${newLat}, ${newLng})`);
           return updated;
         });
 
@@ -226,9 +220,6 @@ export function AdminHullFairMapPage() {
     Object.values(markersRef.current).forEach((m: any) => m.remove());
     markersRef.current = {};
 
-    const mapHeight = 1000;
-    const mapWidth = 1429.2;
-
     const categoryColorHex: Record<string, string> = {
       rollercoaster: "#fcdc5c",
       thrill: "#38b4fc",
@@ -242,15 +233,15 @@ export function AdminHullFairMapPage() {
     };
 
     const currentZoom = map.getZoom();
-    const isCloseUp = currentZoom > 0.4;
-    const isMidZoom = currentZoom > 0.05;
+    const isCloseUp = currentZoom > 18.5;
+    const isMidZoom = currentZoom > 17.9;
     const badgeSize = isCloseUp ? 38 : isMidZoom ? 30 : 25;
     const iconImgSize = isCloseUp ? 24 : isMidZoom ? 19 : 15;
     const roundedClass = isCloseUp ? "rounded-xl" : "rounded-lg";
 
     pois.forEach((poi) => {
-      const lat = mapHeight * (1 - poi.y / 100);
-      const lng = mapWidth * (poi.x / 100);
+      const lat = poi.lat;
+      const lng = poi.lng;
       const isActive = poi.id === activePoiId;
 
       const accentColor = categoryColorHex[poi.category] || "#fc2c30";
@@ -305,23 +296,17 @@ export function AdminHullFairMapPage() {
         })
         .on("dragend", (e: any) => {
           const newLatLng = e.target.getLatLng();
-          const newX = Math.round((newLatLng.lng / 1429.2) * 10000) / 100;
-          const newY = Math.round((1 - newLatLng.lat / 1000) * 10000) / 100;
-
-          const clampedX = Math.max(0, Math.min(100, newX));
-          const clampedY = Math.max(0, Math.min(100, newY));
+          const newLat = Math.round(newLatLng.lat * 1e6) / 1e6;
+          const newLng = Math.round(newLatLng.lng * 1e6) / 1e6;
 
           setPois((prev) => {
             const index = prev.findIndex((p) => p.id === poi.id);
             if (index === -1) return prev;
             const updated = [...prev];
-            updated[index] = { ...updated[index], x: clampedX, y: clampedY };
-            try {
-              localStorage.setItem("hull_fair_custom_pois", JSON.stringify(updated));
-            } catch {}
+            updated[index] = { ...updated[index], lat: newLat, lng: newLng };
             return updated;
           });
-          toast.success(`Moved ${poi.name} to (${clampedX}%, ${clampedY}%)`);
+          toast.success(`Moved ${poi.name} to (${newLat}, ${newLng})`);
         });
 
       markersRef.current[poi.id] = marker;
@@ -331,11 +316,7 @@ export function AdminHullFairMapPage() {
   // Center map on active attraction
   const centerOnActive = useCallback(() => {
     if (!mapInstanceRef.current || !activePoi) return;
-    const mapHeight = 1000;
-    const mapWidth = 1429.2;
-    const lat = mapHeight * (1 - activePoi.y / 100);
-    const lng = mapWidth * (activePoi.x / 100);
-    mapInstanceRef.current.setView([lat, lng], 0.7, { animate: true });
+    mapInstanceRef.current.setView([activePoi.lat, activePoi.lng], 19, { animate: true });
   }, [activePoi]);
 
   // Save to DB and filesystem
@@ -344,7 +325,7 @@ export function AdminHullFairMapPage() {
     try {
       const res = await saveHullFairPoisFn({ data: { pois } });
       try {
-        localStorage.setItem("hull_fair_custom_pois_v3", JSON.stringify(pois));
+        localStorage.setItem("hull_fair_custom_pois_v4", JSON.stringify(pois));
         localStorage.removeItem("hull_fair_custom_pois");
       } catch {}
       toast.success(`Successfully saved ${res.count} attraction positions to database & code!`);
@@ -360,7 +341,7 @@ export function AdminHullFairMapPage() {
     if (confirm("Reset all positions back to the official calibrated layout?")) {
       setPois(HULL_FAIR_POIS);
       try {
-        localStorage.removeItem("hull_fair_custom_pois_v3");
+        localStorage.removeItem("hull_fair_custom_pois_v4");
         localStorage.removeItem("hull_fair_custom_pois");
       } catch {}
       toast.info("Reset positions to calibrated default.");
@@ -693,7 +674,7 @@ export function AdminHullFairMapPage() {
             <span className="font-bold text-sm">{activePoi.name}</span>
             <span className="text-zinc-800">({activePoi.operator})</span>
             <span className="bg-amber-500/50 px-2 py-0.5 rounded text-[11px] font-bold">
-              X: {activePoi.x}% · Y: {activePoi.y}%
+              {activePoi.lat}, {activePoi.lng}
             </span>
           </div>
 
@@ -791,8 +772,7 @@ export function AdminHullFairMapPage() {
                     <h4 className="text-xs font-bold truncate">{p.name}</h4>
                     <p className="text-[10px] text-zinc-500 truncate">{p.operator}</p>
                     <div className="flex items-center gap-2 mt-0.5 text-[9px] font-mono text-amber-400/90">
-                      <span>X: {p.x}%</span>
-                      <span>Y: {p.y}%</span>
+                      <span>{p.lat}, {p.lng}</span>
                     </div>
                   </div>
                   {isActive && (

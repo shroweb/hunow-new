@@ -5,6 +5,7 @@ import {
   FAIR_CATEGORIES,
   SCHEMATIC_LEGEND_ITEMS,
   HULL_FAIR_POIS,
+  HULL_FAIR_MAP_VIEW,
 } from "@/data/hull-fair-map-data";
 import {
   Search,
@@ -55,7 +56,7 @@ export function InteractiveFairMap({
   const [copiedLink, setCopiedLink] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isZoomedIn, setIsZoomedIn] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(-0.15);
+  const [zoomLevel, setZoomLevel] = useState(17.5);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapWrapperRef = useRef<HTMLDivElement>(null);
@@ -63,17 +64,14 @@ export function InteractiveFairMap({
   const markersRef = useRef<{ [key: string]: any }>({});
   const leafletModuleRef = useRef<any>(null);
 
-  const DESKTOP_ZOOM = -0.15;
-  const DESKTOP_CENTER: [number, number] = [660, 660];
-  // Fairground + north Walton Street in map units, used to fit the overview on narrow screens
-  const FAIR_BOUNDS: [[number, number], [number, number]] = [
-    [380, 185],
-    [985, 1060],
-  ];
+  const FAIR_BOUNDS = HULL_FAIR_MAP_VIEW.fairBounds;
   // Locked overview for the current container size (recomputed on resize / rotate / fullscreen)
   const overviewRef = useRef<{ zoom: number; center: [number, number] }>({
-    zoom: DESKTOP_ZOOM,
-    center: DESKTOP_CENTER,
+    zoom: 17.5,
+    center: [
+      (FAIR_BOUNDS[0][0] + FAIR_BOUNDS[1][0]) / 2,
+      (FAIR_BOUNDS[0][1] + FAIR_BOUNDS[1][1]) / 2,
+    ],
   });
 
   // Filtered POIs
@@ -136,50 +134,46 @@ export function InteractiveFairMap({
       leafletModuleRef.current = L.default || L;
       const Leaflet = leafletModuleRef.current;
 
-      const mapHeight = 1000;
-      const mapWidth = 1429.2;
-      const bounds: [[number, number], [number, number]] = [
-        [0, 0],
-        [mapHeight, mapWidth],
-      ];
-
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
 
       const map = Leaflet.map(mapContainerRef.current, {
-        crs: Leaflet.CRS.Simple,
-        minZoom: -3,
-        maxZoom: 2.5,
+        minZoom: 14,
+        maxZoom: HULL_FAIR_MAP_VIEW.maxZoom,
         zoomSnap: 0.1,
         zoomDelta: 0.4,
         attributionControl: false,
         zoomControl: false,
-        // STRICT BOUNDS: never let map pan off screen
-        maxBounds: bounds,
+        // STRICT BOUNDS: keep the map around the fairground
+        maxBounds: HULL_FAIR_MAP_VIEW.maxBounds,
         maxBoundsViscosity: 1.0,
       });
 
-      Leaflet.imageOverlay("/hull-fair/map-base.webp", bounds).addTo(map);
+      Leaflet.tileLayer(HULL_FAIR_MAP_VIEW.tileUrl, {
+        tileSize: HULL_FAIR_MAP_VIEW.tileSize,
+        zoomOffset: HULL_FAIR_MAP_VIEW.zoomOffset,
+        maxNativeZoom: HULL_FAIR_MAP_VIEW.maxNativeZoom,
+        maxZoom: HULL_FAIR_MAP_VIEW.maxZoom,
+        attribution: HULL_FAIR_MAP_VIEW.attribution,
+      }).addTo(map);
+      Leaflet.control.attribution({ position: "bottomleft", prefix: false }).addTo(map);
 
-      // Overview: desktop framing, or zoomed out further so the whole fairground fits a phone screen
+      // Overview: zoom that fits the whole fairground in the current container (phones start further out)
       const applyOverview = (resetView: boolean) => {
         map.invalidateSize();
-        const fitZoom = map.getBoundsZoom(FAIR_BOUNDS, false);
-        const fits = fitZoom >= DESKTOP_ZOOM;
-        overviewRef.current = fits
-          ? { zoom: DESKTOP_ZOOM, center: DESKTOP_CENTER }
-          : {
-              zoom: fitZoom,
-              center: [
-                (FAIR_BOUNDS[0][0] + FAIR_BOUNDS[1][0]) / 2,
-                (FAIR_BOUNDS[0][1] + FAIR_BOUNDS[1][1]) / 2,
-              ],
-            };
-        map.setMinZoom(overviewRef.current.zoom - 0.15);
-        if (resetView || map.getZoom() <= overviewRef.current.zoom + 0.15) {
-          map.setView(overviewRef.current.center, overviewRef.current.zoom, { animate: false });
+        // On phones the legend sits bottom-right, so keep the fairground clear of it
+        const isNarrow = map.getSize().x < 640;
+        const padding = Leaflet.point(0, isNarrow ? 200 : 0);
+        const fitZoom = map.getBoundsZoom(FAIR_BOUNDS, false, padding);
+        const fairCenter = Leaflet.latLngBounds(FAIR_BOUNDS).getCenter();
+        const centerPx = map.project(fairCenter, fitZoom).add(padding.divideBy(2));
+        const center = map.unproject(centerPx, fitZoom);
+        overviewRef.current = { zoom: fitZoom, center: [center.lat, center.lng] };
+        map.setMinZoom(fitZoom - 0.15);
+        if (resetView || map.getZoom() <= fitZoom + 0.15) {
+          map.setView(overviewRef.current.center, fitZoom, { animate: false });
         }
       };
       applyOverview(true);
@@ -238,9 +232,6 @@ export function InteractiveFairMap({
     Object.values(markersRef.current).forEach((m: any) => m.remove());
     markersRef.current = {};
 
-    const mapHeight = 1000;
-    const mapWidth = 1429.2;
-
     const categoryColorHex: Record<string, string> = {
       rollercoaster: "#fcdc5c",
       thrill: "#38b4fc",
@@ -255,16 +246,16 @@ export function InteractiveFairMap({
 
     const currentZoom = map.getZoom();
     // Size badges by absolute zoom so phones (which start further out) get smaller pins in the overview
-    const isCloseUp = currentZoom > DESKTOP_ZOOM + 0.6;
-    const isMidZoom = currentZoom > DESKTOP_ZOOM + 0.2;
-    const isFarOut = currentZoom < DESKTOP_ZOOM - 0.5;
+    const isCloseUp = currentZoom > 18.5;
+    const isMidZoom = currentZoom > 17.9;
+    const isFarOut = currentZoom < 17.0;
     const badgeSize = isCloseUp ? 38 : isMidZoom ? 30 : isFarOut ? 18 : 25;
     const iconImgSize = isCloseUp ? 24 : isMidZoom ? 19 : isFarOut ? 11 : 15;
     const roundedClass = isCloseUp ? "rounded-xl" : "rounded-lg";
 
     filteredPOIs.forEach((poi) => {
-      const lat = mapHeight * (1 - poi.y / 100);
-      const lng = mapWidth * (poi.x / 100);
+      const lat = poi.lat;
+      const lng = poi.lng;
       const isSelected = selectedPOI?.id === poi.id;
       const accentColor = categoryColorHex[poi.category] || "#fc2c30";
       const iconUrl = `/hull-fair/icons/${poi.iconKey}.webp`;
@@ -314,7 +305,7 @@ export function InteractiveFairMap({
           setSelectedPOI(poi);
           // If zoomed out, zoom in towards the tapped marker
           if (map.getZoom() <= overviewRef.current.zoom + 0.15) {
-            map.setView([lat, lng], 0.7, { animate: true, duration: 0.5 });
+            map.setView([lat, lng], Math.max(overviewRef.current.zoom + 1, 18.6), { animate: true, duration: 0.5 });
           } else {
             map.panTo([lat, lng], { animate: true, duration: 0.4 });
           }
@@ -330,11 +321,7 @@ export function InteractiveFairMap({
     setViewMode("map");
 
     if (mapInstanceRef.current) {
-      const mapHeight = 1000;
-      const mapWidth = 1429.2;
-      const lat = mapHeight * (1 - poi.y / 100);
-      const lng = mapWidth * (poi.x / 100);
-      mapInstanceRef.current.setView([lat, lng], 0.8, {
+      mapInstanceRef.current.setView([poi.lat, poi.lng], 19, {
         animate: true,
         duration: 0.6,
       });
@@ -601,7 +588,7 @@ export function InteractiveFairMap({
             viewMode === "map" ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-0"
           }`}
         >
-          <div ref={mapContainerRef} className="relative z-0 w-full h-full bg-[#1b2318]" />
+          <div ref={mapContainerRef} className="relative z-0 w-full h-full bg-[#e9e6df]" />
 
           {/* Floating Map Status Indicator */}
           <div className="pointer-events-none absolute top-3 left-3 z-20 flex items-center gap-2 rounded-xl bg-zinc-950/85 backdrop-blur px-3 py-1.5 text-[11px] font-mono text-zinc-300 border border-zinc-800 shadow-md">
