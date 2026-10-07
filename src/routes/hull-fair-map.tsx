@@ -26,34 +26,34 @@ export const Route = createFileRoute("/hull-fair-map")({
 function HullFairMapPage() {
   return (
     <PublicLayout>
-      {/* Top Header / Breadcrumb */}
-      <div className="bg-zinc-950 text-white border-b border-zinc-800">
+      {/* Top Header / Breadcrumb - seamlessly matched to HU NOW design */}
+      <div className="bg-foreground text-background border-b-2 border-foreground">
         <div className="max-w-7xl mx-auto px-4 py-4 md:py-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Link
               to="/hull-fair"
-              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-amber-400 hover:text-amber-300 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-accent hover:underline transition-colors font-bold"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Back to Hull Fair Guide</span>
             </Link>
 
-            <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-400">
+            <div className="flex items-center gap-2 text-[11px] font-mono text-background/80">
               <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               <span>Walton Street Fairground · 9–17 October 2026</span>
             </div>
           </div>
 
           <div className="mt-4 max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20 text-xs font-mono uppercase tracking-widest font-bold mb-2">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/30 text-[11px] font-mono uppercase tracking-widest font-bold mb-2">
               <Sparkles className="h-3 w-3" />
               Interactive Fairground Map
             </div>
-            <h1 className="text-3xl md:text-5xl font-display uppercase tracking-tight text-white leading-tight">
+            <h1 className="text-3xl md:text-5xl font-display uppercase tracking-tight text-background leading-tight">
               Hull Fair 2026 Map
             </h1>
-            <p className="mt-2 text-sm md:text-base text-zinc-300 leading-relaxed">
-              Pinch to zoom and tap pins to discover over 100 rides, stalls, and facilities mapped across Walton Street. Filter by category, search specific attractions, or switch to list view.
+            <p className="mt-2 text-sm md:text-base text-background/85 leading-relaxed">
+              Explore Walton Street's official 2026 layout. Pinch to zoom, tap pins to check thrill levels and height limits, search rides, or filter by category.
             </p>
           </div>
         </div>
@@ -63,18 +63,18 @@ function HullFairMapPage() {
       <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 md:py-8">
         <InteractiveFairMap />
 
-        {/* Helpful Map Guides & Area Breakdown */}
+        {/* Helpful Map Guides & Area Breakdown - High Contrast Clean Theme Cards */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Key Entrances */}
-          <div className="p-5 rounded-2xl bg-zinc-900/60 border border-border">
+          <div className="p-6 rounded-2xl bg-card border-2 border-foreground/15 shadow-sm hover:border-foreground/30 transition-all">
             <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-wider font-bold mb-3">
               <MapPin className="h-4 w-4" />
               <span>Entrances & Access</span>
             </div>
-            <h3 className="text-lg font-bold text-foreground mb-2">
+            <h3 className="text-lg font-bold text-foreground mb-3 font-display tracking-tight">
               Getting Onto the Fairground
             </h3>
-            <ul className="text-xs text-muted-foreground space-y-2 leading-relaxed">
+            <ul className="text-xs text-foreground/80 space-y-2.5 leading-relaxed">
               <li>
                 <strong className="text-foreground">Spring Bank West Entrance:</strong> Best for visitors arriving from northern bus routes or walking via Chanterlands Avenue.
               </li>
@@ -88,15 +88,15 @@ function HullFairMapPage() {
           </div>
 
           {/* Card 2: Essential Facilities */}
-          <div className="p-5 rounded-2xl bg-zinc-900/60 border border-border">
+          <div className="p-6 rounded-2xl bg-card border-2 border-foreground/15 shadow-sm hover:border-foreground/30 transition-all">
             <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-wider font-bold mb-3">
               <Compass className="h-4 w-4" />
               <span>Key Facilities</span>
             </div>
-            <h3 className="text-lg font-bold text-foreground mb-2">
+            <h3 className="text-lg font-bold text-foreground mb-3 font-display tracking-tight">
               Toilets & Welfare Hubs
             </h3>
-            <ul className="text-xs text-muted-foreground space-y-2 leading-relaxed">
+            <ul className="text-xs text-foreground/80 space-y-2.5 leading-relaxed">
               <li>
                 <strong className="text-foreground">Central Walton Toilets:</strong> Dedicated male, female, accessible cubicles and baby-changing units.
               </li>
@@ -110,15 +110,15 @@ function HullFairMapPage() {
           </div>
 
           {/* Card 3: Opening Hours & Advice */}
-          <div className="p-5 rounded-2xl bg-zinc-900/60 border border-border">
+          <div className="p-6 rounded-2xl bg-card border-2 border-foreground/15 shadow-sm hover:border-foreground/30 transition-all">
             <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-wider font-bold mb-3">
               <Clock className="h-4 w-4" />
               <span>Dates & Hours</span>
             </div>
-            <h3 className="text-lg font-bold text-foreground mb-2">
+            <h3 className="text-lg font-bold text-foreground mb-3 font-display tracking-tight">
               Fairground Schedule
             </h3>
-            <div className="text-xs text-muted-foreground space-y-2 leading-relaxed">
+            <div className="text-xs text-foreground/80 space-y-2.5 leading-relaxed">
               <p>
                 <strong className="text-foreground">Fri 9 Oct:</strong> 4:00 PM – 11:00 PM (Opening Night)
               </p>
@@ -128,26 +128,26 @@ function HullFairMapPage() {
               <p>
                 <strong className="text-foreground">Mon–Fri (12–16 Oct):</strong> 2:00 PM – 11:00 PM
               </p>
-              <p className="text-amber-500 font-bold">
-                Closed Sunday 11 October.
+              <p className="inline-block px-2 py-1 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold border border-amber-500/20">
+                Closed Sunday 11 October
               </p>
             </div>
           </div>
         </div>
 
         {/* Back Link to Complete Guide */}
-        <div className="mt-8 p-6 rounded-2xl bg-foreground/5 border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-8 p-6 rounded-2xl bg-card border-2 border-foreground/20 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div>
-            <h4 className="text-base font-bold text-foreground">
+            <h4 className="text-base font-bold text-foreground font-display">
               Planning your entire visit to Hull Fair?
             </h4>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-foreground/75 mt-0.5">
               Read our complete guide covering bus routes, park & ride locations, ride prices, food history, and family tips.
             </p>
           </div>
           <Link
             to="/hull-fair"
-            className="shrink-0 px-5 py-2.5 rounded-xl bg-foreground text-background font-bold text-xs uppercase tracking-widest hover:bg-foreground/90 transition-colors"
+            className="shrink-0 px-6 py-2.5 rounded-xl bg-foreground text-background font-bold text-xs uppercase tracking-widest hover:bg-foreground/90 transition-colors shadow-sm"
           >
             Read Complete Guide →
           </Link>

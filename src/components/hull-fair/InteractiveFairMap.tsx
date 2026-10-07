@@ -220,6 +220,11 @@ export function InteractiveFairMap({
       accessible: "#545454",
     };
 
+    const currentZoom = map.getZoom();
+    const isCloseUp = currentZoom > INITIAL_ZOOM + 0.25;
+    const badgeSize = isCloseUp ? 36 : 28;
+    const iconImgSize = isCloseUp ? 22 : 18;
+
     filteredPOIs.forEach((poi) => {
       const lat = mapHeight * (1 - poi.y / 100);
       const lng = mapWidth * (poi.x / 100);
@@ -229,21 +234,21 @@ export function InteractiveFairMap({
 
       const markerHtml = `
         <div class="group relative flex flex-col items-center cursor-pointer transition-transform duration-200 ${
-          isSelected ? "scale-130 z-50 animate-bounce-subtle" : "hover:scale-120 z-10"
+          isSelected ? "scale-125 z-50 animate-bounce-subtle" : "hover:scale-125 z-10"
         }">
-          <div class="relative flex items-center justify-center rounded-2xl bg-white p-1 shadow-lg backdrop-blur transition-all duration-200"
-               style="border: 2.5px solid ${accentColor}; box-shadow: 0 4px 14px ${accentColor}55;">
-            <img src="${iconUrl}" alt="${poi.name}" class="h-6 w-6 md:h-7 md:w-7 object-contain drop-shadow" />
+          <div class="relative flex items-center justify-center rounded-xl bg-white shadow-md backdrop-blur transition-all duration-200"
+               style="width: ${badgeSize}px; height: ${badgeSize}px; border: 2px solid ${accentColor}; box-shadow: 0 2px 8px ${accentColor}44;">
+            <img src="${iconUrl}" alt="${poi.name}" style="width: ${iconImgSize}px; height: ${iconImgSize}px;" class="object-contain drop-shadow" />
             ${
               isSelected
-                ? `<span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                ? `<span class="absolute -top-1 -right-1 flex h-3 w-3">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 border border-white"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-white"></span>
                   </span>`
                 : ""
             }
           </div>
-          <div class="pointer-events-none mt-1 hidden whitespace-nowrap rounded-md bg-zinc-950/90 px-2 py-0.5 text-[10px] font-bold tracking-tight text-white shadow-md md:group-hover:block transition-opacity"
+          <div class="pointer-events-none mt-1 hidden whitespace-nowrap rounded-md bg-zinc-950/95 px-2 py-0.5 text-[10px] font-bold tracking-tight text-white shadow-xl md:group-hover:block transition-opacity"
                style="border-bottom: 2px solid ${accentColor};">
             ${poi.name}
           </div>
@@ -253,8 +258,8 @@ export function InteractiveFairMap({
       const customIcon = Leaflet.divIcon({
         html: markerHtml,
         className: "hull-fair-marker",
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
+        iconSize: [badgeSize, badgeSize],
+        iconAnchor: [badgeSize / 2, badgeSize / 2],
       });
 
       const marker = Leaflet.marker([lat, lng], { icon: customIcon })
@@ -263,7 +268,7 @@ export function InteractiveFairMap({
           setSelectedPOI(poi);
           // If zoomed out, zoom in towards the tapped marker
           if (map.getZoom() <= INITIAL_ZOOM + 0.15) {
-            map.setView([lat, lng], 0.6, { animate: true, duration: 0.5 });
+            map.setView([lat, lng], 0.7, { animate: true, duration: 0.5 });
           } else {
             map.panTo([lat, lng], { animate: true, duration: 0.4 });
           }
@@ -271,7 +276,7 @@ export function InteractiveFairMap({
 
       markersRef.current[poi.id] = marker;
     });
-  }, [filteredPOIs, selectedPOI, isMapReady]);
+  }, [filteredPOIs, selectedPOI, isMapReady, isZoomedIn]);
 
   // Select POI
   const handleSelectPOI = (poi: FairPOI) => {
@@ -542,14 +547,14 @@ export function InteractiveFairMap({
             </button>
           </div>
 
-          {/* FLOATING COLOR GROUPING LEGEND CARD (MATCHING OFFICIAL MAP) */}
+          {/* FLOATING COLOR GROUPING LEGEND CARD */}
           {showLegend && (
-            <div className="absolute top-14 right-3 z-20 max-w-[280px] sm:max-w-[340px] rounded-2xl bg-zinc-950/92 backdrop-blur-md border border-zinc-700/80 p-3 shadow-2xl transition-all">
+            <div className="absolute top-14 right-3 z-20 max-w-[270px] sm:max-w-[320px] rounded-2xl bg-zinc-950/95 backdrop-blur-md border border-zinc-700/80 p-3 shadow-2xl transition-all">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
                   <span className="text-[11px] font-black uppercase tracking-wider text-white">
-                    Official Map Legend
+                    Map Colour Legend
                   </span>
                 </div>
                 <button
@@ -562,7 +567,7 @@ export function InteractiveFairMap({
                 </button>
               </div>
 
-              {/* 2-Column Capsule Pills matching the Funfair Funtime schematic */}
+              {/* 2-Column Capsule Pills */}
               <div className="grid grid-cols-2 gap-1.5">
                 {SCHEMATIC_LEGEND_ITEMS.map((item) => {
                   const isSelected = selectedCategory === item.key;
@@ -579,14 +584,14 @@ export function InteractiveFairMap({
                         backgroundColor: item.color,
                         color: item.textColor,
                         boxShadow: isSelected
-                          ? `0 0 0 2.5px #ffffff, 0 4px 12px ${item.color}88`
-                          : "0 2px 6px rgba(0,0,0,0.3)",
+                          ? `0 0 0 2px #ffffff, 0 3px 10px ${item.color}88`
+                          : "0 2px 5px rgba(0,0,0,0.3)",
                       }}
                       className={`flex items-center justify-center px-2 py-1.5 rounded-full border border-white font-black text-[9px] sm:text-[10px] tracking-wide transition-all transform hover:scale-103 active:scale-95 text-center drop-shadow ${
                         isSelected ? "scale-105 ring-2 ring-white" : "opacity-95 hover:opacity-100"
                       }`}
                     >
-                      <span className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)] leading-tight">
+                      <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)] leading-tight">
                         {item.label}
                       </span>
                     </button>
@@ -595,7 +600,7 @@ export function InteractiveFairMap({
               </div>
 
               <div className="mt-2.5 pt-2 border-t border-zinc-850 flex items-center justify-between text-[10px] text-zinc-400">
-                <span>Tap any pill to filter pins</span>
+                <span>Tap pill to filter</span>
                 {selectedCategory !== "all" && (
                   <button
                     type="button"
