@@ -33,11 +33,11 @@ export const Route = createFileRoute("/admin/hull-fair-map")({
 });
 
 export function AdminHullFairMapPage() {
-  // Admin map uses canonical HULL_FAIR_POIS, but allows local tweaks if saved in v2 key
+  // Admin map uses canonical HULL_FAIR_POIS, but allows local tweaks if saved in v3 key
   const [pois, setPois] = useState<FairPOI[]>(() => {
     if (typeof window !== "undefined") {
       try {
-        const local = localStorage.getItem("hull_fair_custom_pois_v2");
+        const local = localStorage.getItem("hull_fair_custom_pois_v3");
         if (local) {
           const parsed = JSON.parse(local);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -98,10 +98,11 @@ export function AdminHullFairMapPage() {
 
   // Load latest from server DB on mount
   useEffect(() => {
-    // Purge old stale v1 localStorage if present
+    // Purge old stale v1/v2 localStorage if present
     if (typeof window !== "undefined") {
       try {
         localStorage.removeItem("hull_fair_custom_pois");
+        localStorage.removeItem("hull_fair_custom_pois_v2");
       } catch {}
     }
 
@@ -343,7 +344,7 @@ export function AdminHullFairMapPage() {
     try {
       const res = await saveHullFairPoisFn({ data: { pois } });
       try {
-        localStorage.setItem("hull_fair_custom_pois_v2", JSON.stringify(pois));
+        localStorage.setItem("hull_fair_custom_pois_v3", JSON.stringify(pois));
         localStorage.removeItem("hull_fair_custom_pois");
       } catch {}
       toast.success(`Successfully saved ${res.count} attraction positions to database & code!`);
@@ -359,7 +360,7 @@ export function AdminHullFairMapPage() {
     if (confirm("Reset all positions back to the official calibrated layout?")) {
       setPois(HULL_FAIR_POIS);
       try {
-        localStorage.removeItem("hull_fair_custom_pois_v2");
+        localStorage.removeItem("hull_fair_custom_pois_v3");
         localStorage.removeItem("hull_fair_custom_pois");
       } catch {}
       toast.info("Reset positions to calibrated default.");
