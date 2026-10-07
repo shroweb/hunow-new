@@ -3,6 +3,7 @@ import {
   FairPOI,
   FairCategory,
   FAIR_CATEGORIES,
+  SCHEMATIC_LEGEND_ITEMS,
   HULL_FAIR_POIS,
 } from "@/data/hull-fair-map-data";
 import {
@@ -12,6 +13,7 @@ import {
   List,
   MapPin,
   ChevronRight,
+  ChevronDown,
   Maximize2,
   Minimize2,
   Share2,
@@ -22,6 +24,7 @@ import {
   Minus,
   Lock,
   Unlock,
+  Layers,
 } from "lucide-react";
 
 interface InteractiveFairMapProps {
@@ -59,6 +62,7 @@ export function InteractiveFairMap({
   });
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showLegend, setShowLegend] = useState(true);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isZoomedIn, setIsZoomedIn] = useState(false);
@@ -204,32 +208,31 @@ export function InteractiveFairMap({
     const mapHeight = 1000;
     const mapWidth = 1429.2;
 
+    const categoryColorHex: Record<string, string> = {
+      rollercoaster: "#fcdc5c",
+      thrill: "#38b4fc",
+      family: "#78d858",
+      funhouse: "#c868e4",
+      ghost_train: "#8c4cfc",
+      kids: "#fc2c30",
+      food_games: "#fc904f",
+      wc: "#545454",
+      accessible: "#545454",
+    };
+
     filteredPOIs.forEach((poi) => {
       const lat = mapHeight * (1 - poi.y / 100);
       const lng = mapWidth * (poi.x / 100);
       const isSelected = selectedPOI?.id === poi.id;
-
-      const categoryColorHex: Record<string, string> = {
-        rollercoaster: "#f59e0b",
-        thrill: "#06b6d4",
-        family: "#10b981",
-        funhouse: "#ec4899",
-        ghost_train: "#8b5cf6",
-        kids: "#f43f5e",
-        food_games: "#f97316",
-        wc: "#475569",
-        accessible: "#2563eb",
-      };
-
-      const accentColor = categoryColorHex[poi.category] || "#e11d48";
+      const accentColor = categoryColorHex[poi.category] || "#fc2c30";
       const iconUrl = `/hull-fair/icons/${poi.iconKey}.webp`;
 
       const markerHtml = `
         <div class="group relative flex flex-col items-center cursor-pointer transition-transform duration-200 ${
           isSelected ? "scale-130 z-50 animate-bounce-subtle" : "hover:scale-120 z-10"
         }">
-          <div class="relative flex items-center justify-center rounded-2xl bg-white/95 p-1 shadow-lg backdrop-blur transition-all duration-200 border-2"
-               style="border-color: ${accentColor}; box-shadow: 0 4px 14px ${accentColor}44;">
+          <div class="relative flex items-center justify-center rounded-2xl bg-white p-1 shadow-lg backdrop-blur transition-all duration-200"
+               style="border: 2.5px solid ${accentColor}; box-shadow: 0 4px 14px ${accentColor}55;">
             <img src="${iconUrl}" alt="${poi.name}" class="h-6 w-6 md:h-7 md:w-7 object-contain drop-shadow" />
             ${
               isSelected
@@ -240,7 +243,8 @@ export function InteractiveFairMap({
                 : ""
             }
           </div>
-          <div class="pointer-events-none mt-1 hidden whitespace-nowrap rounded-md bg-zinc-950/90 px-2 py-0.5 text-[10px] font-bold tracking-tight text-white shadow-md md:group-hover:block transition-opacity">
+          <div class="pointer-events-none mt-1 hidden whitespace-nowrap rounded-md bg-zinc-950/90 px-2 py-0.5 text-[10px] font-bold tracking-tight text-white shadow-md md:group-hover:block transition-opacity"
+               style="border-bottom: 2px solid ${accentColor};">
             ${poi.name}
           </div>
         </div>
@@ -383,6 +387,21 @@ export function InteractiveFairMap({
               </button>
             </div>
 
+            {/* Legend Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setShowLegend((v) => !v)}
+              title={showLegend ? "Hide Legend" : "Show Legend"}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
+                showLegend
+                  ? "bg-amber-400 text-zinc-950 border-amber-400 font-bold"
+                  : "bg-zinc-900 hover:bg-zinc-850 border-zinc-800 text-zinc-300"
+              }`}
+            >
+              <Layers className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Legend</span>
+            </button>
+
             {/* Recenter Button */}
             <button
               type="button"
@@ -430,7 +449,7 @@ export function InteractiveFairMap({
           )}
         </div>
 
-        {/* Row 3: Horizontal Filter Pills */}
+        {/* Row 3: Horizontal Filter Pills with exact category colors */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 text-xs">
           {FAIR_CATEGORIES.map((cat) => {
             const count = categoryCounts[cat.key] || 0;
@@ -440,17 +459,34 @@ export function InteractiveFairMap({
                 key={cat.key}
                 type="button"
                 onClick={() => setSelectedCategory(cat.key)}
-                className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-full font-medium transition-all text-[11px] md:text-xs shrink-0 ${
+                style={
+                  isActive && cat.key !== "all"
+                    ? {
+                        backgroundColor: cat.hexColor,
+                        color: cat.textColor,
+                        borderColor: "#ffffff",
+                        boxShadow: `0 2px 10px ${cat.hexColor}66`,
+                      }
+                    : isActive && cat.key === "all"
+                    ? {
+                        backgroundColor: "#f59e0b",
+                        color: "#09090b",
+                      }
+                    : {}
+                }
+                className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-full font-bold transition-all text-[11px] md:text-xs shrink-0 border ${
                   isActive
-                    ? "bg-amber-400 text-zinc-950 font-bold shadow-md scale-102"
-                    : "bg-zinc-900/90 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-zinc-800/80"
+                    ? "scale-102 border-white/60 shadow-md"
+                    : "bg-zinc-900/90 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border-zinc-800/80"
                 }`}
               >
                 <span>{cat.iconEmoji}</span>
                 <span>{cat.shortLabel}</span>
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                    isActive ? "bg-zinc-950/20 text-zinc-950" : "bg-zinc-800 text-zinc-400"
+                    isActive
+                      ? "bg-black/20 text-current"
+                      : "bg-zinc-800 text-zinc-400"
                   }`}
                 >
                   {count}
@@ -505,6 +541,73 @@ export function InteractiveFairMap({
               <Minus className="h-4 w-4" />
             </button>
           </div>
+
+          {/* FLOATING COLOR GROUPING LEGEND CARD (MATCHING OFFICIAL MAP) */}
+          {showLegend && (
+            <div className="absolute top-14 right-3 z-20 max-w-[280px] sm:max-w-[340px] rounded-2xl bg-zinc-950/92 backdrop-blur-md border border-zinc-700/80 p-3 shadow-2xl transition-all">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="text-[11px] font-black uppercase tracking-wider text-white">
+                    Official Map Legend
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowLegend(false)}
+                  className="text-zinc-400 hover:text-white p-0.5 rounded"
+                  title="Close legend"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              {/* 2-Column Capsule Pills matching the Funfair Funtime schematic */}
+              <div className="grid grid-cols-2 gap-1.5">
+                {SCHEMATIC_LEGEND_ITEMS.map((item) => {
+                  const isSelected = selectedCategory === item.key;
+                  return (
+                    <button
+                      key={item.key}
+                      type="button"
+                      onClick={() =>
+                        setSelectedCategory((prev) =>
+                          prev === item.key ? "all" : item.key
+                        )
+                      }
+                      style={{
+                        backgroundColor: item.color,
+                        color: item.textColor,
+                        boxShadow: isSelected
+                          ? `0 0 0 2.5px #ffffff, 0 4px 12px ${item.color}88`
+                          : "0 2px 6px rgba(0,0,0,0.3)",
+                      }}
+                      className={`flex items-center justify-center px-2 py-1.5 rounded-full border border-white font-black text-[9px] sm:text-[10px] tracking-wide transition-all transform hover:scale-103 active:scale-95 text-center drop-shadow ${
+                        isSelected ? "scale-105 ring-2 ring-white" : "opacity-95 hover:opacity-100"
+                      }`}
+                    >
+                      <span className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)] leading-tight">
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-2.5 pt-2 border-t border-zinc-850 flex items-center justify-between text-[10px] text-zinc-400">
+                <span>Tap any pill to filter pins</span>
+                {selectedCategory !== "all" && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategory("all")}
+                    className="text-amber-400 hover:underline font-bold"
+                  >
+                    Reset (Show All)
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* LIST VIEW */}

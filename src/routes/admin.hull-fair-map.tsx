@@ -4,6 +4,7 @@ import {
   FairPOI,
   FairCategory,
   FAIR_CATEGORIES,
+  SCHEMATIC_LEGEND_ITEMS,
   HULL_FAIR_POIS,
 } from "@/data/hull-fair-map-data";
 import { saveHullFairPoisFn, getHullFairPoisFn } from "@/lib/hull-fair-map.functions";
@@ -22,6 +23,8 @@ import {
   Minus,
   Download,
   Loader2,
+  Layers,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -51,6 +54,7 @@ export function AdminHullFairMapPage() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [showLegend, setShowLegend] = useState(true);
 
   // Refs to avoid tearing down map when state updates
   const activePoiIdRef = useRef<string>(activePoiId);
@@ -217,15 +221,15 @@ export function AdminHullFairMapPage() {
     const mapWidth = 1429.2;
 
     const categoryColorHex: Record<string, string> = {
-      rollercoaster: "#f59e0b",
-      thrill: "#06b6d4",
-      family: "#10b981",
-      funhouse: "#ec4899",
-      ghost_train: "#8b5cf6",
-      kids: "#f43f5e",
-      food_games: "#f97316",
-      wc: "#475569",
-      accessible: "#2563eb",
+      rollercoaster: "#fcdc5c",
+      thrill: "#38b4fc",
+      family: "#78d858",
+      funhouse: "#c868e4",
+      ghost_train: "#8c4cfc",
+      kids: "#fc2c30",
+      food_games: "#fc904f",
+      wc: "#545454",
+      accessible: "#545454",
     };
 
     pois.forEach((poi) => {
@@ -233,15 +237,15 @@ export function AdminHullFairMapPage() {
       const lng = mapWidth * (poi.x / 100);
       const isActive = poi.id === activePoiId;
 
-      const accentColor = categoryColorHex[poi.category] || "#e11d48";
+      const accentColor = categoryColorHex[poi.category] || "#fc2c30";
       const iconUrl = `/hull-fair/icons/${poi.iconKey}.webp`;
 
       const markerHtml = `
         <div class="group relative flex flex-col items-center cursor-move transition-transform duration-150 ${
           isActive ? "scale-140 z-50 animate-bounce-subtle" : "hover:scale-120 z-10"
         }">
-          <div class="relative flex items-center justify-center rounded-2xl bg-white p-1 shadow-2xl backdrop-blur transition-all border-2"
-               style="border-color: ${accentColor}; box-shadow: 0 4px 16px ${accentColor}88;">
+          <div class="relative flex items-center justify-center rounded-2xl bg-white p-1 shadow-2xl backdrop-blur transition-all"
+               style="border: 2.5px solid ${accentColor}; box-shadow: 0 4px 16px ${accentColor}88;">
             <img src="${iconUrl}" alt="${poi.name}" class="h-6 w-6 object-contain" />
             ${
               isActive
@@ -392,26 +396,40 @@ export function AdminHullFairMapPage() {
         )
       );
 
-      // Draw each POI badge and icon on the canvas
-      const iconSize = 56;
+      // Category color mapping for canvas
+      const categoryColorHex: Record<string, string> = {
+        rollercoaster: "#fcdc5c",
+        thrill: "#38b4fc",
+        family: "#78d858",
+        funhouse: "#c868e4",
+        ghost_train: "#8c4cfc",
+        kids: "#fc2c30",
+        food_games: "#fc904f",
+        wc: "#545454",
+        accessible: "#545454",
+      };
+
+      // Draw each POI badge and icon on the canvas with color-coded ring
+      const iconSize = 60;
       for (const p of pois) {
         const px = (p.x / 100) * canvas.width;
         const py = (p.y / 100) * canvas.height;
         const iconImg = iconImages[p.iconKey];
+        const ringColor = categoryColorHex[p.category] || "#fc2c30";
 
         // Draw glowing white badge circle behind each icon
         ctx.save();
         ctx.beginPath();
         ctx.arc(px, py, iconSize / 2 + 5, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
-        ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
-        ctx.shadowBlur = 10;
+        ctx.fillStyle = "rgba(255, 255, 255, 0.98)";
+        ctx.shadowColor = ringColor;
+        ctx.shadowBlur = 12;
         ctx.shadowOffsetY = 4;
         ctx.fill();
 
-        // Border ring
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#ffffff";
+        // Category color ring
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = ringColor;
         ctx.stroke();
         ctx.restore();
 
@@ -420,6 +438,86 @@ export function AdminHullFairMapPage() {
           ctx.drawImage(iconImg, px - iconSize / 2, py - iconSize / 2, iconSize, iconSize);
         }
       }
+
+      // DRAW OFFICIAL 8-CAPSULE LEGEND ON CANVAS (TOP-RIGHT)
+      const legendW = 600;
+      const legendH = 330;
+      const legendX = canvas.width - legendW - 60;
+      const legendY = 60;
+
+      ctx.save();
+      // Legend container card
+      ctx.beginPath();
+      ctx.roundRect(legendX, legendY, legendW, legendH, 24);
+      ctx.fillStyle = "rgba(18, 18, 22, 0.92)";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetY = 8;
+      ctx.fill();
+
+      // Card border
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+      ctx.stroke();
+
+      // Title
+      ctx.font = "bold 22px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText("HULL FAIR 2026 · OFFICIAL MAP LEGEND", legendX + 28, legendY + 44);
+
+      // 8 capsules in 2 columns
+      const legendPills = [
+        { label: "THRILL RIDES", color: "#38b4fc", textColor: "#ffffff", col: 0, row: 0 },
+        { label: "ROLLERCOASTERS", color: "#fcdc5c", textColor: "#18181b", col: 1, row: 0 },
+        { label: "FAMILY RIDES", color: "#78d858", textColor: "#ffffff", col: 0, row: 1 },
+        { label: "FUNHOUSES", color: "#c868e4", textColor: "#ffffff", col: 1, row: 1 },
+        { label: "KIDS RIDES", color: "#fc2c30", textColor: "#ffffff", col: 0, row: 2 },
+        { label: "GHOST TRAINS", color: "#8c4cfc", textColor: "#ffffff", col: 1, row: 2 },
+        { label: "FOOD/GAMES", color: "#fc904f", textColor: "#ffffff", col: 0, row: 3 },
+        { label: "WC/TOILETS", color: "#545454", textColor: "#ffffff", col: 1, row: 3 },
+      ];
+
+      const pillW = 255;
+      const pillH = 48;
+      const startX = legendX + 28;
+      const startY = legendY + 68;
+      const gapX = 30;
+      const gapY = 14;
+
+      for (const item of legendPills) {
+        const px = startX + item.col * (pillW + gapX);
+        const py = startY + item.row * (pillH + gapY);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(px, py, pillW, pillH, pillH / 2);
+        ctx.fillStyle = item.color;
+        ctx.shadowColor = "rgba(0,0,0,0.3)";
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 3;
+        ctx.fill();
+
+        // White border
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+
+        // Text
+        ctx.font = "900 17px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#000000";
+        ctx.strokeText(item.label, px + pillW / 2, py + pillH / 2);
+
+        ctx.fillStyle = item.textColor === "#18181b" ? "#ffffff" : item.textColor;
+        ctx.fillText(item.label, px + pillW / 2, py + pillH / 2);
+
+        ctx.restore();
+      }
+
+      ctx.restore();
 
       // Convert canvas to downloadable PNG
       canvas.toBlob((blob) => {
@@ -503,6 +601,21 @@ export function AdminHullFairMapPage() {
               <Download className="h-3.5 w-3.5" />
             )}
             <span>{isDownloading ? "Rendering..." : "Download PNG"}</span>
+          </button>
+
+          {/* Toggle Legend on Map */}
+          <button
+            type="button"
+            onClick={() => setShowLegend((v) => !v)}
+            title={showLegend ? "Hide Legend" : "Show Legend"}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
+              showLegend
+                ? "bg-amber-400 text-zinc-950 border-amber-400 font-bold"
+                : "bg-zinc-800 hover:bg-zinc-750 border-zinc-700 text-zinc-300"
+            }`}
+          >
+            <Layers className="h-3.5 w-3.5" />
+            <span>Legend</span>
           </button>
 
           <button
@@ -695,6 +808,68 @@ export function AdminHullFairMapPage() {
               <Minus className="h-4 w-4" />
             </button>
           </div>
+
+          {/* FLOATING COLOR GROUPING LEGEND CARD */}
+          {showLegend && (
+            <div className="absolute top-4 left-4 z-20 max-w-[320px] rounded-2xl bg-zinc-950/92 backdrop-blur-md border border-zinc-750 p-3 shadow-2xl">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800">
+                <span className="text-[11px] font-black uppercase tracking-wider text-white">
+                  Official Schematic Legend
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowLegend(false)}
+                  className="text-zinc-400 hover:text-white p-0.5 rounded"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-1.5">
+                {SCHEMATIC_LEGEND_ITEMS.map((item) => {
+                  const isFiltered = selectedCategory === item.key;
+                  return (
+                    <button
+                      key={item.key}
+                      type="button"
+                      onClick={() =>
+                        setSelectedCategory((prev) =>
+                          prev === item.key ? "all" : item.key
+                        )
+                      }
+                      style={{
+                        backgroundColor: item.color,
+                        color: item.textColor,
+                        boxShadow: isFiltered
+                          ? `0 0 0 2px #ffffff, 0 3px 10px ${item.color}88`
+                          : "0 2px 5px rgba(0,0,0,0.3)",
+                      }}
+                      className={`flex items-center justify-center px-2 py-1.5 rounded-full border border-white font-black text-[9px] tracking-wide transition-all hover:scale-103 active:scale-95 text-center drop-shadow ${
+                        isFiltered ? "scale-105 ring-2 ring-white" : ""
+                      }`}
+                    >
+                      <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)] leading-tight">
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-2 pt-1.5 border-t border-zinc-850 flex items-center justify-between text-[10px] text-zinc-400">
+                <span>Click pill to filter list & pins</span>
+                {selectedCategory !== "all" && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategory("all")}
+                    className="text-amber-400 hover:underline font-bold"
+                  >
+                    All
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

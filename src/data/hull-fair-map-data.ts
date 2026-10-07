@@ -32,19 +32,32 @@ export interface CategoryMeta {
   label: string;
   shortLabel: string;
   badgeColor: string;
+  hexColor: string;
+  textColor: string;
   iconEmoji: string;
 }
 
 export const FAIR_CATEGORIES: CategoryMeta[] = [
-  { key: 'all', label: 'All Attractions', shortLabel: 'All', badgeColor: 'bg-zinc-900 text-white', iconEmoji: '🎪' },
-  { key: 'thrill', label: 'Thrill Rides', shortLabel: 'Thrill', badgeColor: 'bg-cyan-500 text-white', iconEmoji: '⚡' },
-  { key: 'rollercoaster', label: 'Roller Coasters', shortLabel: 'Coasters', badgeColor: 'bg-amber-400 text-zinc-950', iconEmoji: '🎢' },
-  { key: 'family', label: 'Family Rides', shortLabel: 'Family', badgeColor: 'bg-emerald-500 text-white', iconEmoji: '🎡' },
-  { key: 'funhouse', label: 'Funhouses & Mazes', shortLabel: 'Funhouses', badgeColor: 'bg-pink-500 text-white', iconEmoji: '🏰' },
-  { key: 'ghost_train', label: 'Ghost Trains', shortLabel: 'Ghost Trains', badgeColor: 'bg-purple-600 text-white', iconEmoji: '👻' },
-  { key: 'kids', label: 'Kids Rides', shortLabel: 'Kids', badgeColor: 'bg-rose-500 text-white', iconEmoji: '🎠' },
-  { key: 'food_games', label: 'Food & Stalls', shortLabel: 'Food & Stalls', badgeColor: 'bg-orange-500 text-white', iconEmoji: '🍟' },
-  { key: 'wc', label: 'Toilets & Facilities', shortLabel: 'Toilets', badgeColor: 'bg-zinc-700 text-white', iconEmoji: '🚻' },
+  { key: 'all', label: 'All Attractions', shortLabel: 'All', badgeColor: 'bg-zinc-900 text-white', hexColor: '#18181b', textColor: '#ffffff', iconEmoji: '🎪' },
+  { key: 'thrill', label: 'Thrill Rides', shortLabel: 'Thrill Rides', badgeColor: 'bg-[#38b4fc] text-white', hexColor: '#38b4fc', textColor: '#ffffff', iconEmoji: '⚡' },
+  { key: 'rollercoaster', label: 'Rollercoasters', shortLabel: 'Rollercoasters', badgeColor: 'bg-[#fcdc5c] text-zinc-950', hexColor: '#fcdc5c', textColor: '#18181b', iconEmoji: '🎢' },
+  { key: 'family', label: 'Family Rides', shortLabel: 'Family Rides', badgeColor: 'bg-[#78d858] text-white', hexColor: '#78d858', textColor: '#ffffff', iconEmoji: '🎡' },
+  { key: 'funhouse', label: 'Funhouses', shortLabel: 'Funhouses', badgeColor: 'bg-[#c868e4] text-white', hexColor: '#c868e4', textColor: '#ffffff', iconEmoji: '🏰' },
+  { key: 'kids', label: 'Kids Rides', shortLabel: 'Kids Rides', badgeColor: 'bg-[#fc2c30] text-white', hexColor: '#fc2c30', textColor: '#ffffff', iconEmoji: '🎠' },
+  { key: 'ghost_train', label: 'Ghost Trains', shortLabel: 'Ghost Trains', badgeColor: 'bg-[#8c4cfc] text-white', hexColor: '#8c4cfc', textColor: '#ffffff', iconEmoji: '👻' },
+  { key: 'food_games', label: 'Food / Games', shortLabel: 'Food/Games', badgeColor: 'bg-[#fc904f] text-white', hexColor: '#fc904f', textColor: '#ffffff', iconEmoji: '🍟' },
+  { key: 'wc', label: 'WC / Toilets', shortLabel: 'WC/Toilets', badgeColor: 'bg-[#545454] text-white', hexColor: '#545454', textColor: '#ffffff', iconEmoji: '🚻' },
+];
+
+export const SCHEMATIC_LEGEND_ITEMS = [
+  { key: 'thrill' as FairCategory, label: 'THRILL RIDES', color: '#38b4fc', textColor: '#ffffff' },
+  { key: 'rollercoaster' as FairCategory, label: 'ROLLERCOASTERS', color: '#fcdc5c', textColor: '#18181b' },
+  { key: 'family' as FairCategory, label: 'FAMILY RIDES', color: '#78d858', textColor: '#ffffff' },
+  { key: 'funhouse' as FairCategory, label: 'FUNHOUSES', color: '#c868e4', textColor: '#ffffff' },
+  { key: 'kids' as FairCategory, label: 'KIDS RIDES', color: '#fc2c30', textColor: '#ffffff' },
+  { key: 'ghost_train' as FairCategory, label: 'GHOST TRAINS', color: '#8c4cfc', textColor: '#ffffff' },
+  { key: 'food_games' as FairCategory, label: 'FOOD/GAMES', color: '#fc904f', textColor: '#ffffff' },
+  { key: 'wc' as FairCategory, label: 'WC/TOILETS', color: '#545454', textColor: '#ffffff' },
 ];
 
 export const HULL_FAIR_POIS: FairPOI[] = [
