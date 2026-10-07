@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
   FairPOI,
   FairCategory,
@@ -8,7 +8,6 @@ import {
 } from "@/data/hull-fair-map-data";
 import { saveHullFairPoisFn, getHullFairPoisFn } from "@/lib/hull-fair-map.functions";
 import {
-  MapPin,
   Search,
   Save,
   RotateCcw,
@@ -18,10 +17,11 @@ import {
   ChevronRight,
   ChevronLeft,
   Sparkles,
-  Layers,
   Crosshair,
   Plus,
   Minus,
+  Download,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -48,8 +48,19 @@ export function AdminHullFairMapPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [autoAdvance, setAutoAdvance] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
+
+  // Refs to avoid tearing down map when state updates
+  const activePoiIdRef = useRef<string>(activePoiId);
+  activePoiIdRef.current = activePoiId;
+
+  const autoAdvanceRef = useRef<boolean>(autoAdvance);
+  autoAdvanceRef.current = autoAdvance;
+
+  const poisRef = useRef<FairPOI[]>(pois);
+  poisRef.current = pois;
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -77,6 +88,9 @@ export function AdminHullFairMapPage() {
     });
   }, [pois, selectedCategory, searchQuery]);
 
+  const filteredPoisRef = useRef<FairPOI[]>(filteredPois);
+  filteredPoisRef.current = filteredPois;
+
   // Load latest from server DB on mount
   useEffect(() => {
     getHullFairPoisFn()
@@ -86,7 +100,7 @@ export function AdminHullFairMapPage() {
         }
       })
       .catch((err) => {
-        console.warn("Could not load from DB, using current data:", err);
+        console.warn("Could not load from DB, using local data:", err);
       });
   }, []);
 
@@ -103,7 +117,7 @@ export function AdminHullFairMapPage() {
     }
   }, []);
 
-  // Initialize Leaflet map
+  // INITIALIZE LEAFLET MAP ONCE
   useEffect(() => {
     if (typeof window === "undefined" || !mapContainerRef.current) return;
 
@@ -141,38 +155,37 @@ export function AdminHullFairMapPage() {
       Leaflet.imageOverlay("/hull-fair/map-base.webp", bounds).addTo(map);
       map.setView([660, 660], 0);
 
-      // Map click handler to place active attraction
+      // Single click listener on map that reads from refs
       map.on("click", (e: any) => {
         const { lat, lng } = e.latlng;
-        // Convert to percentage coordinates:
-        // lat = 1000 * (1 - y / 100) -> y = (1 - lat / 1000) * 100
-        // lng = 1429.2 * (x / 100) -> x = (lng / 1429.2) * 100
         const x_pct = Math.round((lng / 1429.2) * 10000) / 100;
         const y_pct = Math.round((1 - lat / 1000) * 10000) / 100;
 
-        // Clamp inside 0..100
         const clampedX = Math.max(0, Math.min(100, x_pct));
         const clampedY = Math.max(0, Math.min(100, y_pct));
 
+        const currentActiveId = activePoiIdRef.current;
+        if (!currentActiveId) return;
+
         setPois((prev) => {
-          const index = prev.findIndex((p) => p.id === activePoiId);
+          const index = prev.findIndex((p) => p.id === currentActiveId);
           if (index === -1) return prev;
           const updated = [...prev];
+          const poiName = updated[index].name;
           updated[index] = { ...updated[index], x: clampedX, y: clampedY };
-          // Save to local storage immediately
           try {
             localStorage.setItem("hull_fair_custom_pois", JSON.stringify(updated));
           } catch {}
+          toast.success(`Position set for ${poiName} (${clampedX}%, ${clampedY}%)`);
           return updated;
         });
 
-        toast.success(`Position set for ${activePoi?.name || "attraction"} (${clampedX}%, ${clampedY}%)`);
-
         // If auto-advance, move to next item in the filtered list
-        if (autoAdvance) {
-          const currentIndex = filteredPois.findIndex((p) => p.id === activePoiId);
-          if (currentIndex !== -1 && currentIndex + 1 < filteredPois.length) {
-            setActivePoiId(filteredPois[currentIndex + 1].id);
+        if (autoAdvanceRef.current) {
+          const currentList = filteredPoisRef.current;
+          const currentIndex = currentList.findIndex((p) => p.id === currentActiveId);
+          if (currentIndex !== -1 && currentIndex + 1 < currentList.length) {
+            setActivePoiId(currentList[currentIndex + 1].id);
           }
         }
       });
@@ -188,9 +201,9 @@ export function AdminHullFairMapPage() {
         mapInstanceRef.current = null;
       }
     };
-  }, [activePoiId, autoAdvance, filteredPois, activePoi?.name]);
+  }, []);
 
-  // Sync Leaflet markers & make them draggable
+  // SYNC LEAFLET MARKERS (WITHOUT TEARING DOWN MAP)
   useEffect(() => {
     const map = mapInstanceRef.current;
     const Leaflet = leafletModuleRef.current;
@@ -203,22 +216,22 @@ export function AdminHullFairMapPage() {
     const mapHeight = 1000;
     const mapWidth = 1429.2;
 
+    const categoryColorHex: Record<string, string> = {
+      rollercoaster: "#f59e0b",
+      thrill: "#06b6d4",
+      family: "#10b981",
+      funhouse: "#ec4899",
+      ghost_train: "#8b5cf6",
+      kids: "#f43f5e",
+      food_games: "#f97316",
+      wc: "#475569",
+      accessible: "#2563eb",
+    };
+
     pois.forEach((poi) => {
       const lat = mapHeight * (1 - poi.y / 100);
       const lng = mapWidth * (poi.x / 100);
       const isActive = poi.id === activePoiId;
-
-      const categoryColorHex: Record<string, string> = {
-        rollercoaster: "#f59e0b",
-        thrill: "#06b6d4",
-        family: "#10b981",
-        funhouse: "#ec4899",
-        ghost_train: "#8b5cf6",
-        kids: "#f43f5e",
-        food_games: "#f97316",
-        wc: "#475569",
-        accessible: "#2563eb",
-      };
 
       const accentColor = categoryColorHex[poi.category] || "#e11d48";
       const iconUrl = `/hull-fair/icons/${poi.iconKey}.webp`;
@@ -227,8 +240,8 @@ export function AdminHullFairMapPage() {
         <div class="group relative flex flex-col items-center cursor-move transition-transform duration-150 ${
           isActive ? "scale-140 z-50 animate-bounce-subtle" : "hover:scale-120 z-10"
         }">
-          <div class="relative flex items-center justify-center rounded-2xl bg-white/95 p-1 shadow-xl backdrop-blur transition-all border-2"
-               style="border-color: ${accentColor}; box-shadow: 0 4px 16px ${accentColor}66;">
+          <div class="relative flex items-center justify-center rounded-2xl bg-white p-1 shadow-2xl backdrop-blur transition-all border-2"
+               style="border-color: ${accentColor}; box-shadow: 0 4px 16px ${accentColor}88;">
             <img src="${iconUrl}" alt="${poi.name}" class="h-6 w-6 object-contain" />
             ${
               isActive
@@ -240,7 +253,7 @@ export function AdminHullFairMapPage() {
             }
           </div>
           <div class="pointer-events-none mt-1 whitespace-nowrap rounded bg-zinc-950 px-1.5 py-0.5 text-[9px] font-mono font-bold text-white shadow-md ${
-            isActive ? "block" : "hidden group-hover:block"
+            isActive ? "block ring-1 ring-amber-400" : "hidden group-hover:block"
           }">
             ${poi.name}
           </div>
@@ -289,14 +302,14 @@ export function AdminHullFairMapPage() {
   }, [pois, activePoiId, isMapReady]);
 
   // Center map on active attraction
-  const centerOnActive = () => {
+  const centerOnActive = useCallback(() => {
     if (!mapInstanceRef.current || !activePoi) return;
     const mapHeight = 1000;
     const mapWidth = 1429.2;
     const lat = mapHeight * (1 - activePoi.y / 100);
     const lng = mapWidth * (activePoi.x / 100);
     mapInstanceRef.current.setView([lat, lng], 0.7, { animate: true });
-  };
+  }, [activePoi]);
 
   // Save to DB and filesystem
   const handleSave = async () => {
@@ -335,6 +348,104 @@ export function AdminHullFairMapPage() {
     });
   };
 
+  // DOWNLOAD FULL RESOLUTION PNG WITH RENDERED ICONS
+  const handleDownloadPng = async () => {
+    setIsDownloading(true);
+    toast.info("Generating high-resolution PNG map with all icons...");
+
+    try {
+      const baseImg = new window.Image();
+      baseImg.crossOrigin = "anonymous";
+      baseImg.src = "/hull-fair/map-base.webp";
+
+      await new Promise((resolve, reject) => {
+        baseImg.onload = resolve;
+        baseImg.onerror = reject;
+      });
+
+      const canvas = document.createElement("canvas");
+      canvas.width = baseImg.naturalWidth || 3200;
+      canvas.height = baseImg.naturalHeight || 2239;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not create canvas context");
+
+      // Draw base cartoon map
+      ctx.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
+
+      // Preload all unique icons
+      const uniqueIcons = Array.from(new Set(pois.map((p) => p.iconKey)));
+      const iconImages: Record<string, HTMLImageElement> = {};
+
+      await Promise.all(
+        uniqueIcons.map(
+          (key) =>
+            new Promise<void>((resolve) => {
+              const iconImg = new window.Image();
+              iconImg.crossOrigin = "anonymous";
+              iconImg.src = `/hull-fair/icons/${key}.png`;
+              iconImg.onload = () => {
+                iconImages[key] = iconImg;
+                resolve();
+              };
+              iconImg.onerror = () => resolve();
+            })
+        )
+      );
+
+      // Draw each POI badge and icon on the canvas
+      const iconSize = 56;
+      for (const p of pois) {
+        const px = (p.x / 100) * canvas.width;
+        const py = (p.y / 100) * canvas.height;
+        const iconImg = iconImages[p.iconKey];
+
+        // Draw glowing white badge circle behind each icon
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(px, py, iconSize / 2 + 5, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+        ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 4;
+        ctx.fill();
+
+        // Border ring
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+        ctx.restore();
+
+        // Draw icon inside badge
+        if (iconImg) {
+          ctx.drawImage(iconImg, px - iconSize / 2, py - iconSize / 2, iconSize, iconSize);
+        }
+      }
+
+      // Convert canvas to downloadable PNG
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          toast.error("Failed to generate PNG blob");
+          setIsDownloading(false);
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `hull-fair-2026-map-${new Date().toISOString().slice(0, 10)}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success("Downloaded high-resolution map PNG!");
+        setIsDownloading(false);
+      }, "image/png");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Failed to render map image");
+      setIsDownloading(false);
+    }
+  };
+
   // Next & previous item
   const handlePrev = () => {
     const idx = filteredPois.findIndex((p) => p.id === activePoiId);
@@ -358,7 +469,7 @@ export function AdminHullFairMapPage() {
             <h1 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
               Hull Fair Map Calibration Tool
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                106 Attractions
+                {pois.length} Attractions
               </span>
             </h1>
             <p className="text-xs text-zinc-400">
@@ -378,6 +489,21 @@ export function AdminHullFairMapPage() {
             />
             <span>Auto-next on click</span>
           </label>
+
+          {/* Download PNG Button */}
+          <button
+            type="button"
+            onClick={handleDownloadPng}
+            disabled={isDownloading}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-colors disabled:opacity-50"
+          >
+            {isDownloading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Download className="h-3.5 w-3.5" />
+            )}
+            <span>{isDownloading ? "Rendering..." : "Download PNG"}</span>
+          </button>
 
           <button
             type="button"
@@ -509,8 +635,8 @@ export function AdminHullFairMapPage() {
                   onClick={() => setActivePoiId(p.id)}
                   className={`flex items-center gap-3 p-2.5 rounded-lg cursor-pointer transition-all ${
                     isActive
-                      ? "bg-amber-400/15 border border-amber-400/40 text-white"
-                      : "hover:bg-zinc-850 text-zinc-300"
+                      ? "bg-amber-400/20 border-2 border-amber-400 text-white shadow-lg"
+                      : "hover:bg-zinc-850 text-zinc-300 border border-transparent"
                   }`}
                 >
                   <span className="font-mono text-[10px] text-zinc-500 w-5 text-right shrink-0">
@@ -532,7 +658,7 @@ export function AdminHullFairMapPage() {
                     </div>
                   </div>
                   {isActive && (
-                    <span className="text-[10px] font-mono text-amber-400 font-bold px-1.5 py-0.5 rounded bg-amber-400/20">
+                    <span className="text-[10px] font-mono text-amber-400 font-bold px-1.5 py-0.5 rounded bg-amber-400/20 shrink-0">
                       ACTIVE
                     </span>
                   )}
