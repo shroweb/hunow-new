@@ -90,12 +90,12 @@ const HULL_FAIR_FAQS = [
   {
     question: "Where are the toilets and baby-changing facilities?",
     answer:
-      "Public toilet blocks, accessible facilities, and baby-changing units are situated along Walton Street Central, by the Spring Bank Way entrance, and along the North Perimeter railway boundary. You can locate all facilities on our interactive Hull Fair Map.",
+      "The official 2026 layout shows two public toilet blocks: one on the Walton Street side of the fairground, and one on the north-east perimeter by the railway boundary. Both are marked on our interactive Hull Fair Map. Ask an event steward on site for accessible and baby-changing facilities.",
   },
   {
     question: "What happens if a child gets lost at Hull Fair?",
     answer:
-      "Agree a meeting point before entering and notify a nearby event steward or police officer immediately. A dedicated First Aid and Lost Children post is operated by St John Ambulance and Humberside Police on Walton Street (clearly marked on our interactive map).",
+      "Agree a meeting point before entering and notify a nearby event steward or police officer immediately. They can direct you to the first aid and lost children point on site.",
   },
   {
     question: "What are the must-eat traditional foods at Hull Fair?",
@@ -1094,9 +1094,10 @@ function HullFairPage() {
                   🚻 Toilets & Baby Changing
                 </h3>
                 <p className="text-sm leading-relaxed text-foreground/75">
-                  Public toilet blocks, accessible portaloos, and baby-changing units are provided
-                  on site along Walton Street Central, at the Spring Bank Way entrance, and along
-                  the North Perimeter railway boundary.
+                  The official 2026 layout shows two public toilet blocks: one on the Walton Street
+                  side of the fairground, and one on the north-east perimeter by the railway
+                  boundary. Ask an event steward on site for accessible and baby-changing
+                  facilities.
                 </p>
                 <div className="mt-4">
                   <Link className={LINK_CLASS} to="/hull-fair-map">
