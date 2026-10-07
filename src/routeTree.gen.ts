@@ -30,6 +30,7 @@ import { Route as HumberStreetSeshRouteImport } from './routes/humber-street-ses
 import { Route as HullPrideRouteImport } from './routes/hull-pride'
 import { Route as HullKrFixturesRouteImport } from './routes/hull-kr-fixtures'
 import { Route as HullFcFixturesRouteImport } from './routes/hull-fc-fixtures'
+import { Route as HullFairMapRouteImport } from './routes/hull-fair-map'
 import { Route as HullFairRouteImport } from './routes/hull-fair'
 import { Route as HullCityFixturesRouteImport } from './routes/hull-city-fixtures'
 import { Route as FreedomFestivalRouteImport } from './routes/freedom-festival'
@@ -207,6 +208,11 @@ const HullKrFixturesRoute = HullKrFixturesRouteImport.update({
 const HullFcFixturesRoute = HullFcFixturesRouteImport.update({
   id: '/hull-fc-fixtures',
   path: '/hull-fc-fixtures',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HullFairMapRoute = HullFairMapRouteImport.update({
+  id: '/hull-fair-map',
+  path: '/hull-fair-map',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HullFairRoute = HullFairRouteImport.update({
@@ -590,6 +596,7 @@ export interface FileRoutesByFullPath {
   '/freedom-festival': typeof FreedomFestivalRoute
   '/hull-city-fixtures': typeof HullCityFixturesRoute
   '/hull-fair': typeof HullFairRoute
+  '/hull-fair-map': typeof HullFairMapRoute
   '/hull-fc-fixtures': typeof HullFcFixturesRoute
   '/hull-kr-fixtures': typeof HullKrFixturesRoute
   '/hull-pride': typeof HullPrideRoute
@@ -684,6 +691,7 @@ export interface FileRoutesByTo {
   '/freedom-festival': typeof FreedomFestivalRoute
   '/hull-city-fixtures': typeof HullCityFixturesRoute
   '/hull-fair': typeof HullFairRoute
+  '/hull-fair-map': typeof HullFairMapRoute
   '/hull-fc-fixtures': typeof HullFcFixturesRoute
   '/hull-kr-fixtures': typeof HullKrFixturesRoute
   '/hull-pride': typeof HullPrideRoute
@@ -781,6 +789,7 @@ export interface FileRoutesById {
   '/freedom-festival': typeof FreedomFestivalRoute
   '/hull-city-fixtures': typeof HullCityFixturesRoute
   '/hull-fair': typeof HullFairRoute
+  '/hull-fair-map': typeof HullFairMapRoute
   '/hull-fc-fixtures': typeof HullFcFixturesRoute
   '/hull-kr-fixtures': typeof HullKrFixturesRoute
   '/hull-pride': typeof HullPrideRoute
@@ -879,6 +888,7 @@ export interface FileRouteTypes {
     | '/freedom-festival'
     | '/hull-city-fixtures'
     | '/hull-fair'
+    | '/hull-fair-map'
     | '/hull-fc-fixtures'
     | '/hull-kr-fixtures'
     | '/hull-pride'
@@ -973,6 +983,7 @@ export interface FileRouteTypes {
     | '/freedom-festival'
     | '/hull-city-fixtures'
     | '/hull-fair'
+    | '/hull-fair-map'
     | '/hull-fc-fixtures'
     | '/hull-kr-fixtures'
     | '/hull-pride'
@@ -1069,6 +1080,7 @@ export interface FileRouteTypes {
     | '/freedom-festival'
     | '/hull-city-fixtures'
     | '/hull-fair'
+    | '/hull-fair-map'
     | '/hull-fc-fixtures'
     | '/hull-kr-fixtures'
     | '/hull-pride'
@@ -1166,6 +1178,7 @@ export interface RootRouteChildren {
   FreedomFestivalRoute: typeof FreedomFestivalRoute
   HullCityFixturesRoute: typeof HullCityFixturesRoute
   HullFairRoute: typeof HullFairRoute
+  HullFairMapRoute: typeof HullFairMapRoute
   HullFcFixturesRoute: typeof HullFcFixturesRoute
   HullKrFixturesRoute: typeof HullKrFixturesRoute
   HullPrideRoute: typeof HullPrideRoute
@@ -1356,6 +1369,13 @@ declare module '@tanstack/react-router' {
       path: '/hull-fc-fixtures'
       fullPath: '/hull-fc-fixtures'
       preLoaderRoute: typeof HullFcFixturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hull-fair-map': {
+      id: '/hull-fair-map'
+      path: '/hull-fair-map'
+      fullPath: '/hull-fair-map'
+      preLoaderRoute: typeof HullFairMapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hull-fair': {
@@ -2057,6 +2077,7 @@ const rootRouteChildren: RootRouteChildren = {
   FreedomFestivalRoute: FreedomFestivalRoute,
   HullCityFixturesRoute: HullCityFixturesRoute,
   HullFairRoute: HullFairRoute,
+  HullFairMapRoute: HullFairMapRoute,
   HullFcFixturesRoute: HullFcFixturesRoute,
   HullKrFixturesRoute: HullKrFixturesRoute,
   HullPrideRoute: HullPrideRoute,

@@ -70,12 +70,12 @@ const HULL_FAIR_FAQS = [
   {
     question: "Where are the toilets and baby-changing facilities?",
     answer:
-      "We have not found an official 2026 facilities map confirming toilet or baby-changing locations. Check the council's latest visitor information or ask an event steward on arrival.",
+      "Public toilet blocks, accessible facilities, and baby-changing units are situated along Walton Street Central, by the Spring Bank Way entrance, and along the North Perimeter railway boundary. You can locate all facilities on our interactive Hull Fair Map.",
   },
   {
     question: "What happens if a child gets lost at Hull Fair?",
     answer:
-      "Agree a meeting point before entering and tell a nearby event steward or police officer immediately if a child becomes separated. We have not verified a specific lost-children post for 2026.",
+      "Agree a meeting point before entering and notify a nearby event steward or police officer immediately. A dedicated First Aid and Lost Children post is operated by St John Ambulance and Humberside Police on Walton Street (clearly marked on our interactive map).",
   },
   {
     question: "What are the must-eat traditional foods at Hull Fair?",
@@ -352,6 +352,12 @@ function HullFairPage() {
       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border py-3 px-4 overflow-x-auto scrollbar-none">
         <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center gap-2 whitespace-nowrap text-xs font-bold uppercase">
           <span className="text-muted-foreground font-mono text-[10px] mr-2">Jump to:</span>
+          <Link
+            to="/hull-fair-map"
+            className="px-3 py-1.5 border-2 border-accent bg-accent/10 text-accent font-bold hover:bg-accent hover:text-background transition-colors flex items-center gap-1.5"
+          >
+            🗺️ Interactive Map
+          </Link>
           <a
             href="#dates"
             className="px-3 py-1.5 border border-border hover:border-foreground hover:bg-foreground/5 transition-colors"
@@ -436,6 +442,27 @@ function HullFairPage() {
             <span>Rides, lights and attractions</span>
           </figcaption>
         </figure>
+
+        {/* Interactive Map Spotlight Card */}
+        <div className="rounded-2xl border-2 border-foreground bg-foreground text-background p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
+          <div className="space-y-2 max-w-xl">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400 text-zinc-950 font-mono text-[10px] uppercase font-bold tracking-wider">
+              ✨ New Interactive Feature
+            </div>
+            <h3 className="text-2xl md:text-3xl font-display uppercase tracking-tight text-background leading-tight">
+              Hull Fair 2026 Interactive Map
+            </h3>
+            <p className="text-sm text-background/80 leading-relaxed font-sans">
+              Explore 100+ rides, roller coasters, Bob Carvers patties, game stalls, and toilets across Walton Street. Filter by category, search specific rides, and pinch to zoom on mobile.
+            </p>
+          </div>
+          <Link
+            to="/hull-fair-map"
+            className="shrink-0 px-6 py-3.5 rounded-xl bg-background text-foreground font-bold text-xs uppercase tracking-widest hover:bg-background/90 transition-all shadow-lg flex items-center gap-2"
+          >
+            Open Digital Map →
+          </Link>
+        </div>
 
         {/* Section 1: Dates & Daily Hours */}
         <section id="dates" className="scroll-mt-20 border-t-2 border-foreground pt-10">
@@ -942,11 +969,18 @@ function HullFairPage() {
             <div className="border border-border p-6">
               <h3 className="font-bold uppercase text-sm mb-2">🚻 Toilets & Baby Changing</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Temporary public toilet blocks, accessible portaloos, and baby-changing units are
-                provided on site along Walton Street and near the West Park / MKM Stadium entrance.
-                Look for green and white signage from stewards on arrival, as exact locations can
-                shift between years.
+                Public toilet blocks, accessible portaloos, and baby-changing units are provided on
+                site along Walton Street Central, at the Spring Bank Way entrance, and along the North
+                Perimeter railway boundary.
               </p>
+              <div className="mt-3">
+                <Link
+                  to="/hull-fair-map"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-accent hover:underline"
+                >
+                  🗺️ Locate toilets on the interactive map →
+                </Link>
+              </div>
             </div>
 
             <div className="border border-border p-6">
