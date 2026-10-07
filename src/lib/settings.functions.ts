@@ -3,7 +3,13 @@ import { z } from "zod";
 
 export const getSettings = createServerFn({ method: "GET" }).handler(async () => {
   const { getSiteSettings } = await import("./db.server");
-  return getSiteSettings();
+  const settings = await getSiteSettings();
+  // Internal bookkeeping and bulk blobs are never needed by pages; keep them out of every page's HTML
+  return Object.fromEntries(
+    Object.entries(settings).filter(
+      ([key]) => !key.startsWith("migration:") && !key.startsWith("hull_fair_map_pois"),
+    ),
+  );
 });
 
 export const saveSetting = createServerFn({ method: "POST" })
