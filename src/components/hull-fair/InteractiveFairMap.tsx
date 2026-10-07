@@ -262,8 +262,17 @@ export function InteractiveFairMap({
         iconAnchor: [badgeSize / 2, badgeSize / 2],
       });
 
-      const marker = Leaflet.marker([lat, lng], { icon: customIcon })
+      const marker = Leaflet.marker([lat, lng], {
+        icon: customIcon,
+        zIndexOffset: isSelected ? 5000 : 0,
+      })
         .addTo(map)
+        .on("mouseover", () => {
+          marker.setZIndexOffset(10000);
+        })
+        .on("mouseout", () => {
+          marker.setZIndexOffset(isSelected ? 5000 : 0);
+        })
         .on("click", () => {
           setSelectedPOI(poi);
           // If zoomed out, zoom in towards the tapped marker

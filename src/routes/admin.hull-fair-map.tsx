@@ -274,8 +274,15 @@ export function AdminHullFairMapPage() {
       const marker = Leaflet.marker([lat, lng], {
         icon: customIcon,
         draggable: true,
+        zIndexOffset: isActive ? 5000 : 0,
       })
         .addTo(map)
+        .on("mouseover", () => {
+          marker.setZIndexOffset(10000);
+        })
+        .on("mouseout", () => {
+          marker.setZIndexOffset(isActive ? 5000 : 0);
+        })
         .on("click", (e: any) => {
           Leaflet.DomEvent.stopPropagation(e);
           setActivePoiId(poi.id);
