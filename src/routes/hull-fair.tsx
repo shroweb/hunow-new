@@ -4,6 +4,7 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ShareMenu } from "@/components/ShareMenu";
 import { SaveButton } from "@/components/SaveButton";
 import { AdSlot } from "@/components/AdSlot";
+import { InteractiveFairMap } from "@/components/hull-fair/InteractiveFairMap";
 import { subscribeNewsletter } from "@/lib/public.functions";
 import { fetchEventBySlug } from "@/lib/content-read.functions";
 import { img } from "@/data/seed";
@@ -403,6 +404,25 @@ function HullFairPage() {
         </div>
       </div>
 
+      {/* Interactive Fairground Map */}
+      <section id="map" className="relative z-0 scroll-mt-20 max-w-6xl mx-auto px-2 sm:px-4 pt-10 md:pt-14">
+        <div className="flex flex-wrap items-end justify-between gap-3 px-2 sm:px-0 mb-5">
+          <div>
+            <div className="text-[10px] font-mono uppercase tracking-widest text-accent mb-2">
+              Interactive Fairground Map
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display uppercase">Hull Fair 2026 Map</h2>
+          </div>
+          <Link
+            to="/hull-fair-map"
+            className="text-xs font-mono uppercase tracking-widest font-bold underline underline-offset-4 hover:text-accent transition-colors"
+          >
+            Open full map →
+          </Link>
+        </div>
+        <InteractiveFairMap compact />
+      </section>
+
       {/* Main Content Area */}
       <div className="max-w-4xl mx-auto px-4 py-12 md:py-16 space-y-16">
         {/* Intro */}
@@ -442,27 +462,6 @@ function HullFairPage() {
             <span>Rides, lights and attractions</span>
           </figcaption>
         </figure>
-
-        {/* Interactive Map Spotlight Card */}
-        <div className="rounded-2xl border-2 border-foreground bg-foreground text-background p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
-          <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400 text-zinc-950 font-mono text-[10px] uppercase font-bold tracking-wider">
-              ✨ New Interactive Feature
-            </div>
-            <h3 className="text-2xl md:text-3xl font-display uppercase tracking-tight text-background leading-tight">
-              Hull Fair 2026 Interactive Map
-            </h3>
-            <p className="text-sm text-background/80 leading-relaxed font-sans">
-              Explore 100+ rides, roller coasters, Bob Carvers patties, game stalls, and toilets across Walton Street. Filter by category, search specific rides, and pinch to zoom on mobile.
-            </p>
-          </div>
-          <Link
-            to="/hull-fair-map"
-            className="shrink-0 px-6 py-3.5 rounded-xl bg-background text-foreground font-bold text-xs uppercase tracking-widest hover:bg-background/90 transition-all shadow-lg flex items-center gap-2"
-          >
-            Open Digital Map →
-          </Link>
-        </div>
 
         {/* Section 1: Dates & Daily Hours */}
         <section id="dates" className="scroll-mt-20 border-t-2 border-foreground pt-10">

@@ -29,12 +29,15 @@ import {
 interface InteractiveFairMapProps {
   initialCategory?: FairCategory;
   initialSelectedId?: string;
+  /** Shorter frame for embedding inside another page */
+  compact?: boolean;
   className?: string;
 }
 
 export function InteractiveFairMap({
   initialCategory = "all",
   initialSelectedId,
+  compact = false,
   className = "",
 }: InteractiveFairMapProps) {
   // Always use canonical HULL_FAIR_POIS on user-facing map
@@ -405,7 +408,7 @@ export function InteractiveFairMap({
     <div
       ref={mapWrapperRef}
       className={`relative flex flex-col w-full bg-zinc-950 text-white rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl transition-all ${
-        isFullscreen ? "fixed inset-0 z-50 rounded-none h-screen" : "h-[750px] md:h-[820px]"
+        isFullscreen ? "fixed inset-0 z-50 rounded-none h-screen" : compact ? "h-[600px] md:h-[660px]" : "h-[750px] md:h-[820px]"
       } ${className}`}
     >
       {/* TOP CONTROLS BAR */}
