@@ -55,6 +55,7 @@ export function InteractiveFairMap({
   const [copiedLink, setCopiedLink] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isZoomedIn, setIsZoomedIn] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(-0.15);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapWrapperRef = useRef<HTMLDivElement>(null);
@@ -62,8 +63,18 @@ export function InteractiveFairMap({
   const markersRef = useRef<{ [key: string]: any }>({});
   const leafletModuleRef = useRef<any>(null);
 
-  const INITIAL_ZOOM = -0.15;
-  const DEFAULT_CENTER: [number, number] = [660, 660];
+  const DESKTOP_ZOOM = -0.15;
+  const DESKTOP_CENTER: [number, number] = [660, 660];
+  // Fairground + north Walton Street in map units, used to fit the overview on narrow screens
+  const FAIR_BOUNDS: [[number, number], [number, number]] = [
+    [430, 185],
+    [985, 1060],
+  ];
+  // Locked overview for the current container size (recomputed on resize / rotate / fullscreen)
+  const overviewRef = useRef<{ zoom: number; center: [number, number] }>({
+    zoom: DESKTOP_ZOOM,
+    center: DESKTOP_CENTER,
+  });
 
   // Filtered POIs
   const filteredPOIs = useMemo(() => {
@@ -118,6 +129,7 @@ export function InteractiveFairMap({
     if (typeof window === "undefined" || !mapContainerRef.current) return;
 
     let destroyed = false;
+    let resizeObserver: ResizeObserver | null = null;
 
     import("leaflet").then((L) => {
       if (destroyed || !mapContainerRef.current) return;
@@ -138,7 +150,7 @@ export function InteractiveFairMap({
 
       const map = Leaflet.map(mapContainerRef.current, {
         crs: Leaflet.CRS.Simple,
-        minZoom: -0.3,
+        minZoom: -3,
         maxZoom: 2.5,
         zoomSnap: 0.1,
         zoomDelta: 0.4,
@@ -151,8 +163,37 @@ export function InteractiveFairMap({
 
       Leaflet.imageOverlay("/hull-fair/map-base.webp", bounds).addTo(map);
 
-      // Default view locked in center of Walton Street tarmac
-      map.setView(DEFAULT_CENTER, INITIAL_ZOOM);
+      // Overview: desktop framing, or zoomed out further so the whole fairground fits a phone screen
+      const applyOverview = (resetView: boolean) => {
+        map.invalidateSize();
+        const fitZoom = map.getBoundsZoom(FAIR_BOUNDS, false);
+        const fits = fitZoom >= DESKTOP_ZOOM;
+        overviewRef.current = fits
+          ? { zoom: DESKTOP_ZOOM, center: DESKTOP_CENTER }
+          : {
+              zoom: fitZoom,
+              center: [
+                (FAIR_BOUNDS[0][0] + FAIR_BOUNDS[1][0]) / 2,
+                (FAIR_BOUNDS[0][1] + FAIR_BOUNDS[1][1]) / 2,
+              ],
+            };
+        map.setMinZoom(overviewRef.current.zoom - 0.15);
+        if (resetView || map.getZoom() <= overviewRef.current.zoom + 0.15) {
+          map.setView(overviewRef.current.center, overviewRef.current.zoom, { animate: false });
+        }
+      };
+      applyOverview(true);
+
+      if (typeof ResizeObserver !== "undefined") {
+        let lastSize = map.getSize();
+        resizeObserver = new ResizeObserver(() => {
+          const el = mapContainerRef.current;
+          if (!el || (el.clientWidth === lastSize.x && el.clientHeight === lastSize.y)) return;
+          applyOverview(false);
+          lastSize = map.getSize();
+        });
+        resizeObserver.observe(mapContainerRef.current);
+      }
 
       // REQUIREMENT 1: Lock dragging when zoomed out so map doesn't drift
       map.dragging.disable();
@@ -161,14 +202,16 @@ export function InteractiveFairMap({
       // Update dragging state when zoom changes
       map.on("zoomend", () => {
         const currentZoom = map.getZoom();
-        if (currentZoom > INITIAL_ZOOM + 0.15) {
+        const overview = overviewRef.current;
+        if (currentZoom > overview.zoom + 0.15) {
           map.dragging.enable();
           setIsZoomedIn(true);
         } else {
           map.dragging.disable();
           setIsZoomedIn(false);
-          map.setView(DEFAULT_CENTER, INITIAL_ZOOM);
+          map.setView(overview.center, overview.zoom);
         }
+        setZoomLevel(currentZoom);
       });
 
       mapInstanceRef.current = map;
@@ -177,6 +220,7 @@ export function InteractiveFairMap({
 
     return () => {
       destroyed = true;
+      resizeObserver?.disconnect();
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -210,10 +254,12 @@ export function InteractiveFairMap({
     };
 
     const currentZoom = map.getZoom();
-    const isCloseUp = currentZoom > INITIAL_ZOOM + 0.6;
-    const isMidZoom = currentZoom > INITIAL_ZOOM + 0.2;
-    const badgeSize = isCloseUp ? 38 : isMidZoom ? 30 : 25;
-    const iconImgSize = isCloseUp ? 24 : isMidZoom ? 19 : 15;
+    // Size badges by absolute zoom so phones (which start further out) get smaller pins in the overview
+    const isCloseUp = currentZoom > DESKTOP_ZOOM + 0.6;
+    const isMidZoom = currentZoom > DESKTOP_ZOOM + 0.2;
+    const isFarOut = currentZoom < DESKTOP_ZOOM - 0.5;
+    const badgeSize = isCloseUp ? 38 : isMidZoom ? 30 : isFarOut ? 18 : 25;
+    const iconImgSize = isCloseUp ? 24 : isMidZoom ? 19 : isFarOut ? 11 : 15;
     const roundedClass = isCloseUp ? "rounded-xl" : "rounded-lg";
 
     filteredPOIs.forEach((poi) => {
@@ -267,7 +313,7 @@ export function InteractiveFairMap({
         .on("click", () => {
           setSelectedPOI(poi);
           // If zoomed out, zoom in towards the tapped marker
-          if (map.getZoom() <= INITIAL_ZOOM + 0.15) {
+          if (map.getZoom() <= overviewRef.current.zoom + 0.15) {
             map.setView([lat, lng], 0.7, { animate: true, duration: 0.5 });
           } else {
             map.panTo([lat, lng], { animate: true, duration: 0.4 });
@@ -276,7 +322,7 @@ export function InteractiveFairMap({
 
       markersRef.current[poi.id] = marker;
     });
-  }, [filteredPOIs, selectedPOI, isMapReady, isZoomedIn]);
+  }, [filteredPOIs, selectedPOI, isMapReady, isZoomedIn, zoomLevel]);
 
   // Select POI
   const handleSelectPOI = (poi: FairPOI) => {
@@ -311,7 +357,7 @@ export function InteractiveFairMap({
   // Reset to locked overview
   const handleResetView = () => {
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.setView(DEFAULT_CENTER, INITIAL_ZOOM, {
+      mapInstanceRef.current.setView(overviewRef.current.center, overviewRef.current.zoom, {
         animate: true,
         duration: 0.5,
       });
@@ -330,17 +376,62 @@ export function InteractiveFairMap({
     }
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
+    const url = new URL(window.location.origin + window.location.pathname);
     if (selectedPOI) {
       url.searchParams.set("poi", selectedPOI.id);
     }
-    navigator.clipboard.writeText(url.toString()).then(() => {
+    const shareUrl = url.toString();
+    const title = selectedPOI ? `${selectedPOI.name} — Hull Fair 2026 Map` : "Hull Fair 2026 Map";
+
+    // Native share sheet on touch devices
+    const isTouch = window.matchMedia?.("(pointer: coarse)").matches;
+    if (isTouch && typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title, url: shareUrl });
+        return;
+      } catch (err) {
+        if ((err as Error)?.name === "AbortError") return;
+      }
+    }
+
+    let copied = false;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      copied = true;
+    } catch {
+      // Clipboard API unavailable (e.g. inside fullscreen or insecure context)
+      const ta = document.createElement("textarea");
+      ta.value = shareUrl;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      (document.fullscreenElement || document.body).appendChild(ta);
+      ta.select();
+      try {
+        copied = document.execCommand("copy");
+      } catch {}
+      ta.remove();
+    }
+
+    if (copied) {
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
-    });
+    } else {
+      window.prompt("Copy this link to share:", shareUrl);
+    }
   };
+
+  // Open a shared ?poi=<id> link on the linked attraction
+  const sharedPoiHandledRef = useRef(false);
+  useEffect(() => {
+    if (!isMapReady || sharedPoiHandledRef.current) return;
+    sharedPoiHandledRef.current = true;
+    const sharedId = new URLSearchParams(window.location.search).get("poi");
+    const poi = sharedId ? poisList.find((p) => p.id === sharedId) : null;
+    if (poi) handleSelectPOI(poi);
+  }, [isMapReady]);
 
   return (
     <div
@@ -510,19 +601,19 @@ export function InteractiveFairMap({
             viewMode === "map" ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-0"
           }`}
         >
-          <div ref={mapContainerRef} className="w-full h-full bg-[#1b2318]" />
+          <div ref={mapContainerRef} className="relative z-0 w-full h-full bg-[#1b2318]" />
 
           {/* Floating Map Status Indicator */}
           <div className="pointer-events-none absolute top-3 left-3 z-20 flex items-center gap-2 rounded-xl bg-zinc-950/85 backdrop-blur px-3 py-1.5 text-[11px] font-mono text-zinc-300 border border-zinc-800 shadow-md">
             {isZoomedIn ? (
               <>
                 <Unlock className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Zoomed In · Pan enabled</span>
+                <span className="hidden sm:inline">Zoomed In · Pan enabled</span>
               </>
             ) : (
               <>
                 <Lock className="h-3.5 w-3.5 text-amber-400" />
-                <span>Locked · Zoom in to pan</span>
+                <span className="hidden sm:inline">Locked · Zoom in to pan</span>
               </>
             )}
           </div>
@@ -549,7 +640,7 @@ export function InteractiveFairMap({
 
           {/* FLOATING COLOR GROUPING LEGEND CARD */}
           {showLegend && (
-            <div className="absolute top-14 right-3 z-20 max-w-[270px] sm:max-w-[320px] rounded-2xl bg-zinc-950/95 backdrop-blur-md border border-zinc-700/80 p-3 shadow-2xl transition-all">
+            <div className="absolute bottom-3 right-3 sm:bottom-auto sm:top-3 sm:right-14 z-20 w-[196px] sm:w-auto sm:max-w-[320px] rounded-2xl bg-zinc-950/95 backdrop-blur-md border border-zinc-700/80 p-2 sm:p-3 shadow-2xl transition-all">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
@@ -587,7 +678,7 @@ export function InteractiveFairMap({
                           ? `0 0 0 2px #ffffff, 0 3px 10px ${item.color}88`
                           : "0 2px 5px rgba(0,0,0,0.3)",
                       }}
-                      className={`flex items-center justify-center px-2 py-1.5 rounded-full border border-white font-black text-[9px] sm:text-[10px] tracking-wide transition-all transform hover:scale-103 active:scale-95 text-center drop-shadow ${
+                      className={`flex items-center justify-center px-1 sm:px-2 py-1 sm:py-1.5 rounded-full border border-white font-black text-[8px] sm:text-[10px] tracking-wide transition-all transform hover:scale-103 active:scale-95 text-center drop-shadow ${
                         isSelected ? "scale-105 ring-2 ring-white" : "opacity-95 hover:opacity-100"
                       }`}
                     >
