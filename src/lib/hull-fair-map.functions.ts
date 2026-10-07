@@ -20,7 +20,7 @@ export const getHullFairPoisFn = createServerFn({ method: "GET" }).handler(async
 });
 
 export const saveHullFairPoisFn = createServerFn({ method: "POST" })
-  .validator((d: { pois: FairPOI[] }) => d)
+  .inputValidator((d: { pois: FairPOI[] }) => d)
   .handler(async ({ data }) => {
     const { requireAdmin } = await import("./auth.server");
     await requireAdmin();
