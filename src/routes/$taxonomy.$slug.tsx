@@ -320,7 +320,7 @@ function ArticleDetail() {
               <span className="text-muted-foreground">By </span>
               <a
                 href={`/authors/${authorSlug(article.author)}`}
-                className="font-bold hover:text-accent hover:underline"
+                className="-my-2 inline-block py-2 font-bold hover:text-accent hover:underline"
               >
                 {article.author}
               </a>
@@ -342,13 +342,13 @@ function ArticleDetail() {
                 id={article.id}
                 slug={article.slug}
                 title={article.title}
-                className="px-3 py-1.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
+                className="px-3 py-2.5 sm:py-1.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
               />
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(`${article.title} https://www.hunow.co.uk${articlePath(article)}`)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#1EBE5D] transition-colors rounded-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-2.5 sm:py-1.5 bg-[#25D366] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#1EBE5D] transition-colors rounded-sm"
                 title="Share via WhatsApp"
               >
                 WhatsApp
@@ -356,7 +356,7 @@ function ArticleDetail() {
               <ShareMenu
                 title={article.title}
                 text={article.excerpt}
-                className="px-3 py-1.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
+                className="px-3 py-2.5 sm:py-1.5 border border-foreground/30 text-[10px] font-bold uppercase tracking-widest hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
               />
             </div>
           </div>
@@ -397,7 +397,7 @@ function ArticleDetail() {
                 <a
                   key={tag}
                   href={`/tag/${encodeURIComponent(tag.toLowerCase())}`}
-                  className="px-3 py-1.5 border border-foreground/20 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+                  className="px-3 py-2.5 sm:py-1.5 border border-foreground/20 text-[10px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
                 >
                   #{tag}
                 </a>

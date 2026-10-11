@@ -32,7 +32,7 @@ function HullFairMapPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Link
               to="/hull-fair"
-              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-accent hover:underline transition-colors font-bold"
+              className="inline-flex items-center gap-1.5 py-2 text-xs font-mono uppercase tracking-wider text-accent hover:underline transition-colors font-bold"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Back to Hull Fair Guide</span>
@@ -98,13 +98,13 @@ function HullFairMapPage() {
             </h3>
             <ul className="text-xs text-foreground/80 space-y-2.5 leading-relaxed">
               <li>
-                <strong className="text-foreground">Central Walton Toilets:</strong> Dedicated male, female, accessible cubicles and baby-changing units.
+                <strong className="text-foreground">Central Walton Toilets:</strong> The main toilet block on the Walton Street side of the fairground.
               </li>
               <li>
                 <strong className="text-foreground">North Boundary Toilets:</strong> Located along the railway line edge near major thrill rides.
               </li>
               <li>
-                <strong className="text-foreground">First Aid & Welfare Hub:</strong> Operated by St John Ambulance and Humberside Police near the Walton Street centre post.
+                <strong className="text-foreground">First Aid & Lost Children:</strong> Ask any event steward or police officer on site and they will direct you.
               </li>
             </ul>
           </div>

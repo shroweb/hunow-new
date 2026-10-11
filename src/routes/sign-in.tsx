@@ -74,12 +74,12 @@ function SignIn() {
         <div className="mt-6 flex flex-col gap-2 text-sm text-muted-foreground">
           <p>
             No account yet?{" "}
-            <Link to="/sign-up" search={{ redirect }} className="font-bold underline">
+            <Link to="/sign-up" search={{ redirect }} className="inline-block py-2 font-bold underline">
               Create one
             </Link>
           </p>
           <p>
-            <Link to="/forgot-password" className="font-bold underline">
+            <Link to="/forgot-password" className="inline-block py-2 font-bold underline">
               Forgot your password?
             </Link>
           </p>
@@ -146,7 +146,7 @@ export function AuthField({
           <button
             type="button"
             onClick={() => setShow((s) => !s)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            className="absolute right-0 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
             aria-label={show ? "Hide password" : "Show password"}
           >
             {show ? (

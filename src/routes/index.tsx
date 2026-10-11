@@ -289,7 +289,7 @@ function Index() {
                       </span>
                       <Link
                         to={articlePath(primaryHeroArticle)}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold font-mono uppercase tracking-wider text-accent hover:text-white transition-colors"
+                        className="inline-flex items-center gap-1.5 py-2 text-xs font-bold font-mono uppercase tracking-wider text-accent hover:text-white transition-colors"
                       >
                         Read Full Story <ArrowRight className="size-3.5" />
                       </Link>
@@ -441,7 +441,7 @@ function Index() {
             </div>
             <Link
               to="/whats-on"
-              className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent"
+              className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent"
             >
               Full calendar →
             </Link>
@@ -651,7 +651,7 @@ function Index() {
           <div className="mt-8">
             <Link
               to="/whats-on"
-              className="inline-block text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent"
+              className="inline-block text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent"
             >
               View full calendar →
             </Link>
@@ -680,7 +680,7 @@ function Index() {
           </div>
           <Link
             to="/stories"
-            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent shrink-0"
+            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent shrink-0"
           >
             All stories →
           </Link>
@@ -903,7 +903,7 @@ function Index() {
           </div>
           <Link
             to="/places"
-            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent shrink-0"
+            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent shrink-0"
           >
             All places →
           </Link>
@@ -997,7 +997,7 @@ function Index() {
               </div>
               <Link
                 to="/places"
-                className="mt-6 text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 self-start hover:text-accent hover:border-accent"
+                className="mt-6 text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 self-start hover:text-accent hover:border-accent"
               >
                 All places →
               </Link>
@@ -1018,7 +1018,7 @@ function Index() {
             </div>
             <Link
               to="/areas"
-              className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent shrink-0"
+              className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent shrink-0"
             >
               All areas →
             </Link>

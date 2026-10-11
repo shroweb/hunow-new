@@ -362,7 +362,7 @@ const SECTION_CLASS =
 const BODY_CLASS = "text-[15px] md:text-base leading-relaxed text-foreground/75";
 const CARD_CLASS = "border border-border bg-card p-5 md:p-6";
 const LINK_CLASS =
-  "group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-foreground underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent transition-colors";
+  "group inline-flex items-center gap-2 py-2 text-xs font-bold uppercase tracking-widest text-foreground underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent transition-colors";
 
 const CLOSING_HOUR = 23;
 
@@ -628,7 +628,7 @@ function HullFairPage() {
 
           <div className="relative max-w-7xl mx-auto px-4 pt-10 pb-8 md:pt-20 md:pb-12">
             <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-accent mb-5">
-              <Link to="/" className="hover:underline">
+              <Link to="/" className="-my-2 inline-block py-2 hover:underline">
                 Home
               </Link>
               <span className="text-white/40">/</span>

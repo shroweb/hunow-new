@@ -455,7 +455,7 @@ export function InteractiveFairMap({
               <button
                 type="button"
                 onClick={() => setViewMode("map")}
-                className={`flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                className={`flex items-center gap-1 px-3 py-2 sm:px-2.5 sm:py-1 text-xs font-semibold rounded-md transition-colors ${
                   viewMode === "map"
                     ? "bg-amber-500 text-zinc-950 shadow-sm"
                     : "text-zinc-400 hover:text-white"
@@ -467,7 +467,7 @@ export function InteractiveFairMap({
               <button
                 type="button"
                 onClick={() => setViewMode("list")}
-                className={`flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                className={`flex items-center gap-1 px-3 py-2 sm:px-2.5 sm:py-1 text-xs font-semibold rounded-md transition-colors ${
                   viewMode === "list"
                     ? "bg-amber-500 text-zinc-950 shadow-sm"
                     : "text-zinc-400 hover:text-white"
@@ -483,7 +483,7 @@ export function InteractiveFairMap({
               type="button"
               onClick={() => setShowLegend((v) => !v)}
               title={showLegend ? "Hide Legend" : "Show Legend"}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-2 sm:px-2.5 sm:py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
                 showLegend
                   ? "bg-amber-400 text-zinc-950 border-amber-400 font-bold"
                   : "bg-zinc-900 hover:bg-zinc-850 border-zinc-800 text-zinc-300"
@@ -565,7 +565,7 @@ export function InteractiveFairMap({
                       }
                     : {}
                 }
-                className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-full font-bold transition-all text-[11px] md:text-xs shrink-0 border ${
+                className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 sm:px-3 sm:py-1.5 rounded-full font-bold transition-all text-xs shrink-0 border ${
                   isActive
                     ? "scale-102 border-white/60 shadow-md"
                     : "bg-zinc-900/90 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border-zinc-800/80"
@@ -619,7 +619,7 @@ export function InteractiveFairMap({
               type="button"
               onClick={handleZoomIn}
               title="Zoom In"
-              className="flex items-center justify-center h-9 w-9 rounded-xl bg-zinc-950/90 hover:bg-zinc-900 text-white border border-zinc-800 shadow-md active:scale-95 transition-all"
+              className="flex items-center justify-center h-11 w-11 sm:h-9 sm:w-9 rounded-xl bg-zinc-950/90 hover:bg-zinc-900 text-white border border-zinc-800 shadow-md active:scale-95 transition-all"
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -627,7 +627,7 @@ export function InteractiveFairMap({
               type="button"
               onClick={handleZoomOut}
               title="Zoom Out"
-              className="flex items-center justify-center h-9 w-9 rounded-xl bg-zinc-950/90 hover:bg-zinc-900 text-white border border-zinc-800 shadow-md active:scale-95 transition-all"
+              className="flex items-center justify-center h-11 w-11 sm:h-9 sm:w-9 rounded-xl bg-zinc-950/90 hover:bg-zinc-900 text-white border border-zinc-800 shadow-md active:scale-95 transition-all"
             >
               <Minus className="h-4 w-4" />
             </button>
@@ -646,7 +646,7 @@ export function InteractiveFairMap({
                 <button
                   type="button"
                   onClick={() => setShowLegend(false)}
-                  className="text-zinc-400 hover:text-white p-0.5 rounded"
+                  className="-m-2 p-2 text-zinc-400 hover:text-white rounded"
                   title="Close legend"
                 >
                   <X className="h-3.5 w-3.5" />

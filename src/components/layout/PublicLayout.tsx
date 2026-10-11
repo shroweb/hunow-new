@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { BottomNav } from "./BottomNav";
 import { PullToRefresh } from "./PullToRefresh";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode, useRef } from "react";
 import { NAV_SECTIONS } from "@/lib/nav";
 import { findTaxonomy, sectionTaxonomySlug, sectionHref } from "@/lib/taxonomy";
 import { getCurrentUser } from "@/lib/auth.functions";
@@ -28,6 +28,16 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState<string | null>(null);
   const [cmdOpen, setCmdOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // While the phone menu is open the page behind it should not scroll
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileOpen]);
   const [accountLabel, setAccountLabel] = useState("Sign in");
   const [ticker, setTicker] = useState<{ enabled: boolean; text: string }>({
     enabled: true,
@@ -325,12 +335,12 @@ export function PublicLayout({ children }: { children: ReactNode }) {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-foreground/10 bg-background max-h-[70vh] overflow-y-auto">
-            <div className="px-4 py-4 space-y-4">
+          <div className="lg:hidden border-t border-foreground/10 bg-background h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain pb-28">
+            <div className="px-4 py-3 space-y-2">
               <Link
                 to="/"
                 onClick={() => setMobileOpen(false)}
-                className="block text-xs font-bold uppercase tracking-widest"
+                className="block py-2.5 text-sm font-bold uppercase tracking-widest"
               >
                 Home
               </Link>
@@ -339,11 +349,11 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                   <a
                     href={sectionHref(s.slug)}
                     onClick={() => setMobileOpen(false)}
-                    className="block text-xs font-bold uppercase tracking-widest text-accent mb-2"
+                    className="block py-2 text-sm font-bold uppercase tracking-widest text-accent mb-1"
                   >
                     {s.label}
                   </a>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 pl-2">
+                  <div className="grid grid-cols-2 gap-x-4 pl-2">
                     {s.subs.map((sub) => {
                       const customPath = FESTIVAL_PATHS[sub.slug];
                       if (customPath) {
@@ -352,7 +362,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                             key={sub.slug}
                             to={customPath}
                             onClick={() => setMobileOpen(false)}
-                            className="text-sm py-1 font-bold text-accent"
+                            className="text-[15px] py-2.5 font-bold text-accent"
                           >
                             {sub.label}
                           </Link>
@@ -369,7 +379,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                               : { section: s.slug, sub: sub.slug }
                           }
                           onClick={() => setMobileOpen(false)}
-                          className="text-sm py-1"
+                          className="text-[15px] py-2.5"
                         >
                           {sub.label}
                         </Link>
@@ -382,21 +392,21 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 to="/$taxonomy"
                 params={{ taxonomy: "guides" }}
                 onClick={() => setMobileOpen(false)}
-                className="block text-xs font-bold uppercase tracking-widest border-t border-foreground/10 pt-3"
+                className="block py-2.5 text-sm font-bold uppercase tracking-widest border-t border-foreground/10 pt-4"
               >
                 Guides
               </Link>
               <Link
                 to="/account"
                 onClick={() => setMobileOpen(false)}
-                className="block text-xs font-bold uppercase tracking-widest"
+                className="block py-2.5 text-sm font-bold uppercase tracking-widest"
               >
                 {accountLabel}
               </Link>
               <Link
                 to="/saved"
                 onClick={() => setMobileOpen(false)}
-                className="block text-xs font-bold uppercase tracking-widest"
+                className="block py-2.5 text-sm font-bold uppercase tracking-widest"
               >
                 ★ Saved
               </Link>
@@ -405,7 +415,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                   setMobileOpen(false);
                   setCmdOpen(true);
                 }}
-                className="block text-xs font-bold uppercase tracking-widest text-left"
+                className="block w-full py-2.5 text-sm font-bold uppercase tracking-widest text-left"
               >
                 Search…
               </button>
@@ -709,9 +719,17 @@ function Footer() {
 /** Appears after a screen or so of scrolling; sits above the mobile tab bar */
 function BackToTop() {
   const [visible, setVisible] = useState(false);
+  const visibleRef = useRef(false);
+  visibleRef.current = visible;
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 900);
-    onScroll();
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      // On phones the button would sit on top of content, so it only appears when scrolling back up
+      const isPhone = window.innerWidth < 768;
+      setVisible(y > 900 && (!isPhone || y < lastY - 4 || (y <= lastY && visibleRef.current)));
+      lastY = y;
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
