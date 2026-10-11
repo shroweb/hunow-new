@@ -202,3 +202,32 @@ export const sendNewsletterCampaign = createServerFn({ method: "POST" })
     });
     return { ok: true, id, recipients: recipients.length };
   });
+
+const importSubscriberItemSchema = z.object({
+  email: z.string().min(1),
+  segments: z.array(z.string()).optional(),
+  createdAt: z.string().optional().nullable(),
+});
+
+const importSubscribersSchema = z.object({
+  subscribers: z.array(importSubscriberItemSchema),
+  defaultSegments: z.array(z.enum(["events", "offers", "businesses"])).optional().default([]),
+});
+
+export const importNewsletterSubscribersFn = createServerFn({ method: "POST" })
+  .inputValidator(importSubscribersSchema)
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import("./auth.server");
+    const { importNewsletterSubscribers, recordAnalyticsEvent } = await import("./db.server");
+    await requireAdmin();
+
+    const result = await importNewsletterSubscribers(data.subscribers, data.defaultSegments);
+
+    await recordAnalyticsEvent({
+      eventType: "newsletter_subscribers_imported",
+      path: "/admin/subscribers",
+      label: `imported:${result.inserted}:updated:${result.updated}`,
+    });
+
+    return result;
+  });

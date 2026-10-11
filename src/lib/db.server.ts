@@ -1796,6 +1796,136 @@ export async function addNewsletterSubscriber(
   );
 }
 
+export type ImportSubscriberInput = {
+  email: string;
+  segments?: string[];
+  createdAt?: string | null;
+};
+
+export async function importNewsletterSubscribers(
+  subscribers: ImportSubscriberInput[],
+  defaultSegments: ("events" | "offers" | "businesses")[] = [],
+): Promise<{
+  total: number;
+  inserted: number;
+  updated: number;
+  errors: string[];
+}> {
+  await ensureSchema();
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const validMap = new Map<string, { email: string; segments: string[]; createdAt: string }>();
+  const errors: string[] = [];
+
+  for (const item of subscribers) {
+    const normalised = item.email?.trim().toLowerCase();
+    if (!normalised || !emailRegex.test(normalised)) {
+      errors.push(`Invalid email format: "${item.email}"`);
+      continue;
+    }
+
+    let createdAt = new Date().toISOString();
+    if (item.createdAt) {
+      const parsed = new Date(item.createdAt);
+      if (!isNaN(parsed.getTime())) {
+        createdAt = parsed.toISOString();
+      }
+    }
+
+    const segments = Array.from(
+      new Set(["all", ...defaultSegments, ...(item.segments || [])]),
+    );
+
+    const existing = validMap.get(normalised);
+    if (existing) {
+      const mergedSegments = Array.from(new Set([...existing.segments, ...segments]));
+      const earlierDate =
+        new Date(existing.createdAt) < new Date(createdAt) ? existing.createdAt : createdAt;
+      validMap.set(normalised, {
+        email: normalised,
+        segments: mergedSegments,
+        createdAt: earlierDate,
+      });
+    } else {
+      validMap.set(normalised, {
+        email: normalised,
+        segments,
+        createdAt,
+      });
+    }
+  }
+
+  const validItems = Array.from(validMap.values());
+  if (validItems.length === 0) {
+    return { total: 0, inserted: 0, updated: 0, errors };
+  }
+
+  const pool = getPool();
+  const client = await pool.connect();
+  let inserted = 0;
+  let updated = 0;
+
+  try {
+    await client.query("begin");
+
+    const existingResult = await client.query<{ email: string }>(
+      "select email from newsletter_subscribers where email = any($1)",
+      [validItems.map((v) => v.email)],
+    );
+    const existingEmails = new Set(existingResult.rows.map((r) => r.email));
+
+    for (const item of validItems) {
+      const isExisting = existingEmails.has(item.email);
+      const token = await makeUniqueUnsubscribeToken();
+
+      await client.query(
+        `insert into newsletter_subscribers (email, unsubscribe_token, segments, created_at)
+         values ($1, $2, $3::jsonb, $4::timestamptz)
+         on conflict (email) do update set
+           unsubscribe_token = coalesce(newsletter_subscribers.unsubscribe_token, excluded.unsubscribe_token),
+           segments = (
+             select jsonb_agg(distinct elem)
+             from jsonb_array_elements_text(coalesce(newsletter_subscribers.segments, '["all"]'::jsonb) || excluded.segments) as elem
+           ),
+           created_at = case
+             when newsletter_subscribers.created_at is null then excluded.created_at
+             when excluded.created_at is null then newsletter_subscribers.created_at
+             else least(newsletter_subscribers.created_at, excluded.created_at)
+           end`,
+        [item.email, token, JSON.stringify(item.segments), item.createdAt],
+      );
+
+      await client.query(
+        "insert into app_records (collection, id, data) values ($1, $2, $3) on conflict do nothing",
+        ["newsletter", item.email, JSON.stringify({ email: item.email })],
+      );
+
+      if (isExisting) {
+        updated++;
+      } else {
+        inserted++;
+      }
+    }
+
+    await client.query("commit");
+
+    const { cacheInvalidate } = await import("./cache.server");
+    cacheInvalidate("db:store");
+
+    return {
+      total: validItems.length,
+      inserted,
+      updated,
+      errors,
+    };
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export async function addPublicSubmission(submission: Submission) {
   await ensureSchema();
   await getPool().query("insert into submissions (id, data) values ($1, $2)", [
