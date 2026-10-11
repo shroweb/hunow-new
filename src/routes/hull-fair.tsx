@@ -10,6 +10,11 @@ import { fetchEventBySlug } from "@/lib/content-read.functions";
 import { img } from "@/data/seed";
 import {
   ArrowRight,
+  ArrowUp,
+  Check,
+  Copy,
+  Navigation,
+  Search,
   Bus,
   CalendarDays,
   Car,
@@ -269,33 +274,84 @@ const SECTION_NAV: { id: string; label: string; icon: LucideIcon }[] = [
   { id: "faqs", label: "FAQs", icon: HelpCircle },
 ];
 
-const OPENING_TIMES = [
+const OPENING_TIMES: {
+  day: string;
+  iso: string;
+  openHour: number | null;
+  open: string;
+  close: string;
+  note: string;
+  closed?: boolean;
+}[] = [
   {
     day: "Friday 9 Oct",
+    iso: "2026-10-09",
+    openHour: 16,
     open: "4:00 PM",
     close: "11:00 PM",
     note: "Official Opening Bell & Carnival",
   },
   {
     day: "Saturday 10 Oct",
+    iso: "2026-10-10",
+    openHour: 12,
     open: "12:00 PM (Noon)",
     close: "11:00 PM",
     note: "Peak Weekend Crowds",
   },
   {
     day: "Sunday 11 Oct",
+    iso: "2026-10-11",
+    openHour: null,
     open: "CLOSED",
     close: "CLOSED",
     note: "No Sunday Trading by Charter",
     closed: true,
   },
-  { day: "Monday 12 Oct", open: "2:00 PM", close: "11:00 PM", note: "Family & Toddler Afternoon" },
-  { day: "Tuesday 13 Oct", open: "2:00 PM", close: "11:00 PM", note: "Quieter Afternoon Queues" },
-  { day: "Wednesday 14 Oct", open: "2:00 PM", close: "11:00 PM", note: "Midweek Thrills" },
-  { day: "Thursday 15 Oct", open: "2:00 PM", close: "11:00 PM", note: "Pre-Weekend Rush" },
-  { day: "Friday 16 Oct", open: "2:00 PM", close: "11:00 PM", note: "Electric Big Friday Night" },
+  {
+    day: "Monday 12 Oct",
+    iso: "2026-10-12",
+    openHour: 14,
+    open: "2:00 PM",
+    close: "11:00 PM",
+    note: "Family & Toddler Afternoon",
+  },
+  {
+    day: "Tuesday 13 Oct",
+    iso: "2026-10-13",
+    openHour: 14,
+    open: "2:00 PM",
+    close: "11:00 PM",
+    note: "Quieter Afternoon Queues",
+  },
+  {
+    day: "Wednesday 14 Oct",
+    iso: "2026-10-14",
+    openHour: 14,
+    open: "2:00 PM",
+    close: "11:00 PM",
+    note: "Midweek Thrills",
+  },
+  {
+    day: "Thursday 15 Oct",
+    iso: "2026-10-15",
+    openHour: 14,
+    open: "2:00 PM",
+    close: "11:00 PM",
+    note: "Pre-Weekend Rush",
+  },
+  {
+    day: "Friday 16 Oct",
+    iso: "2026-10-16",
+    openHour: 14,
+    open: "2:00 PM",
+    close: "11:00 PM",
+    note: "Electric Big Friday Night",
+  },
   {
     day: "Saturday 17 Oct",
+    iso: "2026-10-17",
+    openHour: 12,
     open: "12:00 PM (Noon)",
     close: "11:00 PM",
     note: "Grand Finale Saturday",
@@ -308,6 +364,84 @@ const BODY_CLASS = "text-[15px] md:text-base leading-relaxed text-foreground/75"
 const CARD_CLASS = "border border-border bg-card p-5 md:p-6";
 const LINK_CLASS =
   "group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-foreground underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent transition-colors";
+
+const CLOSING_HOUR = 23;
+
+/** Current date and hour in Hull, regardless of the visitor's own timezone */
+function nowInHull() {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date());
+  const get = (type: string) => parts.find((p) => p.type === type)?.value || "";
+  return { iso: `${get("year")}-${get("month")}-${get("day")}`, hour: Number(get("hour")) };
+}
+
+type FairStatus = { label: string; tone: "open" | "soon" | "closed"; todayIso: string };
+
+function getFairStatus(): FairStatus {
+  const { iso, hour } = nowInHull();
+  const first = OPENING_TIMES[0];
+  const last = OPENING_TIMES[OPENING_TIMES.length - 1];
+  if (iso < first.iso) {
+    return { label: `Opens ${first.day} at ${first.open}`, tone: "soon", todayIso: iso };
+  }
+  if (iso > last.iso || (iso === last.iso && hour >= CLOSING_HOUR)) {
+    return { label: "Hull Fair 2026 has finished", tone: "closed", todayIso: iso };
+  }
+  const index = OPENING_TIMES.findIndex((d) => d.iso === iso);
+  const today = OPENING_TIMES[index];
+  const next = OPENING_TIMES.slice(index + 1).find((d) => d.openHour !== null);
+  if (today.openHour !== null && hour >= today.openHour && hour < CLOSING_HOUR) {
+    return { label: `Open now · until ${today.close}`, tone: "open", todayIso: iso };
+  }
+  if (today.openHour !== null && hour < today.openHour) {
+    return { label: `Opens today at ${today.open}`, tone: "soon", todayIso: iso };
+  }
+  return {
+    label: next ? `Closed now · opens ${next.day} at ${next.open}` : "Hull Fair 2026 has finished",
+    tone: "closed",
+    todayIso: iso,
+  };
+}
+
+function PostcodeActions({ postcode }: { postcode: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(postcode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // Clipboard unavailable: the postcode is still visible to type in
+    }
+  };
+  return (
+    <div className="mt-5 flex flex-wrap gap-2">
+      <button
+        type="button"
+        onClick={copy}
+        className="inline-flex items-center gap-1.5 border border-foreground px-3 py-2 text-[11px] font-bold uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors"
+      >
+        {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+        {copied ? "Copied" : `Copy ${postcode}`}
+      </button>
+      <a
+        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(postcode)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 bg-foreground text-background px-3 py-2 text-[11px] font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground transition-colors"
+      >
+        <Navigation className="h-3.5 w-3.5" />
+        Directions
+      </a>
+    </div>
+  );
+}
 
 function SectionHeader({
   index,
@@ -349,6 +483,9 @@ function HullFairPage() {
   const [submitted, setSubmitted] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
   const [activeSection, setActiveSection] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState<FairStatus | null>(null);
+  const [faqQuery, setFaqQuery] = useState("");
   const heroImage = event?.featuredImage ? img(event.featuredImage) : HULL_FAIR_HERO_IMAGE;
   const eventTitle = event?.title || "Hull Fair 2026";
   const eventDescription =
@@ -388,11 +525,31 @@ function HullFairPage() {
         if (el.getBoundingClientRect().top <= line) current = el.id;
       }
       setActiveSection(current);
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [headerHeight]);
+
+  // Live open/closed status, worked out in the browser so it is never stale from the server render
+  useEffect(() => {
+    setStatus(getFairStatus());
+    const timer = setInterval(() => setStatus(getFairStatus()), 60_000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Smooth in-page jumps, unless the visitor prefers reduced motion
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const root = document.documentElement;
+    const previous = root.style.scrollBehavior;
+    root.style.scrollBehavior = "smooth";
+    return () => {
+      root.style.scrollBehavior = previous;
+    };
+  }, []);
 
   // Keep the active pill in view on small screens
   useEffect(() => {
@@ -417,13 +574,43 @@ function HullFairPage() {
     }
   };
 
-  const quickFacts: { label: string; value: ReactNode; icon: LucideIcon; tone?: string }[] = [
-    { label: "Dates", value: dateSummary, icon: CalendarDays },
-    { label: "Hours", value: "Times Vary · Until 11pm", icon: Clock },
-    { label: "Sunday Rule", value: "Closed Sunday 11th", icon: TriangleAlert, tone: "text-accent" },
-    { label: "Admission", value: "Free Entry", icon: Ticket, tone: "text-emerald-400" },
-    { label: "Location", value: event?.address || "Walton St, HU3 6JU", icon: MapPin },
-    { label: "Best Parking", value: "Priory Park & Ride", icon: ParkingCircle },
+  const faqTerm = faqQuery.trim().toLowerCase();
+  const faqVisible = (f: { question: string; answer: string }) =>
+    !faqTerm ||
+    f.question.toLowerCase().includes(faqTerm) ||
+    f.answer.toLowerCase().includes(faqTerm);
+  const faqMatches = HULL_FAIR_FAQS.filter(faqVisible).length;
+
+  const quickFacts: {
+    label: string;
+    value: ReactNode;
+    icon: LucideIcon;
+    href: string;
+    tone?: string;
+  }[] = [
+    { label: "Dates", href: "#dates", value: dateSummary, icon: CalendarDays },
+    { label: "Hours", href: "#dates", value: "Times Vary · Until 11pm", icon: Clock },
+    {
+      label: "Sunday Rule",
+      href: "#dates",
+      value: "Closed Sunday 11th",
+      icon: TriangleAlert,
+      tone: "text-accent",
+    },
+    {
+      label: "Admission",
+      href: "#rides",
+      value: "Free Entry",
+      icon: Ticket,
+      tone: "text-emerald-400",
+    },
+    {
+      label: "Location",
+      href: "#map",
+      value: event?.address || "Walton St, HU3 6JU",
+      icon: MapPin,
+    },
+    { label: "Best Parking", href: "#parking", value: "Priory Park & Ride", icon: ParkingCircle },
   ];
 
   return (
@@ -465,6 +652,29 @@ function HullFairPage() {
               {eventDescription}
             </p>
 
+            {status && (
+              <a
+                href="#dates"
+                className="mb-6 inline-flex items-center gap-2.5 border border-white/25 bg-black/50 backdrop-blur-sm px-3.5 py-2 text-sm font-bold text-white hover:bg-white/10 transition-colors"
+              >
+                <span className="relative flex h-2.5 w-2.5">
+                  {status.tone === "open" && (
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  )}
+                  <span
+                    className={`relative inline-flex h-2.5 w-2.5 rounded-full ${
+                      status.tone === "open"
+                        ? "bg-emerald-400"
+                        : status.tone === "soon"
+                          ? "bg-accent"
+                          : "bg-rose-400"
+                    }`}
+                  />
+                </span>
+                {status.label}
+              </a>
+            )}
+
             <div className="flex flex-wrap items-center gap-3 mb-10">
               <a
                 href="#map"
@@ -484,24 +694,25 @@ function HullFairPage() {
             </div>
 
             {/* Quick Facts Grid */}
-            <dl className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border-t border-l border-white/15">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border-t border-l border-white/15">
               {quickFacts.map((fact) => (
-                <div
+                <a
                   key={fact.label}
-                  className="flex flex-col gap-1.5 border-r border-b border-white/15 bg-black/40 backdrop-blur-sm p-4"
+                  href={fact.href}
+                  className="group flex flex-col gap-1.5 border-r border-b border-white/15 bg-black/40 backdrop-blur-sm p-4 hover:bg-white/10 focus-visible:bg-white/10 transition-colors"
                 >
-                  <dt className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-white/60">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-white/60">
                     <fact.icon className="h-3.5 w-3.5 text-accent" />
                     {fact.label}
-                  </dt>
-                  <dd
+                  </div>
+                  <div
                     className={`font-bold text-sm md:text-[15px] leading-snug ${fact.tone || "text-white"}`}
                   >
                     {fact.value}
-                  </dd>
-                </div>
+                  </div>
+                </a>
               ))}
-            </dl>
+            </div>
           </div>
         </div>
 
@@ -537,6 +748,12 @@ function HullFairPage() {
               })}
             </div>
             <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-background to-transparent md:hidden" />
+          </div>
+          <div className="absolute -bottom-[2px] left-0 right-0 h-[2px]" aria-hidden="true">
+            <div
+              className="h-full origin-left bg-accent transition-transform duration-150"
+              style={{ transform: `scaleX(${progress})` }}
+            />
           </div>
         </nav>
 
@@ -630,10 +847,15 @@ function HullFairPage() {
                       row.closed
                         ? "bg-rose-500/10 text-rose-700 dark:text-rose-300 font-bold"
                         : "sm:hover:bg-foreground/[0.03]"
-                    }`}
+                    } ${status?.todayIso === row.iso ? "shadow-[inset_4px_0_0_var(--accent)]" : ""}`}
                   >
                     <td className="col-span-2 font-bold text-base sm:text-sm sm:px-4 sm:py-3.5">
                       {row.day}
+                      {status?.todayIso === row.iso && (
+                        <span className="ml-2 inline-block bg-accent px-1.5 py-0.5 align-middle text-[10px] font-mono font-bold uppercase tracking-wider text-accent-foreground">
+                          Today
+                        </span>
+                      )}
                     </td>
                     <td
                       data-label="Opens"
@@ -810,6 +1032,7 @@ function HullFairPage() {
                       <strong>Postcode:</strong> HU4 7DY
                     </li>
                   </BulletList>
+                  <PostcodeActions postcode="HU4 7DY" />
                 </div>
 
                 <div className={CARD_CLASS}>
@@ -834,6 +1057,7 @@ function HullFairPage() {
                       <strong>Postcode:</strong> HU13 0JG
                     </li>
                   </BulletList>
+                  <PostcodeActions postcode="HU13 0JG" />
                 </div>
               </div>
 
@@ -1123,9 +1347,31 @@ function HullFairPage() {
               title="Frequently Asked Questions"
             />
 
+            <label className="relative mb-4 block">
+              <span className="sr-only">Search the questions</span>
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/50" />
+              <input
+                type="search"
+                value={faqQuery}
+                onChange={(e) => setFaqQuery(e.target.value)}
+                placeholder="Search the questions — try “parking”, “dogs” or “Sunday”"
+                className="w-full border border-border bg-card py-3.5 pl-11 pr-4 text-[15px] placeholder:text-foreground/45 focus:border-foreground focus:outline-none"
+              />
+            </label>
+
+            {faqMatches === 0 && (
+              <p className="mb-4 text-sm text-foreground/70">
+                No questions match that search. Try a different word.
+              </p>
+            )}
+
             <div className="border border-border bg-card divide-y divide-border">
               {HULL_FAIR_FAQS.map((f, i) => (
-                <details key={i} className="group" open={i === 0}>
+                <details
+                  key={i}
+                  className={`group ${faqVisible(f) ? "" : "hidden"}`}
+                  open={faqTerm ? faqVisible(f) : i === 0}
+                >
                   <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 md:px-6 md:py-5 font-bold text-base md:text-lg text-foreground hover:bg-foreground/[0.03] transition-colors [&::-webkit-details-marker]:hidden">
                     <span>{f.question}</span>
                     <ChevronDown className="h-5 w-5 shrink-0 mt-0.5 text-foreground/50 transition-transform duration-200 group-open:rotate-180 group-open:text-accent" />
@@ -1137,6 +1383,57 @@ function HullFairPage() {
               ))}
             </div>
           </section>
+
+          {/* Keep planning */}
+          <nav aria-label="More Hull Fair guides" className={SECTION_CLASS}>
+            <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-widest text-foreground/60 mb-5">
+              <span className="h-2 w-2 bg-accent" />
+              Keep planning
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-px border border-border bg-border">
+              <Link
+                to="/hull-fair-map"
+                className="group flex items-center justify-between gap-4 bg-card p-5 hover:bg-foreground hover:text-background transition-colors"
+              >
+                <span className="flex items-center gap-3 font-display text-xl uppercase leading-tight">
+                  <MapIcon className="h-5 w-5 shrink-0 text-accent" />
+                  Hull Fair 2026 Interactive Map
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                to="/guides/guide-to-parking-at-hull-fair"
+                className="group flex items-center justify-between gap-4 bg-card p-5 hover:bg-foreground hover:text-background transition-colors"
+              >
+                <span className="flex items-center gap-3 font-display text-xl uppercase leading-tight">
+                  <ParkingCircle className="h-5 w-5 shrink-0 text-accent" />
+                  Guide to Parking at Hull Fair
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                to="/guides/hull-fair-ride-prices-2026"
+                className="group flex items-center justify-between gap-4 bg-card p-5 hover:bg-foreground hover:text-background transition-colors"
+              >
+                <span className="flex items-center gap-3 font-display text-xl uppercase leading-tight">
+                  <Ticket className="h-5 w-5 shrink-0 text-accent" />
+                  Hull Fair Ride Prices & Budgeting Guide
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                to="/$taxonomy/$slug"
+                params={{ taxonomy: "travel", slug: "hull-fair-buses-2026" }}
+                className="group flex items-center justify-between gap-4 bg-card p-5 hover:bg-foreground hover:text-background transition-colors"
+              >
+                <span className="flex items-center gap-3 font-display text-xl uppercase leading-tight">
+                  <Bus className="h-5 w-5 shrink-0 text-accent" />
+                  Hull Fair Bus Times & Shuttles
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+          </nav>
 
           {/* Newsletter Signup */}
           <section className="relative overflow-hidden bg-foreground text-background p-8 md:p-12">
@@ -1182,6 +1479,17 @@ function HullFairPage() {
             </div>
           </section>
         </div>
+
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0 })}
+          aria-label="Back to top"
+          className={`fixed right-4 bottom-24 md:bottom-6 z-40 flex h-11 w-11 items-center justify-center border-2 border-foreground bg-background text-foreground shadow-lg transition-all duration-200 hover:bg-foreground hover:text-background ${
+            progress > 0.12 ? "opacity-100" : "pointer-events-none translate-y-2 opacity-0"
+          }`}
+        >
+          <ArrowUp className="h-5 w-5" />
+        </button>
       </div>
     </PublicLayout>
   );

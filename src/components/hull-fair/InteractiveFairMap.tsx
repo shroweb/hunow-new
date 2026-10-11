@@ -18,6 +18,7 @@ import {
   Maximize2,
   Minimize2,
   Share2,
+  Hand,
   Sparkles,
   Info,
   Check,
@@ -57,6 +58,9 @@ export function InteractiveFairMap({
   const [copiedLink, setCopiedLink] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(17.5);
+  // Embedded on a touch device: leave one-finger swipes to the page until the visitor asks to move the map
+  const [touchLocked, setTouchLocked] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapWrapperRef = useRef<HTMLDivElement>(null);
@@ -205,6 +209,26 @@ export function InteractiveFairMap({
       }
     };
   }, []);
+
+  // Embedded maps on touch screens start "page scroll first"
+  useEffect(() => {
+    if (compact && window.matchMedia?.("(pointer: coarse)").matches) {
+      setIsTouchDevice(true);
+      setTouchLocked(true);
+    }
+  }, [compact]);
+
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !isMapReady) return;
+    if (touchLocked && !isFullscreen) {
+      map.dragging.disable();
+      map.touchZoom.disable();
+    } else {
+      map.dragging.enable();
+      map.touchZoom.enable();
+    }
+  }, [touchLocked, isFullscreen, isMapReady]);
 
   // Sync markers
   useEffect(() => {
@@ -573,6 +597,21 @@ export function InteractiveFairMap({
           }`}
         >
           <div ref={mapContainerRef} className="relative z-0 w-full h-full bg-[#e9e6df]" />
+
+          {compact && !isFullscreen && (touchLocked || isTouchDevice) && (
+            <button
+              type="button"
+              onClick={() => setTouchLocked((v) => !v)}
+              className={`absolute top-3 left-3 z-20 flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] font-bold shadow-lg border transition-colors ${
+                touchLocked
+                  ? "bg-amber-400 text-zinc-950 border-amber-300"
+                  : "bg-zinc-950/90 text-white border-zinc-800"
+              }`}
+            >
+              <Hand className="h-3.5 w-3.5" />
+              {touchLocked ? "Tap to move the map" : "Done · scroll page"}
+            </button>
+          )}
 
           {/* Dedicated Zoom Controls */}
           <div className="absolute top-3 right-3 z-20 flex flex-col gap-1.5 shadow-lg">
