@@ -9,6 +9,8 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    // Start loading a page as soon as a link is hovered or touched, so navigation feels instant
+    defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
   });
 

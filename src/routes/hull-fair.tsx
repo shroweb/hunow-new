@@ -10,7 +10,6 @@ import { fetchEventBySlug } from "@/lib/content-read.functions";
 import { img } from "@/data/seed";
 import {
   ArrowRight,
-  ArrowUp,
   Check,
   Copy,
   Navigation,
@@ -1479,17 +1478,6 @@ function HullFairPage() {
             </div>
           </section>
         </div>
-
-        <button
-          type="button"
-          onClick={() => window.scrollTo({ top: 0 })}
-          aria-label="Back to top"
-          className={`fixed right-4 bottom-24 md:bottom-6 z-40 flex h-11 w-11 items-center justify-center border-2 border-foreground bg-background text-foreground shadow-lg transition-all duration-200 hover:bg-foreground hover:text-background ${
-            progress > 0.12 ? "opacity-100" : "pointer-events-none translate-y-2 opacity-0"
-          }`}
-        >
-          <ArrowUp className="h-5 w-5" />
-        </button>
       </div>
     </PublicLayout>
   );

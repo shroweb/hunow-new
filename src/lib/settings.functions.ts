@@ -21,3 +21,17 @@ export const saveSetting = createServerFn({ method: "POST" })
     await setSiteSetting(data.key, data.value);
     return { ok: true };
   });
+
+let settingsRequest: ReturnType<typeof getSettings> | undefined;
+
+/** Browser-side: share one settings request between the header and footer */
+export function getSettingsOnce() {
+  if (typeof window === "undefined") return getSettings();
+  if (!settingsRequest) {
+    settingsRequest = getSettings().catch((error) => {
+      settingsRequest = undefined;
+      throw error;
+    });
+  }
+  return settingsRequest;
+}

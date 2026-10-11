@@ -7,6 +7,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { NotFoundPage } from "@/components/NotFoundPage";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard, ListingCard } from "@/components/cards";
 import {
@@ -98,16 +99,7 @@ export const Route = createFileRoute("/$taxonomy")({
     });
   },
   component: TaxonomyPage,
-  notFoundComponent: () => (
-    <PublicLayout>
-      <div className="max-w-3xl mx-auto px-4 py-32 text-center">
-        <h1 className="font-display text-6xl mb-4">PAGE NOT FOUND</h1>
-        <Link to="/" className="underline">
-          Back to Home
-        </Link>
-      </div>
-    </PublicLayout>
-  ),
+  notFoundComponent: () => <NotFoundPage title="Page not found" />,
 });
 
 function TaxonomyPage() {

@@ -6,7 +6,7 @@ import { NAV_SECTIONS } from "@/lib/nav";
 import { findTaxonomy, sectionTaxonomySlug, sectionHref } from "@/lib/taxonomy";
 import { getCurrentUser } from "@/lib/auth.functions";
 import { subscribeNewsletter } from "@/lib/public.functions";
-import { getSettings } from "@/lib/settings.functions";
+import { getSettingsOnce } from "@/lib/settings.functions";
 import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 import { CommandPalette } from "@/components/CommandPalette";
 import { PwaEnhancements } from "@/components/PwaEnhancements";
@@ -36,7 +36,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    getSettings()
+    getSettingsOnce()
       .then((s) => {
         if (s) {
           setTicker({
@@ -421,6 +421,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       <BottomNav />
       <PullToRefresh />
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+      <BackToTop />
       <PwaEnhancements />
     </div>
   );
@@ -439,7 +440,7 @@ function Footer() {
   const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    getSettings()
+    getSettingsOnce()
       .then((s) => setSocialLinks(s))
       .catch(() => {});
   }, []);
@@ -471,15 +472,15 @@ function Footer() {
             <div className="font-display text-6xl md:text-8xl tracking-wide leading-none mb-4">
               HU NOW
             </div>
-            <p className="text-white/40 text-sm max-w-md leading-relaxed">
+            <p className="text-white/70 text-sm max-w-md leading-relaxed">
               An independent guide to Hull — events, food, culture and the city's best independent
               businesses. Made by people who love the city.
             </p>
           </div>
-          <div className="text-[10px] font-mono uppercase tracking-widest text-white/20 leading-loose shrink-0 text-right">
+          <div className="text-[10px] font-mono uppercase tracking-widest text-white/55 leading-loose shrink-0 text-right">
             <div>Hull, East Yorkshire</div>
             <div>England, HU1</div>
-            <div className="mt-1 text-white/10">Independent since 2024</div>
+            <div className="mt-1 text-white/45">Independent since 2024</div>
           </div>
         </div>
       </div>
@@ -487,7 +488,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 pt-12 pb-12 grid grid-cols-2 md:grid-cols-4 gap-10 border-b border-white/10">
         {/* Explore */}
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/70 mb-5">
             Explore
           </div>
           <ul className="space-y-3 text-sm font-medium text-white/70">
@@ -520,7 +521,7 @@ function Footer() {
 
         {/* Categories */}
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/70 mb-5">
             Food & Drink
           </div>
           <ul className="space-y-3 text-sm font-medium text-white/70">
@@ -574,7 +575,7 @@ function Footer() {
 
         {/* HU NOW */}
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/70 mb-5">
             HU NOW
           </div>
           <ul className="space-y-3 text-sm font-medium text-white/70">
@@ -608,7 +609,7 @@ function Footer() {
 
         {/* Newsletter */}
         <div className="col-span-2 md:col-span-1">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-5">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-white/70 mb-5">
             Newsletter
           </div>
           <p className="text-sm text-white/60 mb-5 leading-relaxed">
@@ -616,7 +617,7 @@ function Footer() {
           </p>
           <Link
             to="/newsletter"
-            className="block text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-4"
+            className="block text-[10px] font-bold uppercase tracking-widest text-white/70 hover:text-white transition-colors mb-4"
           >
             Archive & more info →
           </Link>
@@ -629,7 +630,7 @@ function Footer() {
                 type="email"
                 required
                 placeholder="your@email.com"
-                className="bg-white/10 border border-white/20 px-4 py-3 font-mono text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/50"
+                className="bg-white/10 border border-white/20 px-4 py-3 font-mono text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white/50"
               />
               <fieldset className="grid gap-2 py-1">
                 <legend className="sr-only">Newsletter preferences</legend>
@@ -665,7 +666,7 @@ function Footer() {
         <div className="font-display text-3xl tracking-wide">HU NOW</div>
         {/* Social links */}
         {Object.entries(SOCIAL_LABELS).some(([key]) => socialLinks[key]) && (
-          <div className="flex gap-5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+          <div className="flex gap-5 text-[10px] font-bold uppercase tracking-widest text-white/70">
             {Object.entries(SOCIAL_LABELS).map(([key, label]) =>
               socialLinks[key] ? (
                 <a
@@ -682,7 +683,7 @@ function Footer() {
           </div>
         )}
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-white/30">
+          <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-white/60">
             <a href="mailto:hello@hunow.co.uk" className="hover:text-white/60 transition-colors">
               hello@hunow.co.uk
             </a>
@@ -697,12 +698,37 @@ function Footer() {
             href="https://swift7.co.uk"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] font-mono text-white/20 hover:text-white/50 transition-colors"
+            className="text-[10px] font-mono text-white/55 hover:text-white/50 transition-colors"
           >
             Web Design in Hull by Swift7
           </a>
         </div>
       </div>
     </footer>
+  );
+}
+
+/** Appears after a screen or so of scrolling; sits above the mobile tab bar */
+function BackToTop() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 900);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <button
+      type="button"
+      onClick={() => window.scrollTo({ top: 0 })}
+      aria-label="Back to top"
+      className={`fixed right-4 bottom-24 md:bottom-6 z-40 flex h-11 w-11 items-center justify-center border-2 border-foreground bg-background text-foreground shadow-lg transition-all duration-200 hover:bg-foreground hover:text-background ${
+        visible ? "opacity-100" : "pointer-events-none translate-y-2 opacity-0"
+      }`}
+    >
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
   );
 }

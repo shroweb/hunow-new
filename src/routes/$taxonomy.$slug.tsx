@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { NotFoundPage } from "@/components/NotFoundPage";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard, ListingCard } from "@/components/cards";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -155,16 +156,7 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
       ],
     };
   },
-  notFoundComponent: () => (
-    <PublicLayout>
-      <div className="max-w-3xl mx-auto px-4 py-32 text-center">
-        <h1 className="font-display text-6xl mb-4">STORY NOT FOUND</h1>
-        <Link to="/" className="underline">
-          Back to Home
-        </Link>
-      </div>
-    </PublicLayout>
-  ),
+  notFoundComponent: () => <NotFoundPage title="Story not found" />,
 });
 
 function ArticleDetail() {
@@ -323,7 +315,7 @@ function ArticleDetail() {
                 )}
               </div>
             )}
-          <div className="flex gap-4 border-y border-border py-4 mb-12 font-mono text-[10px] uppercase">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-y border-border py-4 mb-12 font-mono text-[10px] uppercase">
             <span>
               <span className="text-muted-foreground">By </span>
               <a
@@ -368,6 +360,32 @@ function ArticleDetail() {
               />
             </div>
           </div>
+          {/hull[-\s]fair/i.test(`${article.slug} ${article.title}`) && (
+            <aside className="mb-10 flex flex-col gap-4 border-2 border-foreground bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-accent">
+                  Part of our Hull Fair 2026 guide
+                </div>
+                <div className="mt-1 font-display text-2xl uppercase leading-tight">
+                  Dates, opening times and the interactive map
+                </div>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <a
+                  href="/hull-fair"
+                  className="bg-foreground px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-background transition-colors hover:bg-accent hover:text-accent-foreground"
+                >
+                  Full guide
+                </a>
+                <a
+                  href="/hull-fair-map"
+                  className="border border-foreground px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest transition-colors hover:bg-foreground hover:text-background"
+                >
+                  Open the map
+                </a>
+              </div>
+            </aside>
+          )}
           {seriesArticles.length > 1 && (
             <SeriesNav current={article} seriesArticles={seriesArticles} />
           )}

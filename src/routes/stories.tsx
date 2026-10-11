@@ -1,9 +1,10 @@
 import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AdSlot } from "@/components/AdSlot";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard } from "@/components/cards";
 import { PaginationControls } from "@/components/PaginationControls";
+import { CardGridSkeleton } from "@/components/CardSkeleton";
 import { fetchPagedArticles } from "@/lib/content-read.functions";
 import { buildSeoMeta } from "@/lib/seo-meta";
 import type { Article } from "@/types";
@@ -11,6 +12,18 @@ import type { Article } from "@/types";
 const PER_PAGE = 12;
 
 export const Route = createFileRoute("/stories")({
+  // First page of stories is rendered on the server, so visitors and search engines see it immediately
+  loader: async ({ location }) => {
+    if (location.pathname.replace(/\/$/, "") !== "/stories") return { initial: null };
+    try {
+      const res = await fetchPagedArticles({
+        data: { page: 1, limit: PER_PAGE, status: "published" },
+      });
+      return { initial: { items: res.items as Article[], totalCount: res.totalCount } };
+    } catch {
+      return { initial: null };
+    }
+  },
   head: ({ params }) => {
     if ((params as { slug?: string })?.slug) return {};
     return buildSeoMeta({
@@ -41,9 +54,11 @@ function Stories() {
 }
 
 function StoriesIndex() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const { initial } = Route.useLoaderData();
+  const skipFirstFetch = useRef(!!initial);
+  const [articles, setArticles] = useState<Article[]>(initial ? initial.items : []);
+  const [totalCount, setTotalCount] = useState(initial ? initial.totalCount : 0);
+  const [loading, setLoading] = useState(!initial);
   const [loadFailed, setLoadFailed] = useState(false);
 
   const [cat, setCat] = useState("All");
@@ -54,6 +69,10 @@ function StoriesIndex() {
   }, [cat]);
 
   useEffect(() => {
+    if (skipFirstFetch.current) {
+      skipFirstFetch.current = false;
+      return;
+    }
     let active = true;
     setLoading(true);
     setLoadFailed(false);
@@ -110,9 +129,7 @@ function StoriesIndex() {
           <AdSlot placement="Homepage Inline Banner" />
         </div>
         {loading ? (
-          <div className="py-20 text-center font-mono text-sm uppercase text-muted-foreground animate-pulse">
-            Loading stories…
-          </div>
+          <CardGridSkeleton label="Loading stories" />
         ) : loadFailed ? (
           <div className="py-20 text-center font-mono text-sm uppercase text-muted-foreground">
             Stories could not be loaded. Please refresh and try again.

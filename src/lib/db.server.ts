@@ -2075,30 +2075,54 @@ const SETTING_DEFAULTS: Record<string, string> = {
   overheard_hull_source: "Overheard down Princes Ave",
 };
 
+let settingDefaultsSeeded: Promise<void> | undefined;
+
+/** Insert any missing default settings once per server instance, in a single round trip. */
+function seedSettingDefaults() {
+  if (!settingDefaultsSeeded) {
+    settingDefaultsSeeded = (async () => {
+      const entries = Object.entries(SETTING_DEFAULTS);
+      const placeholders = entries.map((_, i) => `($${i * 2 + 1}, $${i * 2 + 2})`).join(", ");
+      await getPool().query(
+        `insert into site_settings (key, value) values ${placeholders} on conflict (key) do nothing`,
+        entries.flat(),
+      );
+      const analyticsMigration = await getPool().query(
+        `insert into site_settings (key, value)
+         values ('migration:google-analytics-rrcn783rep', 'done')
+         on conflict (key) do nothing
+         returning key`,
+      );
+      if (analyticsMigration.rowCount) {
+        await getPool().query(
+          "update site_settings set value = $1 where key = 'ga_id' and value = ''",
+          ["G-RRCN783REP"],
+        );
+      }
+    })().catch((error) => {
+      settingDefaultsSeeded = undefined;
+      throw error;
+    });
+  }
+  return settingDefaultsSeeded;
+}
+
+const SETTINGS_CACHE_KEY = "db:site-settings";
+
 export async function getSiteSettings(): Promise<Record<string, string>> {
+  const { cacheGet, cacheSet } = await import("./cache.server");
+  const cached = cacheGet<Record<string, string>>(SETTINGS_CACHE_KEY);
+  if (cached) return { ...cached };
+
   await ensureSchema();
-  for (const [key, value] of Object.entries(SETTING_DEFAULTS)) {
-    await getPool().query(
-      "insert into site_settings (key, value) values ($1, $2) on conflict (key) do nothing",
-      [key, value],
-    );
-  }
-  const analyticsMigration = await getPool().query(
-    `insert into site_settings (key, value)
-     values ('migration:google-analytics-rrcn783rep', 'done')
-     on conflict (key) do nothing
-     returning key`,
-  );
-  if (analyticsMigration.rowCount) {
-    await getPool().query(
-      "update site_settings set value = $1 where key = 'ga_id' and value = ''",
-      ["G-RRCN783REP"],
-    );
-  }
+  await seedSettingDefaults();
   const r = await getPool().query<{ key: string; value: string }>(
     "select key, value from site_settings",
   );
-  return Object.fromEntries(r.rows.map((row) => [row.key, row.value]));
+  const settings = Object.fromEntries(r.rows.map((row) => [row.key, row.value]));
+  // Settings are read on every page; a short cache keeps that to one query a minute per instance
+  cacheSet(SETTINGS_CACHE_KEY, settings, 60_000);
+  return { ...settings };
 }
 
 export async function setSiteSetting(key: string, value: string) {
@@ -2107,6 +2131,8 @@ export async function setSiteSetting(key: string, value: string) {
     "insert into site_settings (key, value) values ($1, $2) on conflict (key) do update set value = $2",
     [key, value],
   );
+  const { cacheInvalidate } = await import("./cache.server");
+  cacheInvalidate(SETTINGS_CACHE_KEY);
 }
 
 export async function getAuthors(): Promise<import("./authors").Author[]> {

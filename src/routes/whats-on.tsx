@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { EventCard } from "@/components/cards";
 import { PaginationControls } from "@/components/PaginationControls";
+import { CardGridSkeleton } from "@/components/CardSkeleton";
 import { fetchPagedEvents } from "@/lib/content-read.functions";
 import type { EventItem } from "@/types";
 
@@ -19,6 +20,17 @@ import { buildSeoMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/whats-on")({
   validateSearch: searchSchema,
+  // First page of events is rendered on the server, so visitors and search engines see it immediately
+  loader: async () => {
+    try {
+      const res = await fetchPagedEvents({
+        data: { page: 1, limit: PER_PAGE, status: "published" },
+      });
+      return { initial: { items: res.items as EventItem[], totalCount: res.totalCount } };
+    } catch {
+      return { initial: null };
+    }
+  },
   head: () => {
     const seo = buildSeoMeta({
       title: "What's On in Hull — Gigs, Shows & Events Guide",
@@ -105,9 +117,13 @@ function weekendRange(): [string, string] {
 
 function WhatsOn() {
   const search = Route.useSearch();
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const { initial } = Route.useLoaderData();
+  // Server-rendered list applies only to the unfiltered first page
+  const useInitial = !!initial && !search.category && !search.free && !search.when;
+  const skipFirstFetch = useRef(useInitial);
+  const [events, setEvents] = useState<EventItem[]>(useInitial ? initial.items : []);
+  const [totalCount, setTotalCount] = useState(useInitial ? initial.totalCount : 0);
+  const [loading, setLoading] = useState(!useInitial);
   const [loadFailed, setLoadFailed] = useState(false);
 
   const [category, setCategory] = useState(search.category ?? "All");
@@ -154,6 +170,10 @@ function WhatsOn() {
 
   // Fetch events from server
   useEffect(() => {
+    if (skipFirstFetch.current) {
+      skipFirstFetch.current = false;
+      return;
+    }
     let active = true;
     setLoading(true);
     setLoadFailed(false);
@@ -282,9 +302,7 @@ function WhatsOn() {
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         {loading ? (
-          <div className="py-32 text-center font-mono text-sm uppercase text-muted-foreground animate-pulse">
-            Loading events…
-          </div>
+          <CardGridSkeleton label="Loading events" />
         ) : loadFailed ? (
           <div className="py-32 text-center font-mono text-sm uppercase text-muted-foreground">
             Events could not be loaded. Please refresh and try again.
