@@ -10,7 +10,6 @@ import { getSettingsOnce } from "@/lib/settings.functions";
 import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 import { CommandPalette } from "@/components/CommandPalette";
 import { PwaEnhancements } from "@/components/PwaEnhancements";
-import { LocalStatusTicker } from "@/components/LocalStatusTicker";
 
 const FESTIVAL_PATHS: Record<string, string> = {
   "hull-fair": "/hull-fair",
@@ -464,7 +463,6 @@ function Footer() {
 
   return (
     <footer className="bg-foreground text-background border-t border-white/10">
-      <LocalStatusTicker />
       {/* Editorial masthead */}
       <div className="max-w-7xl mx-auto px-4 pt-14 pb-10 border-b border-white/10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
