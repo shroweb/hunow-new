@@ -248,19 +248,19 @@ function WhatsOn() {
                 setCategory("All");
                 setFreeOnly(false);
               }}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "all" && category === "All" && !freeOnly ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "all" && category === "All" && !freeOnly ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               All
             </button>
             <button
               onClick={() => setWhen("today")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "today" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "today" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               Today
             </button>
             <button
               onClick={() => setWhen("weekend")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "weekend" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide whitespace-nowrap shrink-0 rounded-sm ${effectiveWhen === "weekend" ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               This Weekend
             </button>
@@ -269,7 +269,7 @@ function WhatsOn() {
               <button
                 key={c}
                 onClick={() => setCategory(category === c ? "All" : c)}
-                className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${category === c ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+                className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide whitespace-nowrap shrink-0 rounded-sm ${category === c ? "bg-accent text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
               >
                 {c}
               </button>
@@ -277,7 +277,7 @@ function WhatsOn() {
             <div className="w-px bg-foreground/15 mx-0.5 self-stretch shrink-0" />
             <button
               onClick={() => setFreeOnly((v) => !v)}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase whitespace-nowrap shrink-0 rounded-sm ${freeOnly ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
+              className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide whitespace-nowrap shrink-0 rounded-sm ${freeOnly ? "bg-foreground text-background" : "border border-foreground/20 hover:bg-foreground/5"}`}
             >
               Free
             </button>
@@ -286,13 +286,13 @@ function WhatsOn() {
           <div className="flex gap-1 shrink-0 border-l border-foreground/10 pl-2">
             <button
               onClick={() => setView("list")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase rounded-sm ${view === "list" ? "bg-foreground text-background" : "text-foreground/50 hover:text-foreground"}`}
+              className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide rounded-sm ${view === "list" ? "bg-foreground text-background" : "text-foreground/50 hover:text-foreground"}`}
             >
               List
             </button>
             <button
               onClick={() => setView("calendar")}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase rounded-sm ${view === "calendar" ? "bg-foreground text-background" : "text-foreground/50 hover:text-foreground"}`}
+              className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide rounded-sm ${view === "calendar" ? "bg-foreground text-background" : "text-foreground/50 hover:text-foreground"}`}
             >
               Cal
             </button>
@@ -308,8 +308,21 @@ function WhatsOn() {
             Events could not be loaded. Please refresh and try again.
           </div>
         ) : events.length === 0 ? (
-          <div className="py-32 text-center font-mono text-sm uppercase text-muted-foreground">
-            No events match your filters.
+          <div className="py-24 text-center">
+            <p className="font-display text-4xl uppercase mb-3">No events match your filters</p>
+            <p className="text-muted-foreground mb-6">Try a different category or date.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setCategory("All");
+                setFreeOnly(false);
+                setWhen("all");
+                setQuery("");
+              }}
+              className="bg-foreground px-6 py-3 text-xs font-bold uppercase tracking-widest text-background hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              Show all events
+            </button>
           </div>
         ) : view === "calendar" ? (
           <CalendarView events={events} />

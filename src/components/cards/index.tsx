@@ -156,7 +156,7 @@ export function ArticleCard({ article }: { article: Article }) {
         {article.title}
       </h3>
       <p className="text-sm text-muted-foreground line-clamp-2">{article.excerpt}</p>
-      <div className="text-[10px] font-mono uppercase text-muted-foreground">
+      <div className="text-[11px] font-mono uppercase text-muted-foreground">
         {article.author} · {article.readingMinutes} min read
       </div>
     </a>
@@ -206,14 +206,14 @@ export function ListingCard({ listing }: { listing: Listing }) {
         />
       </div>
       <div className="flex items-start justify-between gap-1 mb-1">
-        <div className="text-[9px] font-mono font-bold uppercase text-accent leading-tight">
+        <div className="text-[11px] font-mono font-bold uppercase text-accent leading-tight">
           {listing.category}
           <span className="hidden sm:inline"> · {listing.area}</span>
         </div>
         {status && (
           <span
             title={status.label}
-            className={`text-[8px] sm:text-[9px] font-bold uppercase px-1.5 py-0.5 shrink-0 max-w-[90px] truncate ${status.open ? "bg-[oklch(0.58_0.15_145)] text-background" : "border border-foreground/20 text-muted-foreground"}`}
+            className={`text-[10px] sm:text-[11px] font-bold uppercase px-2 py-0.5 shrink-0 max-w-[90px] truncate ${status.open ? "bg-[oklch(0.58_0.15_145)] text-background" : "border border-foreground/20 text-muted-foreground"}`}
           >
             {status.open ? "Open" : "Closed"}
           </span>
@@ -222,7 +222,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <h3 className="text-base sm:text-xl font-bold leading-tight group-hover:underline">
         {listing.name}
       </h3>
-      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mt-1 hidden sm:block">
+      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
         {listing.description}
       </p>
     </Link>
@@ -239,7 +239,7 @@ export function OfferCard({ offer }: { offer: Offer }) {
         <div className="text-[10px] font-bold uppercase text-accent">{offer.businessName}</div>
         <div className="font-bold truncate">{offer.title}</div>
         <div
-          className="text-[10px] font-mono uppercase text-muted-foreground mt-1"
+          className="text-[11px] font-mono uppercase text-muted-foreground mt-1"
           suppressHydrationWarning
         >
           Ends {formatShortDate(offer.endDate)}

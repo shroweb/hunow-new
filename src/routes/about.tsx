@@ -49,9 +49,6 @@ function AboutPage() {
             <li>
               <strong>Culture & Heritage:</strong> In-depth coverage of flagship annual traditions including Hull Fair, Freedom Festival, Humber Street Sesh, and Pride in Hull.
             </li>
-            <li>
-              <strong>Civic Data:</strong> Real-time public infrastructure monitoring including the Humber Bridge status, River Humber tides at Victoria Pier, and local meteorological feeds.
-            </li>
           </ul>
 
           <div className="pt-8 border-t border-border flex flex-wrap gap-4 font-sans not-prose">

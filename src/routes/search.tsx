@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { articlePath } from "@/lib/taxonomy";
+import { img } from "@/data/seed";
 import { trackAnalyticsEvent } from "@/lib/analytics.functions";
 import { searchContentFn } from "@/lib/content.functions";
 import type { Article, EventItem, Listing as ListingItem, Offer } from "@/types";
@@ -37,6 +38,27 @@ function saveRecentSearch(term: string) {
   }
 }
 
+function ResultThumb({ src }: { src?: string }) {
+  return (
+    <div className="h-16 w-20 shrink-0 overflow-hidden bg-foreground/10">
+      {src && (
+        <img
+          src={img(src, 160, 128)}
+          alt=""
+          width={80}
+          height={64}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 function SearchPage() {
   const { q } = Route.useSearch();
   const navigate = useNavigate();
@@ -46,6 +68,7 @@ function SearchPage() {
   const [searchFailed, setSearchFailed] = useState(false);
   const [inputValue, setInputValue] = useState(q);
   const [showRecent, setShowRecent] = useState(false);
+  const [inputFocused, setInputFocused] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -58,13 +81,17 @@ function SearchPage() {
 
   // Load recent searches on focus
   const handleFocus = () => {
+    setInputFocused(true);
     setRecentSearches(getRecentSearches());
     if (!inputValue.trim()) setShowRecent(true);
   };
 
   const handleBlur = () => {
     // Delay to allow click on recent search
-    setTimeout(() => setShowRecent(false), 200);
+    setTimeout(() => {
+      setShowRecent(false);
+      setInputFocused(false);
+    }, 200);
   };
 
   // Track analytics
@@ -127,10 +154,7 @@ function SearchPage() {
     navigate({ to: "/search", search: { q: term } });
   };
 
-  const total =
-    results.articles.length +
-    results.events.length +
-    results.listings.length;
+  const total = results.articles.length + results.events.length + results.listings.length;
   const showArticles = type === "all" || type === "stories";
   const showEvents = type === "all" || type === "events";
   const showListings = type === "all" || type === "places";
@@ -157,8 +181,13 @@ function SearchPage() {
     })),
   ].slice(0, 8);
 
+  // Suggestions are for while typing: hide them once the full results for this term are on screen
   const showAutocomplete =
-    inputValue.trim().length >= 2 && !isSearching && autocompleteItems.length > 0;
+    inputFocused &&
+    inputValue.trim().length >= 2 &&
+    inputValue.trim().toLowerCase() !== term &&
+    !isSearching &&
+    autocompleteItems.length > 0;
 
   return (
     <PublicLayout>
@@ -180,7 +209,9 @@ function SearchPage() {
               onFocus={handleFocus}
               onBlur={handleBlur}
               placeholder="Search events, places, stories…"
-              autoFocus
+              type="search"
+              enterKeyHint="search"
+              autoFocus={!q}
               className="w-full bg-white border-2 border-foreground px-6 py-4 font-mono text-sm focus:outline-none"
             />
 
@@ -271,7 +302,7 @@ function SearchPage() {
                 key={key}
                 type="button"
                 onClick={() => setType(key)}
-                className={`px-3 py-1.5 text-[10px] font-bold uppercase ${
+                className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide ${
                   type === key ? "bg-accent text-background" : "border border-foreground/30"
                 }`}
               >
@@ -298,7 +329,23 @@ function SearchPage() {
       {term && !isSearching && !searchFailed && total === 0 && (
         <div className="max-w-7xl mx-auto px-4 py-24 text-center">
           <p className="font-display text-4xl uppercase mb-4">No results</p>
-          <p className="text-muted-foreground">Try a different search term.</p>
+          <p className="text-muted-foreground">Try a different search term, or browse a section.</p>
+          <div className="mt-8 flex flex-wrap justify-center gap-2">
+            {[
+              ["/whats-on", "What's On"],
+              ["/places", "Places"],
+              ["/guides", "Guides"],
+              ["/stories", "Stories"],
+            ].map(([href, label]) => (
+              <a
+                key={href}
+                href={href}
+                className="border-2 border-foreground px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+              >
+                {label}
+              </a>
+            ))}
+          </div>
         </div>
       )}
 
@@ -313,17 +360,15 @@ function SearchPage() {
               <ul className="divide-y divide-foreground/10">
                 {results.articles.map((a) => (
                   <li key={a.id} className="py-4">
-                    <a
-                      href={articlePath(a)}
-                      className="group flex items-start justify-between gap-4"
-                    >
-                      <div>
+                    <a href={articlePath(a)} className="group flex items-start gap-4">
+                      <ResultThumb src={a.featuredImage} />
+                      <div className="min-w-0 flex-1">
                         <p className="font-bold group-hover:underline">{a.title}</p>
                         <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
                           {a.excerpt}
                         </p>
                       </div>
-                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
+                      <span className="hidden sm:inline text-[11px] font-mono uppercase text-accent shrink-0 mt-1">
                         {a.category}
                       </span>
                     </a>
@@ -345,9 +390,10 @@ function SearchPage() {
                     <Link
                       to="/events/$slug"
                       params={{ slug: e.slug }}
-                      className="group flex items-start justify-between gap-4"
+                      className="group flex items-start gap-4"
                     >
-                      <div>
+                      <ResultThumb src={e.featuredImage} />
+                      <div className="min-w-0 flex-1">
                         <p className="font-bold group-hover:underline">{e.title}</p>
                         <p className="text-sm text-muted-foreground mt-0.5">
                           {e.locationName} ·{" "}
@@ -358,7 +404,7 @@ function SearchPage() {
                           })}
                         </p>
                       </div>
-                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
+                      <span className="hidden sm:inline text-[11px] font-mono uppercase text-accent shrink-0 mt-1">
                         {e.category}
                       </span>
                     </Link>
@@ -380,15 +426,16 @@ function SearchPage() {
                     <Link
                       to="/places/$slug"
                       params={{ slug: l.slug }}
-                      className="group flex items-start justify-between gap-4"
+                      className="group flex items-start gap-4"
                     >
-                      <div>
+                      <ResultThumb src={l.featuredImage} />
+                      <div className="min-w-0 flex-1">
                         <p className="font-bold group-hover:underline">{l.name}</p>
                         <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
                           {l.description}
                         </p>
                       </div>
-                      <span className="text-[10px] font-mono uppercase text-accent shrink-0 mt-1">
+                      <span className="hidden sm:inline text-[11px] font-mono uppercase text-accent shrink-0 mt-1">
                         {l.category} · {l.area}
                       </span>
                     </Link>

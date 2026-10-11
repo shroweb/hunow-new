@@ -117,7 +117,7 @@ function StoriesIndex() {
             <button
               key={c}
               onClick={() => setCat(c)}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase ${cat === c ? "bg-accent text-background" : "border border-foreground/20"}`}
+              className={`px-3.5 py-2.5 sm:py-2 text-[11px] font-bold uppercase tracking-wide ${cat === c ? "bg-accent text-background" : "border border-foreground/20"}`}
             >
               {c}
             </button>
@@ -135,8 +135,15 @@ function StoriesIndex() {
             Stories could not be loaded. Please refresh and try again.
           </div>
         ) : articles.length === 0 ? (
-          <div className="py-20 text-center font-mono text-sm uppercase text-muted-foreground">
-            No stories match your filter.
+          <div className="py-20 text-center">
+            <p className="font-display text-4xl uppercase mb-3">No stories in this category yet</p>
+            <button
+              type="button"
+              onClick={() => setCat("All")}
+              className="mt-3 bg-foreground px-6 py-3 text-xs font-bold uppercase tracking-widest text-background hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              Show all stories
+            </button>
           </div>
         ) : (
           <>

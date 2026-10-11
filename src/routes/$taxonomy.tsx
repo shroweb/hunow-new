@@ -123,6 +123,7 @@ function TaxonomyPage() {
     listingMatchesTaxonomy(listing, taxonomy),
   );
   const total = articles.length + events.length + listings.length;
+  const typeCount = [articles, events, listings].filter((list) => list.length > 0).length;
 
   if (pathname !== `/${taxonomy.slug}`) return <Outlet />;
 
@@ -141,21 +142,21 @@ function TaxonomyPage() {
       </div>
 
       <section className="max-w-7xl mx-auto px-4 py-6 border-b border-border">
-        <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-widest" suppressHydrationWarning>
+        <div className="flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-widest" suppressHydrationWarning>
           <span className="border-2 border-foreground px-3 py-1.5" suppressHydrationWarning>
             {total} {total === 1 ? "result" : "results"}
           </span>
-          {events.length > 0 && (
+          {typeCount > 1 && events.length > 0 && (
             <span className="bg-foreground text-background px-3 py-1.5">
               {events.length} events
             </span>
           )}
-          {listings.length > 0 && (
+          {typeCount > 1 && listings.length > 0 && (
             <span className="bg-accent text-background px-3 py-1.5">
               {listings.length} listings
             </span>
           )}
-          {articles.length > 0 && (
+          {typeCount > 1 && articles.length > 0 && (
             <span className="border-2 border-accent text-accent px-3 py-1.5">
               {articles.length} posts
             </span>
