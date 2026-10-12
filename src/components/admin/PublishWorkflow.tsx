@@ -45,13 +45,13 @@ export function PublishWorkflow({
           <option value="archived">Archived</option>
         </select>
       </AdminField>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
         <AdminField label={dateLabel}>
           <input
             name={dateName}
             type="date"
             defaultValue={dateValue ?? new Date().toISOString().slice(0, 10)}
-            className={adminInput}
+            className={`${adminInput} font-sans px-3 text-xs`}
           />
         </AdminField>
         <AdminField label="Scheduled for">
@@ -59,7 +59,7 @@ export function PublishWorkflow({
             name="scheduledFor"
             type="datetime-local"
             defaultValue={scheduledFor}
-            className={adminInput}
+            className={`${adminInput} font-sans px-3 text-xs`}
           />
         </AdminField>
       </div>

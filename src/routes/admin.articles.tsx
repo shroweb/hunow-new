@@ -67,7 +67,8 @@ function AdminArticles() {
   const articles = useStore((s) => s.articles);
   const [editing, setEditing] = useState<Article | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [section, setSection] = useState(editing?.section ?? "whats-on");
+  const [section, setSection] = useState(editing?.section ?? "");
+  const [subcategory, setSubcategory] = useState(editing?.subcategory ?? "");
   const [errors, setErrors] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState("");
@@ -89,7 +90,7 @@ function AdminArticles() {
   const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState("");
 
-  const selectedSection = findSection(section) ?? NAV_SECTIONS[0];
+  const selectedSection = findSection(section);
   const published = articles.filter((a) => a.status === "published").length;
   const drafts = articles.filter((a) => a.status === "draft").length;
   const today = new Date().toISOString().slice(0, 10);
@@ -111,7 +112,8 @@ function AdminArticles() {
 
   const openForm = (article: Article | null) => {
     setEditing(article);
-    setSection(article?.section ?? "whats-on");
+    setSection(article?.section ?? "");
+    setSubcategory(article?.subcategory ?? "");
     const cat = article?.category ?? (allCategories[0] || "Guides");
     setSelectedCategory(cat);
     setIsCustomCategory(false);
@@ -518,13 +520,17 @@ function AdminArticles() {
                       </div>
                     )}
                   </AdminField>
-                  <AdminField label="Section">
+                  <AdminField label="Section" hint="Optional top-level navigation section">
                     <select
                       name="section"
                       value={section}
-                      onChange={(e) => setSection(e.target.value)}
+                      onChange={(e) => {
+                        setSection(e.target.value);
+                        setSubcategory("");
+                      }}
                       className={adminInput}
                     >
+                      <option value="">General Stories & Magazine</option>
                       {NAV_SECTIONS.map((s) => (
                         <option key={s.slug} value={s.slug}>
                           {s.label}
@@ -532,15 +538,24 @@ function AdminArticles() {
                       ))}
                     </select>
                   </AdminField>
-                  <AdminField label="Subcategory">
+                  <AdminField
+                    label="Subcategory"
+                    hint={
+                      subcategory
+                        ? `Canonical path: /${subcategory}/${slugDraft || "slug"}`
+                        : `Canonical path: /stories/${slugDraft || "slug"}`
+                    }
+                  >
                     <select
                       name="subcategory"
-                      defaultValue={editing?.subcategory ?? selectedSection?.subs[0]?.slug}
+                      value={subcategory}
+                      onChange={(e) => setSubcategory(e.target.value)}
                       className={adminInput}
                     >
+                      <option value="">None (Standard /stories post)</option>
                       {selectedSection?.subs.map((s) => (
                         <option key={s.slug} value={s.slug}>
-                          {s.label}
+                          {s.label} (/{s.slug}/...)
                         </option>
                       ))}
                     </select>
@@ -582,7 +597,7 @@ function AdminArticles() {
                       name="series"
                       list="admin-series-list"
                       defaultValue={editing?.series}
-                      placeholder="Series name — pick existing or type new"
+                      placeholder="Pick existing or enter new series name"
                       className={adminInput}
                     />
                     <datalist id="admin-series-list">
