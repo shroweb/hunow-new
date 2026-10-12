@@ -24,6 +24,7 @@ import { setState, slugify, uid, useStore } from "@/lib/store";
 import { upsertArticleFn, deleteArticleFn } from "@/lib/content.functions";
 import { getAuthorsFn } from "@/lib/authors.functions";
 import { getAdminPolls } from "@/lib/polls.functions";
+import { getTaxonomy, updateTaxonomyKey } from "@/lib/taxonomy-config.functions";
 import type { Article } from "@/types";
 import type { PollRow } from "@/lib/db.server";
 import type { Author } from "@/lib/authors";
@@ -31,19 +32,20 @@ import type { Author } from "@/lib/authors";
 export const Route = createFileRoute("/admin/articles")({
   loader: async () => {
     try {
-      const [polls, authors] = await Promise.all([
+      const [polls, authors, taxonomy] = await Promise.all([
         getAdminPolls().catch(() => []),
         getAuthorsFn().catch(() => []),
+        getTaxonomy().catch(() => ({})),
       ]);
-      return { polls: polls ?? [], authors: authors ?? [] };
+      return { polls: polls ?? [], authors: authors ?? [], taxonomy: taxonomy ?? {} };
     } catch {
-      return { polls: [], authors: [] };
+      return { polls: [], authors: [], taxonomy: {} };
     }
   },
   component: AdminArticles,
 });
 
-const ARTICLE_CATEGORIES = [
+const DEFAULT_ARTICLE_CATEGORIES = [
   "Culture",
   "Eat & Drink",
   "Events",
@@ -57,7 +59,9 @@ const ARTICLE_CATEGORIES = [
 ];
 
 function AdminArticles() {
-  const loaderData = Route.useLoaderData() as { polls?: PollRow[]; authors?: Author[] } | undefined;
+  const loaderData = Route.useLoaderData() as
+    | { polls?: PollRow[]; authors?: Author[]; taxonomy?: Record<string, string[]> }
+    | undefined;
   const polls = loaderData?.polls ?? [];
   const authors = loaderData?.authors ?? [];
   const articles = useStore((s) => s.articles);
@@ -68,8 +72,23 @@ function AdminArticles() {
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [slugDraft, setSlugDraft] = useState("");
   const [slugManual, setSlugManual] = useState(false);
+
+  // Dynamic categories from taxonomy and existing articles
+  const taxonomyCategories = loaderData?.taxonomy?.article_categories ?? DEFAULT_ARTICLE_CATEGORIES;
+  const existingArticleCategories = Array.from(
+    new Set(articles.map((a) => a.category).filter(Boolean)),
+  );
+  const allCategories = Array.from(
+    new Set([...taxonomyCategories, ...existingArticleCategories]),
+  ).sort();
+
+  const [selectedCategory, setSelectedCategory] = useState(editing?.category ?? "Guides");
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const [customCategory, setCustomCategory] = useState("");
+
   const selectedSection = findSection(section) ?? NAV_SECTIONS[0];
   const published = articles.filter((a) => a.status === "published").length;
   const drafts = articles.filter((a) => a.status === "draft").length;
@@ -85,6 +104,7 @@ function AdminArticles() {
     const q = query.toLowerCase();
     return (
       (statusFilter === "all" || a.status === statusFilter) &&
+      (categoryFilter === "all" || a.category === categoryFilter) &&
       (!q || a.title.toLowerCase().includes(q) || a.category.toLowerCase().includes(q))
     );
   });
@@ -92,6 +112,10 @@ function AdminArticles() {
   const openForm = (article: Article | null) => {
     setEditing(article);
     setSection(article?.section ?? "whats-on");
+    const cat = article?.category ?? (allCategories[0] || "Guides");
+    setSelectedCategory(cat);
+    setIsCustomCategory(false);
+    setCustomCategory("");
     setErrors([]);
     setShowForm(true);
   };
@@ -125,13 +149,24 @@ function AdminArticles() {
     const proTip = String(fd.get("proTip") || "").trim();
     const honestVerdict = theGood || theCatch || proTip ? { theGood, theCatch, proTip } : undefined;
 
+    const submittedCategory = (
+      isCustomCategory ? customCategory.trim() : String(fd.get("category") || "")
+    ).trim() || "Guides";
+
+    if (submittedCategory && !taxonomyCategories.includes(submittedCategory)) {
+      const updatedCategories = Array.from(new Set([...taxonomyCategories, submittedCategory]));
+      updateTaxonomyKey({ data: { key: "article_categories", items: updatedCategories } }).catch(
+        console.error,
+      );
+    }
+
     const a: Article = {
       id: editing?.id ?? uid(),
       title,
       slug,
       excerpt: String(fd.get("excerpt")),
       content: String(fd.get("content")),
-      category: String(fd.get("category")),
+      category: submittedCategory,
       tags: String(fd.get("tags") || "")
         .split(",")
         .map((t) => t.trim())
@@ -214,9 +249,14 @@ function AdminArticles() {
         title="Posts"
         subtitle={`${articles.length} posts · ${published} published · ${drafts} drafts`}
         action={
-          <button onClick={() => openForm(null)} className={adminBtn}>
-            <Plus className="w-3 h-3" /> New Post
-          </button>
+          <div className="flex items-center gap-3">
+            <Link to="/admin/taxonomy" className={adminBtnOutline}>
+              Categories
+            </Link>
+            <button onClick={() => openForm(null)} className={adminBtn}>
+              <Plus className="w-3 h-3" /> New Post
+            </button>
+          </div>
         }
       />
       <div className="p-6 md:p-10">
@@ -408,18 +448,75 @@ function AdminArticles() {
                       ))}
                     </datalist>
                   </AdminField>
-                  <AdminField label="Category">
-                    <select
-                      name="category"
-                      defaultValue={editing?.category ?? "Guides"}
-                      className={adminInput}
-                    >
-                      {ARTICLE_CATEGORIES.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
+                  <AdminField
+                    label="Category"
+                    hint={
+                      <Link
+                        to="/admin/taxonomy"
+                        className="text-accent hover:underline font-mono text-[10px]"
+                      >
+                        Manage all categories in Taxonomy →
+                      </Link>
+                    }
+                  >
+                    {isCustomCategory ? (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          name="category"
+                          value={customCategory}
+                          onChange={(e) => setCustomCategory(e.target.value)}
+                          placeholder="Type new category name..."
+                          className={adminInput}
+                          autoFocus
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsCustomCategory(false);
+                            setCustomCategory("");
+                          }}
+                          className={adminBtnOutline}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <select
+                          name="category"
+                          value={selectedCategory}
+                          onChange={(e) => {
+                            if (e.target.value === "__NEW__") {
+                              setIsCustomCategory(true);
+                              setCustomCategory("");
+                            } else {
+                              setSelectedCategory(e.target.value);
+                            }
+                          }}
+                          className={adminInput}
+                        >
+                          {allCategories.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                          <option value="__NEW__">+ Add New Category…</option>
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsCustomCategory(true);
+                            setCustomCategory("");
+                          }}
+                          className={adminBtnOutline}
+                          title="Add new category"
+                        >
+                          + New
+                        </button>
+                      </div>
+                    )}
                   </AdminField>
                   <AdminField label="Section">
                     <select
@@ -597,6 +694,18 @@ function AdminArticles() {
             <option value="published">Published</option>
             <option value="scheduled">Scheduled</option>
             <option value="expired">Expired</option>
+          </select>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className={`${adminInput} w-auto`}
+          >
+            <option value="all">All categories</option>
+            {allCategories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </select>
           {filtered.length !== articles.length && (
             <span className="text-xs font-mono text-muted-foreground self-center">

@@ -14,14 +14,40 @@ const PER_PAGE = 12;
 export const Route = createFileRoute("/stories")({
   // First page of stories is rendered on the server, so visitors and search engines see it immediately
   loader: async ({ location }) => {
-    if (location.pathname.replace(/\/$/, "") !== "/stories") return { initial: null };
+    if (location.pathname.replace(/\/$/, "") !== "/stories") return { initial: null, categories: [] };
     try {
-      const res = await fetchPagedArticles({
-        data: { page: 1, limit: PER_PAGE, status: "published" },
-      });
-      return { initial: { items: res.items as Article[], totalCount: res.totalCount } };
+      const { getTaxonomy } = await import("@/lib/taxonomy-config.functions");
+      const [res, taxonomy] = await Promise.all([
+        fetchPagedArticles({
+          data: { page: 1, limit: PER_PAGE, status: "published" },
+        }),
+        getTaxonomy().catch(() => ({})),
+      ]);
+      const rawCategories = (taxonomy?.article_categories as string[] | undefined) ?? [
+        "Culture",
+        "Eat & Drink",
+        "Interviews",
+        "Independent Business",
+        "Hidden Gems",
+        "Guides",
+      ];
+      return {
+        initial: { items: res.items as Article[], totalCount: res.totalCount },
+        categories: ["All", ...rawCategories],
+      };
     } catch {
-      return { initial: null };
+      return {
+        initial: null,
+        categories: [
+          "All",
+          "Culture",
+          "Eat & Drink",
+          "Interviews",
+          "Independent Business",
+          "Hidden Gems",
+          "Guides",
+        ],
+      };
     }
   },
   head: ({ params }) => {
@@ -36,7 +62,7 @@ export const Route = createFileRoute("/stories")({
   component: Stories,
 });
 
-const CATS = [
+const DEFAULT_CATS = [
   "All",
   "Culture",
   "Eat & Drink",
@@ -54,7 +80,11 @@ function Stories() {
 }
 
 function StoriesIndex() {
-  const { initial } = Route.useLoaderData();
+  const { initial, categories } = Route.useLoaderData() as {
+    initial: { items: Article[]; totalCount: number } | null;
+    categories?: string[];
+  };
+  const filterCategories = categories && categories.length > 0 ? categories : DEFAULT_CATS;
   const skipFirstFetch = useRef(!!initial);
   const [articles, setArticles] = useState<Article[]>(initial ? initial.items : []);
   const [totalCount, setTotalCount] = useState(initial ? initial.totalCount : 0);
@@ -113,7 +143,7 @@ function StoriesIndex() {
       </section>
       <section className="max-w-7xl mx-auto px-4 py-6 border-b border-border">
         <div className="flex flex-wrap gap-2">
-          {CATS.map((c) => (
+          {filterCategories.map((c) => (
             <button
               key={c}
               onClick={() => setCat(c)}

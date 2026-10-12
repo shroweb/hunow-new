@@ -2010,6 +2010,18 @@ export async function checkRedirect(path: string) {
 }
 
 const TAXONOMY_DEFAULTS: Record<string, string[]> = {
+  article_categories: [
+    "Culture",
+    "Eat & Drink",
+    "Events",
+    "Guides",
+    "Hidden Gems",
+    "Independent Business",
+    "Interviews",
+    "Outdoors",
+    "Shopping",
+    "Sport",
+  ],
   event_categories: [
     "Music",
     "Food & Drink",

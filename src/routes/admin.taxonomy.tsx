@@ -19,6 +19,7 @@ export const Route = createFileRoute("/admin/taxonomy")({
 });
 
 const KEY_LABELS: Record<string, string> = {
+  article_categories: "Blog / Story categories",
   event_categories: "Event categories",
   listing_categories: "Listing / place categories",
   areas: "Areas of Hull",
