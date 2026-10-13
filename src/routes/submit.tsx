@@ -1,3 +1,4 @@
+import { buildSeoMeta } from "@/lib/seo-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
@@ -7,12 +8,13 @@ import { getTaxonomy } from "@/lib/taxonomy-config.functions";
 import type { Submission } from "@/types";
 
 export const Route = createFileRoute("/submit")({
-  head: () => ({
-    meta: [
-      { title: "Submit — HU NOW" },
-      { name: "description", content: "Submit your event or business listing to HU NOW for free." },
-    ],
-  }),
+  head: () =>
+    buildSeoMeta({
+      title: "Submit an Event or Business Listing",
+      description:
+        "Submit your event or business listing to HU NOW for free. Tell us what's happening in Hull and East Yorkshire and we'll review it for the guide.",
+      path: "/submit",
+    }),
   loader: async () => {
     const taxonomy = await getTaxonomy();
     return { taxonomy };

@@ -178,6 +178,20 @@ export const TAXONOMIES: Taxonomy[] = [
     articleSections: ["community"],
   },
   {
+    slug: "everything-else",
+    label: "Everything Else",
+    eyebrow: "Food & Drink",
+    description: "Cafes, coffee, bakeries and the food and drink stories that don't fit anywhere else.",
+    articleSubcategories: ["everything-else"],
+  },
+  {
+    slug: "everyday-life",
+    label: "Everyday Life",
+    eyebrow: "Community",
+    description: "Local life in Hull: practical guides, weekend ideas and the everyday city.",
+    articleSubcategories: ["everyday-life"],
+  },
+  {
     slug: "family",
     label: "Family",
     eyebrow: "Community",

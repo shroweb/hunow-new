@@ -1,3 +1,4 @@
+import { buildSeoMeta } from "@/lib/seo-meta";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ListingCard, EventCard, ArticleCard } from "@/components/cards";
@@ -13,15 +14,14 @@ export const Route = createFileRoute("/areas/$area")({
   head: ({ loaderData }) => {
     const area = loaderData?.area ?? "";
     const intro = loaderData?.guide?.intro ?? "";
-    return {
-      meta: [
-        { title: `${area} — Hull Area Guide — HU NOW` },
-        {
-          name: "description",
-          content: intro || `Places, events and stories from ${area} in Hull.`,
-        },
-      ],
-    };
+    const slug = area.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    return buildSeoMeta({
+      title: `${area} — Hull Area Guide`,
+      description:
+        intro ||
+        `A local guide to ${area} in Hull: places to eat and drink, things to do, upcoming events and stories from the neighbourhood.`,
+      path: `/areas/${slug}`,
+    });
   },
   notFoundComponent: () => (
     <PublicLayout>

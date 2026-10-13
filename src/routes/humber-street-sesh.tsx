@@ -13,7 +13,7 @@ export const Route = createFileRoute("/humber-street-sesh")({
   component: HumberStreetSeshPage,
   head: () => ({
     meta: [
-      { title: "Humber Street Sesh: The Ultimate Guide to Hull's Biggest Music Festival — HU NOW" },
+      { title: "Humber Street Sesh: Guide to Hull's Biggest Music Festival" },
       {
         name: "description",
         content:

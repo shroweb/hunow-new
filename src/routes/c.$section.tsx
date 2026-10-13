@@ -1,3 +1,4 @@
+import { buildSeoMeta } from "@/lib/seo-meta";
 import { createFileRoute, Link, Outlet, notFound, redirect, useRouterState } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard } from "@/components/cards";
@@ -16,14 +17,15 @@ export const Route = createFileRoute("/c/$section")({
     }
     return { section };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.section.label} — HU NOW` },
-          { name: "description", content: loaderData.section.blurb },
-        ]
-      : [],
-  }),
+  head: ({ loaderData, params }) =>
+    // Sub-section pages set their own title and canonical
+    loaderData && !(params as { sub?: string }).sub
+      ? buildSeoMeta({
+          title: `${loaderData.section.label} — Hull Guides & Stories`,
+          description: `${loaderData.section.blurb} Browse HU NOW's ${loaderData.section.label.toLowerCase()} coverage from across Hull and East Yorkshire.`,
+          path: `/c/${loaderData.section.slug}`,
+        })
+      : {},
   component: SectionPage,
   notFoundComponent: () => (
     <PublicLayout>

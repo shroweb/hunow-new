@@ -12,7 +12,7 @@ export const Route = createFileRoute("/freedom-festival")({
   component: FreedomFestivalPage,
   head: () => ({
     meta: [
-      { title: "Freedom Festival Hull: The Definitive Guide to Hull's International Arts Festival — HU NOW" },
+      { title: "Freedom Festival Hull: The Definitive Guide — HU NOW" },
       {
         name: "description",
         content:

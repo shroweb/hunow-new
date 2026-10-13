@@ -38,11 +38,16 @@ export function formatTitle(title: string | undefined | null, suffix = "HU NOW")
     t = `${t} in Hull & East Yorkshire`;
   }
 
+  const MAX = 60;
   const full = `${t} — ${suffix}`;
-  if (full.length > 65) {
-    return `${t.slice(0, 58 - suffix.length).trim()} — ${suffix}`;
-  }
-  return full;
+  if (full.length <= MAX) return full;
+  // Too long with the brand suffix: drop the suffix before touching the title itself
+  if (t.length <= MAX) return t;
+  // Still too long: cut at a word boundary, preferring a natural break such as a colon or dash
+  const cut = t.slice(0, MAX);
+  const natural = Math.max(cut.lastIndexOf(": "), cut.lastIndexOf(" — "), cut.lastIndexOf(" - "));
+  if (natural >= 30) return cut.slice(0, natural).trim();
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,:;&—-]+$/, "")}…`;
 }
 
 export interface SeoMetaOptions {

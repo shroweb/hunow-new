@@ -1,3 +1,4 @@
+import { formatTitle } from "@/lib/seo-meta";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { NotFoundPage } from "@/components/NotFoundPage";
@@ -64,7 +65,7 @@ export const Route = createFileRoute("/$taxonomy/$slug")({
   head: ({ loaderData, params }) => {
     const a = loaderData?.article;
     if (!a) return {};
-    const title = a.seo?.title ?? `${a.title} — HU NOW`;
+    const title = formatTitle(a.seo?.title ?? a.title);
     const description = a.seo?.description ?? a.excerpt;
     const image = a.seo?.ogImage ?? img(a.featuredImage, 1200, 630);
     const url = articlePath(a);

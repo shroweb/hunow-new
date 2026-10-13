@@ -27,6 +27,7 @@ export const Route = createFileRoute("/tag/$tag")({
       title: `#${tag} — Hull & East Yorkshire Guide`,
       description: `Explore all HU NOW articles, culture guides, and upcoming events tagged with #${tag} across Kingston upon Hull.`,
       path: `/tag/${encodeURIComponent(tag)}`,
+      robots: "noindex, follow",
     });
   },
   notFoundComponent: () => (

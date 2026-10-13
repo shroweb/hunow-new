@@ -1,3 +1,4 @@
+import { buildSeoMeta } from "@/lib/seo-meta";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ArticleCard, EventCard } from "@/components/cards";
@@ -42,17 +43,14 @@ export const Route = createFileRoute("/c/$section/$sub")({
       events: store?.events ?? [],
     };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.sub.label} — ${loaderData.section.label} — HU NOW` },
-          {
-            name: "description",
-            content: `${loaderData.sub.label} posts in ${loaderData.section.label} from HU NOW.`,
-          },
-        ]
-      : [],
-  }),
+  head: ({ loaderData }) =>
+    loaderData
+      ? buildSeoMeta({
+          title: `${loaderData.sub.label} in Hull — ${loaderData.section.label}`,
+          description: `${loaderData.sub.label} stories, guides and local recommendations from HU NOW's ${loaderData.section.label} section, covering Hull and East Yorkshire.`,
+          path: `/c/${loaderData.section.slug}/${loaderData.sub.slug}`,
+        })
+      : {},
   component: SubPage,
   notFoundComponent: () => (
     <PublicLayout>
