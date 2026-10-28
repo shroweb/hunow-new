@@ -20,6 +20,20 @@ import { validateUniqueSlug } from "@/components/admin/validation-utils";
 import { readSeo } from "@/components/admin/seo-utils";
 import { TiptapEditor } from "@/components/admin/TiptapEditor";
 import { NAV_SECTIONS, findSection } from "@/lib/nav";
+import { TAXONOMIES } from "@/lib/taxonomy";
+
+// Every URL category an article can live under (/<category>/<slug>). These must be real section
+// routes, otherwise the article 404s. "events" is excluded because /events/* is the event page route.
+const URL_CATEGORY_GROUPS = Array.from(
+  TAXONOMIES.filter((t) => t.slug !== "events").reduce((groups, t) => {
+    const list = groups.get(t.eyebrow) ?? [];
+    list.push({ slug: t.slug, label: t.label });
+    groups.set(t.eyebrow, list);
+    return groups;
+  }, new Map<string, { slug: string; label: string }[]>()),
+);
+const sectionForUrlCategory = (slug: string) =>
+  NAV_SECTIONS.find((s) => s.subs.some((sub) => sub.slug === slug))?.slug;
 import { setState, slugify, uid, useStore } from "@/lib/store";
 import { upsertArticleFn, deleteArticleFn } from "@/lib/content.functions";
 import { getAuthorsFn } from "@/lib/authors.functions";
@@ -90,7 +104,6 @@ function AdminArticles() {
   const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState("");
 
-  const selectedSection = findSection(section);
   const published = articles.filter((a) => a.status === "published").length;
   const drafts = articles.filter((a) => a.status === "draft").length;
   const today = new Date().toISOString().slice(0, 10);
@@ -151,9 +164,9 @@ function AdminArticles() {
     const proTip = String(fd.get("proTip") || "").trim();
     const honestVerdict = theGood || theCatch || proTip ? { theGood, theCatch, proTip } : undefined;
 
-    const submittedCategory = (
-      isCustomCategory ? customCategory.trim() : String(fd.get("category") || "")
-    ).trim() || "Guides";
+    const submittedCategory =
+      (isCustomCategory ? customCategory.trim() : String(fd.get("category") || "")).trim() ||
+      "Guides";
 
     if (submittedCategory && !taxonomyCategories.includes(submittedCategory)) {
       const updatedCategories = Array.from(new Set([...taxonomyCategories, submittedCategory]));
@@ -320,7 +333,9 @@ function AdminArticles() {
                           className={adminInput}
                         >
                           <option value="">None</option>
-                          <option value="Proper Hull Institution">⭐ Proper Hull Institution</option>
+                          <option value="Proper Hull Institution">
+                            ⭐ Proper Hull Institution
+                          </option>
                           <option value="HU NOW Certified Pint">🍺 HU NOW Certified Pint</option>
                           <option value="Hidden Gem">💎 Hidden Gem</option>
                           <option value="Worth the Queue">⏱️ Worth the Queue</option>
@@ -429,7 +444,10 @@ function AdminArticles() {
                   <AdminField
                     label="Author"
                     hint={
-                      <Link to="/admin/authors" className="text-accent underline hover:text-accent/80">
+                      <Link
+                        to="/admin/authors"
+                        className="text-accent underline hover:text-accent/80"
+                      >
                         Manage authors →
                       </Link>
                     }
@@ -445,7 +463,8 @@ function AdminArticles() {
                     <datalist id="admin-authors-list">
                       {authors.map((a) => (
                         <option key={a.name} value={a.name}>
-                          {a.role ? `${a.role} · ` : ""}{a.locationNote ?? ""}
+                          {a.role ? `${a.role} · ` : ""}
+                          {a.locationNote ?? ""}
                         </option>
                       ))}
                     </datalist>
@@ -524,10 +543,7 @@ function AdminArticles() {
                     <select
                       name="section"
                       value={section}
-                      onChange={(e) => {
-                        setSection(e.target.value);
-                        setSubcategory("");
-                      }}
+                      onChange={(e) => setSection(e.target.value)}
                       className={adminInput}
                     >
                       <option value="">General Stories & Magazine</option>
@@ -539,7 +555,7 @@ function AdminArticles() {
                     </select>
                   </AdminField>
                   <AdminField
-                    label="Subcategory"
+                    label="URL category"
                     hint={
                       subcategory
                         ? `Canonical path: /${subcategory}/${slugDraft || "slug"}`
@@ -549,14 +565,29 @@ function AdminArticles() {
                     <select
                       name="subcategory"
                       value={subcategory}
-                      onChange={(e) => setSubcategory(e.target.value)}
+                      onChange={(e) => {
+                        const next = e.target.value;
+                        setSubcategory(next);
+                        // Keep the navigation section in step when the category belongs to one
+                        const navSection = sectionForUrlCategory(next);
+                        if (navSection && !section) setSection(navSection);
+                      }}
                       className={adminInput}
                     >
                       <option value="">None (Standard /stories post)</option>
-                      {selectedSection?.subs.map((s) => (
-                        <option key={s.slug} value={s.slug}>
-                          {s.label} (/{s.slug}/...)
+                      {subcategory && !TAXONOMIES.some((t) => t.slug === subcategory) && (
+                        <option value={subcategory}>
+                          {subcategory} (not a live section — pick another)
                         </option>
+                      )}
+                      {URL_CATEGORY_GROUPS.map(([group, items]) => (
+                        <optgroup key={group} label={group}>
+                          {items.map((item) => (
+                            <option key={item.slug} value={item.slug}>
+                              {item.label} (/{item.slug}/...)
+                            </option>
+                          ))}
+                        </optgroup>
                       ))}
                     </select>
                   </AdminField>
