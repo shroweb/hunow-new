@@ -703,12 +703,12 @@ function Footer() {
             </a>
           </div>
           <a
-            href="https://swift7.co.uk"
+            href="https://www.shroweb.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[10px] font-mono text-white/55 hover:text-white/50 transition-colors"
           >
-            Web Design in Hull by Swift7
+            Web development by Shro Web
           </a>
         </div>
       </div>
