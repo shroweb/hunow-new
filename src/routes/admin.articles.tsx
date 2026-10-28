@@ -19,7 +19,7 @@ import { ValidationErrors } from "@/components/admin/ValidationErrors";
 import { validateUniqueSlug } from "@/components/admin/validation-utils";
 import { readSeo } from "@/components/admin/seo-utils";
 import { TiptapEditor } from "@/components/admin/TiptapEditor";
-import { NAV_SECTIONS, findSection } from "@/lib/nav";
+import { NAV_SECTIONS } from "@/lib/nav";
 import { TAXONOMIES } from "@/lib/taxonomy";
 
 // Every URL category an article can live under (/<category>/<slug>). These must be real section
