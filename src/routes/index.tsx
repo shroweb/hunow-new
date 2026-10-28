@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 
 import { AdSlot } from "@/components/AdSlot";
+import { ArticleCard, EventCard, ListingCard } from "@/components/cards";
 import { PollWidget } from "@/components/PollWidget";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ResponsiveImage } from "@/components/ResponsiveImage";
@@ -123,76 +125,82 @@ function Index() {
 
   return (
     <PublicLayout>
-      {/* ── FRONT PAGE ───────────────────────────────────────────────────────── */}
-      <section className="border-b-2 border-foreground bg-background">
-        <div className="max-w-7xl mx-auto px-4 pt-6 pb-10 md:pt-8 md:pb-14">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b-2 border-foreground pb-3 mb-6 md:mb-8">
-            <h1 className="text-sm md:text-base font-bold">
-              Hull&apos;s independent guide to events, food and culture
-            </h1>
-            <p className="text-sm text-foreground/70" suppressHydrationWarning>
-              {liveDate}
-            </p>
-          </div>
+      {/* ── HERO: today's lead story ──────────────────────────────────────── */}
+      {primaryHeroArticle && (
+        <section className="relative overflow-hidden border-b-2 border-foreground bg-[#070b16] text-white">
+          <ResponsiveImage
+            id={primaryHeroArticle.featuredImage || "/hull-marina-hero.jpg"}
+            alt=""
+            width={1600}
+            height={900}
+            className="absolute inset-0 h-full w-full object-cover"
+            fetchPriority="high"
+            loading="eager"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070b16] via-[#070b16]/70 to-[#070b16]/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#070b16]/85 via-[#070b16]/30 to-transparent hidden lg:block" />
 
-          {primaryHeroArticle && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          <div className="relative max-w-7xl mx-auto px-4 pt-5 pb-8 md:pb-12">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-white/25 pb-3">
+              <h1 className="text-sm font-bold text-white/90">
+                Hull&apos;s independent guide to events, food and culture
+              </h1>
+              <p className="text-sm text-white/70" suppressHydrationWarning>
+                {liveDate}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-end pt-28 sm:pt-40 lg:pt-56">
               <a href={articlePath(primaryHeroArticle)} className="group block lg:col-span-8">
-                <div className="aspect-[16/9] overflow-hidden bg-foreground/10 mb-5">
-                  <ResponsiveImage
-                    id={primaryHeroArticle.featuredImage || "/hull-marina-hero.jpg"}
-                    alt={decodeHtml(primaryHeroArticle.title)}
-                    width={1100}
-                    height={620}
-                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
-                    fetchPriority="high"
-                    loading="eager"
-                    sizes="(max-width: 1024px) 100vw, 66vw"
-                  />
-                </div>
-                <div className="text-sm font-bold text-foreground/60 mb-2">
+                <div className="text-sm font-bold text-accent mb-3">
                   {primaryHeroArticle.category}
                 </div>
-                <h2 className="font-display-keep text-4xl md:text-6xl font-display uppercase leading-[0.95] tracking-tight mb-4 group-hover:underline decoration-accent decoration-4 underline-offset-4">
+                <h2 className="font-display-keep text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display uppercase leading-[0.92] tracking-tight mb-5 group-hover:underline decoration-accent decoration-4 underline-offset-8">
                   {decodeHtml(primaryHeroArticle.title)}
                 </h2>
-                <p className="text-base md:text-lg text-foreground/75 max-w-2xl leading-relaxed mb-3">
+                <p className="text-base md:text-xl text-white/85 max-w-2xl leading-relaxed mb-5">
                   {decodeHtml(primaryHeroArticle.excerpt)}
                 </p>
-                <p className="text-sm text-foreground/60">
-                  By {primaryHeroArticle.author || "HU NOW"}
-                  {primaryHeroArticle.readingMinutes
-                    ? ` · ${primaryHeroArticle.readingMinutes} min read`
-                    : ""}
-                </p>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                  <span className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-5 py-3 text-xs font-bold uppercase tracking-widest group-hover:bg-white transition-colors">
+                    Read the story <ArrowRight className="size-4" />
+                  </span>
+                  <span className="text-sm text-white/70">
+                    By {primaryHeroArticle.author || "HU NOW"}
+                    {primaryHeroArticle.readingMinutes
+                      ? ` · ${primaryHeroArticle.readingMinutes} min read`
+                      : ""}
+                  </span>
+                </div>
               </a>
 
-              <div className="lg:col-span-4 lg:border-l-2 lg:border-foreground lg:pl-10">
-                <h2 className="text-lg font-bold mb-2">Also on HU NOW</h2>
-                <ul className="divide-y divide-foreground/15">
+              <div className="lg:col-span-4 border-t-2 border-white/25 lg:border-t-0 lg:border-l-2 lg:pl-8 pt-5 lg:pt-0">
+                <h2 className="text-base font-bold text-white mb-1">Also on HU NOW</h2>
+                <ul className="divide-y divide-white/15">
                   {primaryHeroEvent && (
                     <li>
                       <Link
                         to="/events/$slug"
                         params={{ slug: primaryHeroEvent.slug }}
-                        className="group flex gap-4 py-4"
+                        className="group flex gap-4 py-3.5"
                       >
                         <div
-                          className="w-14 shrink-0 border-2 border-foreground text-center leading-none py-1.5"
+                          className="w-12 shrink-0 bg-white text-[#070b16] text-center leading-none py-1.5"
                           suppressHydrationWarning
                         >
-                          <div className="text-[11px] font-bold uppercase">
+                          <div className="text-[10px] font-bold uppercase">
                             {formatWeekday(primaryHeroEvent.startDate)}
                           </div>
-                          <div className="font-display text-3xl">
+                          <div className="font-display text-2xl">
                             {Number(primaryHeroEvent.startDate.slice(8, 10))}
                           </div>
                         </div>
                         <div className="min-w-0">
-                          <div className="font-bold leading-snug group-hover:underline">
+                          <div className="font-bold leading-snug text-white group-hover:underline">
                             {decodeHtml(primaryHeroEvent.title)}
                           </div>
-                          <div className="text-sm text-foreground/60 mt-1">
+                          <div className="text-sm text-white/65 mt-0.5">
                             {cleanLocation(primaryHeroEvent.locationName)}
                             {primaryHeroEvent.startTime ? ` · ${primaryHeroEvent.startTime}` : ""}
                           </div>
@@ -202,278 +210,87 @@ function Index() {
                   )}
                   {sideArticles.map((a) => (
                     <li key={a.id}>
-                      <a href={articlePath(a)} className="group flex gap-4 py-4">
-                        <div className="w-20 shrink-0 aspect-[4/3] overflow-hidden bg-foreground/10">
-                          <img
-                            src={img(a.featuredImage, 160, 120)}
-                            alt=""
-                            width={160}
-                            height={120}
-                            loading="lazy"
-                            decoding="async"
-                            onError={(e) => {
-                              e.currentTarget.style.visibility = "hidden";
-                            }}
-                            className="w-full h-full object-cover"
-                          />
+                      <a href={articlePath(a)} className="group block py-3.5">
+                        <div className="font-bold leading-snug text-white group-hover:underline">
+                          {decodeHtml(a.title)}
                         </div>
-                        <div className="min-w-0">
-                          <div className="font-bold leading-snug group-hover:underline">
-                            {decodeHtml(a.title)}
-                          </div>
-                          <div className="text-sm text-foreground/60 mt-1">{a.category}</div>
-                        </div>
+                        <div className="text-sm text-white/65 mt-0.5">{a.category}</div>
                       </a>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── MAIN GRID ────────────────────────────────────────────────────────── */}
-      <main className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div className="lg:col-span-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-display uppercase tracking-tight">
-                Coming up in Hull
-              </h2>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {(
-                [
-                  { label: "Today", search: { when: "today" as const } },
-                  { label: "This Weekend", search: { when: "weekend" as const } },
-                  { label: "Free", search: { free: true } },
-                  { label: "Music", search: { category: "Music" } },
-                  { label: "Food", search: { category: "Food & Drink" } },
-                  { label: "Arts", search: { category: "Arts" } },
-                ] as const
-              ).map(({ label, search }) => (
-                <Link
-                  key={label}
-                  to="/whats-on"
-                  search={search}
-                  className="px-3 py-1 text-[10px] font-bold uppercase border border-foreground/20 hover:border-foreground hover:bg-foreground/5 transition-colors"
-                >
-                  {label}
-                </Link>
-              ))}
-            </div>
           </div>
+        </section>
+      )}
 
-          {/* Lead event */}
-          {events[0] && (
+      {/* ── COMING UP ──────────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 py-12 md:py-16 border-b border-border">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+          <h2 className="text-4xl md:text-5xl font-display">Coming up in Hull</h2>
+          <Link
+            to="/whats-on"
+            className="inline-flex items-center gap-2 border-2 border-foreground px-4 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
+          >
+            Full calendar <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        <div className="-mt-4 mb-8 flex flex-wrap gap-2">
+          {(
+            [
+              { label: "Today", search: { when: "today" as const } },
+              { label: "This weekend", search: { when: "weekend" as const } },
+              { label: "Free", search: { free: true } },
+              { label: "Music", search: { category: "Music" } },
+              { label: "Food & drink", search: { category: "Food & Drink" } },
+              { label: "Arts", search: { category: "Arts" } },
+            ] as const
+          ).map(({ label, search }) => (
             <Link
-              to="/events/$slug"
-              params={{ slug: events[0].slug }}
-              className="group block w-full mb-6"
+              key={label}
+              to="/whats-on"
+              search={search}
+              className="px-3.5 py-2 text-sm font-semibold border border-foreground/25 hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
             >
-              <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-stone-200">
-                <ResponsiveImage
-                  id={events[0].featuredImage}
-                  alt={events[0].title}
-                  width={900}
-                  height={420}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="pt-3 pb-1">
-                <div
-                  className="font-mono text-[10px] font-bold uppercase mb-1.5"
-                  style={{ color: categoryColor(events[0].category) }}
-                >
-                  {events[0].category}
-                  {events[0].isSponsored && (
-                    <span className="ml-3 text-muted-foreground">· Sponsored</span>
-                  )}
-                </div>
-                <h3 className="text-2xl md:text-3xl font-display uppercase leading-none group-hover:underline mb-2">
-                  {decodeHtml(events[0].title)}
-                </h3>
-                <div
-                  className="text-[10px] font-mono uppercase text-muted-foreground"
-                  suppressHydrationWarning
-                >
-                  {formatHomeDate(events[0].startDate)} · {events[0].startTime} ·{" "}
-                  {cleanLocation(events[0].locationName)}
-                </div>
-              </div>
+              {label}
             </Link>
-          )}
-
-          {/* Compact event rows */}
-          <div className="divide-y divide-foreground/10">
-            {events.slice(1).map((e) => (
-              <Link
-                key={e.id}
-                to="/events/$slug"
-                params={{ slug: e.slug }}
-                className="group flex gap-4 items-center py-3.5"
-              >
-                <div className="w-20 shrink-0 overflow-hidden bg-stone-200 aspect-[4/3]">
-                  <img
-                    src={img(e.featuredImage, 160, 120)}
-                    alt={decodeHtml(e.title)}
-                    width={160}
-                    height={120}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div
-                    className="font-mono text-[9px] font-bold uppercase mb-1"
-                    style={{ color: categoryColor(e.category) }}
-                    suppressHydrationWarning
-                  >
-                    {e.category} · {formatHomeDate(e.startDate)}
-                  </div>
-                  <h3 className="text-sm font-bold leading-snug group-hover:underline mb-0.5">
-                    {decodeHtml(e.title)}
-                  </h3>
-                  <div className="text-[9px] font-mono uppercase text-muted-foreground">
-                    {cleanLocation(e.locationName)}
-                  </div>
-                </div>
-                <svg
-                  className="shrink-0 text-foreground/25 group-hover:text-accent transition-colors"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M3 8h10M9 4l4 4-4 4"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
+          ))}
+        </div>
+        {events.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+            {events.map((e) => (
+              <EventCard key={e.id} event={e} />
             ))}
           </div>
-          <div className="mt-8">
-            <Link
-              to="/whats-on"
-              className="inline-block text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent"
-            >
-              View full calendar →
-            </Link>
-          </div>
-        </div>
+        ) : (
+          <p className="text-foreground/70">Nothing listed yet. Check the full calendar.</p>
+        )}
+      </section>
 
-        <aside className="lg:col-span-4 space-y-12">
-          <PollWidget />
-          <AdSlot placement="Sidebar Ad" />
-        </aside>
-      </main>
-
-      {/* ── LATEST STORIES ───────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 py-12 border-t border-border">
-        <div className="flex items-end justify-between mb-10 gap-4">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-display uppercase">Latest stories</h2>
-          </div>
+      {/* ── LATEST STORIES ─────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 py-12 md:py-16 border-b border-border">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+          <h2 className="text-4xl md:text-5xl font-display">Latest stories</h2>
           <Link
             to="/stories"
-            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent shrink-0"
+            className="inline-flex items-center gap-2 border-2 border-foreground px-4 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
           >
-            All stories →
+            All stories <ArrowRight className="size-4" />
           </Link>
         </div>
         {latestArticles.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            {/* Lead article */}
-            <a href={articlePath(latestArticles[0])} className="group block md:col-span-2">
-              <div className="w-full aspect-[16/10] bg-stone-200 overflow-hidden mb-5 relative">
-                <ResponsiveImage
-                  id={latestArticles[0].featuredImage}
-                  alt={latestArticles[0].title}
-                  width={900}
-                  height={560}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <span
-                className="inline-block text-[10px] font-mono font-bold uppercase px-2 py-1 mb-3"
-                style={{
-                  background: categoryColor(latestArticles[0].category),
-                  color: "var(--background)",
-                }}
-              >
-                {latestArticles[0].category}
-              </span>
-              <h3 className="text-3xl md:text-5xl font-display uppercase leading-none group-hover:underline mb-4">
-                {latestArticles[0].title}
-              </h3>
-              <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
-                {latestArticles[0].excerpt}
-              </p>
-              <div className="text-[10px] font-mono uppercase text-muted-foreground">
-                {latestArticles[0].author} · {latestArticles[0].readingMinutes} min read
-              </div>
-            </a>
-            {/* Secondary articles */}
-            <div className="flex flex-col gap-0 md:border-l-2 md:border-foreground md:pl-10 divide-y divide-foreground/10">
-              {latestArticles.slice(1, 3).map((a) => (
-                <a
-                  key={a.id}
-                  href={articlePath(a)}
-                  className="group flex gap-4 items-start py-5 first:pt-0"
-                >
-                  <div className="w-24 shrink-0 overflow-hidden bg-stone-200 aspect-[4/3]">
-                    <img
-                      src={img(a.featuredImage, 192, 144)}
-                      alt={a.title}
-                      width={192}
-                      height={144}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span
-                      className="text-[9px] font-mono font-bold uppercase block mb-1"
-                      style={{ color: categoryColor(a.category) }}
-                    >
-                      {a.category}
-                    </span>
-                    <h3 className="text-sm font-bold leading-snug group-hover:underline mb-1">
-                      {a.title}
-                    </h3>
-                    <div className="text-[9px] font-mono uppercase text-muted-foreground mt-1">
-                      {a.author} · {a.readingMinutes} min
-                    </div>
-                  </div>
-                  <svg
-                    className="shrink-0 text-foreground/25 group-hover:text-accent transition-colors mt-0.5"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M3 8h10M9 4l4 4-4 4"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </a>
-              ))}
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+            {latestArticles.slice(0, 3).map((a) => (
+              <ArticleCard key={a.id} article={a} />
+            ))}
           </div>
         )}
+      </section>
+
+      <section className="max-w-7xl mx-auto px-4 py-12 border-b border-border grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <PollWidget />
+        <AdSlot placement="Sidebar Ad" />
       </section>
 
       {/* ── NEWSLETTER CTA ───────────────────────────────────────────────────── */}
@@ -543,135 +360,38 @@ function Index() {
         </div>
       </section>
 
-      {/* ── INDEPENDENT HULL ─────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 py-12 border-b border-border">
-        <div className="flex items-end justify-between mb-10 gap-4">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-display uppercase">Independent Hull</h2>
-            <p className="text-sm text-muted-foreground mt-1.5">
-              Shops, cafés, restaurants and more — the city's independent scene
-            </p>
-          </div>
+      {/* ── INDEPENDENT HULL ───────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 py-12 md:py-16 border-b border-border">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+          <h2 className="text-4xl md:text-5xl font-display">Independent Hull</h2>
           <Link
             to="/places"
-            className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent shrink-0"
+            className="inline-flex items-center gap-2 border-2 border-foreground px-4 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
           >
-            All places →
+            All places <ArrowRight className="size-4" />
           </Link>
         </div>
         {listings.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            <Link
-              to="/places/$slug"
-              params={{ slug: listings[0].slug }}
-              className="group block md:col-span-2"
-            >
-              <div className="w-full aspect-[16/7] overflow-hidden bg-stone-200">
-                <ResponsiveImage
-                  id={listings[0].featuredImage}
-                  alt={listings[0].name}
-                  width={900}
-                  height={560}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="pt-3 pb-1">
-                <div
-                  className="text-[9px] font-mono font-bold uppercase mb-1.5"
-                  style={{ color: categoryColor(listings[0].category) }}
-                >
-                  {listings[0].category} · {listings[0].area}
-                </div>
-                {/* Lead listing font-display */}
-                <h3 className="text-2xl md:text-4xl font-display uppercase leading-none group-hover:underline mb-2">
-                  {listings[0].name}
-                </h3>
-                <p className="text-sm text-muted-foreground line-clamp-4 max-w-3xl leading-relaxed">
-                  {listings[0].description}
-                </p>
-              </div>
-            </Link>
-            <div className="flex flex-col md:border-l-2 md:border-foreground md:pl-10">
-              <div className="divide-y divide-foreground/10 flex-1">
-                {listings.slice(1, 4).map((l) => (
-                  <Link
-                    key={l.id}
-                    to="/places/$slug"
-                    params={{ slug: l.slug }}
-                    className="group flex gap-4 items-center py-4"
-                  >
-                    <div className="w-20 shrink-0 overflow-hidden bg-stone-200 aspect-[4/3]">
-                      {l.featuredImage && (
-                        <img
-                          src={img(l.featuredImage, 160, 120)}
-                          alt={l.name}
-                          width={160}
-                          height={120}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <span
-                        className="text-[9px] font-mono font-bold uppercase block mb-1"
-                        style={{ color: categoryColor(l.category) }}
-                      >
-                        {l.category} · {l.area}
-                      </span>
-                      <h3 className="text-sm font-bold leading-snug group-hover:underline mb-0.5">
-                        {l.name}
-                      </h3>
-                      <p className="text-[11px] text-muted-foreground line-clamp-1">
-                        {l.description}
-                      </p>
-                    </div>
-                    <svg
-                      className="shrink-0 text-foreground/25 group-hover:text-accent transition-colors"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M3 8h10M9 4l4 4-4 4"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </Link>
-                ))}
-              </div>
-              <Link
-                to="/places"
-                className="mt-6 text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 self-start hover:text-accent hover:border-accent"
-              >
-                All places →
-              </Link>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+            {listings.map((l) => (
+              <ListingCard key={l.id} listing={l} />
+            ))}
           </div>
         )}
       </section>
 
-      {/* [NEW] Hull neighbourhoods strip */}
+      {/* ── NEIGHBOURHOODS ─────────────────────────────────────────────────── */}
       <section className="border-b border-border bg-background">
         <div className="max-w-7xl mx-auto px-4 py-10">
           <div className="flex items-end justify-between mb-6 gap-4">
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/30 mb-1.5">
-                Explore by area
-              </div>
-              <h2 className="text-4xl font-display uppercase">Hull Neighbourhoods</h2>
+              <h2 className="text-4xl md:text-5xl font-display">Hull neighbourhoods</h2>
             </div>
             <Link
               to="/areas"
-              className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent shrink-0"
+              className="inline-flex shrink-0 items-center gap-2 border-2 border-foreground px-4 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors"
             >
-              All areas →
+              All areas <ArrowRight className="size-4" />
             </Link>
           </div>
           <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-5">
@@ -712,9 +432,6 @@ function Index() {
       <section className="bg-background text-foreground border-t-2 border-foreground py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
-            <div className="text-[10px] font-mono uppercase tracking-widest mb-3 text-accent">
-              Got a story?
-            </div>
             <h2 className="text-4xl md:text-6xl font-display uppercase leading-none text-foreground">
               Send us a tip
             </h2>
