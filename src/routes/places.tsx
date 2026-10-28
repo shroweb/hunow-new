@@ -47,8 +47,7 @@ function PlacesIndex() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b border-border">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Directory</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">Places</h1>
+                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">Places</h1>
         <p className="text-xl max-w-2xl">Where to eat, drink, shop and explore across the city.</p>
       </section>
       <section className="max-w-7xl mx-auto px-4 py-6 border-b border-border flex flex-wrap gap-2 items-center">

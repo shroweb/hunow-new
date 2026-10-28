@@ -64,8 +64,7 @@ function SectionIndex() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b border-border">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Section</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">
+                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">
           {section.label}
         </h1>
         <p className="text-xl max-w-2xl text-muted-foreground">{section.blurb}</p>

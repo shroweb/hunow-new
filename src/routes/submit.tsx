@@ -110,8 +110,7 @@ function Submit() {
   return (
     <PublicLayout>
       <section className="max-w-3xl mx-auto px-4 py-12 md:py-20">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Free Listings</div>
-        <h1 className="text-5xl md:text-7xl font-display uppercase leading-none mb-6">
+                <h1 className="text-5xl md:text-7xl font-display uppercase leading-none mb-6">
           Submit to HU NOW
         </h1>
         <p className="text-lg mb-10">

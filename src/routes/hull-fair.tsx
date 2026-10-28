@@ -634,7 +634,7 @@ function HullFairPage() {
               <span className="text-white/40">/</span>
               <span>Annual Traditions</span>
               <span className="text-white/40">/</span>
-              <span className="text-white">Hull Fair Superhub</span>
+              <span className="text-white">Hull Fair</span>
             </div>
 
             <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-1.5 bg-accent text-accent-foreground font-mono text-[11px] font-bold uppercase tracking-widest mb-5">
@@ -796,7 +796,7 @@ function HullFairPage() {
                 to="/$taxonomy/$slug"
                 params={{ taxonomy: "history", slug: "hull-fair-history" }}
               >
-                📖 Discover the 700-year story: Read the History of Hull Fair →
+                Discover the 700-year story: Read the History of Hull Fair →
               </Link>
             </div>
           </section>
@@ -898,7 +898,7 @@ function HullFairPage() {
             {/* Walking Route from Station */}
             <div className="border-2 border-foreground bg-card mb-6">
               <div className="flex flex-wrap items-center gap-2 bg-foreground text-background px-5 md:px-6 py-3 text-[11px] font-mono uppercase tracking-wider font-bold">
-                <span>🚶 The Insider Choice</span>
+                <span>Quickest from the station</span>
                 <span className="text-background/40">•</span>
                 <span>1.3 Miles · 20–25 Mins Walk</span>
               </div>
@@ -939,7 +939,6 @@ function HullFairPage() {
                   ))}
                 </ol>
                 <div className="text-sm text-foreground/70">
-                  💡{" "}
                   <em>
                     Tip: Follow the steady stream of fairgoers and illuminated big wheel visible
                     across West Park. Wide pavements all the way make this easy for pushchairs.
@@ -1130,19 +1129,16 @@ function HullFairPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
               {[
                 {
-                  emoji: "🧸",
                   title: "Children's Rides",
                   price: "Typically £2.50–£3.50",
                   text: "Teacups, mini roller coasters, funhouses, toy carousels, inflatables, and gentle train rides.",
                 },
                 {
-                  emoji: "🎡",
                   title: "Family Classics",
                   price: "Typically £3.50–£5.00",
                   text: "Dodgems (bumper cars), Waltzers, Giant Observation Wheel, Ghost Train, Sizzler, and Helter Skelter.",
                 },
                 {
-                  emoji: "🚀",
                   title: "Extreme Thrill Rides",
                   price: "Typically £4.00–£7.00",
                   text: "Air, Reverse Bungee, Giant Booster, XXL Speed, AtmosFear, and 50-metre drop towers.",
@@ -1150,9 +1146,6 @@ function HullFairPage() {
               ].map((tier) => (
                 <div key={tier.title} className="flex flex-col border border-border bg-card">
                   <div className="flex items-center gap-3 p-5 pb-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center bg-accent/20 text-2xl">
-                      {tier.emoji}
-                    </div>
                     <h3 className="font-display text-xl uppercase leading-tight">{tier.title}</h3>
                   </div>
                   <div className="border-y border-border bg-foreground text-background px-5 py-3 font-mono font-bold text-base">
@@ -1210,22 +1203,18 @@ function HullFairPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {[
                 {
-                  emoji: "🥔",
                   title: "1. Bob Carver’s Patties & Chips",
                   text: "The quintessential Hull delicacy. A seasoned patty made from mashed potato infused with sage and onion, dipped in batter and deep-fried golden. Served piping hot with chips, salt, and lashings of chip spice.",
                 },
                 {
-                  emoji: "🍯",
                   title: "2. Wright’s Brandy Snaps & Fresh Cream",
                   text: "Crisp, golden-brown rolled ginger-molasses wafer cylinders filled on the spot with sweet whipped fresh dairy cream. A cherished staple for generations of fairgoers.",
                 },
                 {
-                  emoji: "🔴",
                   title: "3. Pomegranates with Pins & Spoons",
                   text: "A unique Hull Fair tradition dating back to when exotic Mediterranean fruits were unloaded at Hull Docks each autumn. Fairgoers pick ruby-red seeds straight from the cut fruit using pins or small plastic spoons.",
                 },
                 {
-                  emoji: "🌰",
                   title: "4. Hot Roasted Chestnuts & Toffee Apples",
                   text: "Roasted over open coal drums and served in paper bags to warm your hands against the autumn evening chill.",
                 },
@@ -1234,9 +1223,6 @@ function HullFairPage() {
                   key={item.title}
                   className="flex gap-4 border border-border bg-card p-5 md:p-6"
                 >
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center bg-accent/20 text-3xl">
-                    {item.emoji}
-                  </div>
                   <div>
                     <h3 className="font-display text-xl md:text-2xl uppercase leading-tight mb-2">
                       {item.title}
@@ -1259,7 +1245,7 @@ function HullFairPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className={CARD_CLASS}>
                 <h3 className="font-bold uppercase text-sm tracking-wide mb-2">
-                  🕒 Quieter Times for Families
+                  Quieter Times for Families
                 </h3>
                 <p className="text-sm leading-relaxed text-foreground/75">
                   Weekday afternoons (Monday to Thursday, 2:00 PM to 5:00 PM) are significantly
@@ -1270,7 +1256,7 @@ function HullFairPage() {
 
               <div className={CARD_CLASS}>
                 <h3 className="font-bold uppercase text-sm tracking-wide mb-2">
-                  🪪 If a Child Gets Separated
+                  If a Child Gets Separated
                 </h3>
                 <p className="text-sm leading-relaxed text-foreground/75">
                   Agree a fixed meeting point before entering — a recognisable landmark works better
@@ -1283,7 +1269,7 @@ function HullFairPage() {
 
               <div className={CARD_CLASS}>
                 <h3 className="font-bold uppercase text-sm tracking-wide mb-2">
-                  💳 Cash, Cards & Mobile Signal
+                  Cash, Cards & Mobile Signal
                 </h3>
                 <p className="text-sm leading-relaxed text-foreground/75">
                   Many operators accept contactless payment, but mobile network congestion across
@@ -1296,7 +1282,7 @@ function HullFairPage() {
 
               <div className={CARD_CLASS}>
                 <h3 className="font-bold uppercase text-sm tracking-wide mb-2">
-                  🚻 Toilets & Baby Changing
+                  Toilets & Baby Changing
                 </h3>
                 <p className="text-sm leading-relaxed text-foreground/75">
                   The official 2026 layout shows two public toilet blocks: one on the Walton Street
@@ -1306,14 +1292,14 @@ function HullFairPage() {
                 </p>
                 <div className="mt-4">
                   <Link className={LINK_CLASS} to="/hull-fair-map">
-                    🗺️ Locate toilets on the interactive map →
+                    Locate toilets on the interactive map →
                   </Link>
                 </div>
               </div>
 
               <div className={CARD_CLASS}>
                 <h3 className="font-bold uppercase text-sm tracking-wide mb-2">
-                  🐕 Dogs at Hull Fair
+                  Dogs at Hull Fair
                 </h3>
                 <p className="text-sm leading-relaxed text-foreground/75">
                   Pet dogs are strongly discouraged. The fairground creates serious hazards for
@@ -1326,7 +1312,7 @@ function HullFairPage() {
 
               <div className={CARD_CLASS}>
                 <h3 className="font-bold uppercase text-sm tracking-wide mb-2">
-                  ♿ Accessibility & Blue Badges
+                  Accessibility & Blue Badges
                 </h3>
                 <p className="text-sm leading-relaxed text-foreground/75">
                   Walton Street is largely paved. Individual rides and stalls have their own

@@ -192,8 +192,7 @@ function ListingsPage() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b border-border">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">The Directory</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">Listings</h1>
+                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">Listings</h1>
         <p className="text-xl max-w-2xl text-muted-foreground">
           A directory of independent businesses, venues and places worth knowing about in Hull.
         </p>

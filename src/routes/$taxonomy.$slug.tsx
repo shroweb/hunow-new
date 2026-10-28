@@ -336,6 +336,12 @@ function ArticleDetail() {
             </span>
             <span className="text-muted-foreground">·</span>
             <span>{article.readingMinutes} min read</span>
+            {article.verifiedDate && (
+              <>
+                <span className="text-muted-foreground">·</span>
+                <span className="font-bold text-foreground">Checked {article.verifiedDate}</span>
+              </>
+            )}
             <span className="text-muted-foreground ml-auto hidden sm:inline">·</span>
             <div className="ml-auto flex items-center gap-2">
               <SaveButton

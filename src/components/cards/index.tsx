@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { img, getCategoryFallback } from "@/data/seed";
-import { formatEventDate, formatShortDate } from "@/lib/dates";
+import { formatShortDate, formatWeekday } from "@/lib/dates";
 import type { Article, EventItem, Listing, Offer } from "@/types";
 import { useIsSaved, toggleSaved } from "@/lib/bookmarks";
 import { articlePath } from "@/lib/taxonomy";
@@ -42,7 +42,6 @@ function catColor(category: string): string {
 }
 
 export function EventCard({ event }: { event: EventItem }) {
-  const dateLabel = formatEventDate(event.startDate).toUpperCase();
   const saved = useIsSaved("event", event.id);
   const fallback = getCategoryFallback(event.category, event.title);
   const fixtureMatchup = getFixtureMatchup(event);
@@ -74,8 +73,20 @@ export function EventCard({ event }: { event: EventItem }) {
             className="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         )}
+        <div
+          className="absolute top-3 left-3 z-20 w-14 bg-background text-foreground text-center leading-none border-2 border-foreground py-1.5"
+          suppressHydrationWarning
+        >
+          <div className="text-[10px] font-bold uppercase">{formatWeekday(event.startDate)}</div>
+          <div className="font-display text-3xl">{Number(event.startDate.slice(8, 10))}</div>
+          <div className="text-[10px] font-bold uppercase">
+            {new Date(`${event.startDate}T12:00:00`).toLocaleDateString("en-GB", {
+              month: "short",
+            })}
+          </div>
+        </div>
         {event.isSponsored && (
-          <span className="absolute top-3 left-3 bg-accent text-background text-[9px] font-bold uppercase px-2 py-0.5">
+          <span className="absolute bottom-3 left-3 z-20 bg-accent text-background text-[9px] font-bold uppercase px-2 py-0.5">
             Sponsored
           </span>
         )}
@@ -93,13 +104,17 @@ export function EventCard({ event }: { event: EventItem }) {
         className={`flex gap-3 mb-2 font-mono text-[10px] font-bold uppercase ${catColor(event.category)}`}
       >
         <span>{event.category}</span>
-        <span className="text-foreground/30">•</span>
-        <span className="text-foreground" suppressHydrationWarning>
-          {dateLabel} / {event.startTime}
-        </span>
+        {event.startTime && (
+          <>
+            <span className="text-foreground/30">•</span>
+            <span className="text-foreground">{event.startTime}</span>
+          </>
+        )}
       </div>
-      <h3 className="text-2xl font-bold leading-tight group-hover:underline mb-2">{decodeHtml(event.title)}</h3>
-      <p className="text-sm text-muted-foreground line-clamp-2">{decodeHtml(event.description)}</p>
+      <h3 className="text-2xl font-bold leading-tight group-hover:underline mb-2">
+        {decodeHtml(event.title)}
+      </h3>
+      <p className="text-sm text-muted-foreground">{decodeHtml(event.locationName)}</p>
     </Link>
   );
 }
@@ -222,9 +237,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <h3 className="text-base sm:text-xl font-bold leading-tight group-hover:underline">
         {listing.name}
       </h3>
-      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-        {listing.description}
-      </p>
+      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{listing.description}</p>
     </Link>
   );
 }

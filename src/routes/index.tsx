@@ -1,16 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-  Search,
-  ArrowRight,
-  Sparkles,
-  Calendar,
-  Clock,
-  Compass,
-  Flame,
-} from "lucide-react";
-import { CommandPalette } from "@/components/CommandPalette";
+
 import { AdSlot } from "@/components/AdSlot";
 import { PollWidget } from "@/components/PollWidget";
 import { PublicLayout } from "@/components/layout/PublicLayout";
@@ -29,7 +20,7 @@ export const Route = createFileRoute("/")({
     const { getSettings } = await import("@/lib/settings.functions");
     const [store, settings] = await Promise.all([
       getStoreFromDatabase(),
-      getSettings().catch(() => ({} as Record<string, string>)),
+      getSettings().catch(() => ({}) as Record<string, string>),
     ]);
     return {
       articles: store.articles,
@@ -99,8 +90,6 @@ function Index() {
     listings: loaderListings,
     settings,
   } = Route.useLoaderData();
-  const [cmdOpen, setCmdOpen] = useState(false);
-  const [heroQ, setHeroQ] = useState("");
   const [nlEmail, setNlEmail] = useState("");
   const [nlDone, setNlDone] = useState(false);
   const storeEvents = useStore((s) => s.events);
@@ -113,421 +102,145 @@ function Index() {
   const allListingsData = loaderListings?.length ? loaderListings : storeListings;
 
   const today = todayIso();
-  const publishedEvents = allEvents.filter(
-    (e) => e.status === "published" && (e.endDate || e.startDate) >= today,
-  );
+  const publishedEvents = allEvents
+    .filter((e) => e.status === "published" && (e.endDate || e.startDate) >= today)
+    .sort((a, b) => a.startDate.localeCompare(b.startDate));
   const events = publishedEvents.slice(0, 4);
-  const articles = allArticles.filter((a) => a.status === "published").slice(0, 4);
+  const articles = allArticles.filter((a) => a.status === "published");
   const listings = allListingsData.filter((l) => l.isFeatured).slice(0, 4);
 
   const featuredArticles = allArticles.filter((a) => a.isFeatured && a.status === "published");
-  const featuredEvents = allEvents.filter((e) => e.isFeatured && e.status === "published");
-  const featuredListings = allListingsData.filter((l) => l.isFeatured);
-  const featuredHeadlines = [
-    ...featuredArticles.map((a) => ({ label: a.title, href: articlePath(a) })),
-    ...featuredEvents.map((e) => ({ label: e.title, href: `/events/${e.slug}` })),
-    ...featuredListings.map((l) => ({ label: l.name, href: `/places/${l.slug}` })),
-  ].slice(0, 8);
   const primaryHeroArticle = featuredArticles[0] ?? articles[0];
-  const secondaryHeroArticle = featuredArticles[1] ?? articles[1];
-  const primaryHeroEvent = featuredEvents[0] ?? events[0];
-
-  const todayEvents = publishedEvents.filter((event) => event.startDate === todayIso());
-  const weekendEvents = publishedEvents.filter((event) => isThisWeekend(event.startDate));
-  const weekEvents = publishedEvents.filter((event) => isThisWeek(event.startDate));
-  const [spotlightTab, setSpotlightTab] = useState<"today" | "weekend" | "week">(
-    todayEvents.length > 0 ? "today" : weekendEvents.length > 0 ? "weekend" : "week",
-  );
-  const spotlightEvents = (
-    spotlightTab === "today" ? todayEvents : spotlightTab === "weekend" ? weekendEvents : weekEvents
-  ).slice(0, 3);
+  const primaryHeroEvent = events[0];
+  const publishedArticles = allArticles.filter((a) => a.status === "published");
+  const sideArticles = publishedArticles.filter((a) => a.id !== primaryHeroArticle?.id).slice(0, 3);
+  // Latest stories skips anything already shown in the front-page block
+  const shownIds = new Set([primaryHeroArticle?.id, ...sideArticles.map((a) => a.id)]);
+  const latestArticles = publishedArticles.filter((a) => !shownIds.has(a.id));
 
   // [3] Live date string for the hero masthead
   const liveDate = formatFullDate();
 
   return (
     <PublicLayout>
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section
-        className="relative overflow-hidden border-b-2 border-foreground bg-[#070b16] text-white flex flex-col justify-between"
-        style={{ animation: "reveal 0.6s cubic-bezier(0.19,1,0.22,1) both" }}
-      >
-        {/* Layered high-definition backdrop image with clear photographic presence */}
-        <ResponsiveImage
-          id="/hull-marina-hero.jpg"
-          alt="Hull Marina waterfront"
-          width={1600}
-          height={900}
-          className="absolute inset-0 h-full w-full object-cover scale-105 filter brightness-[0.9] contrast-[1.05]"
-          fetchPriority="high"
-          loading="eager"
-          sizes="100vw"
-        />
-        {/* Gradients tailored to ensure 100% readable text without turning the image pitch black */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#070b16]/90 via-[#070b16]/75 to-[#070b16]/95 sm:via-[#070b16]/55 sm:to-[#070b16]/85" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#070b16]/90 via-[#070b16]/40 to-transparent hidden lg:block" />
-
-        {/* Hero Center Stage */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 sm:py-12 lg:py-16 w-full flex-grow flex items-center">
-          <div className="w-full grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            {/* Left Column (7 cols): Headline, Subtitle, Search */}
-            <div className="lg:col-span-7 space-y-4 sm:space-y-6">
-              
-              {/* Overline Tag */}
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-black/60 border border-white/20 text-accent font-mono text-[10px] uppercase font-bold tracking-widest backdrop-blur-md">
-                <Sparkles className="size-3 shrink-0" />
-                <span>Kingston upon Hull &amp; East Yorkshire</span>
-              </div>
-
-              {/* Responsive Headline */}
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-display leading-[0.92] tracking-tight uppercase text-white">
-                DISCOVER WHAT&apos;S{" "}
-                <span className="text-accent underline decoration-accent/40 underline-offset-4 sm:underline-offset-8">
-                  HAPPENING
-                </span>{" "}
-                IN HULL
-              </h1>
-
-              {/* Sub-lead Description */}
-              <p className="text-sm sm:text-base md:text-lg text-white/80 max-w-xl font-sans leading-relaxed text-pretty">
-                Independent daily coverage of live music, food &amp; drink, hidden pubs, cultural happenings, and community stories across Hull.
-              </p>
-
-              {/* Clean Functional Search Console */}
-              <div className="pt-1 max-w-xl">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (heroQ.trim()) {
-                      window.location.href = `/search?q=${encodeURIComponent(heroQ.trim())}`;
-                    } else {
-                      setCmdOpen(true);
-                    }
-                  }}
-                  className="relative flex items-center border-2 border-white/30 bg-black/85 backdrop-blur-md focus-within:border-accent transition-all shadow-2xl p-1"
-                >
-                  <Search className="size-4 sm:size-5 text-white/50 ml-2.5 sm:ml-3 shrink-0" />
-                  <input
-                    value={heroQ}
-                    onChange={(e) => setHeroQ(e.target.value)}
-                    type="text"
-                    placeholder="Search events, places, gigs..."
-                    className="flex-grow min-w-0 bg-transparent px-2.5 sm:px-3 py-2 sm:py-2.5 font-mono text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none"
-                  />
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setCmdOpen(true)}
-                      className="hidden sm:inline-flex items-center px-2 py-1 bg-white/10 hover:bg-white/20 border border-white/20 font-mono text-[10px] text-white/60 tracking-wider transition-colors cursor-pointer"
-                      title="Open Search Palette (⌘K)"
-                    >
-                      ⌘K
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-accent text-black font-extrabold px-3.5 sm:px-5 py-2 sm:py-2.5 uppercase tracking-wider text-xs hover:bg-white transition-colors cursor-pointer"
-                    >
-                      Search
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            {/* Right Column (5 cols): Curated Editorial Spotlight Card */}
-            <div className="lg:col-span-5">
-              {primaryHeroArticle && (
-                <div className="relative group border-2 border-white/20 bg-[#0d1222] overflow-hidden hover:border-accent transition-all duration-300 shadow-2xl">
-                  {/* Spotlight Top Header */}
-                  <div className="px-3.5 sm:px-4 py-2 border-b border-white/10 flex items-center justify-between bg-white/5 text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-white/60">
-                    <span className="flex items-center gap-1.5 text-accent font-bold">
-                      <Flame className="size-3" />
-                      FEATURED STORY
-                    </span>
-                    <span className="text-white/40">
-                      {primaryHeroArticle.readingMinutes
-                        ? `${primaryHeroArticle.readingMinutes} min read`
-                        : "Editorial Guide"}
-                    </span>
-                  </div>
-
-                  {/* Spotlight Image with category tag */}
-                  <div className="relative aspect-[16/9] sm:aspect-[16/10] overflow-hidden bg-black/60">
-                    <ResponsiveImage
-                      id={primaryHeroArticle.featuredImage || "/hull-marina-hero.jpg"}
-                      alt={decodeHtml(primaryHeroArticle.title)}
-                      width={700}
-                      height={440}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                      loading="eager"
-                      sizes="(max-width: 1024px) 100vw, 40vw"
-                    />
-                    <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10">
-                      <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-black/90 border border-white/25 text-accent font-mono text-[9px] uppercase font-bold tracking-widest shadow-md">
-                        {primaryHeroArticle.category || "Guide"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Spotlight Content & CTA with high-contrast text */}
-                  <div className="p-4 sm:p-5 space-y-3 bg-[#0d1222]">
-                    <Link
-                      to={articlePath(primaryHeroArticle)}
-                      className="font-display text-xl sm:text-2xl text-white hover:text-accent transition-colors leading-tight line-clamp-2 block uppercase"
-                    >
-                      {decodeHtml(primaryHeroArticle.title)}
-                    </Link>
-
-                    <p className="text-xs sm:text-sm text-white/70 line-clamp-2 leading-relaxed">
-                      {decodeHtml(primaryHeroArticle.excerpt)}
-                    </p>
-                    
-                    <div className="pt-2.5 border-t border-white/10 flex items-center justify-between">
-                      <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">
-                        By {primaryHeroArticle.author || "HU NOW"}
-                      </span>
-                      <Link
-                        to={articlePath(primaryHeroArticle)}
-                        className="inline-flex items-center gap-1.5 py-2 text-xs font-bold font-mono uppercase tracking-wider text-accent hover:text-white transition-colors"
-                      >
-                        Read Full Story <ArrowRight className="size-3.5" />
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Mini-ticker of upcoming event or secondary guide */}
-                  {(primaryHeroEvent || secondaryHeroArticle) && (
-                    <div className="border-t border-white/10 bg-black/50 p-3 flex items-center justify-between text-xs hover:bg-black/70 transition-colors">
-                      {primaryHeroEvent ? (
-                        <Link
-                          to={`/events/${primaryHeroEvent.slug}`}
-                          className="flex items-center gap-2 text-white/90 hover:text-white w-full overflow-hidden group"
-                        >
-                          <span className="shrink-0 text-[9px] font-mono uppercase px-2 py-0.5 bg-accent text-black font-extrabold tracking-wider">
-                            Live Gig / Event
-                          </span>
-                          <span className="truncate text-xs font-medium text-white/80 group-hover:text-accent transition-colors">
-                            {decodeHtml(primaryHeroEvent.title)}
-                          </span>
-                          <ArrowRight className="size-3.5 ml-auto shrink-0 text-white/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
-                        </Link>
-                      ) : secondaryHeroArticle ? (
-                        <Link
-                          to={articlePath(secondaryHeroArticle)}
-                          className="flex items-center gap-2 text-white/90 hover:text-white w-full overflow-hidden group"
-                        >
-                          <span className="shrink-0 text-[9px] font-mono uppercase px-2 py-0.5 bg-white/15 border border-white/20 text-white font-bold tracking-wider">
-                            Also Reading
-                          </span>
-                          <span className="truncate text-xs font-medium text-white/80 group-hover:text-accent transition-colors">
-                            {decodeHtml(secondaryHeroArticle.title)}
-                          </span>
-                          <ArrowRight className="size-3.5 ml-auto shrink-0 text-white/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
-                        </Link>
-                      ) : null}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-          </div>
-        </div>
-
-        {/* 3. Hero Bottom: Live Visitor Shortcuts Strip */}
-        <div className="relative z-10 border-t-2 border-white/15 bg-black/85 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/10 divide-y sm:divide-y-0">
-            <Link
-              to="/whats-on"
-              search={{ when: "today" }}
-              className="group p-3 sm:px-6 sm:py-3.5 hover:bg-white/5 transition-colors flex flex-col justify-center"
-            >
-              <div className="flex items-center gap-1.5 min-h-4">
-                <span className="size-2 rounded-full bg-accent animate-pulse shrink-0" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors leading-none truncate">
-                  Happening Today
-                </span>
-              </div>
-              <div className="font-display text-base sm:text-xl lg:text-2xl text-white group-hover:text-accent transition-colors mt-1.5 leading-none uppercase truncate">
-                {todayEvents.length > 0 ? `${todayEvents.length} Events` : "What's On"}
-              </div>
-            </Link>
-
-            <Link
-              to="/whats-on"
-              search={{ when: "weekend" }}
-              className="group p-3 sm:px-6 sm:py-3.5 hover:bg-white/5 transition-colors flex flex-col justify-center"
-            >
-              <div className="flex items-center gap-1.5 min-h-4">
-                <Calendar className="size-3 text-white/40 group-hover:text-accent transition-colors shrink-0" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors leading-none truncate">
-                  This Weekend
-                </span>
-              </div>
-              <div className="font-display text-base sm:text-xl lg:text-2xl text-white group-hover:text-accent transition-colors mt-1.5 leading-none uppercase truncate">
-                {weekendEvents.length > 0 ? `${weekendEvents.length} Events` : "Weekend Guide"}
-              </div>
-            </Link>
-
-            <Link
-              to="/open-now"
-              className="group p-3 sm:px-6 sm:py-3.5 hover:bg-white/5 transition-colors flex flex-col justify-center"
-            >
-              <div className="flex items-center gap-1.5 min-h-4">
-                <Clock className="size-3 text-white/40 group-hover:text-accent transition-colors shrink-0" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors leading-none truncate">
-                  Open Right Now
-                </span>
-              </div>
-              <div className="font-display text-base sm:text-xl lg:text-2xl text-white group-hover:text-accent transition-colors mt-1.5 leading-none uppercase truncate">
-                Food &amp; Nightlife
-              </div>
-            </Link>
-
-            <Link
-              to="/whats-on"
-              search={{ free: true }}
-              className="group p-3 sm:px-6 sm:py-3.5 hover:bg-white/5 transition-colors flex flex-col justify-center"
-            >
-              <div className="flex items-center gap-1.5 min-h-4">
-                <Compass className="size-3 text-white/40 group-hover:text-accent transition-colors shrink-0" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/50 group-hover:text-accent transition-colors leading-none truncate">
-                  Budget Friendly
-                </span>
-              </div>
-              <div className="font-display text-base sm:text-xl lg:text-2xl text-white group-hover:text-accent transition-colors mt-1.5 leading-none uppercase truncate">
-                Free Things To Do
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* [8] Spotlight — live city picks */}
+      {/* ── FRONT PAGE ───────────────────────────────────────────────────────── */}
       <section className="border-b-2 border-foreground bg-background">
-        <div className="max-w-7xl mx-auto px-4 py-7 md:py-8">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              {/* [9] Event count label */}
-              <div className="mb-3 text-[10px] font-mono uppercase tracking-widest text-accent">
-                {spotlightTab === "today"
-                  ? `${todayEvents.length} event${todayEvents.length !== 1 ? "s" : ""} today in Hull`
-                  : spotlightTab === "weekend"
-                    ? `${weekendEvents.length} event${weekendEvents.length !== 1 ? "s" : ""} this weekend`
-                    : `${weekEvents.length} event${weekEvents.length !== 1 ? "s" : ""} this week`}
-              </div>
-              <div className="flex gap-1">
-                {(["today", "weekend", "week"] as const).map((tab) => {
-                  const labels = { today: "Today", weekend: "Weekend", week: "This week" };
-                  const active = spotlightTab === tab;
-                  return (
-                    <button
-                      key={tab}
-                      onClick={() => setSpotlightTab(tab)}
-                      className={`px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${
-                        active
-                          ? "bg-foreground text-background"
-                          : "border-2 border-foreground/30 text-foreground/50 hover:border-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {labels[tab]}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <Link
-              to="/whats-on"
-              className="text-[10px] font-bold uppercase tracking-widest border-b-2 border-foreground pt-2 pb-1 hover:text-accent hover:border-accent"
-            >
-              Full calendar →
-            </Link>
+        <div className="max-w-7xl mx-auto px-4 pt-6 pb-10 md:pt-8 md:pb-14">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b-2 border-foreground pb-3 mb-6 md:mb-8">
+            <h1 className="text-sm md:text-base font-bold">
+              Hull&apos;s independent guide to events, food and culture
+            </h1>
+            <p className="text-sm text-foreground/70" suppressHydrationWarning>
+              {liveDate}
+            </p>
           </div>
-          {spotlightEvents.length > 0 ? (
-            <div className="grid md:grid-cols-3 gap-4">
-              {spotlightEvents.map((event, i) => (
-                <Link
-                  key={event.id}
-                  to="/events/$slug"
-                  params={{ slug: event.slug }}
-                  className={`group border-2 border-foreground overflow-hidden hover:bg-foreground hover:text-background transition-colors ${i === 0 ? "md:row-span-1" : ""}`}
-                >
-                  <div className="aspect-[16/7] overflow-hidden bg-stone-200">
-                    <ResponsiveImage
-                      id={event.featuredImage}
-                      alt={decodeHtml(event.title)}
-                      width={520}
-                      height={230}
-                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="p-4">
-                    {/* [10] Prominent day of week */}
-                    <div
-                      className="font-display text-3xl uppercase leading-none mb-2 text-foreground/15 group-hover:text-background/15 transition-colors select-none"
-                      suppressHydrationWarning
-                    >
-                      {formatWeekday(event.startDate)}
-                    </div>
-                    <div
-                      className="mb-2 font-mono text-[10px] uppercase"
-                      style={{ color: categoryColor(event.category) }}
-                    >
-                      {event.category} · {event.startTime}
-                    </div>
-                    <h3 className="font-display text-2xl uppercase leading-none mb-2 group-hover:text-accent transition-colors">
-                      {decodeHtml(event.title)}
-                    </h3>
-                    <p className="text-xs font-mono uppercase opacity-60">
-                      {cleanLocation(event.locationName)}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="border-2 border-dashed border-foreground/30 p-8 text-sm text-muted-foreground font-mono">
-              No events listed yet. Check the full calendar for what's coming up.
+
+          {primaryHeroArticle && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+              <a href={articlePath(primaryHeroArticle)} className="group block lg:col-span-8">
+                <div className="aspect-[16/9] overflow-hidden bg-foreground/10 mb-5">
+                  <ResponsiveImage
+                    id={primaryHeroArticle.featuredImage || "/hull-marina-hero.jpg"}
+                    alt={decodeHtml(primaryHeroArticle.title)}
+                    width={1100}
+                    height={620}
+                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
+                    fetchPriority="high"
+                    loading="eager"
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                  />
+                </div>
+                <div className="text-sm font-bold text-foreground/60 mb-2">
+                  {primaryHeroArticle.category}
+                </div>
+                <h2 className="font-display-keep text-4xl md:text-6xl font-display uppercase leading-[0.95] tracking-tight mb-4 group-hover:underline decoration-accent decoration-4 underline-offset-4">
+                  {decodeHtml(primaryHeroArticle.title)}
+                </h2>
+                <p className="text-base md:text-lg text-foreground/75 max-w-2xl leading-relaxed mb-3">
+                  {decodeHtml(primaryHeroArticle.excerpt)}
+                </p>
+                <p className="text-sm text-foreground/60">
+                  By {primaryHeroArticle.author || "HU NOW"}
+                  {primaryHeroArticle.readingMinutes
+                    ? ` · ${primaryHeroArticle.readingMinutes} min read`
+                    : ""}
+                </p>
+              </a>
+
+              <div className="lg:col-span-4 lg:border-l-2 lg:border-foreground lg:pl-10">
+                <h2 className="text-lg font-bold mb-2">Also on HU NOW</h2>
+                <ul className="divide-y divide-foreground/15">
+                  {primaryHeroEvent && (
+                    <li>
+                      <Link
+                        to="/events/$slug"
+                        params={{ slug: primaryHeroEvent.slug }}
+                        className="group flex gap-4 py-4"
+                      >
+                        <div
+                          className="w-14 shrink-0 border-2 border-foreground text-center leading-none py-1.5"
+                          suppressHydrationWarning
+                        >
+                          <div className="text-[11px] font-bold uppercase">
+                            {formatWeekday(primaryHeroEvent.startDate)}
+                          </div>
+                          <div className="font-display text-3xl">
+                            {Number(primaryHeroEvent.startDate.slice(8, 10))}
+                          </div>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-bold leading-snug group-hover:underline">
+                            {decodeHtml(primaryHeroEvent.title)}
+                          </div>
+                          <div className="text-sm text-foreground/60 mt-1">
+                            {cleanLocation(primaryHeroEvent.locationName)}
+                            {primaryHeroEvent.startTime ? ` · ${primaryHeroEvent.startTime}` : ""}
+                          </div>
+                        </div>
+                      </Link>
+                    </li>
+                  )}
+                  {sideArticles.map((a) => (
+                    <li key={a.id}>
+                      <a href={articlePath(a)} className="group flex gap-4 py-4">
+                        <div className="w-20 shrink-0 aspect-[4/3] overflow-hidden bg-foreground/10">
+                          <img
+                            src={img(a.featuredImage, 160, 120)}
+                            alt=""
+                            width={160}
+                            height={120}
+                            loading="lazy"
+                            decoding="async"
+                            onError={(e) => {
+                              e.currentTarget.style.visibility = "hidden";
+                            }}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-bold leading-snug group-hover:underline">
+                            {decodeHtml(a.title)}
+                          </div>
+                          <div className="text-sm text-foreground/60 mt-1">{a.category}</div>
+                        </div>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
         </div>
       </section>
 
-      {/* [11] Featured marquee — improved with star separators */}
-      {featuredHeadlines.length > 0 && (
-        <section className="border-b border-border overflow-hidden bg-foreground text-background py-2.5">
-          <div
-            className="flex whitespace-nowrap items-center gap-10"
-            style={{ animation: "marquee 30s linear infinite" }}
-          >
-            {[...featuredHeadlines, ...featuredHeadlines, ...featuredHeadlines].map((item, i) => (
-              <span key={`${item.href}-${i}`} className="flex items-center gap-10 shrink-0">
-                <a
-                  href={item.href}
-                  className="font-display text-lg uppercase tracking-widest hover:text-accent focus-visible:text-accent focus-visible:outline-none"
-                >
-                  {item.label}
-                </a>
-                <span className="text-accent text-sm select-none">★</span>
-              </span>
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* ── MAIN GRID ────────────────────────────────────────────────────────── */}
       <main className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
         <div className="lg:col-span-8">
-          {/* [12] Section label + number */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/30 mb-1.5">
-                01 / What's On
-              </div>
-              <h2 className="text-5xl font-display uppercase tracking-tight">This Week in Hull</h2>
+              <h2 className="text-4xl md:text-5xl font-display uppercase tracking-tight">
+                Coming up in Hull
+              </h2>
             </div>
             <div className="flex flex-wrap gap-2">
               {(
@@ -569,7 +282,6 @@ function Index() {
                 />
               </div>
               <div className="pt-3 pb-1">
-                {/* [13] Category color coding */}
                 <div
                   className="font-mono text-[10px] font-bold uppercase mb-1.5"
                   style={{ color: categoryColor(events[0].category) }}
@@ -579,7 +291,6 @@ function Index() {
                     <span className="ml-3 text-muted-foreground">· Sponsored</span>
                   )}
                 </div>
-                {/* [14] font-display for lead event title */}
                 <h3 className="text-2xl md:text-3xl font-display uppercase leading-none group-hover:underline mb-2">
                   {decodeHtml(events[0].title)}
                 </h3>
@@ -668,15 +379,7 @@ function Index() {
       <section className="max-w-7xl mx-auto px-4 py-12 border-t border-border">
         <div className="flex items-end justify-between mb-10 gap-4">
           <div>
-            {/* [15] Section number */}
-            <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/30 mb-1.5">
-              02 / Latest Stories
-            </div>
-            <h2 className="text-4xl md:text-5xl font-display uppercase">From Our Journalists</h2>
-            {/* [16] Section subtitle */}
-            <p className="text-sm text-muted-foreground mt-1.5">
-              Hull news, culture and what's making people talk
-            </p>
+            <h2 className="text-4xl md:text-5xl font-display uppercase">Latest stories</h2>
           </div>
           <Link
             to="/stories"
@@ -685,14 +388,14 @@ function Index() {
             All stories →
           </Link>
         </div>
-        {articles.length > 0 && (
+        {latestArticles.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             {/* Lead article */}
-            <a href={articlePath(articles[0])} className="group block md:col-span-2">
+            <a href={articlePath(latestArticles[0])} className="group block md:col-span-2">
               <div className="w-full aspect-[16/10] bg-stone-200 overflow-hidden mb-5 relative">
                 <ResponsiveImage
-                  id={articles[0].featuredImage}
-                  alt={articles[0].title}
+                  id={latestArticles[0].featuredImage}
+                  alt={latestArticles[0].title}
                   width={900}
                   height={560}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -701,32 +404,30 @@ function Index() {
               <span
                 className="inline-block text-[10px] font-mono font-bold uppercase px-2 py-1 mb-3"
                 style={{
-                  background: categoryColor(articles[0].category),
+                  background: categoryColor(latestArticles[0].category),
                   color: "var(--background)",
                 }}
               >
-                {articles[0].category}
+                {latestArticles[0].category}
               </span>
-              {/* [17] Bigger, font-display lead article title */}
               <h3 className="text-3xl md:text-5xl font-display uppercase leading-none group-hover:underline mb-4">
-                {articles[0].title}
+                {latestArticles[0].title}
               </h3>
               <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
-                {articles[0].excerpt}
+                {latestArticles[0].excerpt}
               </p>
               <div className="text-[10px] font-mono uppercase text-muted-foreground">
-                {articles[0].author} · {articles[0].readingMinutes} min read
+                {latestArticles[0].author} · {latestArticles[0].readingMinutes} min read
               </div>
             </a>
             {/* Secondary articles */}
             <div className="flex flex-col gap-0 md:border-l-2 md:border-foreground md:pl-10 divide-y divide-foreground/10">
-              {articles.slice(1, 3).map((a) => (
+              {latestArticles.slice(1, 3).map((a) => (
                 <a
                   key={a.id}
                   href={articlePath(a)}
                   className="group flex gap-4 items-start py-5 first:pt-0"
                 >
-                  {/* [18] Wider 4:3 thumbnails on secondary articles */}
                   <div className="w-24 shrink-0 overflow-hidden bg-stone-200 aspect-[4/3]">
                     <img
                       src={img(a.featuredImage, 192, 144)}
@@ -775,65 +476,19 @@ function Index() {
         )}
       </section>
 
-      {/* ── EDITORIAL FEATURE BAND ───────────────────────────────────────────── */}
-      {featuredArticles[0] && (
-        <section className="border-y-2 border-foreground overflow-hidden">
-          <a
-            href={articlePath(featuredArticles[0])}
-            className="group relative block min-h-[340px] md:min-h-[420px]"
-          >
-            <img
-              src={img(featuredArticles[0].featuredImage, 1400, 600)}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-foreground/72" />
-            <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 flex flex-col justify-end min-h-[340px] md:min-h-[420px]">
-              <div className="max-w-3xl">
-                <span
-                  className="inline-block text-[10px] font-mono font-bold uppercase px-3 py-1 mb-5"
-                  style={{
-                    background: categoryColor(featuredArticles[0].category),
-                    color: "var(--foreground)",
-                  }}
-                >
-                  {featuredArticles[0].category}
-                </span>
-                <h2 className="text-4xl md:text-6xl lg:text-7xl font-display uppercase leading-none text-background mb-4 group-hover:text-accent transition-colors duration-300">
-                  {featuredArticles[0].title}
-                </h2>
-                <p className="text-background/75 text-lg max-w-2xl mb-6 hidden md:block">
-                  {featuredArticles[0].excerpt}
-                </p>
-                <div className="flex items-center gap-4">
-                  <span className="inline-block border-b-2 border-accent text-background text-[10px] font-bold uppercase tracking-widest pb-1">
-                    Read the story →
-                  </span>
-                  <span className="text-[10px] font-mono uppercase text-background/40">
-                    {featuredArticles[0].readingMinutes} min read
-                  </span>
-                </div>
-              </div>
-            </div>
-          </a>
-        </section>
-      )}
-
       {/* ── NEWSLETTER CTA ───────────────────────────────────────────────────── */}
-      {/* [19] Rewritten copy — more personality, less corporate */}
       <section className="bg-foreground text-background border-y-2 border-foreground">
         <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div>
             <div className="text-accent text-[10px] font-mono uppercase tracking-widest mb-4">
-              Free · Every Friday
+              Free · Every Thursday
             </div>
             <h2 className="text-5xl md:text-7xl font-display uppercase leading-none mb-5">
               Hull in your inbox
             </h2>
             <p className="text-background/70 text-lg leading-relaxed mb-4 max-w-sm">
-              Every Friday morning, a handpicked round-up of what's on, what's opened and what's
-              worth knowing in Hull this week.
+              Every Thursday, a round-up of what's on, what's opened and what's worth knowing in
+              Hull this week.
             </p>
             <p className="text-background/40 text-[11px] font-mono uppercase tracking-wide">
               No noise. No spam. Unsubscribe any time.
@@ -892,11 +547,7 @@ function Index() {
       <section className="max-w-7xl mx-auto px-4 py-12 border-b border-border">
         <div className="flex items-end justify-between mb-10 gap-4">
           <div>
-            <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/30 mb-1.5">
-              03 / Independent Hull
-            </div>
             <h2 className="text-4xl md:text-5xl font-display uppercase">Independent Hull</h2>
-            {/* [20] Section subtitle */}
             <p className="text-sm text-muted-foreground mt-1.5">
               Shops, cafés, restaurants and more — the city's independent scene
             </p>
@@ -1057,8 +708,6 @@ function Index() {
         </div>
       </section>
 
-      <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
-
       {/* Send us a tip — editorial bordered block */}
       <section className="bg-background text-foreground border-t-2 border-foreground py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
@@ -1097,27 +746,6 @@ function isThisWeek(date: string) {
   d.setUTCDate(d.getUTCDate() + 6);
   const weekEnd = d.toISOString().slice(0, 10);
   return date >= today && date <= weekEnd;
-}
-
-function isThisWeekend(date: string) {
-  if (!date) return false;
-  try {
-    const eventDate = new Date(`${date}T12:00:00Z`);
-    if (isNaN(eventDate.getTime())) return false;
-    const now = new Date();
-    const day = now.getUTCDay();
-    const daysUntilSaturday = (6 - day + 7) % 7;
-    const saturday = new Date(now);
-    saturday.setUTCDate(now.getUTCDate() + daysUntilSaturday);
-    const sunday = new Date(saturday);
-    sunday.setUTCDate(saturday.getUTCDate() + 1);
-    const start = saturday.toISOString().slice(0, 10);
-    const end = sunday.toISOString().slice(0, 10);
-    const eventIso = eventDate.toISOString().slice(0, 10);
-    return eventIso >= start && eventIso <= end;
-  } catch {
-    return false;
-  }
 }
 
 function formatHomeDate(date: string) {

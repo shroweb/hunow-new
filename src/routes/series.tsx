@@ -42,8 +42,7 @@ function SeriesIndex() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Deep reads</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">Series</h1>
+                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">Series</h1>
         <p className="text-xl text-muted-foreground max-w-2xl">
           Multi-part editorial collections — start from the beginning or dip in anywhere.
         </p>

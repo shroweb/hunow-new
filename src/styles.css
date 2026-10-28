@@ -306,3 +306,14 @@ html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Unlayered on purpose so it wins over utility classes such as `uppercase`.
+   The condensed display face is for page titles (h1). Section and card headings use the text
+   face in sentence case, so pages don't read as one long poster. */
+:where(h2, h3, h4).font-display:not(.font-display-keep) {
+  font-family: "Inter", system-ui, sans-serif;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  line-height: 1.1;
+}

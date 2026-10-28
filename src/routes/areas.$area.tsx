@@ -55,8 +55,7 @@ function AreaPage() {
             />
             <div className="absolute inset-0 bg-foreground/65" />
             <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 text-background">
-              <div className="text-[10px] font-mono uppercase mb-4 text-accent">Area Guide</div>
-              <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
+                            <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
                 {area}
               </h1>
               {guide.intro && (
@@ -81,8 +80,7 @@ function AreaPage() {
           </>
         ) : (
           <div className="max-w-7xl mx-auto px-4 py-12 md:py-20">
-            <div className="text-[10px] font-mono uppercase mb-4 text-accent">Area Guide</div>
-            <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
+                        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">
               {area}
             </h1>
             {guide.intro && (

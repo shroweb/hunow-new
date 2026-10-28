@@ -137,8 +137,7 @@ function StoriesIndex() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b border-border">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Long Reads</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">Stories</h1>
+                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">Stories</h1>
         <p className="text-xl max-w-2xl">Interviews, guides and dispatches from across the city.</p>
       </section>
       <section className="max-w-7xl mx-auto px-4 py-6 border-b border-border">

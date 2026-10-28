@@ -192,8 +192,7 @@ function SearchPage() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-16 border-b-2 border-foreground">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Search</div>
-        <form
+                <form
           onSubmit={handleSubmit}
           className="flex flex-col md:flex-row gap-3 max-w-3xl relative"
         >

@@ -217,11 +217,10 @@ function WhatsOn() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b border-border">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">The Diary</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">
+                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-6">
           What's On in Hull
         </h1>
-        <p className="text-xl max-w-2xl mb-8">Hand-picked events you won't want to miss.</p>
+        <p className="text-xl max-w-2xl mb-8">Gigs, theatre, comedy, sport and family days out across Hull, listed by date.</p>
         <div className="flex flex-col md:flex-row gap-4 max-w-3xl">
           <input
             value={query}

@@ -72,8 +72,7 @@ function Advertise() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-24 border-b border-border">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">For Local Businesses</div>
-        <h1 className="text-6xl md:text-9xl font-display uppercase leading-[0.9] mb-8">
+                <h1 className="text-6xl md:text-9xl font-display uppercase leading-[0.9] mb-8">
           Advertise <span className="text-accent">in HU NOW</span>
         </h1>
         <p className="text-2xl max-w-3xl">

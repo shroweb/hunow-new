@@ -71,8 +71,7 @@ function SavedPage() {
   return (
     <PublicLayout>
       <section className="max-w-5xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Your collection</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-3">My HU NOW</h1>
+                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-3">My HU NOW</h1>
         <p className="text-lg text-muted-foreground">
           {total === 0 ? "Nothing saved yet." : `${total} saved item${total !== 1 ? "s" : ""}`}
         </p>

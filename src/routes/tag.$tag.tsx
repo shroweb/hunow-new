@@ -88,8 +88,7 @@ function TagPage() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
-        <div className="text-[10px] font-mono uppercase mb-4 text-accent">Tag</div>
-        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none">
+                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none">
           #{tag}
           {also && <span className="text-accent"> + #{also}</span>}
         </h1>

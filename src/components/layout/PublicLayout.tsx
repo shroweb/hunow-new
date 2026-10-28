@@ -482,7 +482,7 @@ function Footer() {
             </div>
             <p className="text-white/70 text-sm max-w-md leading-relaxed">
               An independent guide to Hull — events, food, culture and the city's best independent
-              businesses. Made by people who love the city.
+              businesses.
             </p>
           </div>
           <div className="text-[10px] font-mono uppercase tracking-widest text-white/55 leading-loose shrink-0 text-right">
