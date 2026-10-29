@@ -39,6 +39,9 @@ import { upsertArticleFn, deleteArticleFn } from "@/lib/content.functions";
 import { getAuthorsFn } from "@/lib/authors.functions";
 import { getAdminPolls } from "@/lib/polls.functions";
 import { getTaxonomy, updateTaxonomyKey } from "@/lib/taxonomy-config.functions";
+import { getSettings, saveSetting } from "@/lib/settings.functions";
+
+const HOME_LEAD_SETTING = "home_lead_article_id";
 import type { Article } from "@/types";
 import type { PollRow } from "@/lib/db.server";
 import type { Author } from "@/lib/authors";
@@ -46,14 +49,20 @@ import type { Author } from "@/lib/authors";
 export const Route = createFileRoute("/admin/articles")({
   loader: async () => {
     try {
-      const [polls, authors, taxonomy] = await Promise.all([
+      const [polls, authors, taxonomy, settings] = await Promise.all([
         getAdminPolls().catch(() => []),
         getAuthorsFn().catch(() => []),
         getTaxonomy().catch(() => ({})),
+        getSettings().catch(() => ({}) as Record<string, string>),
       ]);
-      return { polls: polls ?? [], authors: authors ?? [], taxonomy: taxonomy ?? {} };
+      return {
+        polls: polls ?? [],
+        authors: authors ?? [],
+        taxonomy: taxonomy ?? {},
+        homeLeadId: (settings as Record<string, string>)[HOME_LEAD_SETTING] || "",
+      };
     } catch {
-      return { polls: [], authors: [], taxonomy: {} };
+      return { polls: [], authors: [], taxonomy: {}, homeLeadId: "" };
     }
   },
   component: AdminArticles,
@@ -74,12 +83,19 @@ const DEFAULT_ARTICLE_CATEGORIES = [
 
 function AdminArticles() {
   const loaderData = Route.useLoaderData() as
-    | { polls?: PollRow[]; authors?: Author[]; taxonomy?: Record<string, string[]> }
+    | {
+        polls?: PollRow[];
+        authors?: Author[];
+        taxonomy?: Record<string, string[]>;
+        homeLeadId?: string;
+      }
     | undefined;
   const polls = loaderData?.polls ?? [];
   const authors = loaderData?.authors ?? [];
   const articles = useStore((s) => s.articles);
   const [editing, setEditing] = useState<Article | null>(null);
+  const [homeLeadId, setHomeLeadId] = useState(loaderData?.homeLeadId ?? "");
+  const [leadSaving, setLeadSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [section, setSection] = useState(editing?.section ?? "");
   const [subcategory, setSubcategory] = useState(editing?.subcategory ?? "");
@@ -243,6 +259,21 @@ function AdminArticles() {
     setState((s) => ({ ...s, articles: s.articles.map((a) => (a.id === id ? updated : a)) }), {
       persist: false,
     });
+  };
+
+  // Homepage hero: an explicitly chosen story, otherwise the newest featured article
+  const chosenLead = articles.find((a) => a.id === homeLeadId && a.status === "published");
+  const automaticLead =
+    articles.find((a) => a.isFeatured && a.status === "published") ??
+    articles.find((a) => a.status === "published");
+  const setHomeLead = async (id: string) => {
+    setLeadSaving(true);
+    try {
+      await saveSetting({ data: { key: HOME_LEAD_SETTING, value: id } });
+      setHomeLeadId(id);
+    } finally {
+      setLeadSaving(false);
+    }
   };
 
   const toggleStatus = async (id: string) => {
@@ -760,6 +791,33 @@ function AdminArticles() {
           )}
         </div>
 
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-2 border-foreground bg-card p-4">
+          <div className="min-w-0">
+            <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+              Homepage main story
+            </div>
+            <div className="font-bold truncate">
+              {(chosenLead ?? automaticLead)?.title ?? "No published articles"}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {chosenLead
+                ? "Chosen by you. It stays until you change it."
+                : homeLeadId
+                  ? "Your chosen story isn't published, so the newest featured article is showing."
+                  : "Automatic: the newest article with Featured ticked. Use “Lead” on any published post to pin it."}
+            </div>
+          </div>
+          {homeLeadId && (
+            <button
+              type="button"
+              onClick={() => setHomeLead("")}
+              disabled={leadSaving}
+              className={adminBtnOutline}
+            >
+              Back to automatic
+            </button>
+          )}
+        </div>
         <AdminTable
           headers={["Post", "Section", "Status", "Published", "Flags", "Actions"]}
           rows={filtered.map((a) => [
@@ -788,6 +846,20 @@ function AdminArticles() {
               >
                 Feat
               </button>
+              {a.status === "published" && (
+                <button
+                  onClick={() => setHomeLead(a.id === homeLeadId ? "" : a.id)}
+                  disabled={leadSaving}
+                  title={
+                    a.id === homeLeadId
+                      ? "This is the homepage main story. Click to go back to automatic."
+                      : "Make this the homepage main story"
+                  }
+                  className={`text-[9px] font-bold uppercase px-2 py-0.5 ${a.id === homeLeadId ? "bg-foreground text-background" : "border border-foreground/20"}`}
+                >
+                  Lead
+                </button>
+              )}
               <button
                 onClick={() => toggle(a.id, "isSponsored")}
                 className={`text-[9px] font-bold uppercase px-2 py-0.5 ${a.isSponsored ? "bg-accent text-background" : "border border-foreground/20"}`}

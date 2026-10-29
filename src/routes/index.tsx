@@ -112,7 +112,9 @@ function Index() {
   const listings = allListingsData.filter((l) => l.isFeatured).slice(0, 4);
 
   const featuredArticles = allArticles.filter((a) => a.isFeatured && a.status === "published");
-  const primaryHeroArticle = featuredArticles[0] ?? articles[0];
+  // Main story: the one chosen in admin (Articles → "Lead"), otherwise the newest featured article
+  const chosenLead = articles.find((a) => a.id === settings?.home_lead_article_id);
+  const primaryHeroArticle = chosenLead ?? featuredArticles[0] ?? articles[0];
   const primaryHeroEvent = events[0];
   const publishedArticles = allArticles.filter((a) => a.status === "published");
   const sideArticles = publishedArticles.filter((a) => a.id !== primaryHeroArticle?.id).slice(0, 3);
