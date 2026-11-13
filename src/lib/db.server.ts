@@ -555,6 +555,36 @@ async function ensureSeeded() {
   await ensureEditorialSourceCorrections2026();
   await ensureSundayDinnerDepth2026();
   await ensureBrunchGuideDepth();
+  await ensureChristmasSwitchOnDate2026();
+}
+
+async function ensureChristmasSwitchOnDate2026() {
+  const article = seedArticles.find((item) => item.slug === "essential-guide-to-christmas-in-hull");
+  const section = article?.content.match(/<h2>1\. Queen Victoria Square[\s\S]*?(?=<h2>2\.)/)?.[0];
+  if (!section) return;
+  const client = await getPool().connect();
+  try {
+    await client.query("begin");
+    const marker = await client.query(
+      `insert into site_settings (key, value)
+       values ('migration:christmas-switch-on-date-2026-11-13', 'true'::jsonb)
+       on conflict (key) do nothing returning key`,
+    );
+    if (marker.rowCount) {
+      await client.query(
+        `update articles set data = jsonb_set(data, '{content}',
+         to_jsonb(regexp_replace(data->>'content', '<h2>1\\. Queen Victoria Square[\\s\\S]*?<h2>2\\.', $1)))
+         where slug = 'essential-guide-to-christmas-in-hull'`,
+        [section + "<h2>2."],
+      );
+    }
+    await client.query("commit");
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 async function ensureSundayDinnerDepth2026() {

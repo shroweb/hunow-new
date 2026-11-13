@@ -29,6 +29,14 @@ function wordCount(html: string) {
 }
 
 describe("new editorial guides", () => {
+  test("uses the officially confirmed Hull Christmas switch-on date", () => {
+    const article = seedArticles.find(
+      (item) => item.slug === "essential-guide-to-christmas-in-hull",
+    );
+    expect(article?.content).toContain("Thursday 19 November 2026");
+    expect(article?.content).toContain("https://www.visithull.com/must-be-hull-christmas/");
+    expect(article?.content).not.toContain("Light Switch-On</strong> in late November");
+  });
   test("keeps every published seed article above the thin-content floor", () => {
     const thin = seedArticles
       .filter((article) => article.status === "published" && wordCount(article.content) < 225)

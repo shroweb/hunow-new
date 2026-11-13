@@ -32,12 +32,12 @@ const SWITCH_ONS: SwitchOn[] = [
   },
   {
     town: "Hull City Centre",
-    date: "Thu 19 Nov (expected)",
-    time: "5:00pm – 7:30pm",
-    switchOn: "Approx 6:50pm",
+    date: "Thu 19 Nov 2026 (confirmed)",
+    time: "Check organiser for timings",
+    switchOn: "Exact time to be confirmed",
     venue: "Queen Victoria Square",
     highlights:
-      "The 50ft Norwegian spruce, performers on the City Hall balcony, rooftop fireworks and the launch of late-night Thursday shopping.",
+      "Visit Hull confirms the switch-on date, alongside a small Christmas market on King Edward Street.",
   },
   {
     town: "St Stephen's & Princes Quay, Hull",
@@ -197,7 +197,7 @@ const ITEM_LIST_SCHEMA = {
       "@type": "Event",
       name: `${s.town} Christmas Lights Switch-On 2026`,
       description: s.highlights,
-      startDate: s.date.includes("TBC") ? "2026-11-30" : "2026-11-13",
+      ...(s.town === "Hull City Centre" ? { startDate: "2026-11-19" } : {}),
       eventStatus: "https://schema.org/EventScheduled",
       isAccessibleForFree: true,
       url: "https://www.hunow.co.uk/christmas-lights-switch-on",
@@ -290,8 +290,7 @@ export const Route = createFileRoute("/christmas-lights-switch-on")({
           name: "Hull Christmas Lights Switch-On 2026",
           description:
             "Hull's official festive kickoff event in Queen Victoria Square featuring live entertainment, 50ft tree illumination, and rooftop fireworks.",
-          startDate: "2026-11-19T17:00:00+00:00",
-          endDate: "2026-11-19T19:30:00+00:00",
+          startDate: "2026-11-19",
           eventStatus: "https://schema.org/EventScheduled",
           isAccessibleForFree: true,
           url: "https://www.hunow.co.uk/christmas-lights-switch-on",
@@ -527,6 +526,15 @@ function ChristmasLightsPage() {
           <h2 className="text-3xl md:text-4xl font-display uppercase mb-6">
             Hull City Centre Switch-On
           </h2>
+          <p className="mb-6 text-sm">
+            Confirmed date: <strong>Thursday 19 November 2026</strong>.{" "}
+            <a href="https://www.visithull.com/must-be-hull-christmas/" className="underline">
+              Visit Hull's official Christmas programme
+            </a>{" "}
+            confirms the date and a small Christmas market on King Edward Street.
+            Check the organiser's latest announcement for the exact switch-on time.
+            Date checked 13 November 2026.
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="border border-border p-6">
               <h3 className="font-display text-xl uppercase mb-2">The 50ft Norwegian Spruce</h3>

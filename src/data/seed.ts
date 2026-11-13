@@ -367,11 +367,12 @@ export const seedArticles: Article[] = [
 <p>From historic cobbled streets illuminated by thousands of twinkling festoon bulbs to bustling Victorian artisan craft markets and packed theatre pantomimes, Hull comes alive across November and December. Here is your definitive guide to the essential events, markets, light switch-ons, and seasonal celebrations across the city for Christmas 2026.</p>
 
 <h2>1. Queen Victoria Square Christmas Lights Switch-On</h2>
-<p>Hull's festive season officially begins with the spectacular <strong>Queen Victoria Square Light Switch-On</strong> in late November. Centred around the grand backdrop of Hull City Hall and the Ferens Art Gallery, the square fills with thousands of families for live entertainment, community choirs, and special guest appearances before the big countdown triggers the illuminations and a rooftop pyrotechnic finale.</p>
+<p>Hull's Christmas Lights Switch-On is confirmed for <strong>Thursday 19 November 2026</strong>. <a href="https://www.visithull.com/must-be-hull-christmas/" target="_blank" rel="noopener noreferrer">Visit Hull's official Christmas programme</a> confirms the date, alongside a small Christmas market on King Edward Street. Check the organiser's latest announcement for the exact switch-on time. Date checked 13 November 2026.</p>
 <ul>
   <li><strong>Location:</strong> Queen Victoria Square, Hull City Centre (HU1 3RA)</li>
   <li><strong>Admission:</strong> Free entry</li>
-  <li><strong>Highlights:</strong> Giant illuminated Christmas tree, street food stalls, live brass bands, and late-night shopping opening.</li>
+  <li><strong>Date:</strong> Thursday 19 November 2026</li>
+  <li><strong>Times:</strong> Check the organiser's latest announcement before travelling.</li>
 </ul>
 
 <h2>2. Trinity Market Victorian Christmas & Festive Night Markets</h2>

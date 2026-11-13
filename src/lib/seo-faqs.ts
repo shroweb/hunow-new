@@ -155,7 +155,7 @@ export const ARTICLE_FAQS: Record<string, FAQItem[]> = {
     {
       question: "When is the Hull Christmas Lights Switch-On?",
       answer:
-        "The annual Hull City Centre Christmas Lights Switch-On takes place in mid-November (typically the third Thursday in November) from 5:00 PM to 7:30 PM, with the lights officially illuminated at approximately 6:45 PM to 7:00 PM.",
+        "Hull's Christmas Lights Switch-On is confirmed for Thursday 19 November 2026 by Visit Hull. Check the organiser's latest announcement for the exact switch-on time; its Christmas programme confirms the date and a small market on King Edward Street.",
     },
     {
       question: "Where is the Christmas lights switch-on in Hull?",
@@ -234,7 +234,7 @@ export const ARTICLE_FAQS: Record<string, FAQItem[]> = {
     {
       question: "When are the Christmas lights switched on in Hull for 2026?",
       answer:
-        "The annual Hull City Centre Christmas Lights Switch-On takes place in Queen Victoria Square in mid-November, featuring live music, street entertainment, and the lighting of the fifty-foot Norwegian spruce tree.",
+        "Visit Hull confirms Hull's Christmas Lights Switch-On for Thursday 19 November 2026. Check the organiser's latest announcement for the exact time. A small Christmas market on King Edward Street accompanies the switch-on.",
     },
     {
       question: "Where are the best Christmas markets in Hull?",
