@@ -12,13 +12,16 @@ function seriesSlug(name: string) {
 }
 
 export const Route = createFileRoute("/series")({
-  head: () =>
-    buildSeoMeta({
-      title: "Editorial Series & Investigative Reports — HU NOW",
-      description:
-        "Explore multi-part editorial series, deep dives, cultural essays, and investigative reporting on Kingston upon Hull and East Yorkshire.",
-      path: "/series",
-    }),
+  head: ({ params }) =>
+    // Individual series pages set their own title and canonical
+    (params as { series?: string }).series
+      ? {}
+      : buildSeoMeta({
+          title: "Editorial Series & Investigative Reports — HU NOW",
+          description:
+            "Explore multi-part editorial series, deep dives, cultural essays, and investigative reporting on Kingston upon Hull and East Yorkshire.",
+          path: "/series",
+        }),
   component: SeriesIndex,
 });
 
@@ -42,7 +45,7 @@ function SeriesIndex() {
   return (
     <PublicLayout>
       <section className="max-w-7xl mx-auto px-4 py-12 md:py-20 border-b-2 border-foreground">
-                <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">Series</h1>
+        <h1 className="text-6xl md:text-8xl font-display uppercase leading-none mb-4">Series</h1>
         <p className="text-xl text-muted-foreground max-w-2xl">
           Multi-part editorial collections — start from the beginning or dip in anywhere.
         </p>

@@ -132,8 +132,9 @@ export const Route = createFileRoute("/sitemap.xml")({
             });
           }
           for (const sub of section.subs) {
-            const canonicalSub = CANONICAL_SUB_PATHS[sub.slug] ?? `/c/${section.slug}/${sub.slug}`;
-            if (!addedPaths.has(canonicalSub)) {
+            // /c/<section>/<sub> URLs redirect or are thin, so only dedicated landing pages are listed
+            const canonicalSub = CANONICAL_SUB_PATHS[sub.slug];
+            if (canonicalSub && !addedPaths.has(canonicalSub)) {
               addedPaths.add(canonicalSub);
               entries.push({
                 path: canonicalSub,
@@ -165,12 +166,11 @@ export const Route = createFileRoute("/sitemap.xml")({
         for (const event of events) {
           if (event.status === "published") {
             const isUpcoming = (event.endDate || event.startDate) >= todayStr;
-            const isFeaturedOrMajor =
-              event.isFeatured ||
-              event.slug.includes("hull-fair") ||
-              event.slug.includes("sesh") ||
-              event.slug.includes("freedom");
-            if (isUpcoming || isFeaturedOrMajor) {
+            // Annual festival events (e.g. /events/hull-fair-2026) redirect to their hub pages
+            const redirectsToHub = /^(hull-fair|humber-street-sesh|freedom-festival)-\d{4}$/.test(
+              event.slug,
+            );
+            if (isUpcoming && !redirectsToHub) {
               entries.push({
                 path: `/events/${event.slug}`,
                 changefreq: "weekly",
@@ -211,23 +211,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           }
         }
 
-        // Tag pages - only index robust tags associated with 2 or more articles to avoid thin content soft 404s
-        const tagArticleCounts: Record<string, number> = {};
-        for (const a of articles) {
-          for (const t of a.tags ?? []) {
-            const cleanTag = t.trim().toLowerCase();
-            tagArticleCounts[cleanTag] = (tagArticleCounts[cleanTag] || 0) + 1;
-          }
-        }
-        for (const [tag, count] of Object.entries(tagArticleCounts)) {
-          if (count >= 2) {
-            entries.push({
-              path: `/tag/${encodeURIComponent(tag.replace(/\s+/g, "-"))}`,
-              changefreq: "weekly",
-              priority: "0.5",
-            });
-          }
-        }
+        // Tag pages are noindex (thin listings), so they are not listed
 
         // Series pages
         const seriesList = [...new Set(articles.map((a) => a.series).filter(Boolean))];
